@@ -1,10 +1,10 @@
-@use "themes.scss" as th;
+@use "globals_forward.scss" as g;
 
 body.theme-default {
-    @include th.theme-dark;    
+    @include g.theme-dark;
 }
 
 body {
-    color: vr.$text;
-    background-color: vr.$background;
+    color: g.$color-text;
+    background-color: g.$color-background;
 }

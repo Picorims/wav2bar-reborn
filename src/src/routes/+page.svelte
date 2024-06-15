@@ -1,2 +1,8 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<p>hi</p>
+
+<style global lang="scss">
+	@use "../lib/css/globals_forward.scss" as g;
+    p {
+        @include g.theme-dark;
+    }
+</style>
