@@ -8,10 +8,11 @@ export default defineConfig({
 	},
 	css: {
 		preprocessorOptions: {
-		  sass: { // make available everywhere:
+		  scss: { // make available everywhere:
 			additionalData: `
-			  @import '$lib/scss/_variables as vr'
-			  @import '$lib/scss/_mixins as mx'
+			  @use '$lib/css/variables.scss' as vr;
+			  @use '$lib/css/mixins.scss' as mx;
+			  @use '$lib/css/global.scss' as gb;
 			`,
 		  }
 		},

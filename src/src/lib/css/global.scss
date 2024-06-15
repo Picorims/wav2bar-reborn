@@ -1,0 +1,8 @@
+@use "mixins.scss" as mx;
+@use "variables.scss" as vr;
+
+:root {
+    color: vr.$a;
+}
+
+$b: #456386;
