@@ -1,8 +1,10 @@
-@use "mixins.scss" as mx;
-@use "variables.scss" as vr;
+@use "themes.scss" as th;
 
-:root {
-    color: vr.$a;
+body.theme-default {
+    @include th.theme-dark;    
 }
 
-$b: #456386;
+body {
+    color: vr.$text;
+    background-color: vr.$background;
+}

@@ -12,7 +12,6 @@ export default defineConfig({
 			additionalData: `
 			  @use '$lib/css/variables.scss' as vr;
 			  @use '$lib/css/mixins.scss' as mx;
-			  @use '$lib/css/global.scss' as gb;
 			`,
 		  }
 		},
