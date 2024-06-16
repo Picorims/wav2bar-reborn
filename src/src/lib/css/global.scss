@@ -24,10 +24,12 @@ body {
 $_splitter-half-size: 8px;
 .splitpanes.custom-theme {
     $half-size: $_splitter-half-size;
+    overflow: hidden;
     // background-color: red;
-    // .splitpanes__pane {
-    //     background-color: #f8f8f8;
-    // }
+    .splitpanes__pane {
+        position: relative;
+        overflow: visible;
+    }
     &.splitpanes--vertical > .splitpanes__splitter {
         width: 2*$half-size;
     }
@@ -36,7 +38,7 @@ $_splitter-half-size: 8px;
     }
     
     .splitpanes__splitter {
-        background-color: #ccc;
+        // background-color: #ccc;
         position: relative;
         
         &:before {
@@ -70,4 +72,22 @@ $_splitter-half-size: 8px;
         width: 100%;
         cursor: row-resize;
     }
+}
+
+$_icon-half-size: 12px;
+svg.grip-horizontal, svg.grip-vertical {
+    position: absolute;
+    fill: g.$color-background-200;
+    z-index: 100;
+    pointer-events: none;
+}
+
+svg.grip-horizontal {
+    top: calc(100% + $_splitter-half-size - $_icon-half-size);
+    left: calc(50% - $_icon-half-size);
+}
+
+svg.grip-vertical {
+    left: calc(100% + $_splitter-half-size - $_icon-half-size);
+    top: calc(50% - $_icon-half-size);
 }
