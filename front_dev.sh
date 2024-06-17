@@ -1,0 +1,1 @@
+cd src && npm run dev -- --open
