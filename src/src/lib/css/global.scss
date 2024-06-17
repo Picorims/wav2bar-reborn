@@ -1,0 +1,93 @@
+@use "globals_forward.scss" as g;
+
+body.theme-default {
+    @include g.theme-dark;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: g.$color-text;
+    background-color: g.$color-background;
+    width: 100vw;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+$_splitter-half-size: calc(g.$spacing-l / 2);
+.splitpanes.custom-theme {
+    $half-size: $_splitter-half-size;
+    overflow: hidden;
+    // background-color: red;
+    .splitpanes__pane {
+        position: relative;
+        overflow: visible;
+    }
+    &.splitpanes--vertical > .splitpanes__splitter {
+        width: 2*$half-size;
+    }
+    &.splitpanes--horizontal > .splitpanes__splitter {
+        height: 2*$half-size;
+    }
+    
+    .splitpanes__splitter {
+        // background-color: #ccc;
+        position: relative;
+        
+        &:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: opacity 0.4s;
+            background-color: g.$color-primary-300;
+            opacity: 0;
+            z-index: 1;
+        }
+        &:hover:before {
+            opacity: 1;
+        }
+        &.splitpanes__splitter__active {
+            z-index: 2; /* Fix an issue of overlap fighting with a near hovered splitter */
+        }
+    }
+}
+.custom-theme {
+    &.splitpanes--vertical > .splitpanes__splitter:before {
+        left: 0;
+        right: 0;
+        height: 100%;
+        cursor: col-resize;
+    }
+    &.splitpanes--horizontal > .splitpanes__splitter:before {
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        cursor: row-resize;
+    }
+}
+
+$_icon-half-size: 12px;
+svg.grip-horizontal, svg.grip-vertical {
+    position: absolute;
+    stroke: g.$color-background-800;
+    z-index: 100;
+    pointer-events: none;
+}
+
+svg.grip-horizontal {
+    top: calc(100% + $_splitter-half-size - $_icon-half-size);
+    left: calc(50% - $_icon-half-size);
+}
+
+svg.grip-vertical {
+    left: calc(100% + $_splitter-half-size - $_icon-half-size);
+    top: calc(50% - $_icon-half-size);
+}
