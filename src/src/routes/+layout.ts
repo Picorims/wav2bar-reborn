@@ -3,7 +3,7 @@ export const prerender = true;
 
 import "$lib/css/global.scss";
 
-// === done through vite, hence the commented imports below vvvvvv
+// === done through @use and @forward, hence the commented imports below vvvvvv
 
 // import * as vr from "$lib/css/variables.scss";
 // import * as mx from "$lib/css/mixins.scss";
