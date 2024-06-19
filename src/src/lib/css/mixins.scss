@@ -5,3 +5,10 @@
     background-color: vr.$color-background-100;
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
+
+@mixin text-strong {
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    font-size: 1rem;
+}
