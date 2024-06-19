@@ -1,10 +1,13 @@
 <script lang="ts">
 	import IconButton from "../atoms/IconButton.svelte";
 	import { FileCog, FilePlus, FolderOpen, Save, Bug, HelpCircle } from "lucide-svelte";
+
+	export let title = "";
+	export let saved = false;
 </script>
 
 <div class="card">
-	<span class="project-title">title</span>
+	<span class="project-title">{title}{saved? "" : "*"}</span>
 	<IconButton>
 		<FileCog/>
 	</IconButton>
@@ -40,6 +43,12 @@
 		padding: g.$spacing-m;
 	}
 
-	span.project.title {
+	span.project-title {
+		@include g.text-strong;
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-wrap: nowrap;
 	}
 </style>

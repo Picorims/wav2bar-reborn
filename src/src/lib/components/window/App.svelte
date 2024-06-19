@@ -5,6 +5,9 @@
 	import PropertiesPane from '$lib/components/panes/PropertiesPane.svelte';
 	import ControllerPane from '$lib/components/panes/ControllerPane.svelte';
 	import FileAndIconsPane from '$lib/components/panes/FileAndIconsPane.svelte';
+
+	let saved = false;
+	let projectTitle = "New Project";
 </script>
 
 <Splitpanes class="main-split-pane" theme="custom-theme">
@@ -15,7 +18,7 @@
                 <GripHorizontal class="grip-horizontal"/>
 				<div class="flex-column">
 					<div class="file-and-icons-pane-container">
-						<FileAndIconsPane/>
+						<FileAndIconsPane title={projectTitle} saved={saved}/>
 					</div>
 					<div class="objects-pane-container">
 						<ObjectPane/>
