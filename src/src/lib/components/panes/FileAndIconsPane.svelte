@@ -1,6 +1,7 @@
 <script lang="ts">
 	import IconButton from "../atoms/IconButton.svelte";
 	import { FileCog, FilePlus, FolderOpen, Save, Bug, HelpCircle } from "lucide-svelte";
+	import { currentModal, ModalType } from "../store/modal";
 
 	export let title = "";
 	export let saved = false;
@@ -8,7 +9,7 @@
 
 <div class="card">
 	<span class="project-title">{title}{saved? "" : "*"}</span>
-	<IconButton>
+	<IconButton onClick={() => {currentModal.set(ModalType.PROJECT_SETTINGS)}}>
 		<FileCog/>
 	</IconButton>
 	<IconButton>
