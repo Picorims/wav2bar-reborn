@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
 	import { Pane, Splitpanes } from 'svelte-splitpanes';
 	import { GripHorizontal, GripVertical } from 'lucide-svelte';
     import ObjectPane from '$lib/components/panes/ObjectPane.svelte';
 	import PropertiesPane from '$lib/components/panes/PropertiesPane.svelte';
 	import ControllerPane from '$lib/components/panes/ControllerPane.svelte';
 	import FileAndIconsPane from '$lib/components/panes/FileAndIconsPane.svelte';
+	import Modal from '$lib/components/window/Modal.svelte';
+	import { currentModal, ModalType } from '../store/modal';
 
 	let saved = false;
 	let projectTitle = "New Project";
@@ -41,6 +43,13 @@
 		</div>
 	</Pane>
 </Splitpanes>
+
+{#if $currentModal === ModalType.PROJECT_SETTINGS}
+	<Modal title="Project Settings">
+		<p>Project settings go here</p>
+		<button on:click={() => {currentModal.set(null)}}>Close</button>
+	</Modal>
+{/if}
 
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
