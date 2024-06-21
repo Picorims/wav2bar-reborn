@@ -1,0 +1,42 @@
+{
+    // Place your wav2bar-reborn workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+    // description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+    // is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+    // used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+    // $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+    // Placeholders with the same ids are connected.
+    // Example:
+    // "Print to console": {
+    // 	"scope": "javascript,typescript",
+    // 	"prefix": "log",
+    // 	"body": [
+    // 		"console.log('$1');",
+    // 		"$2"
+    // 	],
+    // 	"description": "Log output to console"
+    // }
+    "Add copyright header": {
+        "scope": "javascript,typescript,css,scss,html,rust,markdown,plantuml,sh,bash,shell,svelte",
+        "prefix": ["copyright", "cprt"],
+        "body": [
+            "$BLOCK_COMMENT_START",
+            "Wav2Bar - Free software for creating audio visualization (motion design) videos",
+            "Copyright (C) 2024  Picorims <picorims.contact@gmail.com>",
+            "",
+            "This program is free software: you can redistribute it and/or modify",
+            "it under the terms of the GNU General Public License as published by",
+            "the Free Software Foundation, either version 3 of the License, or",
+            "any later version.",
+            "",
+            "This program is distributed in the hope that it will be useful,",
+            "but WITHOUT ANY WARRANTY; without even the implied warranty of",
+            "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the",
+            "GNU General Public License for more details.",
+            "",
+            "You should have received a copy of the GNU General Public License",
+            "along with this program.  If not, see <https://www.gnu.org/licenses/>.",
+            "$BLOCK_COMMENT_END"
+        ],
+        "description": "Add a license header to the current file"
+    }
+}
