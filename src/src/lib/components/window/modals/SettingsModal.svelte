@@ -19,10 +19,14 @@
 	import Modal from '../Modal.svelte';
 	import { lang, settings } from '$lib/store/settings';
 	import { closeModalHandler, currentModal } from '$lib/store/modal';
+	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
+	import { LanguageOptions, ThemeOptions } from '$lib/store/settings_structure/settings_enums';
 
 	console.log($settings);
 </script>
 
 <Modal title={$lang.settings.title}>
+    <LabeledDropdown title={$lang.settings.language} optionsObj={LanguageOptions}></LabeledDropdown>
+    <LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions}></LabeledDropdown>
 	<button on:click={closeModalHandler}>{$lang.settings.close}</button>
 </Modal>

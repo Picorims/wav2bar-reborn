@@ -24,6 +24,45 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
+@mixin input {
+    min-width: vr.$size-2xl;
+    height: vr.$size-m;
+    padding: 0 vr.$spacing-m;
+    
+    display: flex;
+    align-items: center;
+    
+    border-radius: vr.$border-radius-m;
+    border: 1px solid vr.$color-secondary-200;
+    
+    @include text;
+    color: vr.$color-text-900;
+    background-color: vr.$color-background-50;
+
+    &::placeholder {
+        color: vr.$color-text-600;
+    }
+
+    &:focus, &:active {
+        border-color: vr.$color-primary-600;
+        box-shadow: 0 0 vr.$shadow-s vr.$color-primary-400;
+    }
+}
+
+@mixin input-spacing-with-label {
+    margin-top: vr.$spacing-s;
+    margin-bottom: vr.$spacing-m;
+}
+
+
+
+@mixin text {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    line-height: 1.2;
+    font-size: 1rem;
+}
+
 @mixin text-strong {
     font-family: "Poppins", sans-serif;
     font-weight: 700;
