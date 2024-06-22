@@ -23,7 +23,8 @@
 	import ControllerPane from '$lib/components/panes/ControllerPane.svelte';
 	import FileAndIconsPane from '$lib/components/panes/FileAndIconsPane.svelte';
 	import Modal from '$lib/components/window/Modal.svelte';
-	import { currentModal, ModalType } from '../store/modal';
+	import { currentModal, ModalType } from '../../store/modal';
+	import SettingsModal from './modals/SettingsModal.svelte';
 
 	let saved = false;
 	let projectTitle = "New Project";
@@ -66,6 +67,8 @@
 		<p>Project settings go here</p>
 		<button on:click={() => {currentModal.set(null)}}>Close</button>
 	</Modal>
+{:else if $currentModal === ModalType.SETTINGS}
+	<SettingsModal/>
 {/if}
 
 <style lang="scss">
