@@ -20,6 +20,21 @@ import { writable } from "svelte/store";
 
 export enum ModalType {
     PROJECT_SETTINGS,
+	SETTINGS,
 }
 
 export const currentModal = writable<ModalType | null>(null);
+
+export function closeModal() {
+    currentModal.set(null);
+}
+
+export const closeModalHandler = () => closeModal();
+
+export function openModal(type: ModalType) {
+    currentModal.set(type);
+}
+
+export function openModalHandler(type: ModalType) {
+    return () => {console.log("g"); openModal(type);}
+}

@@ -17,8 +17,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	*/
 	import IconButton from "../atoms/IconButton.svelte";
-	import { FileCog, FilePlus, FolderOpen, Save, Bug, HelpCircle } from "lucide-svelte";
-	import { currentModal, ModalType } from "../store/modal";
+	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from "lucide-svelte";
+	import { currentModal, ModalType } from "$lib/store/modal";
+	import { openModalHandler } from "$lib/store/modal";
 
 	export let title = "";
 	export let saved = false;
@@ -38,8 +39,8 @@
 	<IconButton>
 		<Save/>
 	</IconButton>
-	<IconButton>
-		<Bug/>
+	<IconButton onClick={openModalHandler(ModalType.SETTINGS)}>
+		<Settings/>
 	</IconButton>
 	<IconButton>
 		<HelpCircle/>

@@ -1,0 +1,14 @@
+{
+    "lang": "en",
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "theme": "Theme",
+        "theme_options": {
+            "default": "Default",
+            "light": "Light",
+            "dark": "Dark"
+        },
+        "close": "OK"
+    }
+}
