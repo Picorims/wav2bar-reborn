@@ -17,6 +17,12 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
     import App from '$lib/components/window/App.svelte';
+	import { settings } from '$lib/store/settings';
+	import { ThemeOptions } from '$lib/store/settings_structure/settings_enums';
+
+    settings.subscribe((value) => {
+        document.body.className = `theme-${value.theme}`
+    });
 </script>
 
 <App/>

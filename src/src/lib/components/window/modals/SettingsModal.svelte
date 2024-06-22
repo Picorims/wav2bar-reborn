@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -16,11 +16,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   import Modal from "../Modal.svelte";
-   import { lang } from "$lib/store/settings";
-	import { closeModalHandler, currentModal } from "$lib/store/modal";
+	import Modal from '../Modal.svelte';
+	import { lang, settings } from '$lib/store/settings';
+	import { closeModalHandler, currentModal } from '$lib/store/modal';
+
+	console.log($settings);
 </script>
 
 <Modal title={$lang.settings.title}>
-    <button on:click={closeModalHandler}>{$lang.settings.close}</button>
+	<button on:click={closeModalHandler}>{$lang.settings.close}</button>
 </Modal>
