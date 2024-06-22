@@ -38,7 +38,7 @@
     }
 
     button.icon-button:hover > :global(svg) {
-        stroke: g.$color-primary;
+        stroke: g.$color-primary-500;
         transition: g.$anim-fast;
     }
 
