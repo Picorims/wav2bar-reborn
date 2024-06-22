@@ -19,10 +19,17 @@
     import App from '$lib/components/window/App.svelte';
 	import { settings } from '$lib/store/settings';
 	import { ThemeOptions } from '$lib/store/settings_structure/settings_enums';
+	import { onMount } from 'svelte';
 
-    settings.subscribe((value) => {
-        document.body.className = `theme-${value.theme}`
+    let docBody: HTMLBodyElement;
+
+    onMount(() => {
+        settings.subscribe((value) => {
+            docBody.className = `theme-${value.theme}`
+        });
     });
 </script>
+
+<svelte:body bind:this={docBody} />
 
 <App/>
