@@ -49,7 +49,7 @@
         @include g.card;
         padding: g.$spacing-l;
         margin: g.$spacing-l;
-        width: 600px;
+        min-width: 300px;
         flex: 0 1 auto;
     }
 
