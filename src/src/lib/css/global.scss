@@ -19,10 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 @use "globals_forward.scss" as g;
 @use "font/poppins/stylesheet.css";
 
-body.theme-default {
-    @include g.theme-dark;
-}
-
 * {
     box-sizing: border-box;
     margin: 0;

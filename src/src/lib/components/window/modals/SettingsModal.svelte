@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -16,11 +16,48 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-   import Modal from "../Modal.svelte";
-   import { lang } from "$lib/store/settings";
-	import { closeModalHandler, currentModal } from "$lib/store/modal";
+	import Modal from '../Modal.svelte';
+	import { lang, settings } from '$lib/store/settings';
+	import { closeModalHandler } from '$lib/store/modal';
+	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
+	import {
+		LanguageOptions,
+		ThemeOptions,
+		type LanguagesType,
+		type ThemesType
+	} from '$lib/store/settings_structure/settings_enums';
+
+	const onLanguageChange = (key: string) => {
+		// note: only works because both enum keys and values are all caps!
+		$settings.language = key as LanguagesType;
+		$settings = $settings;
+	};
+	const onThemeChange = (key: string) => {
+		// note: only works because both enum keys and values are all caps!
+		$settings.theme = key as ThemesType;
+		$settings = $settings;
+	};
 </script>
 
 <Modal title={$lang.settings.title}>
-    <button on:click={closeModalHandler}>{$lang.settings.close}</button>
+	<LabeledDropdown
+		title={$lang.settings.language}
+		optionsObj={LanguageOptions}
+		onChange={onLanguageChange}
+	></LabeledDropdown>
+	
+    <LabeledDropdown
+        title={$lang.settings.theme}
+        optionsObj={ThemeOptions}
+        onChange={onThemeChange}
+	></LabeledDropdown>
+
+    <button slot="buttons" class="close" on:click={closeModalHandler}>{$lang.settings.close}</button>
 </Modal>
+
+<style lang="scss">
+	@use '../../../../lib/css/globals_forward.scss' as g;
+	.close {
+		@include g.button-primary;
+	}
+</style>
