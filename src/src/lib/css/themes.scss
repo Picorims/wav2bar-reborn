@@ -84,9 +84,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     --accent-950: #001a0c;
 
 }
-body.theme-light {
-    @include theme-light;
-}
 
 @mixin theme-dark {
     --text: #eaeff0;
@@ -154,7 +151,4 @@ body.theme-light {
     --accent-800: #99ffca;
     --accent-900: #ccffe5;
     --accent-950: #e5fff2;
-}
-body.theme-dark {
-    @include theme-dark;
 }
