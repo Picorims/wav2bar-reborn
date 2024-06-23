@@ -24,7 +24,12 @@
 <div class="background" transition:fade={{duration: 250}}>
     <div class="modal">
         <h2 class="title">{title}</h2>
+
         <slot></slot>
+        
+        <div class="buttons-container">
+            <slot name="buttons"></slot>
+        </div>
     </div>
 </div>
 
@@ -56,5 +61,12 @@
     .title {
         @include g.heading-2;
         text-align: center;
+    }
+
+    .buttons-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: g.$spacing-m;
     }
 </style>

@@ -56,6 +56,96 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 
+@mixin button-shadow($color) {
+    box-shadow: 0 4px 4px $color;   
+}
+@mixin button-shadow-accent($color) {
+    box-shadow: 0 4px 8px $color;
+}
+
+@mixin button {
+    @include text;
+    height: 32px;
+    padding: 0 vr.$spacing-m;
+    border-radius: vr.$border-radius-m;
+    border: none;
+    transition: vr.$anim-fast;
+
+    &:hover, &:focus {
+        cursor: pointer;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+    }
+}
+
+@mixin button-primary {
+    @include button;
+    @include text-strong;
+    background-color: vr.$color-primary-500;
+    color: vr.$color-primary-50;
+
+    &:hover, &:focus {
+        background-color: vr.$color-primary-600;
+        @include button-shadow(vr.$color-primary-200);
+    }
+
+    &:disabled {
+        background-color: vr.$color-primary-300;
+        color: vr.$color-primary-800;
+    }
+
+    &:active {
+        @include button-shadow-accent(vr.$color-primary-200);
+    }
+}
+
+@mixin button-secondary {
+    @include button;
+    background-color: vr.$color-secondary-200;
+    color: vr.$color-secondary-900;
+
+    &:hover, &:focus {
+        background-color: vr.$color-secondary-300;
+        @include button-shadow(vr.$color-secondary-200);
+    }
+
+    &:disabled {
+        background-color: vr.$color-secondary-50;
+    }
+
+    &:active {
+        @include button-shadow-accent(vr.$color-secondary-200);
+    }
+}
+
+@mixin button-accent {
+    @include button;
+    @include text-strong;
+    background-color: vr.$color-accent-500;
+    color: vr.$color-accent-50;
+
+    &:hover, &:focus {
+        background-color: vr.$color-accent-600;
+        @include button-shadow(vr.$color-accent-200);
+    }
+
+    &:disabled {
+        background-color: vr.$color-accent-200;
+        color: vr.$color-accent-80;
+    }
+
+    &:active {
+        @include button-shadow-accent(vr.$color-accent-200);
+    }
+}
+
+
 @mixin text {
     font-family: "Poppins", sans-serif;
     font-weight: 400;

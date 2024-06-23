@@ -28,14 +28,14 @@
 	} from '$lib/store/settings_structure/settings_enums';
 
 	const onLanguageChange = (key: string) => {
-        // note: only works because both enum keys and values are all caps!
+		// note: only works because both enum keys and values are all caps!
 		$settings.language = key as LanguagesType;
-        $settings = $settings;
+		$settings = $settings;
 	};
 	const onThemeChange = (key: string) => {
-        // note: only works because both enum keys and values are all caps!
+		// note: only works because both enum keys and values are all caps!
 		$settings.theme = key as ThemesType;
-        $settings = $settings;
+		$settings = $settings;
 	};
 </script>
 
@@ -45,7 +45,19 @@
 		optionsObj={LanguageOptions}
 		onChange={onLanguageChange}
 	></LabeledDropdown>
-	<LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}></LabeledDropdown>
-	<button on:click={closeModalHandler}>{$lang.settings.close}</button>
-	<!-- TODO: button style -->
+	
+    <LabeledDropdown
+        title={$lang.settings.theme}
+        optionsObj={ThemeOptions}
+        onChange={onThemeChange}
+	></LabeledDropdown>
+
+    <button slot="buttons" class="close" on:click={closeModalHandler}>{$lang.settings.close}</button>
 </Modal>
+
+<style lang="scss">
+	@use '../../../../lib/css/globals_forward.scss' as g;
+	.close {
+		@include g.button-primary;
+	}
+</style>
