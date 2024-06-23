@@ -18,15 +18,34 @@
     */
 	import Modal from '../Modal.svelte';
 	import { lang, settings } from '$lib/store/settings';
-	import { closeModalHandler, currentModal } from '$lib/store/modal';
+	import { closeModalHandler } from '$lib/store/modal';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
-	import { LanguageOptions, ThemeOptions } from '$lib/store/settings_structure/settings_enums';
+	import {
+		LanguageOptions,
+		ThemeOptions,
+		type LanguagesType,
+		type ThemesType
+	} from '$lib/store/settings_structure/settings_enums';
 
-	console.log($settings);
+	const onLanguageChange = (key: string) => {
+        // note: only works because both enum keys and values are all caps!
+		$settings.language = key as LanguagesType;
+        $settings = $settings;
+	};
+	const onThemeChange = (key: string) => {
+        // note: only works because both enum keys and values are all caps!
+		$settings.theme = key as ThemesType;
+        $settings = $settings;
+	};
 </script>
 
 <Modal title={$lang.settings.title}>
-    <LabeledDropdown title={$lang.settings.language} optionsObj={LanguageOptions}></LabeledDropdown>
-    <LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions}></LabeledDropdown>
+	<LabeledDropdown
+		title={$lang.settings.language}
+		optionsObj={LanguageOptions}
+		onChange={onLanguageChange}
+	></LabeledDropdown>
+	<LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}></LabeledDropdown>
 	<button on:click={closeModalHandler}>{$lang.settings.close}</button>
+	<!-- TODO: button style -->
 </Modal>

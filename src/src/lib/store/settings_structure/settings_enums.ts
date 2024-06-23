@@ -19,13 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 // see: https://www.typescriptlang.org/docs/handbook/enums.html#objects-vs-enums
 
 export const ThemeOptions = {
-    DEFAULT: "default",
-    DARK: "dark",
-    LIGHT: "light",
+    DEFAULT: "DEFAULT",
+    DARK: "DARK",
+    LIGHT: "LIGHT",
 } as const;
 export type ThemesType = typeof ThemeOptions[keyof typeof ThemeOptions];
 
 export const LanguageOptions = {
-    ENGLISH: "en",
+    ENGLISH: "EN",
 } as const;
 export type LanguagesType = typeof LanguageOptions[keyof typeof LanguageOptions];

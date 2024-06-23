@@ -20,12 +20,29 @@
 	export let optionsArr: string[] | null = null;
 	export let optionsObj: Record<string, string> | null = null;
 	export let title: string = '';
-	let options: string[] = [];
+	export let onChange: (key: string) => void = () => {};
+	
+	const handleOnChange = (e: Event) => {
+		const select = e.target as HTMLSelectElement;
+		onChange(select.value);
+	}
+	
+	let options: {key: string, value: string}[] = [];
 	$: {
+		options = [];
 		if (optionsArr) {
-			options = optionsArr;
+			for (let i = 0; i < optionsArr.length; i++) {
+				options.push({key: i.toString(), value: optionsArr[i]});
+			}
+
 		} else if (optionsObj) {
-			options = Object.values(optionsObj);
+			const values = Object.values(optionsObj);
+			const keys = Object.keys(optionsObj);
+
+			for (let i = 0; i < values.length; i++) {
+				options.push({key: keys[i], value: values[i]});
+			}
+
 		} else {
 			options = [];
 		}
@@ -34,9 +51,9 @@
 
 <label class="container">
 	<span class="label">{title}:</span>
-	<select class="select">
-		{#each options as option, i}
-			<option value={i}>{option}</option>
+	<select class="select" on:change={handleOnChange}>
+		{#each options as option}
+			<option value={option.key}>{option.value}</option>
 		{/each}
 	</select>
 </label>
