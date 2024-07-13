@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import { describe, expect, it } from 'vitest';
 import {
 	arrayValidator,
+	dictionaryValidator,
 	recordValidator,
 	validateAgainstArray,
 	validateAgainstRecord,
@@ -379,12 +380,20 @@ describe('validator', () => {
 		// valid
 		expect(
 			validateAgainstRecord(
-				{ a: 5, b: ['5', '6'], c: { d: '5', e: 5 }, f: [{ g: 'g', h: 456 }, { g: 'str', h: 562314 }] },
+				{
+					a: 5,
+					b: ['5', '6'],
+					c: { d: '5', e: 5 },
+					f: [
+						{ g: 'g', h: 456 },
+						{ g: 'str', h: 562314 }
+					]
+				},
 				testValidator
 			),
 			'valid'
 		).toEqual({ success: true, logs: '' });
-		
+
 		// invalid 1
 		expect(
 			validateAgainstRecord(
@@ -392,18 +401,80 @@ describe('validator', () => {
 				testValidator
 			),
 			'invalid 1'
-		).toEqual({ success: false, logs: 'The key "c" does not match the type criteria (c).\nContext:\nThe key "e" does not match the type criteria (number).\nContext:\nInvalid value: 5\n' });
-		
+		).toEqual({
+			success: false,
+			logs: 'The key "c" does not match the type criteria (c).\nContext:\nThe key "e" does not match the type criteria (number).\nContext:\nInvalid value: 5\n'
+		});
+
 		// invalid 2
 		expect(
-			validateAgainstRecord({ a: 5, b: ['5', 6], c: { d: '5', e: 5 }, f: [{ g: 'g', h: 456 }] }, testValidator),
+			validateAgainstRecord(
+				{ a: 5, b: ['5', 6], c: { d: '5', e: 5 }, f: [{ g: 'g', h: 456 }] },
+				testValidator
+			),
 			'invalid 2'
-		).toEqual({ success: false, logs: 'The key "b" does not match the type criteria (string[]).\nContext:\nThe value [1] does not match the type criteria (string).\nContext:\nInvalid value: 6\n' });
-		
+		).toEqual({
+			success: false,
+			logs: 'The key "b" does not match the type criteria (string[]).\nContext:\nThe value [1] does not match the type criteria (string).\nContext:\nInvalid value: 6\n'
+		});
+
 		// invalid 3
 		expect(
-			validateAgainstRecord({ a: 5, b: ['5', '6'], c: { d: '5', e: 5 }, f: [{ g: 'g', h: '456' }] }, testValidator),
+			validateAgainstRecord(
+				{ a: 5, b: ['5', '6'], c: { d: '5', e: 5 }, f: [{ g: 'g', h: '456' }] },
+				testValidator
+			),
 			'invalid 3'
-		).toEqual({ success: false, logs: 'The key \"f\" does not match the type criteria (f[]).\nContext:\nThe value [0] does not match the type criteria (f).\nContext:\nThe key \"h\" does not match the type criteria (number).\nContext:\nInvalid value: 456\n' });
+		).toEqual({
+			success: false,
+			logs: 'The key "f" does not match the type criteria (f[]).\nContext:\nThe value [0] does not match the type criteria (f).\nContext:\nThe key "h" does not match the type criteria (number).\nContext:\nInvalid value: 456\n'
+		});
+	});
+
+	it('validate against dictionary', () => {
+		const testValidator = dictionaryValidator(validators.string, validators.number);
+
+		expect(
+			testValidator.f({
+				a: 5,
+				b: 6,
+				c: 7
+			}),
+			'valid'
+		).toEqual({ success: true, logs: '' });
+
+		expect(
+			testValidator.f({
+				a: 5,
+				b: '6',
+				c: 7
+			}),
+			'invalid'
+		).toEqual({
+			success: false,
+			logs: 'The value "6" does not match the type criteria (number).\nContext:\nInvalid value: 6\n'
+		});
+
+		const uuidValidator = dictionaryValidator(validators.uuidV4, validators.number);
+		expect(
+			uuidValidator.f({
+				'550e8400-e29b-41d4-a716-446655440000': 5,
+				'550e8400-e29b-41d4-a716-446655440001': 6,
+				'550e8400-e29b-41d4-a716-446655440002': 7
+			}),
+			'valid uuid'
+		).toEqual({ success: true, logs: '' });
+
+		expect(
+			uuidValidator.f({
+				'550e8400-e29b-41d4-a716-446655440000': 5,
+				'550e8400-e29b-41d4-a716-44665544000_!': 6,
+				'550e8400-e29b-41d4-a716-446655440002': 7
+			}),
+			'invalid uuid'
+		).toEqual({
+			success: false,
+			logs: 'The key "550e8400-e29b-41d4-a716-44665544000_!" does not match the type criteria (uuidV4).\nContext:\nInvalid value: 550e8400-e29b-41d4-a716-44665544000_!\n'
+		});
 	});
 });

@@ -178,6 +178,40 @@ export const recordValidator = (validatorRecord: ValidatorRecord, name: string):
 	name: name,
 });
 
+export const dictionaryValidator = (keyValidator: ValueLoggedValidator, valueValidator: ValueLoggedValidator): ValueLoggedValidator => ({
+	f: (v) => {
+		if (!objectNonNullable(v)) {
+			return {
+				success: false,
+				logs: 'The value is not an object.'
+			};
+		}
+		const result = {
+			success: true,
+			logs: ''
+		};
+		for (const e of Object.entries(v as Record<string, unknown>)) {
+			const [key, value] = e;
+			const keyTestResult = keyValidator.f(key);
+			if (!keyTestResult.success) {
+				result.logs += `The key "${key}" does not match the type criteria (${keyValidator.name}).\n`;
+				result.logs += `Context:\n`;
+				result.logs += keyTestResult.logs;
+				if (result.success) result.success = false;
+			}
+			const valueTestResult = valueValidator.f(value);
+			if (!valueTestResult.success) {
+				result.logs += `The value "${value}" does not match the type criteria (${valueValidator.name}).\n`;
+				result.logs += `Context:\n`;
+				result.logs += valueTestResult.logs;
+				if (result.success) result.success = false;
+			}
+		}
+		return result;
+	},
+	name: `Record<${keyValidator.name}, ${valueValidator.name}}>`,
+});
+
 const validatorsLocal = {
 	number: loggedWrapper(number),
 	int: loggedWrapper(int),
