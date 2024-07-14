@@ -26,6 +26,17 @@ import type {
 	StrictlyPositiveInt,
 	UUIDv4
 } from '$lib/types/common_types';
+import {
+	dictionaryValidator,
+	enumValidator,
+	fixedLengthArrayValidator,
+	loggedWrapper,
+	recordValidator,
+	validateAgainstRecord,
+	validators,
+	type ValidatorRecord,
+	type ValueLoggedValidator
+} from '$lib/types/validator';
 
 /**
  * - For versions 1.0.0-beta.1 and above
@@ -65,16 +76,50 @@ export interface Save_V4 {
 	audio_filename: string;
 	objects: Record<UUIDv4, JsonLike>;
 }
+const partialV4Validator = {
+	save_version: loggedWrapper(function v4(value: unknown) {
+		return value === 4;
+	}),
+	software_version_used: validators.string,
+	software_version_first_created: validators.string,
+	screen: recordValidator({
+		width: validators.strictlyPositiveInt,
+		height: validators.strictlyPositiveInt
+	}, 'Screen'),
+	fps: validators.strictlyPositiveInt,
+	audio_filename: validators.string
+};
 // =========================================================
 // PROPERTIES ==============================================
 // =========================================================
+
+type VisualObject_V4_Type =
+	| 'shape'
+	| 'particle_flow'
+	| 'text'
+	| 'timer_straight_bar'
+	| 'timer_straight_line_point'
+	| 'visualizer_straight_bar'
+	| 'visualizer_straight_wave'
+	| 'visualizer_circular_bar';
+const visualObject_V4_types = [
+	'shape',
+	'particle_flow',
+	'text',
+	'timer_straight_bar',
+	'timer_straight_line_point',
+	'visualizer_straight_bar',
+	'visualizer_straight_wave',
+	'visualizer_circular_bar'
+];
+const visualObject_V4_TypeValidator = enumValidator(visualObject_V4_types, validators.string);
 
 /** All visual objects handle these properties.
  * Their interpretation may slightly differ from
  * one object to another, although it should remain
  * somewhat consistent.
  */
-export interface VisualObject_V4<T extends string> {
+export interface VisualObject_V4<T extends VisualObject_V4_Type> {
 	visual_object_type: T;
 	/** random by default */
 	name: string;
@@ -92,6 +137,21 @@ export interface VisualObject_V4<T extends string> {
 	/** List of `<filter>` tags separated by `[#]` with no `<script>` tag. */
 	svg_filter: string;
 }
+const partialVisualObject_V4Validator = {
+	visual_object_type: visualObject_V4_TypeValidator,
+	name: validators.string,
+	layer: validators.positiveInt,
+	coordinates: recordValidator({
+		x: validators.int,
+		y: validators.int
+	}, 'Coordinates'),
+	size: recordValidator({
+		width: validators.positiveInt,
+		height: validators.positiveInt
+	}, 'Size'),
+	rotation: validators.angleDegreesInt,
+	svg_filter: validators.string
+};
 
 export interface Supports_BorderRadius_V4 {
 	/**
@@ -99,10 +159,16 @@ export interface Supports_BorderRadius_V4 {
 	 */
 	border_radius: string;
 }
+const supports_BorderRadius_V4Validator = {
+	border_radius: validators.string
+};
 
 export interface Supports_BoxShadow_V4 {
 	box_shadow: string;
 }
+const supports_BoxShadow_V4Validator = {
+	box_shadow: validators.string
+};
 
 export interface Supports_Background_V4 {
 	background: {
@@ -121,6 +187,16 @@ export interface Supports_Background_V4 {
 		repeat: 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
 	};
 }
+const supports_Background_V4Validator = {
+	background: recordValidator({
+		type: enumValidator(['color', 'gradient', 'image'], validators.string),
+		last_color: validators.string,
+		last_gradient: validators.string,
+		last_image: validators.string,
+		size: validators.string,
+		repeat: enumValidator(['no-repeat', 'repeat', 'repeat-x', 'repeat-y'], validators.string)
+	}, 'Background')
+};
 
 export interface Supports_ParticleProps_V4 {
 	particle_radius_range: [StrictlyPositiveInt, StrictlyPositiveInt];
@@ -133,11 +209,22 @@ export interface Supports_ParticleProps_V4 {
 	 */
 	particle_spawn_tests: StrictlyPositiveInt;
 }
+const supports_ParticleProps_V4Validator = {
+	particle_radius_range: fixedLengthArrayValidator(validators.strictlyPositiveInt, 2),
+	flow_type: enumValidator(['radial', 'directional'], validators.string),
+	flow_center: fixedLengthArrayValidator(validators.int, 2),
+	flow_direction: validators.angleDegreesInt,
+	particle_spawn_probability: validators.positiveReal,
+	particle_spawn_tests: validators.strictlyPositiveInt
+};
 
 export interface Supports_Color_V4 {
 	/** hex, rgb, rgba */
 	color: Color;
 }
+const supports_Color_V4Validator = {
+	color: validators.color
+};
 
 export interface Supports_TextProps_V4 {
 	text_type: 'any' | 'time';
@@ -156,14 +243,36 @@ export interface Supports_TextProps_V4 {
 	/** CSS text shadow */
 	text_shadow: string;
 }
+const supports_TextProps_V4Validator = {
+	text_type: enumValidator(['any', 'time'], validators.string),
+	text_content: validators.string,
+	font_size: validators.strictlyPositiveInt,
+	text_decoration: recordValidator({
+		italic: validators.boolean,
+		bold: validators.boolean,
+		underline: validators.boolean,
+		overline: validators.boolean,
+		line_through: validators.boolean
+	}, 'TextDecoration'),
+	text_align: recordValidator({
+		horizontal: enumValidator(['left', 'center', 'right'], validators.string)
+	}, 'TextAlign'),
+	text_shadow: validators.string
+};
 
 export interface Supports_BorderThickness_V4 {
 	border_thickness: PositiveInt;
 }
+const supports_BorderThickness_V4Validator = {
+	border_thickness: validators.positiveInt
+};
 
 export interface Supports_TimerInnerSpacing_V4 {
 	inner_spacing: PositiveInt;
 }
+const supports_TimerInnerSpacing_V4Validator = {
+	inner_spacing: validators.positiveInt
+};
 
 export interface Supports_VisualizerProps_V4 {
 	visualizer_points_count: StrictlyPositiveInt;
@@ -174,18 +283,33 @@ export interface Supports_VisualizerProps_V4 {
 	 */
 	visualizer_analyzer_range: [PositiveInt, PositiveInt];
 	/** Interpolation type of the frequency array between frames. */
-	visualization_smoothing_type: "proportional_decrease" | "linear_decrease" | "average";
+	visualization_smoothing_type: 'proportional_decrease' | 'linear_decrease' | 'average';
 	/** Parameter for the visualization smoothing type. Its behaviour differs depending of the mode. */
 	visualization_smoothing_factor: PositiveReal;
 }
+const supports_VisualizerProps_V4Validator = {
+	visualizer_points_count: validators.strictlyPositiveInt,
+	visualizer_analyzer_range: fixedLengthArrayValidator(validators.positiveInt, 2),
+	visualization_smoothing_type: enumValidator(
+		['proportional_decrease', 'linear_decrease', 'average'],
+		validators.string
+	),
+	visualization_smoothing_factor: validators.positiveReal
+};
 
 export interface Supports_VisualizerBarProps_V4 {
 	visualizer_bar_thickness: PositiveInt;
 }
+const supports_VisualizerBarProps_V4Validator = {
+	visualizer_bar_thickness: validators.positiveInt
+};
 
 export interface Supports_VisualizerCircularProps_V4 {
 	visualizer_radius: PositiveInt;
 }
+const supports_VisualizerCircularProps_V4Validator = {
+	visualizer_radius: validators.positiveInt
+};
 
 // =========================================================
 // VISUAL OBJECTS ==========================================
@@ -195,12 +319,28 @@ export type ShapeV4 = VisualObject_V4<'shape'> &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4 &
 	Supports_Background_V4;
+const shapeV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_BorderRadius_V4Validator,
+	...supports_BoxShadow_V4Validator,
+	...supports_Background_V4Validator
+};
 
 export type ParticleFlowV4 = VisualObject_V4<'particle_flow'> &
 	Supports_ParticleProps_V4 &
 	Supports_Color_V4;
+const particleFlowV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_ParticleProps_V4Validator,
+	...supports_Color_V4Validator
+};
 
 export type TextV4 = VisualObject_V4<'text'> & Supports_TextProps_V4 & Supports_Color_V4;
+const textV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_TextProps_V4Validator,
+	...supports_Color_V4Validator
+};
 
 export type TimerStraightBarV4 = VisualObject_V4<'timer_straight_bar'> &
 	Supports_Color_V4 &
@@ -208,28 +348,100 @@ export type TimerStraightBarV4 = VisualObject_V4<'timer_straight_bar'> &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4 &
 	Supports_TimerInnerSpacing_V4;
+const timerStraightBarV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_Color_V4Validator,
+	...supports_BorderThickness_V4Validator,
+	...supports_BorderRadius_V4Validator,
+	...supports_BoxShadow_V4Validator,
+	...supports_TimerInnerSpacing_V4Validator
+};
 
 export type TimerStraightLinePointV4 = VisualObject_V4<'timer_straight_line_point'> &
 	Supports_Color_V4 &
 	Supports_BorderThickness_V4 &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4;
+const timerStraightLinePointV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_Color_V4Validator,
+	...supports_BorderThickness_V4Validator,
+	...supports_BorderRadius_V4Validator,
+	...supports_BoxShadow_V4Validator
+};
 
-export type VisualizerStraightBarV4 = VisualObject_V4<'visualizer_straight_bar'>
-	& Supports_VisualizerProps_V4
-	& Supports_Color_V4
-	& Supports_BorderRadius_V4
-	& Supports_BoxShadow_V4;
+export type VisualizerStraightBarV4 = VisualObject_V4<'visualizer_straight_bar'> &
+	Supports_VisualizerProps_V4 &
+	Supports_Color_V4 &
+	Supports_BorderRadius_V4 &
+	Supports_BoxShadow_V4;
+const visualizerStraightBarV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_VisualizerProps_V4Validator,
+	...supports_Color_V4Validator,
+	...supports_BorderRadius_V4Validator,
+	...supports_BoxShadow_V4Validator
+};
 
-export type VisualizerStraightWaveV4 = VisualObject_V4<'visualizer_straight_wave'>
-	& Supports_VisualizerProps_V4
-	& Supports_Color_V4
+export type VisualizerStraightWaveV4 = VisualObject_V4<'visualizer_straight_wave'> &
+	Supports_VisualizerProps_V4 &
+	Supports_Color_V4;
+const visualizerStraightWaveV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_VisualizerProps_V4Validator,
+	...supports_Color_V4Validator
+};
 
-export type VisualizerCircularBarV4 = VisualObject_V4<'visualizer_circular_bar'>
-	& Supports_VisualizerProps_V4
-	& Supports_Color_V4
-	& Supports_BorderRadius_V4
-	& Supports_BoxShadow_V4
-	& Supports_VisualizerBarProps_V4
-	& Supports_VisualizerCircularProps_V4;
-	
+export type VisualizerCircularBarV4 = VisualObject_V4<'visualizer_circular_bar'> &
+	Supports_VisualizerProps_V4 &
+	Supports_Color_V4 &
+	Supports_BorderRadius_V4 &
+	Supports_BoxShadow_V4 &
+	Supports_VisualizerBarProps_V4 &
+	Supports_VisualizerCircularProps_V4;
+const visualizerCircularBarV4Validator = {
+	...partialVisualObject_V4Validator,
+	...supports_VisualizerProps_V4Validator,
+	...supports_Color_V4Validator,
+	...supports_BorderRadius_V4Validator,
+	...supports_BoxShadow_V4Validator,
+	...supports_VisualizerBarProps_V4Validator,
+	...supports_VisualizerCircularProps_V4Validator
+};
+
+const visualObjectV4ValidatorDict: Record<VisualObject_V4_Type, ValidatorRecord> = {
+	shape: shapeV4Validator,
+	particle_flow: particleFlowV4Validator,
+	text: textV4Validator,
+	timer_straight_bar: timerStraightBarV4Validator,
+	timer_straight_line_point: timerStraightLinePointV4Validator,
+	visualizer_straight_bar: visualizerStraightBarV4Validator,
+	visualizer_straight_wave: visualizerStraightWaveV4Validator,
+	visualizer_circular_bar: visualizerCircularBarV4Validator
+};
+const visualObjectV4Validator: ValueLoggedValidator = {
+	f: (value: unknown) => {
+		if (!validators.objectNonNullable.f(value).success)
+			return validators.objectNonNullable.f(value);
+		const value_ = value as Record<string, unknown>;
+		if (!Object.prototype.hasOwnProperty.call(value_, 'visual_object_type')) {
+			return { success: false, logs: 'missing type property.\n' };
+		}
+		if (!validators.string.f(value_.visual_object_type).success) {
+			return validators.string.f(value_.visual_object_type);
+		}
+		const typeValidator = enumValidator(visualObject_V4_types, validators.string);
+		if (
+			!typeValidator.f(value_.visual_object_type).success
+		) {
+			return typeValidator.f(value_.visual_object_type);
+		}
+		const type: VisualObject_V4_Type = value_.visual_object_type as VisualObject_V4_Type;
+		return validateAgainstRecord(value, visualObjectV4ValidatorDict[type]);
+	},
+	name: 'VisualObjectV4'
+};
+export const saveV4Validator: ValidatorRecord = {
+	...partialV4Validator,
+	objects: dictionaryValidator(validators.uuidV4, visualObjectV4Validator)
+};
