@@ -43,6 +43,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"libarchive.js": "^2.0.2",
 		"lucide-svelte": "^0.395.0",
 		"svelte-splitpanes": "^0.8.2"
 	}
