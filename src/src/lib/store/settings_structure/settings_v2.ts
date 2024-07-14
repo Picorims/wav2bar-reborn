@@ -25,6 +25,7 @@ import { LanguageOptions, ThemeOptions, type LanguagesType, type ThemesType } fr
 export interface SettingsV2 {
     save_version: 2;
     software_version_used: string;
+    //TODO: software_version_first_created: string;
     ffmpeg_path: string;
     theme: ThemesType;
     language: LanguagesType;

@@ -18,7 +18,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "npx vitest"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
