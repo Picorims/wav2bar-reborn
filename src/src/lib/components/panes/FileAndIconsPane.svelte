@@ -20,6 +20,7 @@
 	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from "lucide-svelte";
 	import { currentModal, ModalType } from "$lib/store/modal";
 	import { openModalHandler } from "$lib/store/modal";
+	import { openSave } from "$lib/store/save";
 
 	export let title = "";
 	export let saved = false;
@@ -33,7 +34,7 @@
 	<IconButton>
 		<FilePlus/>
 	</IconButton>
-	<IconButton>
+	<IconButton onClick={openSave}>
 		<FolderOpen/>
 	</IconButton>
 	<IconButton>
