@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { version } from '$app/environment';
 import type {
 	AngleDegreesInt,
 	Color,
@@ -409,6 +410,11 @@ const visualizerCircularBarV4Validator = {
 	...supports_VisualizerCircularProps_V4Validator
 };
 
+// =========================================================
+// GLOBAL VALIDATION =======================================
+// =========================================================
+
+
 const visualObjectV4ValidatorDict: Record<VisualObject_V4_Type, ValidatorRecord> = {
 	shape: shapeV4Validator,
 	particle_flow: particleFlowV4Validator,
@@ -445,3 +451,20 @@ export const saveV4Validator: ValidatorRecord = {
 	...partialV4Validator,
 	objects: dictionaryValidator(validators.uuidV4, visualObjectV4Validator)
 };
+
+// =========================================================
+// DEFAULTS ================================================
+// =========================================================
+
+export const defaultSaveConfig_V4 = (): Save_V4 => ({
+	save_version: 4,
+	software_version_used: version,
+	software_version_first_created: version,
+	screen: {
+		width: 1920 as StrictlyPositiveInt,
+		height: 1080 as StrictlyPositiveInt
+	},
+	fps: 60 as StrictlyPositiveInt,
+	audio_filename: '',
+	objects: {}
+});
