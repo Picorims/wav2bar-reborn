@@ -20,6 +20,8 @@ import { describe, expect, it } from 'vitest';
 import {
 	arrayValidator,
 	dictionaryValidator,
+	enumValidator,
+	fixedLengthArrayValidator,
 	recordValidator,
 	validateAgainstArray,
 	validateAgainstRecord,
@@ -477,4 +479,28 @@ describe('validator', () => {
 			logs: 'The key "550e8400-e29b-41d4-a716-44665544000_!" does not match the type criteria (uuidV4).\nContext:\nInvalid value: 550e8400-e29b-41d4-a716-44665544000_!\n'
 		});
 	});
+
+	it('validate against fixed length array', () => {
+		const testValidator = fixedLengthArrayValidator(validators.number, 3);
+
+		expect(testValidator.f([5, 6, 7]), 'valid').toEqual({ success: true, logs: '' });
+
+		expect(testValidator.f([5, 6]), 'invalid').toEqual({
+			success: false,
+			logs: 'The array does not have the correct length (3).\n'
+		});
+	});
+
+	it('validate against enum', () => {
+		const testValidator = enumValidator(['a', 'b', 'c'], validators.string);
+
+		expect(testValidator.f('a'), 'valid').toEqual({ success: true, logs: '' });
+		expect(testValidator.f('b'), 'valid').toEqual({ success: true, logs: '' });
+		expect(testValidator.f('c'), 'valid').toEqual({ success: true, logs: '' });
+		expect(testValidator.f('d'), 'invalid').toEqual({
+			success: false,
+			logs: 'The value "d" is not in the valid list: a, b, c.\n'
+		});
+	});
+		
 });
