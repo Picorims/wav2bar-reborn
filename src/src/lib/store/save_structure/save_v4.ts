@@ -316,40 +316,40 @@ const supports_VisualizerCircularProps_V4Validator = {
 // VISUAL OBJECTS ==========================================
 // =========================================================
 
-export type ShapeV4 = VisualObject_V4<'shape'> &
+export type Shape_V4 = VisualObject_V4<'shape'> &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4 &
 	Supports_Background_V4;
-const shapeV4Validator = {
+const shape_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_BorderRadius_V4Validator,
 	...supports_BoxShadow_V4Validator,
 	...supports_Background_V4Validator
 };
 
-export type ParticleFlowV4 = VisualObject_V4<'particle_flow'> &
+export type ParticleFlow_V4 = VisualObject_V4<'particle_flow'> &
 	Supports_ParticleProps_V4 &
 	Supports_Color_V4;
-const particleFlowV4Validator = {
+const particleFlow_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_ParticleProps_V4Validator,
 	...supports_Color_V4Validator
 };
 
-export type TextV4 = VisualObject_V4<'text'> & Supports_TextProps_V4 & Supports_Color_V4;
-const textV4Validator = {
+export type Text_V4 = VisualObject_V4<'text'> & Supports_TextProps_V4 & Supports_Color_V4;
+const text_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_TextProps_V4Validator,
 	...supports_Color_V4Validator
 };
 
-export type TimerStraightBarV4 = VisualObject_V4<'timer_straight_bar'> &
+export type TimerStraightBar_V4 = VisualObject_V4<'timer_straight_bar'> &
 	Supports_Color_V4 &
 	Supports_BorderThickness_V4 &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4 &
 	Supports_TimerInnerSpacing_V4;
-const timerStraightBarV4Validator = {
+const timerStraightBar_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_Color_V4Validator,
 	...supports_BorderThickness_V4Validator,
@@ -358,12 +358,12 @@ const timerStraightBarV4Validator = {
 	...supports_TimerInnerSpacing_V4Validator
 };
 
-export type TimerStraightLinePointV4 = VisualObject_V4<'timer_straight_line_point'> &
+export type TimerStraightLinePoint_V4 = VisualObject_V4<'timer_straight_line_point'> &
 	Supports_Color_V4 &
 	Supports_BorderThickness_V4 &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4;
-const timerStraightLinePointV4Validator = {
+const timerStraightLinePoint_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_Color_V4Validator,
 	...supports_BorderThickness_V4Validator,
@@ -371,12 +371,12 @@ const timerStraightLinePointV4Validator = {
 	...supports_BoxShadow_V4Validator
 };
 
-export type VisualizerStraightBarV4 = VisualObject_V4<'visualizer_straight_bar'> &
+export type VisualizerStraightBar_V4 = VisualObject_V4<'visualizer_straight_bar'> &
 	Supports_VisualizerProps_V4 &
 	Supports_Color_V4 &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4;
-const visualizerStraightBarV4Validator = {
+const visualizerStraightBar_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_VisualizerProps_V4Validator,
 	...supports_Color_V4Validator,
@@ -384,23 +384,23 @@ const visualizerStraightBarV4Validator = {
 	...supports_BoxShadow_V4Validator
 };
 
-export type VisualizerStraightWaveV4 = VisualObject_V4<'visualizer_straight_wave'> &
+export type VisualizerStraightWave_V4 = VisualObject_V4<'visualizer_straight_wave'> &
 	Supports_VisualizerProps_V4 &
 	Supports_Color_V4;
-const visualizerStraightWaveV4Validator = {
+const visualizerStraightWave_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_VisualizerProps_V4Validator,
 	...supports_Color_V4Validator
 };
 
-export type VisualizerCircularBarV4 = VisualObject_V4<'visualizer_circular_bar'> &
+export type VisualizerCircularBar_V4 = VisualObject_V4<'visualizer_circular_bar'> &
 	Supports_VisualizerProps_V4 &
 	Supports_Color_V4 &
 	Supports_BorderRadius_V4 &
 	Supports_BoxShadow_V4 &
 	Supports_VisualizerBarProps_V4 &
 	Supports_VisualizerCircularProps_V4;
-const visualizerCircularBarV4Validator = {
+const visualizerCircularBar_V4Validator = {
 	...partialVisualObject_V4Validator,
 	...supports_VisualizerProps_V4Validator,
 	...supports_Color_V4Validator,
@@ -415,17 +415,17 @@ const visualizerCircularBarV4Validator = {
 // =========================================================
 
 
-const visualObjectV4ValidatorDict: Record<VisualObject_V4_Type, ValidatorRecord> = {
-	shape: shapeV4Validator,
-	particle_flow: particleFlowV4Validator,
-	text: textV4Validator,
-	timer_straight_bar: timerStraightBarV4Validator,
-	timer_straight_line_point: timerStraightLinePointV4Validator,
-	visualizer_straight_bar: visualizerStraightBarV4Validator,
-	visualizer_straight_wave: visualizerStraightWaveV4Validator,
-	visualizer_circular_bar: visualizerCircularBarV4Validator
+const visualObjectValidatorDict_V4: Record<VisualObject_V4_Type, ValidatorRecord> = {
+	shape: shape_V4Validator,
+	particle_flow: particleFlow_V4Validator,
+	text: text_V4Validator,
+	timer_straight_bar: timerStraightBar_V4Validator,
+	timer_straight_line_point: timerStraightLinePoint_V4Validator,
+	visualizer_straight_bar: visualizerStraightBar_V4Validator,
+	visualizer_straight_wave: visualizerStraightWave_V4Validator,
+	visualizer_circular_bar: visualizerCircularBar_V4Validator
 };
-const visualObjectV4Validator: ValueLoggedValidator = {
+const visualObjectValidator_V4: ValueLoggedValidator = {
 	f: (value: unknown) => {
 		if (!validators.objectNonNullable.f(value).success)
 			return validators.objectNonNullable.f(value);
@@ -443,13 +443,13 @@ const visualObjectV4Validator: ValueLoggedValidator = {
 			return typeValidator.f(value_.visual_object_type);
 		}
 		const type: VisualObject_V4_Type = value_.visual_object_type as VisualObject_V4_Type;
-		return validateAgainstRecord(value, visualObjectV4ValidatorDict[type]);
+		return validateAgainstRecord(value, visualObjectValidatorDict_V4[type]);
 	},
 	name: 'VisualObjectV4'
 };
-export const saveV4Validator: ValidatorRecord = {
+export const saveValidator_V4: ValidatorRecord = {
 	...partialV4Validator,
-	objects: dictionaryValidator(validators.uuidV4, visualObjectV4Validator)
+	objects: dictionaryValidator(validators.uuidV4, visualObjectValidator_V4)
 };
 
 // =========================================================
