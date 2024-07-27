@@ -3,6 +3,7 @@ import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 import { validateAgainstRecord } from "$lib/types/validator";
 import { defaultSaveConfig, saveValidator, type Save } from "./save_structure/save_latest";
+import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
 export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
@@ -39,6 +40,12 @@ export function openSave() {
                 console.log("Save file is valid, loading it");
                 saveConfig.set(saveJSON as Omit<Save, "objects">);
                 saveObjects.set(saveJSON.objects);
+
+                const liveAudioProvider = new LiveAudioProvider();
+                liveAudioProvider.init();
+                setInterval(() => {
+                    console.log(liveAudioProvider.getCurrentAudioSpectrum());
+                }, 1000);        
             }
         }
 
