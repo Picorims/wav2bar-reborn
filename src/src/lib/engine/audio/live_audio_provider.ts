@@ -18,6 +18,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { AudioProvider } from './audio_provider';
 
+/**
+ * Use the microphone as audio input
+ */
 export class LiveAudioProvider extends AudioProvider {
     private hasInitBool = false;
     private audioCtx: AudioContext;

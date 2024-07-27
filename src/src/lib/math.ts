@@ -17,22 +17,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 /**
- * Base class for defining a way to provide audio data to the renderer
+ * 
+ * @param value value to floor 
+ * @param step "precision", i.e floor(7) with step 5 will return 5.
+ * @param offset shift the step points
+ * @returns 
  */
-export abstract class AudioProvider {
-    static DEFAULT_POINTS_COUNT = 1024;
-    abstract init(): Promise<void>;
-    abstract hasInit(): boolean;
-    abstract play(): void;
-    abstract pause(): void;
-    abstract stop(): void;
-    abstract setVolume(volume: number): void;
-    abstract getCurrentAudioTime(): number;
-    abstract getDuration(): number;
-    abstract seekTo(time: number): void;
-    abstract isPlaying(): boolean;
-    abstract getCurrentAudioSpectrum(): Uint8Array | number[];
-    abstract getAudioSpectrumSize(): number;
-    abstract setAudioSpectrumSize(size: number): void;
-    abstract getCurrentAudioWaveform(): Uint8Array | number[];
+export function floor(value: number, step = 1, offset = 0) {
+    /* TODO: test */
+    // based on https://stackoverflow.com/questions/14627566/rounding-in-steps-of-20-or-x-in-javascript
+    return Math.floor((value - offset) / step) * step + offset;
 }
