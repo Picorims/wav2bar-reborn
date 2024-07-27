@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import * as PIXI from "pixi.js";
+import { TickEngine } from "./tick";
 
 /**
  * Pixi.js renderer, drives the tick and audio engines.
@@ -24,17 +25,20 @@ import * as PIXI from "pixi.js";
 export class Renderer {
     private app: PIXI.Application;
     private hasInitBool = false;
+    private tickEngine: TickEngine;
     constructor() {
         this.app = new PIXI.Application();
+        this.tickEngine = new TickEngine();
     }
 
     /**
      * Initialize the Pixi.js renderer
      */
     async init(width: number, height: number, fps: number) {
-        await this.app.init({width, height});
         this.app.ticker.maxFPS = fps;
-        this.app.ticker.add(() => this.render());
+        this.app.ticker.autoStart = false;
+        await this.app.init({width, height});
+        this.app.ticker.add(() => this.update());
         this.hasInitBool = true;
     }
 
@@ -50,17 +54,41 @@ export class Renderer {
         return this.app.canvas;
     }
 
+    /**
+     * Update the renderer with n ticks
+     */
+    private update() {
+        this.tickEngine.tick();
+        this.render();
+    }
+
+    /**
+     * Update the renderer with a single tick,
+     * useful for manual control of the renderer
+     * instead of real-time rendering.
+     */
+    updateOnce() {
+        this.tickEngine.tickOnce();
+        this.render();
+    }
+
     private render() {
 
     }
 
     play() {
         this.app.ticker.start();
+        this.tickEngine.play();
+    }
+    /**
+     * Keeps the renderer active but stops the tick engine.
+     * Use `play` to restart the tick engine.
+     */
+    pauseTick() {
+        this.tickEngine.pause();
     }
     stop() {
         this.app.ticker.stop();
-    }
-    update() {
-        this.app.ticker.update();
+        this.tickEngine.stop();
     }
 }
