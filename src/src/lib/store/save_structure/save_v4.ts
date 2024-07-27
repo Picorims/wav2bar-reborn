@@ -40,10 +40,10 @@ import {
 } from '$lib/types/validator';
 
 /**
- * - For versions 1.0.0-beta.1 and above
+ * - For versions beta 0.3.0 indev and above
  * - backward compatibility: none
- * - Breaking changes: TODO
- * - Other changes: TODO
+ * - Breaking changes: see legacy project
+ * - Other changes: see legacy project
  */
 
 export const EXTENSION_V4 = '.w2bzip';
@@ -94,7 +94,7 @@ const partialV4Validator = {
 // PROPERTIES ==============================================
 // =========================================================
 
-type VisualObject_V4_Type =
+export type VisualObject_V4_Type =
 	| 'shape'
 	| 'particle_flow'
 	| 'text'

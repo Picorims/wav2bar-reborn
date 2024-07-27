@@ -1,11 +1,11 @@
 import { derived, writable } from "svelte/store";
-import { defaultSaveConfig_V4, saveValidator_V4, type Save_V4 } from "./save_structure/save_v4";
 import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 import { validateAgainstRecord } from "$lib/types/validator";
+import { defaultSaveConfig, saveValidator, type Save } from "./save_structure/save_latest";
 
-export const saveConfig = writable<Omit<Save_V4, "objects">>(defaultSaveConfig_V4());
-export const saveObjects = writable<Save_V4["objects"]>(defaultSaveConfig_V4().objects);
+export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
+export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
 export const activeObject = writable<UUIDv4 | null>(null);
 export const activeObjectData = derived([saveObjects, activeObject], ([$saveObjects, $activeObject]) => {
     if ($activeObject === null) return null;
@@ -32,12 +32,12 @@ export function openSave() {
             const saveString = await saveEntry.getData!(new zip.TextWriter());
             const saveJSON = JSON.parse(saveString);
             console.log("Save file opened", saveJSON);
-            const validation = validateAgainstRecord(saveJSON, saveValidator_V4);
+            const validation = validateAgainstRecord(saveJSON, saveValidator);
             if (!validation.success) {
                 throw new Error("Save file does not match the schema because:\n\n" + validation.logs);
             } else {
                 console.log("Save file is valid, loading it");
-                saveConfig.set(saveJSON as Omit<Save_V4, "objects">);
+                saveConfig.set(saveJSON as Omit<Save, "objects">);
                 saveObjects.set(saveJSON.objects);
             }
         }
