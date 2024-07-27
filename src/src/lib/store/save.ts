@@ -12,6 +12,12 @@ export const activeObjectData = derived([saveObjects, activeObject], ([$saveObje
     if ($activeObject === null) return null;
     return $saveObjects[$activeObject];
 });
+export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjects]) => {
+    return {
+        ...$saveConfig,
+        objects: $saveObjects,
+    };
+});
 
 export function openSave() {
     console.log("Asking for a file to open");
