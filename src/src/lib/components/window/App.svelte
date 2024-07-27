@@ -25,6 +25,7 @@
 	import Modal from '$lib/components/window/Modal.svelte';
 	import { currentModal, ModalType } from '../../store/modal';
 	import SettingsModal from './modals/SettingsModal.svelte';
+	import Renderer from '../atoms/Renderer.svelte';
 
 	let saved = false;
 	let projectTitle = "New Project";
@@ -53,7 +54,7 @@
 	<Pane>
 		<div class="flex-column">
 			<div class="screen-container">
-
+				<Renderer/>
 			</div>
 			<div class="bottom-pane-container">
 				<ControllerPane/>
@@ -84,6 +85,9 @@
 	}
 	div.screen-container, div.objects-pane-container {
 		flex: 1;
+	}
+	div.screen-container {
+		min-height: 0;
 	}
 	div.bottom-pane-container, div.file-and-icons-pane-container {
 		min-height: g.$size-xl;

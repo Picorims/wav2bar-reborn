@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+/**
+ * Base class for defining a way to provide audio data to the renderer
+ */
 export abstract class AudioProvider {
     static DEFAULT_POINTS_COUNT = 1024;
     abstract init(): Promise<void>;
