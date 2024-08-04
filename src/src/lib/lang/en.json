@@ -10,5 +10,8 @@
             "dark": "Dark"
         },
         "close": "OK"
+    },
+    "object_pane": {
+        "title": "Objects"
     }
 }
