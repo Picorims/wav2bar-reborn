@@ -2,7 +2,7 @@ import { derived, writable } from "svelte/store";
 import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 import { validateAgainstRecord } from "$lib/types/validator";
-import { defaultSaveConfig, saveValidator, type Save } from "./save_structure/save_latest";
+import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
@@ -11,6 +11,11 @@ export const activeObject = writable<UUIDv4 | null>(null);
 export const activeObjectData = derived([saveObjects, activeObject], ([$saveObjects, $activeObject]) => {
     if ($activeObject === null) return null;
     return $saveObjects[$activeObject];
+});
+export const objectsCount = derived(saveObjects, ($saveObjects) => Object.keys($saveObjects).length);
+export let objectsCountValue = 0;
+objectsCount.subscribe(value => {
+    objectsCountValue = value;
 });
 export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjects]) => {
     return {
@@ -57,4 +62,26 @@ export function openSave() {
 
     };
     fileElt.click();
+}
+
+/**
+ * Adds a new object to the save from the given type
+ * with default values
+ * @param type 
+ */
+export function addObject(type: VisualObject_Type) {
+    /* TODO: undo/redo */
+    const uuid: UUIDv4 = self.crypto.randomUUID() as UUIDv4;
+    if (objectsCountValue === 0) {
+        activeObject.set(uuid);
+    }
+    saveObjects.update((objects) => {
+        return {
+            ...objects,
+            [uuid]: {
+                ...defaultVisualObject(type),
+                name: type + "_" + Math.floor(Math.random() * 1000),
+            },
+        }
+    });
 }

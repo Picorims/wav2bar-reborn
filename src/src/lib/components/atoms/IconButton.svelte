@@ -17,9 +17,10 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
     export let onClick: () => void = () => {};
+    export let variant: 'primary' | 'secondary' | 'accent' = 'primary';
 </script>
 
-<button on:click={() => onClick()} type="button" class="icon-button">
+<button on:click={() => onClick()} type="button" class={`icon-button ${variant}`}>
     <slot></slot>
 </button>
 
@@ -37,9 +38,21 @@
         transition: g.$anim-fast;
     }
 
+    button.icon-button.accent > :global(svg) {
+        stroke: g.$color-accent;
+    }
+
     button.icon-button:hover > :global(svg) {
-        stroke: g.$color-primary-500;
         transition: g.$anim-fast;
+    }
+    button.icon-button.primary:hover > :global(svg) {
+        stroke: g.$color-primary-500;
+    }
+    button.icon-button.secondary:hover > :global(svg) {
+        stroke: g.$color-secondary-500;
+    }
+    button.icon-button.accent:hover > :global(svg) {
+        stroke: g.$color-accent-700;
     }
 
     button.icon-button:active {
