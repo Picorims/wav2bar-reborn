@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { activeObjectData } from "$lib/store/save";
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -16,14 +17,24 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	*/
+
+	import VisualObjectIcon from "../atoms/VisualObjectIcon.svelte";
+
 </script>
 
-<div class="card"></div>
+<div class="card">
+	{#if $activeObjectData}
+		<div class="card-header">
+			<VisualObjectIcon type={$activeObjectData.visual_object_type}/>
+			<span class="title">{$activeObjectData.name}</span>
+		</div>
+	{/if}
+</div>
 
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
 
-	.card {
+	div.card {
 		display: flex;
 		flex-direction: column;
 		width: calc(100% - g.$spacing-l);
@@ -31,5 +42,32 @@
 		@include g.card;
 		margin-bottom: g.$spacing-l;
 		margin-left: g.$spacing-l;
+		overflow: hidden;
+	}
+
+	div.card-header {
+		width: 100%;
+		max-width: 100%;
+		display: flex;
+		align-items: center;
+		gap: g.$spacing-s;
+		padding: g.$spacing-s g.$spacing-m;
+		background-color: g.$color-background-200;
+
+		& > :global(*) {
+			flex: 0 0 auto;
+		}
+
+		& > :global(svg) {
+			color: g.$color-primary-600;
+		}
+	}
+
+	span.title {
+		min-width: 0;
+		flex: 0 1 auto;
+		@include g.text-strong;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>
