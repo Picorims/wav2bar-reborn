@@ -46,10 +46,10 @@
 	<div class="header">
 		<span class="title">{$lang.object_pane.title}</span>
 		<div class="header-buttons">
-			<IconButton>
+			<IconButton onClick={() => alert("coming soon!")}>
 				<Undo />
 			</IconButton>
-			<IconButton>
+			<IconButton onClick={() => alert("coming soon!")}>
 				<Redo />
 			</IconButton>
 			<IconButton variant="accent" onClick={newObj}>
