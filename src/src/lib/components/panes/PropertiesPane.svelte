@@ -32,6 +32,9 @@
 		<div class="content">
 			<Accordion label="name">
 				<span>stuff</span>
+				<Accordion label="nested">
+					<span>wow</span>
+				</Accordion>
 			</Accordion>
 		</div>
 	{/if}

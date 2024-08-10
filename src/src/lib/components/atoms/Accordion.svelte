@@ -20,7 +20,7 @@
 	import { ChevronDown, ChevronRight } from 'lucide-svelte';
 
 	export let label: string;
-	let open: boolean;
+	export let open: boolean = false;
 </script>
 
 <details bind:open>
