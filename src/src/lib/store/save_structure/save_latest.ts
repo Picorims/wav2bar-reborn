@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ARCHIVE_STRUCTURE_V4, defaultSaveConfig_V4, EXTENSION_V4, saveValidator_V4, type Save_V4, type VisualObject_V4_Type } from './save_v4';
+import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type } from './save_v4';
 
 export const EXTENSION = EXTENSION_V4;
 export const ARCHIVE_STRUCTURE = ARCHIVE_STRUCTURE_V4;
@@ -28,7 +28,8 @@ export type Save = Save_V4;
 // =========================================================
 
 export type VisualObject_Type = VisualObject_V4_Type;
-
+export const visualObject_types = visualObject_V4_types;
+export type VisualObjectInterface<T extends VisualObject_Type> = VisualObjectInterface_V4<T>;
 
 // =========================================================
 // GLOBAL VALIDATION =======================================
@@ -41,3 +42,34 @@ export const saveValidator = saveValidator_V4;
 // =========================================================
 
 export const defaultSaveConfig = defaultSaveConfig_V4;
+export const defaultShape = defaultShape_V4;
+export const defaultParticleFlow = defaultParticleFlow_V4;
+export const defaultText = defaultText_V4;
+export const defaultTimerStraightBar = defaultTimerStraightBar_V4;
+export const defaultTimerStraightLinePoint = defaultTimerStraightLinePoint_V4;
+export const defaultVisualizerStraightBar = defaultVisualizerStraightBar_V4;
+export const defaultVisualizerStraightWave = defaultVisualizerStraightWave_V4;
+export const defaultVisualizerCircularBar = defaultVisualizerCircularBar_V4;
+
+export const defaultVisualObject = (type: VisualObject_Type) => {
+    switch (type) {
+        case "shape":
+            return defaultShape();
+        case "particle_flow":
+            return defaultParticleFlow();
+        case "text":
+            return defaultText();
+        case "timer_straight_bar":
+            return defaultTimerStraightBar();
+        case "timer_straight_line_point":
+            return defaultTimerStraightLinePoint();
+        case "visualizer_straight_bar":
+            return defaultVisualizerStraightBar();
+        case "visualizer_straight_wave":
+            return defaultVisualizerStraightWave();
+        case "visualizer_circular_bar":
+            return defaultVisualizerCircularBar();
+        default:
+            throw new Error("Unknown type " + type);
+    }
+}

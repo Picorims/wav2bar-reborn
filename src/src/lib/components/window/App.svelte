@@ -77,6 +77,7 @@
 	div.flex-column {
 		width: 100%;
 		height: 100%;
+		max-height: 100%;
 		display: flex;
 		flex-direction: column;
 	}
@@ -92,6 +93,7 @@
 	div.bottom-pane-container, div.file-and-icons-pane-container {
 		min-height: g.$size-xl;
 	}
-
-
+	div.objects-pane-container {
+		min-height: 0;
+	}
 </style>
