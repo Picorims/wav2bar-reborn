@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { activeObjectData } from "$lib/store/save";
+	import Accordion from "../atoms/Accordion.svelte";
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -27,6 +28,11 @@
 		<div class="card-header">
 			<VisualObjectIcon type={$activeObjectData.visual_object_type}/>
 			<span class="title">{$activeObjectData.name}</span>
+		</div>
+		<div class="content">
+			<Accordion label="name">
+				<span>stuff</span>
+			</Accordion>
 		</div>
 	{/if}
 </div>
@@ -67,7 +73,15 @@
 		min-width: 0;
 		flex: 0 1 auto;
 		@include g.text-strong;
+		color: g.$color-text;
 		overflow: hidden;
 		text-overflow: ellipsis;
+	}
+
+	div.content {
+		flex: 1 1 auto;
+		min-width: 0;
+		overflow-y: scroll;
+		padding: g.$spacing-m;
 	}
 </style>
