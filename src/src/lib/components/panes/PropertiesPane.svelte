@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { activeObjectData } from "$lib/store/save";
 	import Accordion from "../atoms/Accordion.svelte";
+	import LabeledInputNumber from "../atoms/LabeledInputNumber.svelte";
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -30,11 +31,12 @@
 			<span class="title">{$activeObjectData.name}</span>
 		</div>
 		<div class="content">
-			<Accordion label="name">
+			<Accordion label="name" open>
 				<span>stuff</span>
 				<Accordion label="nested">
 					<span>wow</span>
 				</Accordion>
+				<LabeledInputNumber placeholder="something" title="nice title" unit={"px"} min={0} />
 			</Accordion>
 		</div>
 	{/if}
@@ -84,6 +86,7 @@
 	div.content {
 		flex: 1 1 auto;
 		min-width: 0;
+		overflow-x: hidden;
 		overflow-y: scroll;
 		padding: g.$spacing-m;
 	}

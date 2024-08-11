@@ -83,6 +83,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     --accent-900: #003319;
     --accent-950: #001a0c;
 
+    --status-error: #f01d4f;
 }
 
 @mixin theme-dark {
@@ -151,4 +152,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     --accent-800: #99ffca;
     --accent-900: #ccffe5;
     --accent-950: #e5fff2;
+
+    --status-error: #f01d4f;
 }

@@ -16,160 +16,213 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-@use "variables.scss" as vr;
+@use 'variables.scss' as vr;
 
 @mixin card {
-    border-radius: vr.$border-radius-m;
-    background-color: vr.$color-background-100;
-    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+	border-radius: vr.$border-radius-m;
+	background-color: vr.$color-background-100;
+	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-@mixin input {
-    min-width: vr.$size-2xl;
-    height: vr.$size-m;
-    padding: 0 vr.$spacing-m;
-    
-    display: flex;
-    align-items: center;
-    
-    border-radius: vr.$border-radius-m;
-    border: 1px solid vr.$color-secondary-200;
-    
-    @include text;
-    color: vr.$color-text-900;
-    background-color: vr.$color-background-50;
+@mixin input($is-div: false) {
+	min-width: vr.$size-2xl;
+	height: vr.$size-m;
+	padding: 0 vr.$spacing-m;
 
-    &::placeholder {
-        color: vr.$color-text-600;
+	display: flex;
+	align-items: center;
+
+	border-radius: vr.$border-radius-m;
+	border: 1px solid vr.$color-secondary-200;
+
+	@include text;
+	color: vr.$color-text-900;
+	background-color: vr.$color-background-50;
+
+	&::placeholder {
+		color: vr.$color-text-600;
+	}
+
+	&:focus,
+    &:focus-within,
+	&:active {
+		border-color: vr.$color-primary-600;
+		box-shadow: 0 0 vr.$shadow-s vr.$color-primary-400;
+	}
+
+    &:invalid,
+    &:has(input:invalid) /*:has since dec 2023, shall have fallback*/ {
+        border-color: vr.$color-status-error;
+        box-shadow: 0 0 vr.$shadow-s vr.$color-status-error;
     }
 
-    &:focus, &:active {
-        border-color: vr.$color-primary-600;
-        box-shadow: 0 0 vr.$shadow-s vr.$color-primary-400;
-    }
+	@if $is-div {
+		display: flex;
+		gap: vr.$spacing-s;
+		& > * {
+			flex: 0;
+		}
+
+		& input {
+			flex: 1;
+			min-width: vr.$size-m;
+			@include text;
+			color: vr.$color-text-900;
+			background-color: transparent;
+			border: none;
+            outline: none; // should be handled by parent div style
+
+			&[type='number'] {
+                // https://stackoverflow.com/questions/28320349/input-type-number-hide-arrows-from-right-part-of-input
+
+				/* Chrome, Safari, Edge, Opera */
+				&::-webkit-outer-spin-button,
+				&::-webkit-inner-spin-button {
+					-webkit-appearance: none;
+					margin: 0;
+				}
+
+				/* Firefox */
+				-moz-appearance: textfield;
+			}
+		}
+		& :global(svg) {
+			color: vr.$color-secondary;
+		}
+        & :focus-within :global(svg) {
+            color: vr.$color-primary;
+        }
+        & :invalid ~ :global(svg) {
+            color: vr.$color-status-error;
+        }
+		& span {
+			color: vr.$color-text-600;
+		}
+	}
 }
 
 @mixin input-spacing-with-label {
-    margin-top: vr.$spacing-s;
-    margin-bottom: vr.$spacing-m;
+	margin-top: vr.$spacing-s;
+	margin-bottom: vr.$spacing-m;
 }
-
-
 
 @mixin button-shadow($color) {
-    box-shadow: 0 4px 4px $color;   
+	box-shadow: 0 4px 4px $color;
 }
 @mixin button-shadow-accent($color) {
-    box-shadow: 0 4px 8px $color;
+	box-shadow: 0 4px 8px $color;
 }
 
 @mixin button {
-    @include text;
-    height: 32px;
-    padding: 0 vr.$spacing-m;
-    border-radius: vr.$border-radius-m;
-    border: none;
-    transition: vr.$anim-fast;
+	@include text;
+	height: 32px;
+	padding: 0 vr.$spacing-m;
+	border-radius: vr.$border-radius-m;
+	border: none;
+	transition: vr.$anim-fast;
 
-    &:hover, &:focus {
-        cursor: pointer;
-    }
+	&:hover,
+	&:focus {
+		cursor: pointer;
+	}
 
-    &:active {
-        transform: scale(0.95);
-    }
+	&:active {
+		transform: scale(0.95);
+	}
 
-    &:disabled {
-        cursor: not-allowed;
-    }
+	&:disabled {
+		cursor: not-allowed;
+	}
 }
 
 @mixin button-primary {
-    @include button;
-    @include text-strong;
-    background-color: vr.$color-primary-500;
-    color: vr.$color-primary-50;
+	@include button;
+	@include text-strong;
+	background-color: vr.$color-primary-500;
+	color: vr.$color-primary-50;
 
-    &:hover, &:focus {
-        background-color: vr.$color-primary-600;
-        @include button-shadow(vr.$color-primary-200);
-    }
+	&:hover,
+	&:focus {
+		background-color: vr.$color-primary-600;
+		@include button-shadow(vr.$color-primary-200);
+	}
 
-    &:disabled {
-        background-color: vr.$color-primary-300;
-        color: vr.$color-primary-800;
-    }
+	&:disabled {
+		background-color: vr.$color-primary-300;
+		color: vr.$color-primary-800;
+	}
 
-    &:active {
-        @include button-shadow-accent(vr.$color-primary-200);
-    }
+	&:active {
+		@include button-shadow-accent(vr.$color-primary-200);
+	}
 }
 
 @mixin button-secondary {
-    @include button;
-    background-color: vr.$color-secondary-200;
-    color: vr.$color-secondary-900;
+	@include button;
+	background-color: vr.$color-secondary-200;
+	color: vr.$color-secondary-900;
 
-    &:hover, &:focus {
-        background-color: vr.$color-secondary-300;
-        @include button-shadow(vr.$color-secondary-200);
-    }
+	&:hover,
+	&:focus {
+		background-color: vr.$color-secondary-300;
+		@include button-shadow(vr.$color-secondary-200);
+	}
 
-    &:disabled {
-        background-color: vr.$color-secondary-50;
-    }
+	&:disabled {
+		background-color: vr.$color-secondary-50;
+	}
 
-    &:active {
-        @include button-shadow-accent(vr.$color-secondary-200);
-    }
+	&:active {
+		@include button-shadow-accent(vr.$color-secondary-200);
+	}
 }
 
 @mixin button-accent {
-    @include button;
-    @include text-strong;
-    background-color: vr.$color-accent-500;
-    color: vr.$color-accent-50;
+	@include button;
+	@include text-strong;
+	background-color: vr.$color-accent-500;
+	color: vr.$color-accent-50;
 
-    &:hover, &:focus {
-        background-color: vr.$color-accent-600;
-        @include button-shadow(vr.$color-accent-200);
-    }
+	&:hover,
+	&:focus {
+		background-color: vr.$color-accent-600;
+		@include button-shadow(vr.$color-accent-200);
+	}
 
-    &:disabled {
-        background-color: vr.$color-accent-200;
-        color: vr.$color-accent-80;
-    }
+	&:disabled {
+		background-color: vr.$color-accent-200;
+		color: vr.$color-accent-80;
+	}
 
-    &:active {
-        @include button-shadow-accent(vr.$color-accent-200);
-    }
+	&:active {
+		@include button-shadow-accent(vr.$color-accent-200);
+	}
 }
 
-
 @mixin text {
-    font-family: "Poppins", sans-serif;
-    font-weight: 400;
-    line-height: 1.2;
-    font-size: 1rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 400;
+	line-height: 1.2;
+	font-size: 1rem;
 }
 
 @mixin text-strong {
-    font-family: "Poppins", sans-serif;
-    font-weight: 700;
-    line-height: 1.2;
-    font-size: 1rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	line-height: 1.2;
+	font-size: 1rem;
 }
 
 @mixin heading-3 {
-    font-family: "Poppins", sans-serif;
-    font-weight: 600;
-    line-height: 1.2;
-    font-size: 1.25rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 600;
+	line-height: 1.2;
+	font-size: 1.25rem;
 }
 
 @mixin heading-2 {
-    font-family: "Poppins", sans-serif;
-    font-weight: 700;
-    line-height: 1.2;
-    font-size: 1.5rem;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 700;
+	line-height: 1.2;
+	font-size: 1.5rem;
 }
