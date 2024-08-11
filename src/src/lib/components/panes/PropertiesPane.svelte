@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { activeObjectData } from "$lib/store/save";
+	import { AlignCenter } from "lucide-svelte";
 	import Accordion from "../atoms/Accordion.svelte";
+	import Button from "../atoms/buttons_group/Button.svelte";
+	import ButtonsGroup from "../atoms/buttons_group/ButtonsGroup.svelte";
+	import ButtonsRow from "../atoms/buttons_group/ButtonsRow.svelte";
 	import LabeledInputNumber from "../atoms/LabeledInputNumber.svelte";
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -37,6 +41,30 @@
 					<span>wow</span>
 				</Accordion>
 				<LabeledInputNumber placeholder="something" title="nice title" unit={"px"} min={0} />
+				<ButtonsGroup>
+					<ButtonsRow>
+						<Button label="button" togglable>
+							<AlignCenter slot="icon-l"/>
+						</Button>
+						<Button>
+							<AlignCenter slot="icon-r"/>
+						</Button>
+					</ButtonsRow>
+					<ButtonsRow>
+						<Button>
+							<AlignCenter slot="icon-r"/>
+						</Button>
+						<Button>
+							<AlignCenter slot="icon-r"/>
+						</Button>
+						<Button>
+							<AlignCenter slot="icon-r"/>
+						</Button>
+						<Button>
+							<AlignCenter slot="icon-r"/>
+						</Button>
+					</ButtonsRow>
+				</ButtonsGroup>
 			</Accordion>
 		</div>
 	{/if}

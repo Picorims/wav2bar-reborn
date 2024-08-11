@@ -163,9 +163,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	color: vr.$color-secondary-900;
 
 	&:hover,
-	&:focus {
+	&:focus:not(.toggled) {
 		background-color: vr.$color-secondary-300;
 		@include button-shadow(vr.$color-secondary-200);
+	}
+
+	&.toggled {
+		background-color: vr.$color-secondary-600;
+		@include button-shadow(vr.$color-secondary-400);
+		color: vr.$color-secondary-100;
 	}
 
 	&:disabled {
