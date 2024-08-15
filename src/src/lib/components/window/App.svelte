@@ -26,16 +26,28 @@
 	import { currentModal, ModalType } from '../../store/modal';
 	import SettingsModal from './modals/SettingsModal.svelte';
 	import Renderer from '../atoms/Renderer.svelte';
+	import { minPercentFrom, maxPercentFrom, ratio, ratioToPercent } from '$lib/math';
 
 	let saved = false;
 	let projectTitle = "New Project";
+	let windowWidth: number;
+	let windowHeight: number;
 </script>
 
-<Splitpanes class="main-split-pane" theme="custom-theme">
-	<Pane snapSize={15} maxSize={50} size={25}>
+<svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight}/>
+
+<Splitpanes
+	class="main-split-pane"
+	theme="custom-theme"
+>
+	<Pane
+		snapSize={maxPercentFrom(15, ratio(200, windowWidth))}
+		maxSize={minPercentFrom(75, ratio(1280, windowWidth))}
+		size={minPercentFrom(50, [300, windowWidth])}
+	>
         <GripVertical class="grip-vertical"/>
         <Splitpanes horizontal theme="custom-theme">
-            <Pane minSize={20}>
+            <Pane minSize={ratioToPercent(200, windowHeight)}>
                 <GripHorizontal class="grip-horizontal"/>
 				<div class="flex-column">
 					<div class="file-and-icons-pane-container">
@@ -46,7 +58,7 @@
 					</div>
 				</div>
 			</Pane>
-			<Pane minSize={20}>
+			<Pane minSize={ratioToPercent(200, windowHeight)}>
 				<PropertiesPane/>
 			</Pane>
 		</Splitpanes>
