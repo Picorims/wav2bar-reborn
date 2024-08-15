@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { activeObjectData } from "$lib/store/save";
-	import { AlignCenter } from "lucide-svelte";
-	import Accordion from "../atoms/Accordion.svelte";
-	import Button from "../atoms/buttons_group/Button.svelte";
-	import ButtonsGroup from "../atoms/buttons_group/ButtonsGroup.svelte";
-	import ButtonsRow from "../atoms/buttons_group/ButtonsRow.svelte";
-	import LabeledInputNumber from "../atoms/LabeledInputNumber.svelte";
+	import { activeObjectData } from '$lib/store/save';
+	import { AlignCenter } from 'lucide-svelte';
+	import Accordion from '../atoms/Accordion.svelte';
+	import Button from '../atoms/buttons_group/Button.svelte';
+	import ButtonsGroup from '../atoms/buttons_group/ButtonsGroup.svelte';
+	import ButtonsRow from '../atoms/buttons_group/ButtonsRow.svelte';
+	import LabeledInputNumber from '../atoms/LabeledInputNumber.svelte';
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -24,48 +24,41 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	*/
 
-	import VisualObjectIcon from "../atoms/VisualObjectIcon.svelte";
-
+	import VisualObjectIcon from '../atoms/VisualObjectIcon.svelte';
+	import ParticleFlowPs from '../property_pane_sets/ParticleFlowPS.svelte';
+	import ShapePs from '../property_pane_sets/ShapePS.svelte';
+	import TextPs from '../property_pane_sets/TextPS.svelte';
+	import TimerStraightBarPs from '../property_pane_sets/TimerStraightBarPS.svelte';
+	import TimerStraightLinePointPs from '../property_pane_sets/TimerStraightLinePointPS.svelte';
+	import VisualizerCircularBarPs from '../property_pane_sets/VisualizerCircularBarPS.svelte';
+	import VisualizerStraightWavePs from '../property_pane_sets/VisualizerStraightWavePS.svelte';
+	import VisualizerStraightBarPs from '../property_pane_sets/VisualizerStraightBarPS.svelte';
 </script>
 
 <div class="card">
 	{#if $activeObjectData}
 		<div class="card-header">
-			<VisualObjectIcon type={$activeObjectData.visual_object_type}/>
+			<VisualObjectIcon type={$activeObjectData.visual_object_type} />
 			<span class="title">{$activeObjectData.name}</span>
 		</div>
 		<div class="content">
-			<Accordion label="name" open>
-				<span>stuff</span>
-				<Accordion label="nested">
-					<span>wow</span>
-				</Accordion>
-				<LabeledInputNumber placeholder="something" title="nice title" unit={"px"} min={0} />
-				<ButtonsGroup>
-					<ButtonsRow>
-						<Button label="button" togglable>
-							<AlignCenter slot="icon-l"/>
-						</Button>
-						<Button>
-							<AlignCenter slot="icon-r"/>
-						</Button>
-					</ButtonsRow>
-					<ButtonsRow>
-						<Button>
-							<AlignCenter slot="icon-r"/>
-						</Button>
-						<Button>
-							<AlignCenter slot="icon-r"/>
-						</Button>
-						<Button>
-							<AlignCenter slot="icon-r"/>
-						</Button>
-						<Button>
-							<AlignCenter slot="icon-r"/>
-						</Button>
-					</ButtonsRow>
-				</ButtonsGroup>
-			</Accordion>
+			{#if $activeObjectData.visual_object_type === 'particle_flow'}
+				<ParticleFlowPs />
+			{:else if $activeObjectData.visual_object_type === 'shape'}
+				<ShapePs />
+			{:else if $activeObjectData.visual_object_type === 'text'}
+				<TextPs />
+			{:else if $activeObjectData.visual_object_type === 'timer_straight_bar'}
+				<TimerStraightBarPs />
+			{:else if $activeObjectData.visual_object_type === 'timer_straight_line_point'}
+				<TimerStraightLinePointPs />
+			{:else if $activeObjectData.visual_object_type === 'visualizer_circular_bar'}
+				<VisualizerCircularBarPs />
+			{:else if $activeObjectData.visual_object_type === 'visualizer_straight_bar'}
+				<VisualizerStraightBarPs />
+			{:else if $activeObjectData.visual_object_type === 'visualizer_straight_wave'}
+				<VisualizerStraightWavePs />
+			{/if}
 		</div>
 	{/if}
 </div>
