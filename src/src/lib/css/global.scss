@@ -57,6 +57,7 @@ $_splitter-half-size: calc(g.$spacing-l / 2);
     .splitpanes__splitter {
         // background-color: #ccc;
         position: relative;
+        flex: 0 0 auto;
         
         &:before {
             content: '';
