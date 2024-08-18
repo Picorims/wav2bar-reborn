@@ -23,32 +23,23 @@
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { activeObjectData } from '$lib/store/save';
+	import { lang } from '$lib/store/settings';
+	import { Move, MoveHorizontal, MoveVertical } from 'lucide-svelte';
 </script>
 
 <Accordion label="Size" open>
-	<LabeledInputNumber title="Width" unit={'px'} min={0} />
-	<LabeledInputNumber title="Height" unit={'px'} min={0} />
+	<LabeledInputNumber title={$lang.properties.size.width} unit={'px'} min={0} />
+	<LabeledInputNumber title={$lang.properties.size.height} unit={'px'} min={0} />
     <ButtonsGroup>
-        <ButtonsRow>
-            <Button>
-                text
+        <ButtonsRow columns={3}>
+            <Button title={$lang.properties.size.buttons.full_width}>
+                <MoveHorizontal slot="icon-r" />
             </Button>
-            <Button>
-                text
+            <Button title={$lang.properties.size.buttons.full_height}>
+                <MoveVertical slot="icon-r" />
             </Button>
-            <Button>
-                text
-            </Button>
-        </ButtonsRow>
-        <ButtonsRow>
-            <Button>
-                text
-            </Button>
-            <Button>
-                text
-            </Button>
-            <Button>
-                text
+            <Button title={$lang.properties.size.buttons.full_size}>
+                <Move slot="icon-r" />
             </Button>
         </ButtonsRow>
     </ButtonsGroup>

@@ -16,9 +16,14 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+
+    /**
+     * Must be defined manually in the parent component.
+     */
+   export let columns = 1;
 </script>
 
-<div class="row">
+<div class="row" style={`--columns-count: ${columns}`}>
     <slot></slot>
 </div>
 
@@ -26,10 +31,8 @@
     @use '../../../css/globals_forward.scss' as g;
 
     div.row {
-        display: flex;
-        flex-direction: row;
-        align-items: stretch;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: repeat(var(--columns-count), 1fr);
         gap: g.$spacing-s;
         & > :global(*) {
             flex: 1 1 auto;

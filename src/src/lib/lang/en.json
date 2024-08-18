@@ -13,5 +13,17 @@
     },
     "object_pane": {
         "title": "Objects"
+    },
+    "properties": {
+        "size": {
+            "title": "Size",
+            "width": "Width",
+            "height": "Height",
+            "buttons": {
+                "full_width": "Full Width",
+                "full_height": "Full Height",
+                "full_size": "Full Size"
+            }
+        }
     }
 }
