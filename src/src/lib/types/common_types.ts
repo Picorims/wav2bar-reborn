@@ -15,9 +15,9 @@ export type UUIDv4 = Opaque<string, "UUID">
 export type Color = Opaque<string, "Color">;
 
 // from: https://stackoverflow.com/questions/38123222/proper-way-to-declare-json-object-in-typescript
-type JsonPrimitive = string | number | boolean | null;
-type JsonArray = (JsonPrimitive | JsonObject | JsonArray)[];
-interface JsonObject {
+export type JsonPrimitive = string | number | boolean | null;
+export type JsonArray = (JsonPrimitive | JsonObject | JsonArray)[];
+export interface JsonObject {
     [key: string]: JsonPrimitive | JsonObject | JsonArray;
 }
 
