@@ -1,17 +1,22 @@
 import { derived, writable } from "svelte/store";
-import type { UUIDv4 } from "$lib/types/common_types";
+import type { JsonLike, UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 import { validateAgainstRecord } from "$lib/types/validator";
-import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject_Type } from "./save_structure/save_latest";
+import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type, type VisualObjectInterface } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
+import { typedDeepClone } from "$lib/deep_clone";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
 export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
 export const activeObject = writable<UUIDv4 | null>(null);
+let activeObjectValue: UUIDv4 | null = null;
+activeObject.subscribe(value => { activeObjectValue = value; });
 export const activeObjectData = derived([saveObjects, activeObject], ([$saveObjects, $activeObject]) => {
     if ($activeObject === null) return null;
     return $saveObjects[$activeObject];
 });
+let activeObjectDataValue: VisualObject | null = null;
+activeObjectData.subscribe(value => { activeObjectDataValue = value; });
 export const objectsCount = derived(saveObjects, ($saveObjects) => Object.keys($saveObjects).length);
 export let objectsCountValue = 0;
 objectsCount.subscribe(value => {
@@ -83,5 +88,22 @@ export function addObject(type: VisualObject_Type) {
                 name: type + "_" + Math.floor(Math.random() * 1000),
             },
         }
+    });
+}
+
+/**
+ * create an immutable copy of the active object data, mutate it with the provided mutator, and save it back
+ * @param mutator mutate the provided active object data in this function
+ * @returns 
+ */
+export function mutateActiveObject<T extends VisualObject>(mutator: (object: T) => T) {
+    if (activeObjectDataValue === null) {
+        throw new Error("No active object to mutate");
+    };
+    saveObjects.update((objects) => {
+        return {
+            ...objects,
+            [activeObjectValue as string]: mutator(typedDeepClone<T>(activeObjectDataValue as T)),
+        };
     });
 }

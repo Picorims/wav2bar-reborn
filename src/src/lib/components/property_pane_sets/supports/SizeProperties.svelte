@@ -22,25 +22,66 @@
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { activeObjectData } from '$lib/store/save';
+	import { activeObjectData, mutateActiveObject, save } from '$lib/store/save';
+	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
+	import type { PositiveInt } from '$lib/types/common_types';
 	import { Move, MoveHorizontal, MoveVertical } from 'lucide-svelte';
+
+	function updateWidth(value: number) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.size.width = value as PositiveInt;
+			return obj;
+		});
+	}
+
+	function updateHeight(value: number) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.size.height = value as PositiveInt;
+			return obj;
+		});
+	}
+
+	function fullWidth() {
+		updateWidth($save.screen.width);
+	}
+
+	function fullHeight() {
+		updateHeight($save.screen.height);
+	}
+
+	function fullSize() {
+		fullWidth();
+		fullHeight();
+	}
 </script>
 
 <Accordion label="Size" open>
-	<LabeledInputNumber title={$lang.properties.size.width} unit={'px'} min={0} />
-	<LabeledInputNumber title={$lang.properties.size.height} unit={'px'} min={0} />
-    <ButtonsGroup>
-        <ButtonsRow columns={3}>
-            <Button title={$lang.properties.size.buttons.full_width}>
-                <MoveHorizontal slot="icon-r" />
-            </Button>
-            <Button title={$lang.properties.size.buttons.full_height}>
-                <MoveVertical slot="icon-r" />
-            </Button>
-            <Button title={$lang.properties.size.buttons.full_size}>
-                <Move slot="icon-r" />
-            </Button>
-        </ButtonsRow>
-    </ButtonsGroup>
+	<LabeledInputNumber
+		title={$lang.properties.size.width}
+		unit={'px'}
+		min={0}
+		value={$activeObjectData?.size.width}
+		onChange={updateWidth}
+	/>
+	<LabeledInputNumber
+		title={$lang.properties.size.height}
+		unit={'px'}
+		min={0}
+		value={$activeObjectData?.size.height}
+		onChange={updateHeight}
+	/>
+	<ButtonsGroup>
+		<ButtonsRow columns={3}>
+			<Button title={$lang.properties.size.buttons.full_width} onClick={fullWidth}>
+				<MoveHorizontal slot="icon-r" />
+			</Button>
+			<Button title={$lang.properties.size.buttons.full_height} onClick={fullHeight}>
+				<MoveVertical slot="icon-r" />
+			</Button>
+			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize}>
+				<Move slot="icon-r" />
+			</Button>
+		</ButtonsRow>
+	</ButtonsGroup>
 </Accordion>

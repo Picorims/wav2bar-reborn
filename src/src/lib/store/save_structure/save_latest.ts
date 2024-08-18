@@ -16,12 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type } from './save_v4';
+import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type, type VisualObject_V4 } from './save_v4';
 
 export const EXTENSION = EXTENSION_V4;
 export const ARCHIVE_STRUCTURE = ARCHIVE_STRUCTURE_V4;
 
 export type Save = Save_V4;
+export type VisualObject = VisualObject_V4;
 
 // =========================================================
 // PROPERTIES ==============================================

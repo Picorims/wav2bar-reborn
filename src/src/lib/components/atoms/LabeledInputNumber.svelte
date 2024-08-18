@@ -30,7 +30,7 @@
 	export let disabled: boolean = false;
 	export let defaultValue: number = 0;
 	export let required: boolean = true;
-	let value: number = defaultValue;
+	export let value: number = defaultValue;
 	let lastValidValue: number = value;
 
 	let input: HTMLInputElement;
