@@ -41,6 +41,11 @@ export function deepClone(value: JsonLike, depth=0): JsonLike {
 }
 
 
+export function typedDeepClone<T>(value: T, depth=0): T {
+    return deepClone(value as unknown as JsonLike, depth) as T;
+}
+
+
 
 /**
  * Deep clones an object. support primitives, arrays (composed of the same things),
