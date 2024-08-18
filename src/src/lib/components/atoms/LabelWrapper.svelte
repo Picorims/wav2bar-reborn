@@ -18,10 +18,11 @@
     */
 
 	export let title: string;
+    export let fixedLabelWidth = true;
 </script>
 
 <label class="container">
-	<span class="label">{title}:</span>
+	<span class="label" class:fixedLabelWidth>{title}:</span>
 	<slot />
 </label>
 
@@ -39,5 +40,10 @@
 		flex: 0 1 auto;
         margin: g.$spacing-s 0;
         margin-right: g.$spacing-m;
+
+        &.fixedLabelWidth {
+            width: 40%;
+            flex: 0 0 auto;
+        }
 	}
 </style>

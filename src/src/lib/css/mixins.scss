@@ -25,7 +25,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 }
 
 @mixin input($is-div: false) {
-	min-width: vr.$size-2xl;
+	min-width: vr.$size-xl;
 	height: vr.$size-m;
 	padding: 0 vr.$spacing-m;
 
@@ -65,7 +65,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 		& input {
 			flex: 1;
-			min-width: vr.$size-m;
+			min-width: vr.$size-s;
 			@include text;
 			color: vr.$color-text-900;
 			background-color: transparent;

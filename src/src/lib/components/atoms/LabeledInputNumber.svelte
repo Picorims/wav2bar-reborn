@@ -81,5 +81,8 @@
 
 	div.input {
 		@include g.input(true);
+		& :global(svg) {
+			flex: 0 0 auto;
+		}
 	}
 </style>
