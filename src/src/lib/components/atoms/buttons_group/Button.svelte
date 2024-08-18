@@ -23,6 +23,7 @@
 	export let disabled = false;
 	export let label: string | null = null;
 	export let title: string | null = label;
+	let clientWidth: number;
 
 	/* TODO: primary, secondary, accent modes */
 
@@ -36,6 +37,7 @@
 </script>
 
 <button
+	bind:clientWidth
 	on:click={handleClick}
 	{disabled}
 	type="button"
@@ -48,6 +50,9 @@
 	<slot name="icon-l" />
 	{#if label}
 		<span>{label}</span>
+	{/if}
+	{#if label === null && title !== null && clientWidth > 100}
+		<span>{title}</span>
 	{/if}
 	<slot name="icon-r" />
 </button>
@@ -69,6 +74,7 @@
 			flex: 1;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			text-wrap: nowrap;
 		}
 	}
 </style>
