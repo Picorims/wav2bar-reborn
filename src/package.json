@@ -10,6 +10,7 @@
 	"license": "GPL-3.0-or-later",
 	"scripts": {
 		"dev": "vite dev",
+		"devo": "vite dev --open",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",

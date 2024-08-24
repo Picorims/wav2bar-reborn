@@ -46,22 +46,24 @@
 		size={minPercentFrom(50, [300, windowWidth])}
 	>
         <GripVertical class="grip-vertical"/>
-        <Splitpanes horizontal theme="custom-theme">
-            <Pane minSize={ratioToPercent(200, windowHeight)}>
-                <GripHorizontal class="grip-horizontal"/>
-				<div class="flex-column">
-					<div class="file-and-icons-pane-container">
-						<FileAndIconsPane title={projectTitle} saved={saved}/>
+		<div class="side-pane-padding">
+			<Splitpanes horizontal theme="custom-theme">
+				<Pane minSize={ratioToPercent(200, windowHeight)}>
+					<GripHorizontal class="grip-horizontal"/>
+					<div class="flex-column">
+						<div class="file-and-icons-pane-container">
+							<FileAndIconsPane title={projectTitle} saved={saved}/>
+						</div>
+						<div class="objects-pane-container">
+							<ObjectPane/>
+						</div>
 					</div>
-					<div class="objects-pane-container">
-						<ObjectPane/>
-					</div>
-				</div>
-			</Pane>
-			<Pane minSize={ratioToPercent(200, windowHeight)}>
-				<PropertiesPane/>
-			</Pane>
-		</Splitpanes>
+				</Pane>
+				<Pane minSize={ratioToPercent(200, windowHeight)}>
+					<PropertiesPane/>
+				</Pane>
+			</Splitpanes>
+		</div>
 	</Pane>
 	<Pane>
 		<div class="flex-column">
@@ -96,6 +98,12 @@
 	div.flex-column > div {
 		width: 100%;
 	}
+	div.side-pane-padding {
+		padding: g.$spacing-l;
+		padding-right: 0;
+		width: 100%;
+		height: 100%;
+	}
 	div.screen-container, div.objects-pane-container {
 		flex: 1;
 	}
@@ -103,7 +111,7 @@
 		min-height: 0;
 	}
 	div.bottom-pane-container, div.file-and-icons-pane-container {
-		min-height: g.$size-xl;
+		min-height: fit-content;
 	}
 	div.objects-pane-container {
 		min-height: 0;
