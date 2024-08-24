@@ -24,7 +24,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
 }
 
-@mixin input($is-div: false) {
+@mixin input {
 	min-width: vr.$size-xl;
 	height: vr.$size-m;
 	padding: 0 vr.$spacing-m;
@@ -44,60 +44,61 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	}
 
 	&:focus,
-    &:focus-within,
+	&:focus-within,
 	&:active {
 		border-color: vr.$color-primary-600;
 		box-shadow: 0 0 vr.$shadow-s vr.$color-primary-400;
 	}
 
-    &:invalid,
+	&:invalid,
     &:has(input:invalid) /*:has since dec 2023, shall have fallback*/ {
-        border-color: vr.$color-status-error;
-        box-shadow: 0 0 vr.$shadow-s vr.$color-status-error;
-    }
+		border-color: vr.$color-status-error;
+		box-shadow: 0 0 vr.$shadow-s vr.$color-status-error;
+	}
+}
 
-	@if $is-div {
-		display: flex;
-		gap: vr.$spacing-s;
-		& > * {
-			flex: 0;
+@mixin div-input {
+	@include input;
+	display: flex;
+	gap: vr.$spacing-s;
+	& > :global(*) {
+		flex: 0;
+	}
+
+	& :global(input) {
+		flex: 1;
+		min-width: vr.$size-s;
+		@include text;
+		color: vr.$color-text-900;
+		background-color: transparent;
+		border: none;
+		outline: none; // should be handled by parent div style
+	}
+	& :global(input[type='number']) {
+		// https://stackoverflow.com/questions/28320349/input-type-number-hide-arrows-from-right-part-of-input
+
+		/* Chrome, Safari, Edge, Opera */
+		&::-webkit-outer-spin-button,
+		&::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
 		}
 
-		& input {
-			flex: 1;
-			min-width: vr.$size-s;
-			@include text;
-			color: vr.$color-text-900;
-			background-color: transparent;
-			border: none;
-            outline: none; // should be handled by parent div style
-
-			&[type='number'] {
-                // https://stackoverflow.com/questions/28320349/input-type-number-hide-arrows-from-right-part-of-input
-
-				/* Chrome, Safari, Edge, Opera */
-				&::-webkit-outer-spin-button,
-				&::-webkit-inner-spin-button {
-					-webkit-appearance: none;
-					margin: 0;
-				}
-
-				/* Firefox */
-				-moz-appearance: textfield;
-			}
-		}
-		& :global(svg) {
-			color: vr.$color-secondary;
-		}
-        & :focus-within :global(svg) {
-            color: vr.$color-primary;
-        }
-        & :invalid ~ :global(svg) {
-            color: vr.$color-status-error;
-        }
-		& span {
-			color: vr.$color-text-600;
-		}
+		/* Firefox */
+		-moz-appearance: textfield;
+	}
+	& :global(svg) {
+		color: vr.$color-secondary;
+		flex: 0 0 auto;
+	}
+	& :global(:focus-within svg) {
+		color: vr.$color-primary;
+	}
+	& :global(:invalid ~ svg) {
+		color: vr.$color-status-error;
+	}
+	& :global(span) {
+		color: vr.$color-text-600;
 	}
 }
 

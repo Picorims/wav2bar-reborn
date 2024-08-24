@@ -18,18 +18,21 @@
     */
 
 	import { MoveVertical, XCircle } from 'lucide-svelte';
-	import LabelWrapper from './LabelWrapper.svelte';
+	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
 	export let title: string = '';
-	export let placeholder: string = '';
 	export let unit: string = '';
 	export let onChange: (value: number) => void = () => {};
+
+	// forwards =====
+	export let placeholder: string = '';
 	export let min: number = -Infinity;
 	export let max: number = Infinity;
 	export let step: number = 1;
 	export let disabled: boolean = false;
-	export let defaultValue: number = 0;
 	export let required: boolean = true;
+	// =====
+	export let defaultValue: number = 0;
 	export let value: number = defaultValue;
 	let lastValidValue: number = value;
 
@@ -51,38 +54,27 @@
 	};
 </script>
 
-<LabelWrapper {title}>
-	<div class="input">
-		<input
-			bind:value
-			bind:this={input}
-			type="number"
-			on:change={handleOnChange}
-			on:input={checkValidity}
-			on:focusout={doNotLetInInvalidState}
-			{placeholder}
-			{min}
-			{max}
-			{step}
-			{disabled}
-			{required}
-		/>
+<LabeledInputWrapper {title}>
+	<input
+		bind:value
+		bind:this={input}
+		type="number"
+		on:change={handleOnChange}
+		on:input={checkValidity}
+		on:focusout={doNotLetInInvalidState}
+		{placeholder}
+		{min}
+		{max}
+		{step}
+		{disabled}
+		{required}
+	/>
+	{#if unit}
 		<span class="unit">{unit}</span>
-		{#if valid}
-			<MoveVertical size={16} />
-		{:else}
-			<XCircle size={16} />
-		{/if}
-	</div>
-</LabelWrapper>
-
-<style lang="scss">
-	@use '../../css/globals_forward.scss' as g;
-
-	div.input {
-		@include g.input(true);
-		& :global(svg) {
-			flex: 0 0 auto;
-		}
-	}
-</style>
+	{/if}
+	{#if valid}
+		<MoveVertical size={16} />
+	{:else}
+		<XCircle size={16} />
+	{/if}
+</LabeledInputWrapper>

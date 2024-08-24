@@ -24,6 +24,19 @@
                 "full_height": "Full Height",
                 "full_size": "Full Size"
             }
+        },
+        "position": {
+            "title": "Position",
+            "x": "X",
+            "y": "Y",
+            "buttons": {
+                "horizontal_center": "Horizontal Center",
+                "vertical_center": "Vertical Center",
+                "left": "Left",
+                "right": "Right",
+                "top": "Top",
+                "bottom": "Bottom"
+            }
         }
     }
 }

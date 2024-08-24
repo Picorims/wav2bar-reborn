@@ -1,5 +1,7 @@
 <script lang="ts">
-    /*
+	import LabelWrapper from "./LabelWrapper.svelte";
+
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -16,10 +18,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
-	import SizeProperties from "../supports/SizeProperties.svelte";
-	import PositionProperties from "../supports/PositionProperties.svelte";
+   export let title = "title";
 </script>
 
-<SizeProperties />
-<PositionProperties />
+<LabelWrapper {title}>
+	<div class="input">
+        <slot></slot>
+    </div>
+</LabelWrapper>
+
+<style lang="scss">
+	@use '../../css/globals_forward.scss' as g;
+
+	div.input {
+		@include g.div-input;
+	}
+</style>

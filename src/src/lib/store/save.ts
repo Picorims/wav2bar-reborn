@@ -1,8 +1,8 @@
 import { derived, writable } from "svelte/store";
-import type { JsonLike, UUIDv4 } from "$lib/types/common_types";
+import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 import { validateAgainstRecord } from "$lib/types/validator";
-import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type, type VisualObjectInterface } from "./save_structure/save_latest";
+import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
 
