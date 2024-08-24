@@ -56,7 +56,7 @@
 	}
 </script>
 
-<Accordion label="Size" open>
+<Accordion label={$lang.properties.size.title} open>
 	<LabeledInputNumber
 		title={$lang.properties.size.width}
 		unit={'px'}
