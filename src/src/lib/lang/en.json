@@ -37,6 +37,9 @@
                 "top": "Top",
                 "bottom": "Bottom"
             }
+        },
+        "name": {
+            "title": "Name"
         }
     }
 }

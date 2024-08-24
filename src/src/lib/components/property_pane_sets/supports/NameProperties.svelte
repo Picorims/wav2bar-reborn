@@ -1,5 +1,11 @@
 <script lang="ts">
-    /*
+	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
+	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import type { VisualObject } from '$lib/store/save_structure/save_latest';
+	import { lang } from '$lib/store/settings';
+	import type { Int } from '$lib/types/common_types';
+
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -17,11 +23,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	import SizeProperties from "../supports/SizeProperties.svelte";
-	import PositionProperties from "../supports/PositionProperties.svelte";
-	import NameProperties from "../supports/NameProperties.svelte";
+	function updateName(value: string) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.name = value;
+			return obj;
+		});
+	}
 </script>
 
-<NameProperties />
-<SizeProperties />
-<PositionProperties />
+<LabeledInputText
+	title={$lang.properties.name.title}
+	value={$activeObjectData?.name}
+	onChange={updateName}
+/>
