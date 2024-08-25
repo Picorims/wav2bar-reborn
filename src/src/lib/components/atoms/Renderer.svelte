@@ -21,9 +21,9 @@
     */
 
     let canvas: HTMLCanvasElement | undefined;
-    let renderer = new Renderer();
-
+    
     onMount(async () => {
+        let renderer = new Renderer();
         await renderer.init(1280, 720, 60);
         canvas = renderer.getCanvas();
         document.getElementById("pixi-canvas-div")?.appendChild(canvas);
