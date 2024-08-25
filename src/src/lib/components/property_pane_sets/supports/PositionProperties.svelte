@@ -25,8 +25,19 @@
 	import { activeObjectData, mutateActiveObject, save } from '$lib/store/save';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
-	import type { Int } from '$lib/types/common_types';
-	import { AlignHorizontalSpaceAround, AlignVerticalSpaceAround, ArrowDownToLine, ArrowLeftToLine, ArrowRightToLine, ArrowUpToLine, Move, MoveHorizontal, MoveVertical } from 'lucide-svelte';
+	import { CHAR_DEGREE } from '$lib/string';
+	import type { AngleDegreesInt, Int } from '$lib/types/common_types';
+	import {
+		AlignHorizontalSpaceAround,
+		AlignVerticalSpaceAround,
+		ArrowDownToLine,
+		ArrowLeftToLine,
+		ArrowRightToLine,
+		ArrowUpToLine,
+		Move,
+		MoveHorizontal,
+		MoveVertical
+	} from 'lucide-svelte';
 
 	function updateX(value: number) {
 		mutateActiveObject<VisualObject>((obj) => {
@@ -42,26 +53,33 @@
 		});
 	}
 
+	function updateRotation(value: number) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.rotation = value as AngleDegreesInt;
+			return obj;
+		});
+	}
+
 	function horizontalCenter() {
-		updateX(($save.screen.width/2) - ($activeObjectData!.size.width/2));
+		updateX($save.screen.width / 2 - $activeObjectData!.size.width / 2);
 	}
 
 	function verticalCenter() {
-        updateY(($save.screen.height/2) - ($activeObjectData!.size.height/2));
-    }
+		updateY($save.screen.height / 2 - $activeObjectData!.size.height / 2);
+	}
 
-    function toLeft() {
-        updateX(0);
-    }
-    function toRight() {
-        updateX($save.screen.width - $activeObjectData!.size.width);
-    }
-    function toTop() {
-        updateY(0);
-    }
-    function toBottom() {
-        updateY($save.screen.height - $activeObjectData!.size.height);
-    }
+	function toLeft() {
+		updateX(0);
+	}
+	function toRight() {
+		updateX($save.screen.width - $activeObjectData!.size.width);
+	}
+	function toTop() {
+		updateY(0);
+	}
+	function toBottom() {
+		updateY($save.screen.height - $activeObjectData!.size.height);
+	}
 </script>
 
 <Accordion label={$lang.properties.position.title} open>
@@ -77,12 +95,24 @@
 		value={$activeObjectData?.coordinates.y}
 		onChange={updateY}
 	/>
+	<LabeledInputNumber
+		title={$lang.properties.position.rotation}
+		unit={CHAR_DEGREE}
+		value={$activeObjectData?.rotation}
+		min={0}
+		max={360}
+		onChange={updateRotation}
+	/>
+
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.position.buttons.left} onClick={toLeft}>
 				<ArrowLeftToLine slot="icon-r" />
 			</Button>
-			<Button title={$lang.properties.position.buttons.horizontal_center} onClick={horizontalCenter}>
+			<Button
+				title={$lang.properties.position.buttons.horizontal_center}
+				onClick={horizontalCenter}
+			>
 				<AlignHorizontalSpaceAround slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.right} onClick={toRight}>
@@ -90,15 +120,15 @@
 			</Button>
 		</ButtonsRow>
 		<ButtonsRow columns={3}>
-            <Button title={$lang.properties.position.buttons.top} onClick={toTop}>
-                <ArrowUpToLine slot="icon-r" />
-            </Button>
-            <Button title={$lang.properties.position.buttons.vertical_center} onClick={verticalCenter}>
-                <AlignVerticalSpaceAround slot="icon-r" />
-            </Button>
-            <Button title={$lang.properties.position.buttons.bottom} onClick={toBottom}>
-                <ArrowDownToLine slot="icon-r" />
-            </Button>
-        </ButtonsRow>
+			<Button title={$lang.properties.position.buttons.top} onClick={toTop}>
+				<ArrowUpToLine slot="icon-r" />
+			</Button>
+			<Button title={$lang.properties.position.buttons.vertical_center} onClick={verticalCenter}>
+				<AlignVerticalSpaceAround slot="icon-r" />
+			</Button>
+			<Button title={$lang.properties.position.buttons.bottom} onClick={toBottom}>
+				<ArrowDownToLine slot="icon-r" />
+			</Button>
+		</ButtonsRow>
 	</ButtonsGroup>
 </Accordion>

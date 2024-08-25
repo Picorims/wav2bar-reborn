@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -17,13 +17,22 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	import SizeProperties from "../supports/SizeProperties.svelte";
-	import PositionProperties from "../supports/PositionProperties.svelte";
-	import NameProperties from "../supports/NameProperties.svelte";
-	import LayerProperties from "../supports/LayerProperties.svelte";
+	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
+	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import type { VisualObject } from '$lib/store/save_structure/save_latest';
+	import { lang } from '$lib/store/settings';
+	import type { PositiveInt } from '$lib/types/common_types';
+
+	function updateLayer(value: number) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.layer = value as PositiveInt;
+			return obj;
+		});
+	}
 </script>
 
-<NameProperties />
-<LayerProperties />
-<SizeProperties />
-<PositionProperties />
+<LabeledInputNumber
+	title={$lang.properties.layer.title}
+	value={$activeObjectData?.layer}
+	onChange={updateLayer}
+/>

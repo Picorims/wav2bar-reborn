@@ -1,0 +1,1 @@
+export const CHAR_DEGREE = String.fromCharCode(176);

@@ -29,6 +29,7 @@
             "title": "Position",
             "x": "X",
             "y": "Y",
+            "rotation": "Rotation",
             "buttons": {
                 "horizontal_center": "Horizontal Center",
                 "vertical_center": "Vertical Center",
@@ -40,6 +41,9 @@
         },
         "name": {
             "title": "Name"
+        },
+        "layer": {
+            "title": "Layer"
         }
     }
 }
