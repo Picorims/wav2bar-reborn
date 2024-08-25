@@ -21,9 +21,11 @@
 	import PositionProperties from "../supports/PositionProperties.svelte";
 	import NameProperties from "../supports/NameProperties.svelte";
 	import LayerProperties from "../supports/LayerProperties.svelte";
+	import SvgFilterProperties from "../supports/SVGFilterProperties.svelte";
 </script>
 
 <NameProperties />
 <LayerProperties />
 <SizeProperties />
 <PositionProperties />
+<SvgFilterProperties />

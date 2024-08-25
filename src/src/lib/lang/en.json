@@ -44,6 +44,9 @@
         },
         "layer": {
             "title": "Layer"
+        },
+        "svg_filter": {
+            "title": "SVG Filter (advanced)"
         }
     }
 }
