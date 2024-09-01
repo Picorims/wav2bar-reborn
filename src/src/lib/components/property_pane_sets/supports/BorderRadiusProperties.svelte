@@ -17,12 +17,25 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	import CommonProperties from "./groups/CommonProperties.svelte";
-	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
-	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
+    import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
+	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import type { Supports_BorderRadius, VisualObject } from "$lib/store/save_structure/save_latest";
+	import { lang } from "$lib/store/settings";
 
+    let data: (VisualObject & Supports_BorderRadius) | null = null;
+    $: $activeObjectData, data = $activeObjectData as (VisualObject & Supports_BorderRadius) | null;
+
+    function updateBorderRadius(value: string) {
+		mutateActiveObject<VisualObject & Supports_BorderRadius>((obj) => {
+			obj.border_radius = value;
+			return obj;
+		});
+	}
 </script>
 
-<CommonProperties />
-<BorderRadiusProperties />
-<BoxShadowProperties />
+<LabeledInputText
+	title={$lang.properties.border_radius.title}
+	value={data?.border_radius}
+	onChange={updateBorderRadius}
+    required={false}
+/>

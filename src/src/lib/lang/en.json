@@ -47,6 +47,12 @@
         },
         "svg_filter": {
             "title": "SVG Filter (advanced)"
+        },
+        "border_radius": {
+            "title": "Border Radius (CSS)"
+        },
+        "box_shadow": {
+            "title": "Box Shadow (CSS)"
         }
     }
 }
