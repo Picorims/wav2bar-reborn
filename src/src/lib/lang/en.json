@@ -97,6 +97,31 @@
         },
         "color": {
             "title": "Color"
+        },
+        "text": {
+            "title": "Text",
+            "type": "Type",
+            "text_types": {
+                "any": "Any",
+                "time": "Time"
+            },
+            "content": "Content",
+            "content_placeholder": "Some text",
+            "font_size": "Font Size",
+            "text_decoration": {
+                "italic": "Italic",
+                "bold": "Bold",
+                "underline": "Underline",
+                "overline": "Overline",
+                "line_through": "Line Through"
+            },
+            "text_align": "Text Align",
+            "text_align_types": {
+                "left": "Left",
+                "center": "Center",
+                "right": "Right"
+            },
+            "text_shadow": "Text Shadow"
         }
     }
 }

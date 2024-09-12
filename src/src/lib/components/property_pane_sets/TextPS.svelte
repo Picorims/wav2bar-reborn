@@ -19,8 +19,10 @@
 
 	import CommonProperties from "./groups/CommonProperties.svelte";
 	import ColorProperties from "./supports/ColorProperties.svelte";
+	import TextProperties from "./supports/TextProperties.svelte";
 
 </script>
 
 <CommonProperties />
 <ColorProperties />
+<TextProperties />
