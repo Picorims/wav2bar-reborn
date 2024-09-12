@@ -17,3 +17,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 export const CHAR_DEGREE = String.fromCharCode(176);
+export function keysUnderscoreToDash(obj: Record<string, string>): Record<string, string> {
+	const newObj: Record<string, string> = {};
+	for (const key in obj) {
+		newObj[key.replaceAll('_', '-')] = obj[key];
+	}
+	return newObj;
+}

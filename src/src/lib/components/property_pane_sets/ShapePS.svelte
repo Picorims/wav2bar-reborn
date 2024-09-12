@@ -18,6 +18,7 @@
     */
 
 	import CommonProperties from "./groups/CommonProperties.svelte";
+	import BackgroundProperties from "./supports/BackgroundProperties.svelte";
 	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
 	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
 
@@ -26,3 +27,4 @@
 <CommonProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />
+<BackgroundProperties />

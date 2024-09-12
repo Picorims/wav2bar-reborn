@@ -53,6 +53,32 @@
         },
         "box_shadow": {
             "title": "Box Shadow (CSS)"
+        },
+        "background": {
+            "title": "Background",
+            "type": {
+                "title": "Type",
+                "color": "Color",
+                "gradient": "Gradient",
+                "image": "Image"
+            },
+            "color": "Color",
+            "gradient": "Gradient",
+            "image": "Image",
+            "size": "Size",
+            "size_types": {
+                "contain": "Contain",
+                "cover": "Cover",
+                "scale_size_control": "Scale Size Control",
+                "width_height_size_control": "Width Height Size Control"
+            },
+            "repeat": "Repeat",
+            "repeat_types": {
+                "no_repeat": "No Repeat",
+                "repeat": "Repeat",
+                "repeat_x": "Repeat X",
+                "repeat_y": "Repeat Y"
+            }
         }
     }
 }

@@ -23,6 +23,7 @@
 	export let optionsObj: Record<string, string> | null = null;
 	export let title: string = '';
 	export let onChange: (key: string) => void = () => {};
+	export let value: string = '';
 	
 	const handleOnChange = (e: Event) => {
 		const select = e.target as HTMLSelectElement;
@@ -48,11 +49,15 @@
 		} else {
 			options = [];
 		}
+		
+		if (value === '') {
+			value = options[0].key;
+		}
 	}
 </script>
 
 <LabelWrapper {title}>
-	<select class="select" on:change={handleOnChange}>
+	<select class="select" on:change={handleOnChange} bind:value>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}
