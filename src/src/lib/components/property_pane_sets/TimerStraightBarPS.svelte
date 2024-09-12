@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -17,12 +17,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	import CommonProperties from "./groups/CommonProperties.svelte";
-	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
-	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
-
+	import CommonProperties from './groups/CommonProperties.svelte';
+	import BorderRadiusProperties from './supports/BorderRadiusProperties.svelte';
+	import BoxShadowProperties from './supports/BoxShadowProperties.svelte';
+	import ColorProperties from './supports/ColorProperties.svelte';
 </script>
 
 <CommonProperties />
+<ColorProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />

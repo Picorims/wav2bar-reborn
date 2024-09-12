@@ -20,9 +20,11 @@
 	import CommonProperties from "./groups/CommonProperties.svelte";
 	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
 	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
+	import ColorProperties from "./supports/ColorProperties.svelte";
 
 </script>
 
 <CommonProperties />
+<ColorProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />

@@ -94,6 +94,9 @@
             "direction": "Direction",
             "spawn_probability": "Spawn Probability",
             "spawn_tests": "Spawn Tests"
+        },
+        "color": {
+            "title": "Color"
         }
     }
 }

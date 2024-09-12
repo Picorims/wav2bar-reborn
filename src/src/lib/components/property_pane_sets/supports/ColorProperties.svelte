@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { Color } from "pixi.js";
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -18,14 +17,28 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	import CommonProperties from "./groups/CommonProperties.svelte";
-	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
-	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
-	import ColorProperties from "./supports/ColorProperties.svelte";
+	import LabeledInputColor from "$lib/components/atoms/LabeledInputColor.svelte";
+	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import type { Supports_Color, VisualObject } from "$lib/store/save_structure/save_latest";
+	import { lang } from "$lib/store/settings";
 
+    type ObjT = VisualObject & Supports_Color;
+
+    let data: ObjT | null = null;
+    $: $activeObjectData, (data = $activeObjectData as ObjT | null);
+
+    function updateColor(value: string) {
+        mutateActiveObject<ObjT>((obj) => {
+            obj.color = value as Supports_Color['color'];
+            return obj;
+        });
+    }
 </script>
 
-<CommonProperties />
-<ColorProperties />
-<BorderRadiusProperties />
-<BoxShadowProperties />
+<LabeledInputColor
+    title={$lang.properties.color.title}
+    value={data?.color}
+    defaultValue="#ffffff"
+    required
+    onChange={updateColor}
+/>
