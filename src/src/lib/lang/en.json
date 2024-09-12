@@ -79,6 +79,21 @@
                 "repeat_x": "Repeat X",
                 "repeat_y": "Repeat Y"
             }
+        },
+        "particle_flow_props": {
+            "title": "Particle Flow Properties",
+            "radius_min": "Radius Min",
+            "radius_max": "Radius Max",
+            "flow_type": "Flow Type",
+            "flow_types": {
+                "radial": "Radial",
+                "directional": "Directional"
+            },
+            "center_x": "Flow Center X",
+            "center_y": "Flow Center Y",
+            "direction": "Direction",
+            "spawn_probability": "Spawn Probability",
+            "spawn_tests": "Spawn Tests"
         }
     }
 }

@@ -18,7 +18,9 @@
     */
 
 	import CommonProperties from "./groups/CommonProperties.svelte";
+	import ParticleProperties from "./supports/ParticleProperties.svelte";
 
 </script>
 
 <CommonProperties />
+<ParticleProperties />
