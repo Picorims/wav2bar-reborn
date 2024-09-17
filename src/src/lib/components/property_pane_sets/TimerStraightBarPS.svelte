@@ -22,6 +22,7 @@
 	import BorderThicknessProperties from './supports/BorderThicknessProperties.svelte';
 	import BoxShadowProperties from './supports/BoxShadowProperties.svelte';
 	import ColorProperties from './supports/ColorProperties.svelte';
+	import TimerInnerSpacingProperties from './supports/TimerInnerSpacingProperties.svelte';
 </script>
 
 <CommonProperties />
@@ -29,3 +30,4 @@
 <BorderRadiusProperties />
 <BorderThicknessProperties />
 <BoxShadowProperties />
+<TimerInnerSpacingProperties />

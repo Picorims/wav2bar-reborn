@@ -125,6 +125,9 @@
         },
         "border_thickness": {
             "title": "Border Thickness"
+        },
+        "timer_inner_spacing": {
+            "title": "Timer Inner Spacing"
         }
     }
 }
