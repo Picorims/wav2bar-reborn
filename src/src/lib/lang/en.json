@@ -122,6 +122,9 @@
                 "right": "Right"
             },
             "text_shadow": "Text Shadow"
+        },
+        "border_thickness": {
+            "title": "Border Thickness"
         }
     }
 }
