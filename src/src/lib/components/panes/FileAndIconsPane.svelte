@@ -55,11 +55,9 @@
 		display: flex;
 		gap: g.$spacing-s;
 		align-items: center;
-		width: calc(100% - g.$spacing-l);
-		height: calc(100% - g.$spacing-l);
+		width: 100%;
+		height: 100%;
 		@include g.card;
-		margin-top: g.$spacing-l;
-		margin-left: g.$spacing-l;
 		padding: g.$spacing-m;
 	}
 

@@ -35,9 +35,9 @@ export class Renderer {
      * Initialize the Pixi.js renderer
      */
     async init(width: number, height: number, fps: number) {
+        await this.app.init({width, height});
         this.app.ticker.maxFPS = fps;
         this.app.ticker.autoStart = false;
-        await this.app.init({width, height});
         this.app.ticker.add(() => this.update());
         this.hasInitBool = true;
     }

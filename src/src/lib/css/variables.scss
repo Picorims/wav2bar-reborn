@@ -82,6 +82,8 @@ $color-accent-800: var(--accent-800);
 $color-accent-900: var(--accent-900);
 $color-accent-950: var(--accent-950);
 
+$color-status-error: var(--status-error);
+
 
 
 
@@ -89,12 +91,15 @@ $border-radius-s: 4px;
 $border-radius-m: 8px;
 
 $spacing-l: 16px;
+$spacing-ml: 12px;
 $spacing-m: 8px;
 $spacing-s: 4px;
 
 $size-2xl: 128px;
 $size-xl: 64px;
+$size-l: 48px;
 $size-m: 32px;
+$size-s: 16px;
 
 $shadow-s: 2px;
 $shadow-m: 4px;

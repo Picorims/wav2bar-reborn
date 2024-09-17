@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { Renderer } from "$lib/engine/video/renderer";
-	import { onMount } from "svelte";
-
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -20,32 +17,33 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-    let canvas: HTMLCanvasElement | undefined;
-    
-    onMount(async () => {
-        let renderer = new Renderer();
-        await renderer.init(1280, 720, 60);
-        canvas = renderer.getCanvas();
-        document.getElementById("pixi-canvas-div")?.appendChild(canvas);
-    });
+	export let title: string;
+    export let fixedLabelWidth = true;
 </script>
 
-<div id="pixi-canvas-div">
-</div>
+<label class="container">
+	<span class="label" class:fixedLabelWidth>{title}:</span>
+	<slot />
+</label>
 
 <style lang="scss">
-    @use "../../css/globals_forward.scss" as g;
-    #pixi-canvas-div {
-        $margin: (g.$spacing-l);
-        $size: calc(100% - 2*$margin); 
-        width: $size;
-        max-width: $size;
-        height: $size;
-        max-height: $size;
-        margin: $margin;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
-    }
+	@use '../../css/globals_forward.scss' as g;
+
+	label.container {
+		display: flex;
+		align-items: center;
+        justify-content: space-between;
+        margin: g.$spacing-m 0;
+	}
+
+	span.label {
+		flex: 0 1 auto;
+        margin: g.$spacing-s 0;
+        margin-right: g.$spacing-m;
+
+        &.fixedLabelWidth {
+            width: 40%;
+            flex: 0 0 auto;
+        }
+	}
 </style>

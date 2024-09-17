@@ -24,7 +24,29 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  * @returns 
  */
 export function floor(value: number, step = 1, offset = 0) {
+    if (step === 0) {
+        throw new Error("step cannot be 0");
+    }
     /* TODO: test */
     // based on https://stackoverflow.com/questions/14627566/rounding-in-steps-of-20-or-x-in-javascript
     return Math.floor((value - offset) / step) * step + offset;
+}
+
+export function maxPercentFrom(percent: number, ratio: [number, number]): number {
+    return Math.max(percent, ratioToPercent(ratio[0], ratio[1]));
+}
+export function minPercentFrom(percent: number, ratio: [number, number]): number {
+    return Math.min(percent, ratioToPercent(ratio[0], ratio[1]));
+}
+export function ratioToPercent(n: number, d: number): number {
+    if (d === 0) {
+        throw new Error("d cannot be 0");
+    }
+    return (n/d) * 100;
+}
+export function ratio(n: number, d: number): [number, number] {
+    if (d === 0) {
+        throw new Error("d cannot be 0");
+    }
+    return [n, d];
 }

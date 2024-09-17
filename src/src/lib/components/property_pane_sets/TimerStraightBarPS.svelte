@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { Renderer } from "$lib/engine/video/renderer";
-	import { onMount } from "svelte";
-
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -20,32 +17,17 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-    let canvas: HTMLCanvasElement | undefined;
-    
-    onMount(async () => {
-        let renderer = new Renderer();
-        await renderer.init(1280, 720, 60);
-        canvas = renderer.getCanvas();
-        document.getElementById("pixi-canvas-div")?.appendChild(canvas);
-    });
+	import CommonProperties from './groups/CommonProperties.svelte';
+	import BorderRadiusProperties from './supports/BorderRadiusProperties.svelte';
+	import BorderThicknessProperties from './supports/BorderThicknessProperties.svelte';
+	import BoxShadowProperties from './supports/BoxShadowProperties.svelte';
+	import ColorProperties from './supports/ColorProperties.svelte';
+	import TimerInnerSpacingProperties from './supports/TimerInnerSpacingProperties.svelte';
 </script>
 
-<div id="pixi-canvas-div">
-</div>
-
-<style lang="scss">
-    @use "../../css/globals_forward.scss" as g;
-    #pixi-canvas-div {
-        $margin: (g.$spacing-l);
-        $size: calc(100% - 2*$margin); 
-        width: $size;
-        max-width: $size;
-        height: $size;
-        max-height: $size;
-        margin: $margin;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
-    }
-</style>
+<CommonProperties />
+<ColorProperties />
+<BorderRadiusProperties />
+<BorderThicknessProperties />
+<BoxShadowProperties />
+<TimerInnerSpacingProperties />

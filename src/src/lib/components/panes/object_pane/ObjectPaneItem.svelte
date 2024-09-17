@@ -87,6 +87,7 @@
 		}
 	}
 	span.name {
+		@include g.text;
 		flex: 1;
 		overflow: hidden;
 		text-overflow: ellipsis;

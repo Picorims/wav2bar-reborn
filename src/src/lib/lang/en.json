@@ -13,5 +13,140 @@
     },
     "object_pane": {
         "title": "Objects"
+    },
+    "properties": {
+        "size": {
+            "title": "Size",
+            "width": "Width",
+            "height": "Height",
+            "buttons": {
+                "full_width": "Full Width",
+                "full_height": "Full Height",
+                "full_size": "Full Size"
+            }
+        },
+        "position": {
+            "title": "Position",
+            "x": "X",
+            "y": "Y",
+            "rotation": "Rotation",
+            "buttons": {
+                "horizontal_center": "Horizontal Center",
+                "vertical_center": "Vertical Center",
+                "left": "Left",
+                "right": "Right",
+                "top": "Top",
+                "bottom": "Bottom"
+            }
+        },
+        "name": {
+            "title": "Name"
+        },
+        "layer": {
+            "title": "Layer"
+        },
+        "svg_filter": {
+            "title": "SVG Filter (advanced)"
+        },
+        "border_radius": {
+            "title": "Border Radius (CSS)"
+        },
+        "box_shadow": {
+            "title": "Box Shadow (CSS)"
+        },
+        "background": {
+            "title": "Background",
+            "type": {
+                "title": "Type",
+                "color": "Color",
+                "gradient": "Gradient",
+                "image": "Image"
+            },
+            "color": "Color",
+            "gradient": "Gradient",
+            "image": "Image",
+            "size": "Size",
+            "size_types": {
+                "contain": "Contain",
+                "cover": "Cover",
+                "scale_size_control": "Scale Size Control",
+                "width_height_size_control": "Width Height Size Control"
+            },
+            "repeat": "Repeat",
+            "repeat_types": {
+                "no_repeat": "No Repeat",
+                "repeat": "Repeat",
+                "repeat_x": "Repeat X",
+                "repeat_y": "Repeat Y"
+            }
+        },
+        "particle_flow_props": {
+            "title": "Particle Flow Properties",
+            "radius_min": "Radius Min",
+            "radius_max": "Radius Max",
+            "flow_type": "Flow Type",
+            "flow_types": {
+                "radial": "Radial",
+                "directional": "Directional"
+            },
+            "center_x": "Flow Center X",
+            "center_y": "Flow Center Y",
+            "direction": "Direction",
+            "spawn_probability": "Spawn Probability",
+            "spawn_tests": "Spawn Tests"
+        },
+        "color": {
+            "title": "Color"
+        },
+        "text": {
+            "title": "Text",
+            "type": "Type",
+            "text_types": {
+                "any": "Any",
+                "time": "Time"
+            },
+            "content": "Content",
+            "content_placeholder": "Some text",
+            "font_size": "Font Size",
+            "text_decoration": {
+                "italic": "Italic",
+                "bold": "Bold",
+                "underline": "Underline",
+                "overline": "Overline",
+                "line_through": "Line Through"
+            },
+            "text_align": "Text Align",
+            "text_align_types": {
+                "left": "Left",
+                "center": "Center",
+                "right": "Right"
+            },
+            "text_shadow": "Text Shadow"
+        },
+        "border_thickness": {
+            "title": "Border Thickness"
+        },
+        "timer_inner_spacing": {
+            "title": "Timer Inner Spacing"
+        },
+        "visualizer_props": {
+            "title": "Audio Visualization",
+            "points_count": "Points Count",
+            "analyzer_range_min": "Analyzer Range Min",
+            "analyzer_range_max": "Analyzer Range Max",
+            "smoothing_type": "Smoothing Type",
+            "smoothing_types": {
+                "proportional_decrease": "Proportional Decrease",
+                "linear_decrease": "Linear Decrease",
+                "average": "Average"
+            },
+            "smoothing_factor": "Smoothing Factor"
+        },
+        "visualizer_bar_props": {
+            "bar_thickness": "Bar Thickness"
+        },
+        "visualizer_circular_props": {
+            "radius": "Radius"
+        }
     }
 }

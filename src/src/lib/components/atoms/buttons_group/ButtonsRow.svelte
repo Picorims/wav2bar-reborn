@@ -1,7 +1,4 @@
 <script lang="ts">
-	import { Renderer } from "$lib/engine/video/renderer";
-	import { onMount } from "svelte";
-
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -20,32 +17,32 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-    let canvas: HTMLCanvasElement | undefined;
-    
-    onMount(async () => {
-        let renderer = new Renderer();
-        await renderer.init(1280, 720, 60);
-        canvas = renderer.getCanvas();
-        document.getElementById("pixi-canvas-div")?.appendChild(canvas);
-    });
+    /**
+     * Must be defined manually in the parent component.
+     */
+   export let columns = 1;
 </script>
 
-<div id="pixi-canvas-div">
+<div class="row" style={`--columns-count: ${columns}`}>
+    <slot></slot>
 </div>
 
 <style lang="scss">
-    @use "../../css/globals_forward.scss" as g;
-    #pixi-canvas-div {
-        $margin: (g.$spacing-l);
-        $size: calc(100% - 2*$margin); 
-        width: $size;
-        max-width: $size;
-        height: $size;
-        max-height: $size;
-        margin: $margin;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
+    @use '../../../css/globals_forward.scss' as g;
+
+    div.row {
+        display: grid;
+        grid-template-columns: repeat(var(--columns-count), 1fr);
+        gap: g.$spacing-s;
+        & > :global(*) {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        & > :global(button) {
+            @include g.button-secondary;
+        }
     }
 </style>

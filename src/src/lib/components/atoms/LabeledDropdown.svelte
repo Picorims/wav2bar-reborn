@@ -17,10 +17,13 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
+	import LabelWrapper from "./LabelWrapper.svelte";
+
 	export let optionsArr: string[] | null = null;
 	export let optionsObj: Record<string, string> | null = null;
 	export let title: string = '';
 	export let onChange: (key: string) => void = () => {};
+	export let value: string = '';
 	
 	const handleOnChange = (e: Event) => {
 		const select = e.target as HTMLSelectElement;
@@ -46,33 +49,23 @@
 		} else {
 			options = [];
 		}
+		
+		if (value === '') {
+			value = options[0].key;
+		}
 	}
 </script>
 
-<label class="container">
-	<span class="label">{title}:</span>
-	<select class="select" on:change={handleOnChange}>
+<LabelWrapper {title}>
+	<select class="select" on:change={handleOnChange} bind:value>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}
 	</select>
-</label>
+</LabelWrapper>
 
 <style lang="scss">
 	@use '../../css/globals_forward.scss' as g;
-
-	label.container {
-		display: flex;
-		align-items: center;
-        justify-content: space-between;
-        margin: g.$spacing-m 0;
-	}
-
-	span.label {
-		flex: 0 1 auto;
-        margin: g.$spacing-s 0;
-        margin-right: g.$spacing-m;
-	}
 
 	select.select {
 		@include g.input;

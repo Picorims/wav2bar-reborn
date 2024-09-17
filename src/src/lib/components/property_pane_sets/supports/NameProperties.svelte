@@ -1,8 +1,11 @@
 <script lang="ts">
-	import { Renderer } from "$lib/engine/video/renderer";
-	import { onMount } from "svelte";
+	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
+	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import type { VisualObject } from '$lib/store/save_structure/save_latest';
+	import { lang } from '$lib/store/settings';
+	import type { Int } from '$lib/types/common_types';
 
-    /*
+	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -20,32 +23,16 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-    let canvas: HTMLCanvasElement | undefined;
-    
-    onMount(async () => {
-        let renderer = new Renderer();
-        await renderer.init(1280, 720, 60);
-        canvas = renderer.getCanvas();
-        document.getElementById("pixi-canvas-div")?.appendChild(canvas);
-    });
+	function updateName(value: string) {
+		mutateActiveObject<VisualObject>((obj) => {
+			obj.name = value;
+			return obj;
+		});
+	}
 </script>
 
-<div id="pixi-canvas-div">
-</div>
-
-<style lang="scss">
-    @use "../../css/globals_forward.scss" as g;
-    #pixi-canvas-div {
-        $margin: (g.$spacing-l);
-        $size: calc(100% - 2*$margin); 
-        width: $size;
-        max-width: $size;
-        height: $size;
-        max-height: $size;
-        margin: $margin;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        overflow: auto;
-    }
-</style>
+<LabeledInputText
+	title={$lang.properties.name.title}
+	value={$activeObjectData?.name}
+	onChange={updateName}
+/>

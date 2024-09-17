@@ -10,6 +10,7 @@
 	"license": "GPL-3.0-or-later",
 	"scripts": {
 		"dev": "vite dev",
+		"devo": "vite dev --open",
 		"build": "vite build",
 		"preview": "vite preview",
 		"test": "npm run test:integration && npm run test:unit",
@@ -44,8 +45,9 @@
 	"type": "module",
 	"dependencies": {
 		"@zip.js/zip.js": "^2.7.45",
-		"lucide-svelte": "^0.395.0",
+		"lucide-svelte": "^0.428.0",
 		"pixi.js": "^8.2.5",
-		"svelte-splitpanes": "^0.8.2"
+		"svelte-splitpanes": "^0.8.2",
+		"wav2bar-reborn": "file:"
 	}
 }
