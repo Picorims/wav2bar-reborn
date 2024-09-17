@@ -19,8 +19,10 @@
 
 	import CommonProperties from "./groups/CommonProperties.svelte";
 	import ColorProperties from "./supports/ColorProperties.svelte";
+	import VisualizerProperties from "./supports/VisualizerProperties.svelte";
 
 </script>
 
 <CommonProperties />
 <ColorProperties />
+<VisualizerProperties kind="bar" />

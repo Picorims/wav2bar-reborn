@@ -128,6 +128,25 @@
         },
         "timer_inner_spacing": {
             "title": "Timer Inner Spacing"
+        },
+        "visualizer_props": {
+            "title": "Audio Visualization",
+            "points_count": "Points Count",
+            "analyzer_range_min": "Analyzer Range Min",
+            "analyzer_range_max": "Analyzer Range Max",
+            "smoothing_type": "Smoothing Type",
+            "smoothing_types": {
+                "proportional_decrease": "Proportional Decrease",
+                "linear_decrease": "Linear Decrease",
+                "average": "Average"
+            },
+            "smoothing_factor": "Smoothing Factor"
+        },
+        "visualizer_bar_props": {
+            "bar_thickness": "Bar Thickness"
+        },
+        "visualizer_circular_props": {
+            "radius": "Radius"
         }
     }
 }

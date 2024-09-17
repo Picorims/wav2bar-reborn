@@ -21,6 +21,7 @@
 	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
 	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
 	import ColorProperties from "./supports/ColorProperties.svelte";
+	import VisualizerProperties from "./supports/VisualizerProperties.svelte";
 
 </script>
 
@@ -28,3 +29,4 @@
 <ColorProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />
+<VisualizerProperties kind="circular" />
