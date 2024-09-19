@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import * as PIXI from "pixi.js";
 import { TickEngine } from "./tick";
+import type { AudioProvider } from "../audio/audio_provider";
 
 /**
  * Pixi.js renderer, drives the tick and audio engines.
@@ -26,6 +27,8 @@ export class Renderer {
     private app: PIXI.Application;
     private hasInitBool = false;
     private tickEngine: TickEngine;
+    private audioProvider: AudioProvider | null = null;
+
     constructor() {
         this.app = new PIXI.Application();
         this.tickEngine = new TickEngine();
@@ -44,6 +47,13 @@ export class Renderer {
 
     hasInit() {
         return this.hasInitBool;
+    }
+
+    setAudioProvider(provider: AudioProvider) {
+        this.audioProvider = provider;
+        if (!this.audioProvider.hasInit()) {
+            this.audioProvider.init();
+        }
     }
 
     /**
@@ -92,3 +102,8 @@ export class Renderer {
         this.tickEngine.stop();
     }
 }
+
+/**
+ * Initialized by the Renderer component.
+ */
+export const renderer = new Renderer();

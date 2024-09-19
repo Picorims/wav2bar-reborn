@@ -5,6 +5,7 @@ import { validateAgainstRecord } from "$lib/types/validator";
 import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
+import type { Renderer } from "$lib/engine/video/renderer";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
 export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
@@ -29,7 +30,7 @@ export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjec
     };
 });
 
-export function openSave() {
+export function openSave(renderer: Renderer) {
     console.log("Asking for a file to open");
     const fileElt = document.createElement("input");
     fileElt.type = "file";
@@ -57,11 +58,7 @@ export function openSave() {
                 saveConfig.set(saveJSON as Omit<Save, "objects">);
                 saveObjects.set(saveJSON.objects);
 
-                const liveAudioProvider = new LiveAudioProvider();
-                liveAudioProvider.init();
-                setInterval(() => {
-                    console.log(liveAudioProvider.getCurrentAudioSpectrum());
-                }, 1000);        
+                renderer.setAudioProvider(new LiveAudioProvider());        
             }
         }
 
