@@ -22,7 +22,7 @@ import type { AudioProvider } from '../audio/audio_provider';
 import type { UUIDv4 } from '$lib/types/common_types';
 import type { VisualObject } from '$lib/store/save_structure/save_latest';
 import { PlaceHolderVisualObjectRenderer, type VisualObjectRenderer } from './visual_objects/visual_object_renderer';
-import { VO_Text } from './visual_objects/text';
+import { VO_Text } from './visual_objects/vo_text';
 import { save } from '$lib/store/save';
 
 interface RendererEvent<T extends RendererEventName> {
