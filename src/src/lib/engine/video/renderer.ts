@@ -16,91 +16,165 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import * as PIXI from "pixi.js";
-import { TickEngine } from "./tick";
-import type { AudioProvider } from "../audio/audio_provider";
+import * as PIXI from 'pixi.js';
+import { TickEngine } from './tick';
+import type { AudioProvider } from '../audio/audio_provider';
+import type { UUIDv4 } from '$lib/types/common_types';
+import type { VisualObject } from '$lib/store/save_structure/save_latest';
+import { PlaceHolderVisualObjectRenderer, type VisualObjectRenderer } from './visual_objects/visual_object_renderer';
+import { VO_Text } from './visual_objects/text';
+import { save } from '$lib/store/save';
+
+interface RendererEvent<T extends RendererEventName> {
+	name: T;
+	payload: RendererEventPayload<T>;
+}
+
+type RendererEventName = 'object_register' | 'object_update';
+
+type IdPayload = {
+	id: UUIDv4;
+};
+
+type RendererEventPayload<T extends RendererEventName> = T extends 'object_register'
+	? IdPayload
+	: T extends 'object_update'
+		? IdPayload
+		: never;
 
 /**
  * Pixi.js renderer, drives the tick and audio engines.
  */
 export class Renderer {
-    private app: PIXI.Application;
-    private hasInitBool = false;
-    private tickEngine: TickEngine;
-    private audioProvider: AudioProvider | null = null;
+	private app: PIXI.Application;
+	private hasInitBool = false;
+	private tickEngine: TickEngine;
+	private audioProvider: AudioProvider | null = null;
+	private visualObjects: Map<UUIDv4, VisualObjectRenderer<VisualObject>> = new Map();
+	private events: RendererEvent<RendererEventName>[] = [];
 
-    constructor() {
-        this.app = new PIXI.Application();
-        this.tickEngine = new TickEngine();
-    }
+	constructor() {
+		this.app = new PIXI.Application();
+		globalThis.__PIXI_APP__ = this.app;
+		this.tickEngine = new TickEngine();
+	}
 
-    /**
-     * Initialize the Pixi.js renderer
-     */
-    async init(width: number, height: number, fps: number) {
-        await this.app.init({width, height});
-        this.app.ticker.maxFPS = fps;
-        this.app.ticker.autoStart = false;
-        this.app.ticker.add(() => this.update());
-        this.hasInitBool = true;
-    }
+	/**
+	 * Initialize the Pixi.js renderer
+	 */
+	async init(width: number, height: number, fps: number) {
+		await this.app.init({ width, height });
+		this.app.ticker.maxFPS = fps;
+		this.app.ticker.autoStart = true;		
+		this.app.ticker.add(() => this.update());
 
-    hasInit() {
-        return this.hasInitBool;
-    }
+		save.subscribe((newSave) => {
+			for (const e of this.events) {
+				console.log(`Processing event ${e.name}`, e);
+				
+				if (e.name === 'object_register') {
+					this.registerObject(e.payload.id, newSave.objects[e.payload.id]);
+				} else if (e.name === 'object_update') {
+                    this.updateObject(e.payload.id, newSave.objects[e.payload.id]);
+                }
+			}
+			this.events = [];
+		});
 
-    setAudioProvider(provider: AudioProvider) {
-        this.audioProvider = provider;
-        if (!this.audioProvider.hasInit()) {
-            this.audioProvider.init();
-        }
-    }
+		this.hasInitBool = true;
+	}
 
-    /**
-     * After initialization, return the canvas
-     */
-    getCanvas() {
-        if (!this.hasInit()) throw new Error("Renderer not initialized");
-        return this.app.canvas;
-    }
+	hasInit() {
+		return this.hasInitBool;
+	}
 
-    /**
-     * Update the renderer with n ticks
-     */
-    private update() {
-        this.tickEngine.tick();
-        this.render();
-    }
+	setAudioProvider(provider: AudioProvider) {
+		this.audioProvider = provider;
+		if (!this.audioProvider.hasInit()) {
+			this.audioProvider.init();
+		}
+	}
 
-    /**
-     * Update the renderer with a single tick,
-     * useful for manual control of the renderer
-     * instead of real-time rendering.
-     */
-    updateOnce() {
-        this.tickEngine.tickOnce();
-        this.render();
-    }
+	/**
+	 * After initialization, return the canvas
+	 */
+	getCanvas() {
+		if (!this.hasInit()) throw new Error('Renderer not initialized');
+		return this.app.canvas;
+	}
 
-    private render() {
+	/**
+	 * Update the renderer with n ticks
+	 */
+	private update() {
+		this.tickEngine.tick();
+		this.render();
+	}
 
-    }
+	/**
+	 * Update the renderer with a single tick,
+	 * useful for manual control of the renderer
+	 * instead of real-time rendering.
+	 */
+	updateOnce() {
+		this.tickEngine.tickOnce();
+		this.render();
+	}
 
-    play() {
-        this.app.ticker.start();
-        this.tickEngine.play();
-    }
-    /**
-     * Keeps the renderer active but stops the tick engine.
-     * Use `play` to restart the tick engine.
-     */
-    pauseTick() {
-        this.tickEngine.pause();
-    }
-    stop() {
-        this.app.ticker.stop();
-        this.tickEngine.stop();
-    }
+	private render() {}
+
+	play() {
+		this.app.ticker.start();
+		this.tickEngine.play();
+	}
+	/**
+	 * Keeps the renderer active but stops the tick engine.
+	 * Use `play` to restart the tick engine.
+	 */
+	pauseTick() {
+		this.tickEngine.pause();
+	}
+	stop() {
+		this.app.ticker.stop();
+		this.tickEngine.stop();
+	}
+
+	/**
+	 * Inform the renderer that the save will be mutated, and indicate
+	 * what should be taken into account in the mutation.
+	 * @param event 
+	 */
+	scheduleRendererEvent(event: RendererEvent<RendererEventName>) {
+		this.events.push(event);
+	}
+
+	/**
+	 * Register a newly created object to the renderer.
+	 * @param id
+	 * @param type
+	 */
+	private registerObject(id: UUIDv4, obj: VisualObject) {
+		console.log(`Registering object ${id} of type ${obj.visual_object_type}`);
+		if (obj.visual_object_type === 'text') {
+			this.visualObjects.set(id, new VO_Text(id));
+		} else {
+			console.warn("Unknown object type, registering placeholder object");
+			this.visualObjects.set(id, new PlaceHolderVisualObjectRenderer());
+		}
+		this.updateObject(id, obj);
+	}
+
+	updateObject(id: UUIDv4, obj: VisualObject) {
+		if (!this.visualObjects.has(id)) {
+			throw new Error('Object not found in renderer');
+		}
+		const oldContainer = this.visualObjects.get(id)!.getContainer();
+		const updatedContainer = this.visualObjects.get(id)!.update(obj);
+		if (updatedContainer) {
+			this.app.stage.removeChild(oldContainer);
+			this.app.stage.addChild(updatedContainer);
+		}
+	}
 }
 
 /**
