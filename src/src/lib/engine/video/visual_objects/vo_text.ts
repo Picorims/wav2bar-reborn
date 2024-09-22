@@ -30,26 +30,36 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		this._container = new Text();
 	}
 	update(obj: SaveVO_Text): Container {
-		// TODO: svg filter, type, underline, overline, line through, text align, text shadow
-		const text = new Text({
+		const container = new Container({
 			zIndex: obj.layer,
 			x: obj.coordinates.x,
 			y: obj.coordinates.y,
 			angle: obj.rotation, // angle is in degrees
-
+		});
+		// TODO: type, underline, overline, line through, text align on one line, text shadow
+		const text = new Text({
 			text: obj.text_content,
 
 			style: new TextStyle({
 				fill: obj.color,
-                wordWrapWidth: obj.size.width,
-                fontSize: obj.font_size,
-                fontStyle: obj.text_decoration.italic? "italic": "normal",
-                fontWeight: obj.text_decoration.bold? "bold": "normal",
-                
+				wordWrap: true,
+				wordWrapWidth: obj.size.width,
+				fontSize: obj.font_size,
+				fontStyle: obj.text_decoration.italic ? 'italic' : 'normal',
+				fontWeight: obj.text_decoration.bold ? 'bold' : 'normal',
+				align: obj.text_align.horizontal
 			})
 		});
 
-		this._container = text;
+		if (text.style.align === 'center') {
+			text.x = obj.size.width / 2 - text.width / 2;
+		} else if (text.style.align === 'right') {
+			text.x = obj.size.width - text.width;
+		}
+
+		container.addChild(text);
+
+		this._container = container;
 		return this._container;
 	}
 	getContainer(): Container {
