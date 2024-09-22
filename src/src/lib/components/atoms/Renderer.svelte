@@ -43,8 +43,16 @@
         max-height: $size;
         margin: $margin;
         display: flex;
-        justify-content: center;
-        align-items: center;
+
+        align-items: flex-start;
+        justify-content: flex-start;
+        // see: https://stackoverflow.com/questions/33454533/cant-scroll-to-top-of-flex-item-that-is-overflowing-container
+        // justify-content: center; // makes part of the canvas inaccessible if it is bigger than the container.
+        // solution
+        @supports(justify-content: safe center) {
+            align-items: safe center;
+            justify-content: safe center;
+        }
         overflow: auto;
     }
 </style>
