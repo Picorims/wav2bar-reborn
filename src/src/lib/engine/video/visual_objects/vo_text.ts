@@ -20,6 +20,7 @@ import type { UUIDv4 } from '$lib/types/common_types';
 import { Container, Text, TextStyle } from 'pixi.js';
 import type { VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_Text } from '$lib/store/save_structure/save_latest';
+import { parseCSSTextShadow } from '$lib/string';
 
 export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	private _saveId: UUIDv4;
@@ -30,13 +31,20 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		this._container = new Text();
 	}
 	update(obj: SaveVO_Text): Container {
+		const textShadow = parseCSSTextShadow(obj.text_shadow);
+
 		const container = new Container({
 			zIndex: obj.layer,
 			x: obj.coordinates.x,
 			y: obj.coordinates.y,
-			angle: obj.rotation, // angle is in degrees
+			angle: obj.rotation // angle is in degrees
 		});
-		// TODO: type, underline, overline, line through, text align on one line, text shadow
+		const shadowDistance = Math.sqrt(textShadow.offsetX ** 2 + textShadow.offsetY ** 2);
+		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
+
+		console.log(textShadow, "textShadow");
+
+		// TODO: type, underline, overline, line through
 		const text = new Text({
 			text: obj.text_content,
 
@@ -47,7 +55,13 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 				fontSize: obj.font_size,
 				fontStyle: obj.text_decoration.italic ? 'italic' : 'normal',
 				fontWeight: obj.text_decoration.bold ? 'bold' : 'normal',
-				align: obj.text_align.horizontal
+				align: obj.text_align.horizontal,
+				dropShadow: {
+					color: textShadow.color,
+					blur: textShadow.blurRadius,
+					angle: shadowAngle,
+					distance: shadowDistance
+				},
 			})
 		});
 
