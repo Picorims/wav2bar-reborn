@@ -27,7 +27,9 @@ export abstract class AudioProvider {
     abstract pause(): void;
     abstract stop(): void;
     abstract setVolume(volume: number): void;
+    /** in ms */
     abstract getCurrentAudioTime(): number;
+    /** in ms */
     abstract getDuration(): number;
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;

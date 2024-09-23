@@ -68,3 +68,12 @@ export function parseCSSTextShadow(str: string): CSSTextShadow {
 
 	return values;
 }
+
+/**
+ * 
+ * @param n value to process
+ * @returns value with a leading zero if it is less than 10
+ */
+export function withLeadingZero(n: number): string {
+	return n < 10 ? '0' + n : n.toString();
+}

@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import type { VisualObject } from "$lib/store/save_structure/save_latest";
 import { Container } from "pixi.js";
+import type { TickUnit } from "../tick_units/tick_unit";
 
 export interface VisualObjectRenderer<T extends VisualObject> {
     /**
@@ -26,6 +27,10 @@ export interface VisualObjectRenderer<T extends VisualObject> {
      */
     update(obj: T): Container
     getContainer(): Container
+    /**
+     * returns null if there is no tick unit
+     */
+    getTickUnit(): TickUnit<unknown> | null
 }
 
 export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<VisualObject> {
@@ -45,5 +50,9 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
         // console.log("PlaceHolderVisualObjectRenderer.getContainer() called");
         
         return this._container;
+    }
+
+    getTickUnit(): null {
+        return null;
     }
 }

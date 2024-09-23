@@ -155,12 +155,20 @@ export class Renderer {
 	 */
 	private registerObject(id: UUIDv4, obj: VisualObject) {
 		console.log(`Registering object ${id} of type ${obj.visual_object_type}`);
+		let newVisualObject: VisualObjectRenderer<VisualObject> = new PlaceHolderVisualObjectRenderer();
+		
 		if (obj.visual_object_type === 'text') {
-			this.visualObjects.set(id, new VO_Text(id));
+			newVisualObject = new VO_Text(id);
 		} else {
 			console.warn("Unknown object type, registering placeholder object");
-			this.visualObjects.set(id, new PlaceHolderVisualObjectRenderer());
 		}
+		this.visualObjects.set(id, newVisualObject);
+
+		const tickUnit = newVisualObject.getTickUnit();
+		if (tickUnit) {
+			this.tickEngine.addTickUnit(tickUnit);
+		}
+
 		this.updateObject(id, obj);
 	}
 
