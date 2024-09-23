@@ -46,7 +46,7 @@
             "title": "Layer"
         },
         "svg_filter": {
-            "title": "SVG Filter (advanced)"
+            "title": "SVG Filter (deprecated, no effect)"
         },
         "border_radius": {
             "title": "Border Radius (CSS)"

@@ -5,23 +5,45 @@ import { validateAgainstRecord } from "$lib/types/validator";
 import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
+import { renderer, type Renderer } from "$lib/engine/video/renderer";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
 export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
+
+
+
 export const activeObject = writable<UUIDv4 | null>(null);
+/**
+ * serves as activeObject getter
+ */
 let activeObjectValue: UUIDv4 | null = null;
 activeObject.subscribe(value => { activeObjectValue = value; });
+
+
+
 export const activeObjectData = derived([saveObjects, activeObject], ([$saveObjects, $activeObject]) => {
     if ($activeObject === null) return null;
     return $saveObjects[$activeObject];
 });
+/**
+ * serves as activeObjectData getter
+ */
 let activeObjectDataValue: VisualObject | null = null;
 activeObjectData.subscribe(value => { activeObjectDataValue = value; });
+
+
+
 export const objectsCount = derived(saveObjects, ($saveObjects) => Object.keys($saveObjects).length);
+/**
+ * serves as objectsCount getter
+ */
 export let objectsCountValue = 0;
 objectsCount.subscribe(value => {
     objectsCountValue = value;
 });
+
+
+
 export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjects]) => {
     return {
         ...$saveConfig,
@@ -29,7 +51,9 @@ export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjec
     };
 });
 
-export function openSave() {
+
+
+export function openSave(renderer: Renderer) {
     console.log("Asking for a file to open");
     const fileElt = document.createElement("input");
     fileElt.type = "file";
@@ -57,11 +81,7 @@ export function openSave() {
                 saveConfig.set(saveJSON as Omit<Save, "objects">);
                 saveObjects.set(saveJSON.objects);
 
-                const liveAudioProvider = new LiveAudioProvider();
-                liveAudioProvider.init();
-                setInterval(() => {
-                    console.log(liveAudioProvider.getCurrentAudioSpectrum());
-                }, 1000);        
+                renderer.setAudioProvider(new LiveAudioProvider());        
             }
         }
 
@@ -80,6 +100,12 @@ export function addObject(type: VisualObject_Type) {
     if (objectsCountValue === 0) {
         activeObject.set(uuid);
     }
+    renderer.scheduleRendererEvent({
+        name: "object_register",
+        payload: {
+            id: uuid,
+        }
+    });
     saveObjects.update((objects) => {
         return {
             ...objects,
@@ -100,6 +126,12 @@ export function mutateActiveObject<T extends VisualObject>(mutator: (object: T) 
     if (activeObjectDataValue === null) {
         throw new Error("No active object to mutate");
     };
+    renderer.scheduleRendererEvent({
+        name: "object_update",
+        payload: {
+            id: activeObjectValue as UUIDv4,
+        }
+    })
     saveObjects.update((objects) => {
         return {
             ...objects,

@@ -21,9 +21,14 @@
 	import { currentModal, ModalType } from "$lib/store/modal";
 	import { openModalHandler } from "$lib/store/modal";
 	import { openSave } from "$lib/store/save";
+	import { renderer } from "$lib/engine/video/renderer";
 
 	export let title = "";
 	export let saved = false;
+
+	function openAndLoadSave() {
+		openSave(renderer);
+	}
 </script>
 
 <div class="card">
@@ -34,7 +39,7 @@
 	<IconButton>
 		<FilePlus/>
 	</IconButton>
-	<IconButton onClick={openSave}>
+	<IconButton onClick={openAndLoadSave}>
 		<FolderOpen/>
 	</IconButton>
 	<IconButton>

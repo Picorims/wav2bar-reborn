@@ -25,7 +25,7 @@
 	import Modal from '$lib/components/window/Modal.svelte';
 	import { currentModal, ModalType } from '../../store/modal';
 	import SettingsModal from './modals/SettingsModal.svelte';
-	import Renderer from '../atoms/Renderer.svelte';
+	import Renderer from '$lib/components/atoms/Renderer.svelte';
 	import { minPercentFrom, maxPercentFrom, ratio, ratioToPercent } from '$lib/math';
 
 	let saved = false;

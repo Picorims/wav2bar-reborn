@@ -26,11 +26,19 @@ export class LiveAudioProvider extends AudioProvider {
     private audioCtx: AudioContext;
     private analyser: AnalyserNode;
     private source: MediaStreamAudioSourceNode | undefined;
+	private chronoStart: number;
+	private chronoPause: number;
+	private stopped: boolean;
+	private lastSpectrum: Uint8Array | undefined;
+	private lastWaveform: Uint8Array | undefined;
 
     constructor() {
         super();
         this.audioCtx = new AudioContext();
         this.analyser = this.audioCtx.createAnalyser();
+		this.chronoStart = performance.now();
+		this.chronoPause = -1;
+		this.stopped = true;
 	}
 	async init() {
         if (this.hasInit()) return;
@@ -46,23 +54,35 @@ export class LiveAudioProvider extends AudioProvider {
 		return this.hasInitBool;
 	}
 	play() {
-		console.log("Live audio provider cannot play, doing nothing");
+		if (this.chronoPause !== -1 && !this.stopped) {
+			this.chronoStart += performance.now() - this.chronoPause;
+			this.chronoPause = -1;
+		} else {
+			this.chronoStart = performance.now();
+			this.stopped = false;
+		}
 	}
 	pause() {
-		console.log("Live audio provider cannot pause, doing nothing");
+		this.chronoPause = performance.now();
 	}
 	stop() {
-		console.log("Live audio provider cannot stop, doing nothing");
+		this.stopped = true;
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	setVolume(_volume: number) {
 		console.log("Live audio provider cannot set volume, doing nothing");
 	}
 	getCurrentAudioTime() {
-		return Infinity;
+		if (this.stopped) {
+			return 0;
+		} else if (this.chronoPause === -1) {
+			return performance.now() - this.chronoStart;
+		} else {
+			return this.chronoPause - this.chronoStart;
+		}
 	}
 	getDuration() {
-		return Infinity;
+		return this.getCurrentAudioTime();
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	seekTo(_time: number) {
@@ -70,13 +90,17 @@ export class LiveAudioProvider extends AudioProvider {
         
 	}
 	isPlaying() {
-		return true;
+		return this.chronoPause === -1;
 	}
 	getCurrentAudioSpectrum(): Uint8Array {
         // We can use Float32Array instead of Uint8Array if we want higher precision
+		if (this.lastSpectrum !== undefined && (this.stopped || this.chronoPause !== -1)) {
+			return this.lastSpectrum;
+		}
 		const bufferLength = this.analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         this.analyser.getByteFrequencyData(dataArray);
+		this.lastSpectrum = dataArray;
         return dataArray;
 	}
 	getAudioSpectrumSize() {
@@ -87,9 +111,13 @@ export class LiveAudioProvider extends AudioProvider {
 	}
     getCurrentAudioWaveform(): Uint8Array {
         // We can use Float32Array instead of Uint8Array if we want higher precision
+		if (this.lastWaveform !== undefined && (this.stopped || this.chronoPause !== -1)) {
+			return this.lastWaveform;
+		}
         const bufferLength = this.analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
         this.analyser.getByteTimeDomainData(dataArray);
+		this.lastWaveform = dataArray;
         return dataArray;
     }
 }

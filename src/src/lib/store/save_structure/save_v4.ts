@@ -549,20 +549,20 @@ export const defaultParticleFlow_V4 = (): ParticleFlow_V4 => ({
 export const defaultText_V4 = (): Text_V4 => ({
 	visual_object_type: 'text',
 	name: '',
-	layer: 0 as PositiveInt,
+	layer: 1 as PositiveInt,
 	coordinates: {
 		x: 0 as Int,
 		y: 0 as Int
 	},
 	size: {
-		width: 0 as PositiveInt,
-		height: 0 as PositiveInt
+		width: 400 as PositiveInt,
+		height: 100 as PositiveInt
 	},
 	rotation: 0 as AngleDegreesInt,
 	svg_filter: '',
 	text_type: 'any',
-	text_content: '',
-	font_size: 1 as StrictlyPositiveInt,
+	text_content: 'text',
+	font_size: 18 as StrictlyPositiveInt,
 	text_decoration: {
 		italic: false,
 		bold: false,
