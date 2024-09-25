@@ -16,20 +16,28 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 	*/
+
+	import AudioController from "./controller_pane/AudioController.svelte";
+
 </script>
 
-<div class="card"></div>
+<div class="card">
+	<AudioController/>
+</div>
 
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
 
 	.card {
 		display: flex;
-		flex-direction: column;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 		width: calc(100% - g.$spacing-l);
 		height: calc(100% - g.$spacing-l);
 		@include g.card;
 		margin-bottom: g.$spacing-l;
 		margin-right: g.$spacing-l;
+		padding: g.$spacing-m g.$spacing-l;
 	}
 </style>
