@@ -108,12 +108,15 @@ export class TickEngine {
 	tick() {
 		if (!this._isPlaying) return;
 		this._now = this.getWindowNow();
-		const thenFrame = floor(this._then, 1000 / this.tps, this._init);
-        const nowFrame = floor(this._now, 1000 / this.tps, this._init);
+		const thenFrame = floor(this._then, 1000 / this.tps, this._init) / this.tps;
+        const nowFrame = floor(this._now, 1000 / this.tps, this._init) / this.tps;
         /**
          * Number of ticks to perform
          */
         const deltaFrame = nowFrame - thenFrame;
+
+        if (deltaFrame < 1) return;
+        
         for (let i = 0; i < deltaFrame; i++) {
             this.tickOnce();
         }
