@@ -96,6 +96,7 @@ export class Renderer {
 		if (!this.audioProvider.hasInit()) {
 			this.audioProvider.init();
 		}
+		this.tickEngine.setAudioProvider(provider);
 	}
 
 	/**

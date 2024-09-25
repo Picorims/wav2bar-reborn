@@ -39,6 +39,8 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 
 		this._tickUnit.subscribe((data) => {
 			if (this._type === "time") {
+				console.log(data, "data");
+				
 				this._text.text = data;
 			}
 		});
