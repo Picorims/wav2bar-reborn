@@ -21,7 +21,10 @@ import { TickEngine } from './tick';
 import type { AudioProvider } from '../audio/audio_provider';
 import type { UUIDv4 } from '$lib/types/common_types';
 import type { VisualObject } from '$lib/store/save_structure/save_latest';
-import { PlaceHolderVisualObjectRenderer, type VisualObjectRenderer } from './visual_objects/visual_object_renderer';
+import {
+	PlaceHolderVisualObjectRenderer,
+	type VisualObjectRenderer
+} from './visual_objects/visual_object_renderer';
 import { VO_Text } from './visual_objects/vo_text';
 import { save } from '$lib/store/save';
 
@@ -65,18 +68,18 @@ export class Renderer {
 	async init(width: number, height: number, fps: number) {
 		await this.app.init({ width, height });
 		this.app.ticker.maxFPS = fps;
-		this.app.ticker.autoStart = true;		
+		this.app.ticker.autoStart = true;
 		this.app.ticker.add(() => this.update());
 
 		save.subscribe((newSave) => {
 			for (const e of this.events) {
 				console.log(`Processing event ${e.name}`, e);
-				
+
 				if (e.name === 'object_register') {
 					this.registerObject(e.payload.id, newSave.objects[e.payload.id]);
 				} else if (e.name === 'object_update') {
-                    this.updateObject(e.payload.id, newSave.objects[e.payload.id]);
-                }
+					this.updateObject(e.payload.id, newSave.objects[e.payload.id]);
+				}
 			}
 			this.events = [];
 		});
@@ -126,6 +129,7 @@ export class Renderer {
 	play() {
 		this.app.ticker.start();
 		this.tickEngine.play();
+		this.audioProvider?.play();
 	}
 	/**
 	 * Keeps the renderer active but stops the tick engine.
@@ -133,16 +137,52 @@ export class Renderer {
 	 */
 	pauseTick() {
 		this.tickEngine.pause();
+		this.audioProvider?.pause();
 	}
 	stop() {
 		this.app.ticker.stop();
 		this.tickEngine.stop();
+		this.audioProvider?.stop();
+	}
+
+	seekToStart() {
+		this.audioProvider?.seekTo(0);
+	}
+	seekToEnd() {
+		this.audioProvider?.seekTo(this.audioProvider.getDuration());
+	}
+	/**
+	 *
+	 * @param percent 0 to 100
+	 */
+	seekToPercent(percent: number) {
+		if (!this.audioProvider) return;
+		const duration = this.audioProvider.getDuration();
+		const time = (percent / 100) * duration;
+		this.audioProvider.seekTo(time);
+	}
+
+	/**
+	 *
+	 * @returns position in ms
+	 */
+	getProgress() {
+		if (!this.audioProvider) return 0;
+		return this.audioProvider.getCurrentAudioTime();
+	}
+	/**
+	 * 
+	 * @returns duration in ms
+	 */
+	getDuration() {
+		if (!this.audioProvider) return 0;
+		return this.audioProvider.getDuration();
 	}
 
 	/**
 	 * Inform the renderer that the save will be mutated, and indicate
 	 * what should be taken into account in the mutation.
-	 * @param event 
+	 * @param event
 	 */
 	scheduleRendererEvent(event: RendererEvent<RendererEventName>) {
 		this.events.push(event);
@@ -156,11 +196,11 @@ export class Renderer {
 	private registerObject(id: UUIDv4, obj: VisualObject) {
 		console.log(`Registering object ${id} of type ${obj.visual_object_type}`);
 		let newVisualObject: VisualObjectRenderer<VisualObject> = new PlaceHolderVisualObjectRenderer();
-		
+
 		if (obj.visual_object_type === 'text') {
 			newVisualObject = new VO_Text(id);
 		} else {
-			console.warn("Unknown object type, registering placeholder object");
+			console.warn('Unknown object type, registering placeholder object');
 		}
 		this.visualObjects.set(id, newVisualObject);
 

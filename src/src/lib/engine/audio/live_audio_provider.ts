@@ -87,7 +87,6 @@ export class LiveAudioProvider extends AudioProvider {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	seekTo(_time: number) {
 		console.log("Live audio provider cannot seek, doing nothing");
-        
 	}
 	isPlaying() {
 		return this.chronoPause === -1;

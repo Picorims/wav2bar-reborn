@@ -71,6 +71,17 @@ export function parseCSSTextShadow(str: string): CSSTextShadow {
 
 /**
  * 
+ * @param ms 
+ * @returns "MM:SS" formatted string
+ */
+export function msToMMSS(ms: number): string {
+	const seconds = Math.floor(ms / 1000);
+	const minutes = Math.floor(seconds / 60);
+	return `${withLeadingZero(minutes)}:${withLeadingZero(seconds % 60)}`;
+}
+
+/**
+ * 
  * @param n value to process
  * @returns value with a leading zero if it is less than 10
  */

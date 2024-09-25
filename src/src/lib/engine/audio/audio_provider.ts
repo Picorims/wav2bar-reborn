@@ -31,6 +31,10 @@ export abstract class AudioProvider {
     abstract getCurrentAudioTime(): number;
     /** in ms */
     abstract getDuration(): number;
+    /**
+     * 
+     * @param time in ms
+     */
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;
     abstract getCurrentAudioSpectrum(): Uint8Array | number[];
