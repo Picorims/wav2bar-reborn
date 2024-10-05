@@ -27,6 +27,7 @@ import {
 } from './visual_objects/visual_object_renderer';
 import { VO_Text } from './visual_objects/vo_text';
 import { save } from '$lib/store/save';
+import { Log } from '$lib/log/logger';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -73,7 +74,7 @@ export class Renderer {
 
 		save.subscribe((newSave) => {
 			for (const e of this.events) {
-				console.log(`Processing event ${e.name}`, e);
+				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 
 				if (e.name === 'object_register') {
 					this.registerObject(e.payload.id, newSave.objects[e.payload.id]);
@@ -195,13 +196,13 @@ export class Renderer {
 	 * @param type
 	 */
 	private registerObject(id: UUIDv4, obj: VisualObject) {
-		console.log(`Registering object ${id} of type ${obj.visual_object_type}`);
+		Log.renderer.info(`Registering object ${id} of type ${obj.visual_object_type}`);
 		let newVisualObject: VisualObjectRenderer<VisualObject> = new PlaceHolderVisualObjectRenderer();
 
 		if (obj.visual_object_type === 'text') {
 			newVisualObject = new VO_Text(id);
 		} else {
-			console.warn('Unknown object type, registering placeholder object');
+			Log.renderer.warn('Unknown object type, registering placeholder object');
 		}
 		this.visualObjects.set(id, newVisualObject);
 

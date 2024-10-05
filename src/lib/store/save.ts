@@ -6,6 +6,7 @@ import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type 
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
 import { renderer, type Renderer } from "$lib/engine/video/renderer";
+import { Log } from "$lib/log/logger";
 
 export const saveConfig = writable<Omit<Save, "objects">>(defaultSaveConfig());
 export const saveObjects = writable<Save["objects"]>(defaultSaveConfig().objects);
@@ -54,14 +55,14 @@ export const save = derived([saveConfig, saveObjects], ([$saveConfig, $saveObjec
 
 
 export function openSave(renderer: Renderer) {
-    console.log("Asking for a file to open");
+    Log.save.info("Asking for a file to open");
     const fileElt = document.createElement("input");
     fileElt.type = "file";
     fileElt.accept = ".w2bzip";
     fileElt.onchange = async (e) => {
         const file = (e.target as HTMLInputElement).files?.[0];
         if (!file) return;
-        console.log("Opening save file");
+        Log.save.info("Opening save file");
         // https://gildas-lormeau.github.io/zip.js/
         const blobReader = new zip.BlobReader(file);
         const reader = new zip.ZipReader(blobReader);
@@ -72,12 +73,12 @@ export function openSave(renderer: Renderer) {
         } else {
             const saveString = await saveEntry.getData!(new zip.TextWriter());
             const saveJSON = JSON.parse(saveString);
-            console.log("Save file opened", saveJSON);
+            Log.save.info("Save file opened", saveJSON);
             const validation = validateAgainstRecord(saveJSON, saveValidator);
             if (!validation.success) {
                 throw new Error("Save file does not match the schema because:\n\n" + validation.logs);
             } else {
-                console.log("Save file is valid, loading it");
+                Log.save.info("Save file is valid, loading it");
                 saveConfig.set(saveJSON as Omit<Save, "objects">);
                 saveObjects.set(saveJSON.objects);
 

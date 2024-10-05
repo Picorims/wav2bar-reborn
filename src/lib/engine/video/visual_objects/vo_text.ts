@@ -23,6 +23,7 @@ import type { SaveVO_Text } from '$lib/store/save_structure/save_latest';
 import { parseCSSTextShadow } from '$lib/string';
 import { TextTimeStringFormatter } from '../tick_units/text_time_string_formatter';
 import type { TickUnit } from '../tick_units/tick_unit';
+import { Log } from '$lib/log/logger';
 
 export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	private _saveId: UUIDv4;
@@ -61,7 +62,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
 
 		this._type = obj.text_type;
-		console.log(this._type, "this._type");
+		Log.default.debug(this._type, "this._type");
 		
 		let textContent = obj.text_content;
 		if (this._type === "time") {

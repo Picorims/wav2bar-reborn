@@ -9,6 +9,7 @@
 	},
 	"license": "GPL-3.0-or-later",
 	"scripts": {
+		"tauri:dev": "npx tauri dev",
 		"dev": "vite dev",
 		"devo": "vite dev --open",
 		"build": "vite build",
