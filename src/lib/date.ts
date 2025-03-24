@@ -16,26 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { Log } from "$lib/log/logger";
-import { writable } from "svelte/store";
-
-export enum ModalType {
-    PROJECT_SETTINGS,
-	SETTINGS,
-}
-
-export const currentModal = writable<ModalType | null>(null);
-
-export function closeModal() {
-    currentModal.set(null);
-}
-
-export const closeModalHandler = () => closeModal();
-
-export function openModal(type: ModalType) {
-    currentModal.set(type);
-}
-
-export function openModalHandler(type: ModalType) {
-    return () => {Log.default.log("g"); openModal(type);}
+export function nowUTCString(): string {
+    return new Date().toISOString();
 }

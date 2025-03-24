@@ -1,12 +1,12 @@
 <script lang="ts">
 	import VisualObjectIcon from '$lib/components/atoms/VisualObjectIcon.svelte';
+	import { Log } from '$lib/log/logger';
 	import { activeObject, saveObjects } from '$lib/store/save';
 	import type {
 		VisualObjectInterface,
 		VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
-	import type { JsonLike, UUIDv4 } from '$lib/types/common_types';
-	import { Binary, Icon } from 'lucide-svelte';
+	import type { UUIDv4 } from '$lib/types/common_types';
 
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -44,7 +44,7 @@
 	on:click={handleClick}
 	class="item"
 	class:selected={uuid === $activeObject}
-    on:focus={() => {console.log("focused")}}
+    on:focus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
 >
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />

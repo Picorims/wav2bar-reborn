@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { Log } from '$lib/log/logger';
 import { AudioProvider } from './audio_provider';
 
 /**
@@ -70,7 +71,7 @@ export class LiveAudioProvider extends AudioProvider {
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	setVolume(_volume: number) {
-		console.log("Live audio provider cannot set volume, doing nothing");
+		Log.audio.info("Live audio provider cannot set volume, doing nothing");
 	}
 	getCurrentAudioTime() {
 		if (this.stopped) {
@@ -86,7 +87,7 @@ export class LiveAudioProvider extends AudioProvider {
 	}
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	seekTo(_time: number) {
-		console.log("Live audio provider cannot seek, doing nothing");
+		Log.audio.info("Live audio provider cannot seek, doing nothing");
 	}
 	isPlaying() {
 		return this.chronoPause === -1;
