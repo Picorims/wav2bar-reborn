@@ -18,6 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // This can be false if you're using a fallback (i.e. SPA mode)
 export const prerender = true;
+/**
+ * @see https://svelte.dev/docs/kit/single-page-apps
+ */
+export const ssr = false; 
 
 import "$lib/css/global.scss";
 

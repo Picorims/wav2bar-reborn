@@ -60,7 +60,7 @@ export const Log = {
     ui: new Logger("ui"),
 }
 
-if (window) {
+if (window !== undefined) {
     window.addEventListener("error", (event) => {
         Log.default.error(event.message);
     });
