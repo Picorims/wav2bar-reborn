@@ -107,27 +107,33 @@
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.position.buttons.left} onClick={toLeft}>
-				<ArrowLeftToLine slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<ArrowLeftToLine slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.position.buttons.horizontal_center}
 				onClick={horizontalCenter}
 			>
-				<AlignHorizontalSpaceAround slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<AlignHorizontalSpaceAround slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.right} onClick={toRight}>
-				<ArrowRightToLine slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<ArrowRightToLine slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.position.buttons.top} onClick={toTop}>
-				<ArrowUpToLine slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<ArrowUpToLine slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.vertical_center} onClick={verticalCenter}>
-				<AlignVerticalSpaceAround slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<AlignVerticalSpaceAround slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.bottom} onClick={toBottom}>
-				<ArrowDownToLine slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<ArrowDownToLine slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 	</ButtonsGroup>

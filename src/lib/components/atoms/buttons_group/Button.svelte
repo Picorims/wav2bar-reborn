@@ -1,3 +1,4 @@
+<!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
 <script lang="ts">
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -57,24 +58,4 @@
 	<slot name="icon-r" />
 </button>
 
-<style lang="scss">
-	@use '../../../css/globals_forward.scss' as g;
-
-	button {
-		@include g.button-secondary;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: g.$spacing-s;
-
-		& > :global(*) {
-			flex: 0 0 auto;
-		}
-		& > span {
-			flex: 1;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			text-wrap: nowrap;
-		}
-	}
-</style>
+<style lang="scss">/*$$__STYLE_CONTENT__$$*/</style>

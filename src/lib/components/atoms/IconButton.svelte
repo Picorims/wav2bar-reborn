@@ -1,5 +1,7 @@
 <script lang="ts">
-    /*
+    
+    interface Props {
+        /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -16,12 +18,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-    export let onClick: () => void = () => {};
-    export let variant: 'primary' | 'secondary' | 'accent' = 'primary';
+        onClick?: () => void;
+        variant?: 'primary' | 'secondary' | 'accent';
+        children?: import('svelte').Snippet;
+    }
+
+    let { onClick = () => {}, variant = 'primary', children }: Props = $props();
 </script>
 
-<button on:click={() => onClick()} type="button" class={`icon-button ${variant}`}>
-    <slot></slot>
+<button onclick={() => onClick()} type="button" class={`icon-button ${variant}`}>
+    {@render children?.()}
 </button>
 
 <style lang="scss">

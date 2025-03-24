@@ -24,10 +24,10 @@
 	import { SkipBack, CirclePlay, CirclePause, SkipForward, IterationCw, IterationCcw, Repeat } from "lucide-svelte";
 	import { onMount } from "svelte";
 
-    let paused = true;
-    let sliderValue = 0;
-    let progressMs = 0;
-    let durationMs = 0;
+    let paused = $state(true);
+    let sliderValue = $state(0);
+    let progressMs = $state(0);
+    let durationMs = $state(0);
 
     function togglePause() {
         paused = !paused;

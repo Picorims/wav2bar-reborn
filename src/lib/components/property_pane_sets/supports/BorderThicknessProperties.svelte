@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -23,8 +25,10 @@
 	import { lang } from "$lib/store/settings";
 
     type ObjT = VisualObject & Supports_BorderThickness;
-    let data: ObjT | null = null;
-    $: $activeObjectData, data = $activeObjectData as ObjT | null;
+    let data: ObjT | null = $state(null);
+    run(() => {
+        $activeObjectData, data = $activeObjectData as ObjT | null;
+    });
 
     function updateBorderThickness(value: number) {
         mutateActiveObject<ObjT>((obj) => {

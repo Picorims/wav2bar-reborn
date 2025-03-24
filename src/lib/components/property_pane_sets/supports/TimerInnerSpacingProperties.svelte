@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -23,9 +25,11 @@
 	import { lang } from "$lib/store/settings";
 
     type ObjT = VisualObject & Supports_TimerInnerSpacing;
-    let data: ObjT | null = null;
+    let data: ObjT | null = $state(null);
 
-    $: $activeObjectData, data = $activeObjectData as ObjT | null;
+    run(() => {
+        $activeObjectData, data = $activeObjectData as ObjT | null;
+    });
 
     function updateTimerInnerSpacing(value: number) {
         mutateActiveObject<ObjT>((obj) => {

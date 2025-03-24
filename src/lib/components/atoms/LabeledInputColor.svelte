@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -20,22 +22,34 @@
 	import { XCircle } from 'lucide-svelte';
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
-	export let title: string = '';
-	export let onChange: (value: string) => void = () => {};
 
 	// forwards =====
-	export let placeholder: string = '';
-	export let disabled: boolean = false;
-	export let required: boolean = true;
-	export let pattern: RegExp = /.+/g;
 	// =====
-	export let defaultValue: string = "";
-	export let value: string = defaultValue;
+	interface Props {
+		title?: string;
+		onChange?: (value: string) => void;
+		placeholder?: string;
+		disabled?: boolean;
+		required?: boolean;
+		pattern?: RegExp;
+		defaultValue?: string;
+		value?: string;
+	}
+
+	let {
+		title = '',
+		onChange = () => {},
+		placeholder = '',
+		disabled = false,
+		required = true,
+		pattern = /.+/g,
+		defaultValue = "",
+		value = $bindable(defaultValue)
+	}: Props = $props();
 	let lastValidValue: string = value;
 
-	let input: HTMLInputElement;
-	let valid = true;
-	$: value, input && checkValidity();
+	let input: HTMLInputElement = $state();
+	let valid = $state(true);
 
 	const doNotLetInInvalidState = () => {
 		if (!valid) input.value = (lastValidValue ?? defaultValue).toString();
@@ -49,6 +63,9 @@
 		checkValidity();
 		if (valid) onChange(value);
 	};
+	run(() => {
+		value, input && checkValidity();
+	});
 </script>
 
 <LabeledInputWrapper {title}>
@@ -56,9 +73,9 @@
 		bind:value
 		bind:this={input}
 		type="color"
-		on:change={handleOnChange}
-		on:input={checkValidity}
-		on:focusout={doNotLetInInvalidState}
+		onchange={handleOnChange}
+		oninput={checkValidity}
+		onfocusout={doNotLetInInvalidState}
 		{placeholder}
 		{disabled}
 		{required}

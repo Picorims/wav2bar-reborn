@@ -34,7 +34,7 @@
 		});
 	}
 
-	let listDiv: HTMLDivElement;
+	let listDiv: HTMLDivElement = $state();
 	function enterList(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
 			(listDiv.children[0] as HTMLDivElement).focus();
@@ -57,13 +57,13 @@
 			</IconButton>
 		</div>
 	</div>
-	<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div
 		bind:this={listDiv}
 		class="content"
 		role="list"
-		on:keyup={enterList}
+		onkeyup={enterList}
 		tabindex="-1"
 	>
 		<!-- Content -->

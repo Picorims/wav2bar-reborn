@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -22,8 +24,10 @@
 	import type { Supports_BorderRadius, VisualObject } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
 
-    let data: (VisualObject & Supports_BorderRadius) | null = null;
-    $: $activeObjectData, data = $activeObjectData as (VisualObject & Supports_BorderRadius) | null;
+    let data: (VisualObject & Supports_BorderRadius) | null = $state(null);
+    run(() => {
+        $activeObjectData, data = $activeObjectData as (VisualObject & Supports_BorderRadius) | null;
+    });
 
     function updateBorderRadius(value: string) {
 		mutateActiveObject<VisualObject & Supports_BorderRadius>((obj) => {

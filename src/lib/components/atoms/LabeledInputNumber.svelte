@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -20,25 +22,40 @@
 	import { MoveVertical, XCircle } from 'lucide-svelte';
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
-	export let title: string = '';
-	export let unit: string = '';
-	export let onChange: (value: number) => void = () => {};
 
 	// forwards =====
-	export let placeholder: string = '';
-	export let min: number = -Infinity;
-	export let max: number = Infinity;
-	export let step: number = 1;
-	export let disabled: boolean = false;
-	export let required: boolean = true;
 	// =====
-	export let defaultValue: number = 0;
-	export let value: number = defaultValue;
+	interface Props {
+		title?: string;
+		unit?: string;
+		onChange?: (value: number) => void;
+		placeholder?: string;
+		min?: number;
+		max?: number;
+		step?: number;
+		disabled?: boolean;
+		required?: boolean;
+		defaultValue?: number;
+		value?: number;
+	}
+
+	let {
+		title = '',
+		unit = '',
+		onChange = () => {},
+		placeholder = '',
+		min = -Infinity,
+		max = Infinity,
+		step = 1,
+		disabled = false,
+		required = true,
+		defaultValue = 0,
+		value = $bindable(defaultValue)
+	}: Props = $props();
 	let lastValidValue: number = value;
 
-	let input: HTMLInputElement;
-	let valid = true;
-	$: value, input && checkValidity();
+	let input: HTMLInputElement = $state();
+	let valid = $state(true);
 
 	const doNotLetInInvalidState = () => {
 		if (!valid) input.value = (lastValidValue ?? defaultValue).toString();
@@ -52,6 +69,9 @@
 		checkValidity();
 		if (valid) onChange(value);
 	};
+	run(() => {
+		value, input && checkValidity();
+	});
 </script>
 
 <LabeledInputWrapper {title}>
@@ -59,9 +79,9 @@
 		bind:value
 		bind:this={input}
 		type="number"
-		on:change={handleOnChange}
-		on:input={checkValidity}
-		on:focusout={doNotLetInInvalidState}
+		onchange={handleOnChange}
+		oninput={checkValidity}
+		onfocusout={doNotLetInInvalidState}
 		{placeholder}
 		{min}
 		{max}

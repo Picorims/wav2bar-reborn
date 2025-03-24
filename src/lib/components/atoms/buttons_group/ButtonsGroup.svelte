@@ -1,4 +1,9 @@
 <script lang="ts">
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -19,7 +24,7 @@
 </script>
 
 <div class="container">
-    <slot></slot>
+    {@render children?.()}
 </div>
 
 <style lang="scss">

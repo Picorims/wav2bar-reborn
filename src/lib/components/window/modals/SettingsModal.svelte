@@ -52,7 +52,9 @@
         onChange={onThemeChange}
 	></LabeledDropdown>
 
-    <button slot="buttons" class="close" on:click={closeModalHandler}>{$lang.settings.close}</button>
+    {#snippet buttons()}
+		<button  class="close" onclick={closeModalHandler}>{$lang.settings.close}</button>
+	{/snippet}
 </Modal>
 
 <style lang="scss">

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -27,11 +29,17 @@
 	import VisualizerBarProperties from './VisualizerBarProperties.svelte';
 	import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
 
-    export let kind: "circular" | "bar" = "bar";
+    interface Props {
+        kind?: "circular" | "bar";
+    }
+
+    let { kind = "bar" }: Props = $props();
 
 	type ObjT = VisualObject & Supports_VisualizerProps_V4;
-	let data: ObjT | null = null;
-	$: $activeObjectData, (data = $activeObjectData as ObjT | null);
+	let data: ObjT | null = $state(null);
+	run(() => {
+        $activeObjectData, (data = $activeObjectData as ObjT | null);
+    });
 
 	function updateVisualizerPointsCount(value: number) {
 		if (value < 1) return;

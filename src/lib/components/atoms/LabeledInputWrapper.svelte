@@ -19,18 +19,23 @@
 
     import LabelWrapper from './LabelWrapper.svelte';
 
-	export let title = 'title';
+    interface Props {
+        title?: string;
+        children?: import('svelte').Snippet;
+    }
+
+    let { title = 'title', children }: Props = $props();
 </script>
 
 {#if title != ''}
 	<LabelWrapper {title}>
 		<div class="input">
-			<slot></slot>
+			{@render children?.()}
 		</div>
 	</LabelWrapper>
 {:else}
 	<div class="input alone">
-		<slot></slot>
+		{@render children?.()}
 	</div>
 {/if}
 

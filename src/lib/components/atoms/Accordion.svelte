@@ -19,8 +19,13 @@
 
 	import { ChevronDown, ChevronRight } from 'lucide-svelte';
 
-	export let label: string;
-	export let open: boolean = false;
+    interface Props {
+        label: string;
+        open?: boolean;
+        children?: import('svelte').Snippet;
+    }
+
+    let { label, open = $bindable(false), children }: Props = $props();
 </script>
 
 <details bind:open>
@@ -35,7 +40,7 @@
         </div>
 	</summary>
 	<div class="content">
-		<slot />
+		{@render children?.()}
 	</div>
 </details>
 
