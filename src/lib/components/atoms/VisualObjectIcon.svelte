@@ -1,8 +1,5 @@
 <script lang="ts">
-	import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
-	import { AudioLines, Box, Clock, Shapes, Sparkles, Type } from 'lucide-svelte';
-
-	/*
+    /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -20,7 +17,15 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	export let type: VisualObject_Type;
+    import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
+	import { AudioLines, Box, Clock, Shapes, Sparkles, Type } from 'lucide-svelte';
+
+    interface Props {
+
+        type: VisualObject_Type;
+    }
+
+    let { type }: Props = $props();
 </script>
 
 {#if type === 'particle_flow'}

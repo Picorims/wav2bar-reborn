@@ -23,8 +23,12 @@
 	import { openSave } from "$lib/store/save";
 	import { renderer } from "$lib/engine/video/renderer";
 
-	export let title = "";
-	export let saved = false;
+	interface Props {
+		title?: string;
+		saved?: boolean;
+	}
+
+	let { title = "", saved = false }: Props = $props();
 
 	function openAndLoadSave() {
 		openSave(renderer);

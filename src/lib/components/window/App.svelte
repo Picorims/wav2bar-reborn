@@ -30,8 +30,8 @@
 
 	let saved = false;
 	let projectTitle = "New Project";
-	let windowWidth: number;
-	let windowHeight: number;
+	let windowWidth: number = $state();
+	let windowHeight: number = $state();
 </script>
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight}/>
@@ -80,7 +80,7 @@
 {#if $currentModal === ModalType.PROJECT_SETTINGS}
 	<Modal title="Project Settings">
 		<p>Project settings go here</p>
-		<button on:click={() => {currentModal.set(null)}}>Close</button>
+		<button onclick={() => {currentModal.set(null)}}>Close</button>
 	</Modal>
 {:else if $currentModal === ModalType.SETTINGS}
 	<SettingsModal/>

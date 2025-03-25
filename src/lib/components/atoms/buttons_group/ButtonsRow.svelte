@@ -17,14 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-    /**
-     * Must be defined manually in the parent component.
-     */
-   export let columns = 1;
+    
+   interface Props {
+      /**
+        * Must be defined manually in the parent component.
+        */
+      columns?: number;
+      children?: import('svelte').Snippet;
+   }
+
+   let { columns = 1, children }: Props = $props();
 </script>
 
 <div class="row" style={`--columns-count: ${columns}`}>
-    <slot></slot>
+    {@render children?.()}
 </div>
 
 <style lang="scss">

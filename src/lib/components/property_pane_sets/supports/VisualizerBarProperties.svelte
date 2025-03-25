@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts"> 
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -16,15 +16,18 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
-	import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
-	import { mutateActiveObject, activeObjectData } from "$lib/store/save";
-	import type { Supports_VisualizerBarProps, VisualObject } from "$lib/store/save_structure/save_latest";
-	import { lang } from "$lib/store/settings";
+   
+    import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
+    import { mutateActiveObject, activeObjectData } from "$lib/store/save";
+    import type { Supports_VisualizerBarProps, VisualObject } from "$lib/store/save_structure/save_latest";
+    import { lang } from "$lib/store/settings";
+    import { run } from 'svelte/legacy';
 
     type ObjT = VisualObject & Supports_VisualizerBarProps;
-    let data: ObjT | null = null;
-    $: $activeObjectData, data = $activeObjectData as ObjT | null;
+    let data: ObjT | null = $state(null);
+    run(() => {
+        $activeObjectData, data = $activeObjectData as ObjT | null;
+    });
 
     function updateBarThickness(value: number) {
         mutateActiveObject<ObjT>((obj) => {

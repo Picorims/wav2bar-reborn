@@ -18,17 +18,23 @@
     */
 	import { fade } from "svelte/transition";
 
-    export let title = "Default Title";
+    interface Props {
+        title?: string;
+        children?: import('svelte').Snippet;
+        buttons?: import('svelte').Snippet;
+    }
+
+    let { title = "Default Title", children, buttons }: Props = $props();
 </script>
 
 <div class="background" transition:fade={{duration: 250}}>
     <div class="modal">
         <h2 class="title">{title}</h2>
 
-        <slot></slot>
+        {@render children?.()}
         
         <div class="buttons-container">
-            <slot name="buttons"></slot>
+            {@render buttons?.()}
         </div>
     </div>
 </div>

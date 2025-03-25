@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
@@ -34,15 +36,17 @@
 
 	type ObjT = VisualObject & Supports_Background;
 
-	let data: ObjT | null = null;
-	$: $activeObjectData, (data = $activeObjectData as ObjT | null);
+	let data: ObjT | null = $state(null);
+	run(() => {
+		$activeObjectData, (data = $activeObjectData as ObjT | null);
+	});
 
 	const DEFAULT_SIZE_TYPE = 'cover';
 	const DEFAULT_SIZE_X = 100;
 	const DEFAULT_SIZE_Y = 100;
-	let sizeType = DEFAULT_SIZE_TYPE;
-	let sizeX = DEFAULT_SIZE_X;
-	let sizeY = DEFAULT_SIZE_Y;
+	let sizeType = $state(DEFAULT_SIZE_TYPE);
+	let sizeX = $state(DEFAULT_SIZE_X);
+	let sizeY = $state(DEFAULT_SIZE_Y);
 
 	function updateBackgroundType(value: string) {
 		mutateActiveObject<ObjT>((obj) => {
@@ -138,13 +142,15 @@
 		});
 	}
 
-	$: sizeType, sizeX, sizeY, updateBackgroundSize();
-	$: {
+	run(() => {
+		sizeType, sizeX, sizeY, updateBackgroundSize();
+	});
+	run(() => {
 		const parsed = parseBackgroundSize(data?.background.size ?? '');
 		sizeType = parsed.size_type;
 		sizeX = parseInt(parsed.size_x);
 		sizeY = parseInt(parsed.size_y);
-	}
+	});
 
 	function updateBackgroundRepeat(v: string) {
 		mutateActiveObject<ObjT>((obj) => {

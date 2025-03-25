@@ -17,21 +17,34 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
+	import { run } from 'svelte/legacy';
+
 	import LabelWrapper from "./LabelWrapper.svelte";
 
-	export let optionsArr: string[] | null = null;
-	export let optionsObj: Record<string, string> | null = null;
-	export let title: string = '';
-	export let onChange: (key: string) => void = () => {};
-	export let value: string = '';
+	interface Props {
+		optionsArr?: string[] | null;
+		optionsObj?: Record<string, string> | null;
+		title?: string;
+		onChange?: (key: string) => void;
+		value?: string;
+	}
+
+	let {
+		optionsArr = null,
+		optionsObj = null,
+		title = '',
+		onChange = () => {},
+		value = $bindable('')
+	}: Props = $props();
 	
 	const handleOnChange = (e: Event) => {
 		const select = e.target as HTMLSelectElement;
 		onChange(select.value);
 	}
 	
-	let options: {key: string, value: string}[] = [];
-	$: {
+	let options: {key: string, value: string}[] = $state([]);
+	// TODO migrate to svelte 5
+	run(() => {
 		options = [];
 		if (optionsArr) {
 			for (let i = 0; i < optionsArr.length; i++) {
@@ -53,11 +66,11 @@
 		if (value === '') {
 			value = options[0].key;
 		}
-	}
+	});
 </script>
 
 <LabelWrapper {title}>
-	<select class="select" on:change={handleOnChange} bind:value>
+	<select class="select" onchange={handleOnChange} bind:value>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}

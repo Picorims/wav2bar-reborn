@@ -16,12 +16,21 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-    export let onClick: () => void = () => {};
-    export let variant: 'primary' | 'secondary' | 'accent' = 'primary';
+
+    import type { Snippet } from "svelte";
+
+
+    interface Props {
+        onClick?: () => void;
+        variant?: 'primary' | 'secondary' | 'accent';
+        children?: Snippet;
+    }
+
+    let { onClick = () => {}, variant = 'primary', children }: Props = $props();
 </script>
 
-<button on:click={() => onClick()} type="button" class={`icon-button ${variant}`}>
-    <slot></slot>
+<button onclick={() => onClick()} type="button" class={`icon-button ${variant}`}>
+    {@render children?.()}
 </button>
 
 <style lang="scss">

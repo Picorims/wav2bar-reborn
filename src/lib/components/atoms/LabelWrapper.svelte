@@ -1,5 +1,5 @@
 <script lang="ts">
-	/*
+    /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -17,13 +17,20 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
 
-	export let title: string;
-    export let fixedLabelWidth = true;
+	import type { Snippet } from "svelte";
+
+    interface Props {
+        title: string;
+        fixedLabelWidth?: boolean;
+        children?: Snippet;
+    }
+
+    let { title, fixedLabelWidth = true, children }: Props = $props();
 </script>
 
 <label class="container">
 	<span class="label" class:fixedLabelWidth>{title}:</span>
-	<slot />
+	{@render children?.()}
 </label>
 
 <style lang="scss">

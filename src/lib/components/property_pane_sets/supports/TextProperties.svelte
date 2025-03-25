@@ -16,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
+   
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
@@ -28,11 +28,14 @@
 	import type { Supports_TextProps, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { ArrowUpToLine, Bold, Italic, Strikethrough, Underline } from 'lucide-svelte';
+	import { run } from 'svelte/legacy';
 
 	type ObjT = VisualObject & Supports_TextProps;
 
-	let data: ObjT | null = null;
-	$: $activeObjectData, (data = $activeObjectData as ObjT | null);
+	let data: ObjT | null = $state(null);
+	run(() => {
+		$activeObjectData, (data = $activeObjectData as ObjT | null);
+	});
 
 	function updateTextType(value: string) {
 		mutateActiveObject<ObjT>((obj) => {
@@ -132,7 +135,8 @@
 				toggled={data?.text_decoration.italic}
 				onToggle={updateItalic}
 			>
-				<Italic slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<Italic slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.bold}
@@ -140,7 +144,8 @@
 				toggled={data?.text_decoration.bold}
 				onToggle={updateBold}
 			>
-				<Bold slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<Bold slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.underline}
@@ -148,7 +153,8 @@
 				toggled={data?.text_decoration.underline}
 				onToggle={updateUnderline}
 			>
-				<Underline slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<Underline slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.overline}
@@ -156,7 +162,8 @@
 				toggled={data?.text_decoration.overline}
 				onToggle={updateOverline}
 			>
-				<ArrowUpToLine slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<ArrowUpToLine slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.line_through}
@@ -164,7 +171,8 @@
 				toggled={data?.text_decoration.line_through}
 				onToggle={updateLineThrough}
 			>
-				<Strikethrough slot="icon-r" />
+				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
+	<Strikethrough slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 	</ButtonsGroup>

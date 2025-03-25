@@ -16,10 +16,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+
+    interface Props {
+        children?: import('svelte').Snippet;
+    }
+
+    let { children }: Props = $props();
 </script>
 
 <div class="container">
-    <slot></slot>
+    {@render children?.()}
 </div>
 
 <style lang="scss">

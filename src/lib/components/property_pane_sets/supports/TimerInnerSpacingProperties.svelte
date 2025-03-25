@@ -16,16 +16,19 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
-	import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
-	import { mutateActiveObject, activeObjectData } from "$lib/store/save";
-	import type { Supports_TimerInnerSpacing, VisualObject } from "$lib/store/save_structure/save_latest";
-	import { lang } from "$lib/store/settings";
+   
+    import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
+    import { mutateActiveObject, activeObjectData } from "$lib/store/save";
+    import type { Supports_TimerInnerSpacing, VisualObject } from "$lib/store/save_structure/save_latest";
+    import { lang } from "$lib/store/settings";
+    import { run } from 'svelte/legacy';
 
     type ObjT = VisualObject & Supports_TimerInnerSpacing;
-    let data: ObjT | null = null;
+    let data: ObjT | null = $state(null);
 
-    $: $activeObjectData, data = $activeObjectData as ObjT | null;
+    run(() => {
+        $activeObjectData, data = $activeObjectData as ObjT | null;
+    });
 
     function updateTimerInnerSpacing(value: number) {
         mutateActiveObject<ObjT>((obj) => {

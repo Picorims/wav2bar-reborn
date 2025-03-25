@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { run } from 'svelte/legacy';
+
     /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -24,8 +26,10 @@
 
     type ObjT = VisualObject & Supports_Color;
 
-    let data: ObjT | null = null;
-    $: $activeObjectData, (data = $activeObjectData as ObjT | null);
+    let data: ObjT | null = $state(null);
+    run(() => {
+        $activeObjectData, (data = $activeObjectData as ObjT | null);
+    });
 
     function updateColor(value: string) {
         mutateActiveObject<ObjT>((obj) => {

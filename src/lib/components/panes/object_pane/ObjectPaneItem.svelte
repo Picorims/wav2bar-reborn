@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import VisualObjectIcon from '$lib/components/atoms/VisualObjectIcon.svelte';
 	import { Log } from '$lib/log/logger';
 	import { activeObject, saveObjects } from '$lib/store/save';
@@ -30,21 +32,27 @@
         $activeObject = uuid;
     };
 
-	export let uuid: UUIDv4;
-	let data: VisualObjectInterface<VisualObject_Type> | null = null;
-	$: data = $saveObjects[uuid] as VisualObjectInterface<VisualObject_Type> | null;
+	interface Props {
+		uuid: UUIDv4;
+	}
+
+	let { uuid }: Props = $props();
+	let data: VisualObjectInterface<VisualObject_Type> | null = $state(null);
+	run(() => {
+		data = $saveObjects[uuid] as VisualObjectInterface<VisualObject_Type> | null;
+	});
 </script>
 
-<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	role="listitem"
     tabindex="0"
-	on:keyup={(e) => {if (e.key === 'Enter') handleClick()}}
-	on:click={handleClick}
+	onkeyup={(e) => {if (e.key === 'Enter') handleClick()}}
+	onclick={handleClick}
 	class="item"
 	class:selected={uuid === $activeObject}
-    on:focus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
+    onfocus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
 >
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />
