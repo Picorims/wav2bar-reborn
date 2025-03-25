@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -18,7 +16,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
+   
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
@@ -30,6 +28,7 @@
 	import type { Supports_TextProps, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { ArrowUpToLine, Bold, Italic, Strikethrough, Underline } from 'lucide-svelte';
+	import { run } from 'svelte/legacy';
 
 	type ObjT = VisualObject & Supports_TextProps;
 

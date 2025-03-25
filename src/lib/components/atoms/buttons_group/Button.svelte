@@ -58,4 +58,24 @@
 	<slot name="icon-r" />
 </button>
 
-<style lang="scss">/*$$__STYLE_CONTENT__$$*/</style>
+<style lang="scss">
+	@use '../../../css/globals_forward.scss' as g;
+
+	button {
+		@include g.button-secondary;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: g.$spacing-s;
+
+		& > :global(*) {
+			flex: 0 0 auto;
+		}
+		& > span {
+			flex: 1;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			text-wrap: nowrap;
+		}
+	}
+</style>

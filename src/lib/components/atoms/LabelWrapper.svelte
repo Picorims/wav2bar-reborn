@@ -1,8 +1,5 @@
 <script lang="ts">
-	
-
-    interface Props {
-        /*
+    /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -19,9 +16,13 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+
+	import type { Snippet } from "svelte";
+
+    interface Props {
         title: string;
         fixedLabelWidth?: boolean;
-        children?: import('svelte').Snippet;
+        children?: Snippet;
     }
 
     let { title, fixedLabelWidth = true, children }: Props = $props();

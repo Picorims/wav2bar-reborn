@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -23,15 +21,15 @@
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
 
-	// forwards =====
-	// =====
 	interface Props {
 		title?: string;
 		onChange?: (value: string) => void;
+		// forwards =====
 		placeholder?: string;
 		disabled?: boolean;
 		required?: boolean;
 		pattern?: RegExp;
+		// =====
 		defaultValue?: string;
 		value?: string;
 	}
@@ -48,14 +46,15 @@
 	}: Props = $props();
 	let lastValidValue: string = value;
 
-	let input: HTMLInputElement = $state();
+	let input: HTMLInputElement | undefined = $state();
 	let valid = $state(true);
 
 	const doNotLetInInvalidState = () => {
-		if (!valid) input.value = (lastValidValue ?? defaultValue).toString();
+		if (!valid && input) input.value = (lastValidValue ?? defaultValue).toString();
 	};
 
 	const checkValidity = () => {
+		if (!input) return;
 		valid = input.checkValidity();
 		if (valid) lastValidValue = value;
 	};
@@ -63,8 +62,8 @@
 		checkValidity();
 		if (valid) onChange(value);
 	};
-	run(() => {
-		value, input && checkValidity();
+	$effect(() => {
+		checkValidity();
 	});
 </script>
 

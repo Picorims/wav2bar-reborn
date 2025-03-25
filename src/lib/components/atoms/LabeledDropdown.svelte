@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
@@ -18,6 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+
+	import { run } from 'svelte/legacy';
 
 	import LabelWrapper from "./LabelWrapper.svelte";
 
@@ -43,6 +43,7 @@
 	}
 	
 	let options: {key: string, value: string}[] = $state([]);
+	// TODO migrate to svelte 5
 	run(() => {
 		options = [];
 		if (optionsArr) {

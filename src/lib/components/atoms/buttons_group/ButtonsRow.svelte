@@ -20,8 +20,8 @@
     
    interface Props {
       /**
-     * Must be defined manually in the parent component.
-     */
+        * Must be defined manually in the parent component.
+        */
       columns?: number;
       children?: import('svelte').Snippet;
    }

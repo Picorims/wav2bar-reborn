@@ -1,7 +1,5 @@
 <script lang="ts">
-    import { run } from 'svelte/legacy';
-
-	/*
+    /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -18,19 +16,20 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
-
-	import Accordion from '$lib/components/atoms/Accordion.svelte';
-	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
-	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
-	import type { VisualObject } from '$lib/store/save_structure/save_latest';
-	import type { Supports_VisualizerProps_V4 } from '$lib/store/save_structure/save_v4';
-	import { lang } from '$lib/store/settings';
-	import VisualizerBarProperties from './VisualizerBarProperties.svelte';
-	import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
-
+   
+    import Accordion from '$lib/components/atoms/Accordion.svelte';
+    import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
+    import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
+    import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+    import type { VisualObject } from '$lib/store/save_structure/save_latest';
+    import type { Supports_VisualizerProps_V4 } from '$lib/store/save_structure/save_v4';
+    import { lang } from '$lib/store/settings';
+    import VisualizerBarProperties from './VisualizerBarProperties.svelte';
+    import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
+        import { run } from 'svelte/legacy';
+    
     interface Props {
-        kind?: "circular" | "bar";
+       kind?: "circular" | "bar";
     }
 
     let { kind = "bar" }: Props = $props();

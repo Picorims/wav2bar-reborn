@@ -18,11 +18,12 @@
     */
 
 	import { ChevronDown, ChevronRight } from 'lucide-svelte';
+	import type { Snippet } from 'svelte';
 
     interface Props {
         label: string;
         open?: boolean;
-        children?: import('svelte').Snippet;
+        children?: Snippet;
     }
 
     let { label, open = $bindable(false), children }: Props = $props();

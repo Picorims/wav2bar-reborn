@@ -1,11 +1,5 @@
 <script lang="ts">
-	import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
-	import { AudioLines, Box, Clock, Shapes, Sparkles, Type } from 'lucide-svelte';
-
-	
-
-    interface Props {
-        /*
+    /*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
     Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
     
@@ -22,6 +16,12 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
+
+    import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
+	import { AudioLines, Box, Clock, Shapes, Sparkles, Type } from 'lucide-svelte';
+
+    interface Props {
+
         type: VisualObject_Type;
     }
 
