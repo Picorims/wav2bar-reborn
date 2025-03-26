@@ -100,6 +100,18 @@ class SaveManager {
         })
         this._saveConfig.objects[this.activeObject as UUIDv4] = mutator(typedDeepClone<T>(this.activeObjectData as T));
     }
+
+    private _handlers: ((save: Save) => void)[] = [];
+
+    public subscribe(callback: (save: Save) => void) {
+        this._handlers.push(callback);
+    }
+
+    $effect() {
+        for (const handler of this._handlers) {
+            handler(this.save);
+        }
+    }
 }
 
 export const saveManager = new SaveManager();

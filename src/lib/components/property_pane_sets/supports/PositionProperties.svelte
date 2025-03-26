@@ -22,7 +22,7 @@
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { saveManager } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { CHAR_DEGREE } from '$lib/string';

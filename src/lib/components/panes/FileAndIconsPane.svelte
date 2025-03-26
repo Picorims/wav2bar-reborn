@@ -20,7 +20,7 @@
 	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from "lucide-svelte";
 	import { currentModal, ModalType } from "$lib/store/modal";
 	import { openModalHandler } from "$lib/store/modal";
-	import { saveManager } from "$lib/store/save";
+	import { saveManager } from "$lib/store/save.svelte";
 	import { renderer } from "$lib/engine/video/renderer";
 
 	interface Props {

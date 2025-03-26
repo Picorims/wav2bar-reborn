@@ -26,7 +26,7 @@ import {
 	type VisualObjectRenderer
 } from './visual_objects/visual_object_renderer';
 import { VO_Text } from './visual_objects/vo_text';
-import { saveManager } from '$lib/store/save';
+import { saveManager } from '$lib/store/save.svelte';
 import { Log } from '$lib/log/logger';
 
 interface RendererEvent<T extends RendererEventName> {
@@ -72,7 +72,7 @@ export class Renderer {
 		this.app.ticker.autoStart = true;
 		this.app.ticker.add(() => this.update());
 
-		$effect(() => {
+		saveManager.subscribe(() => {
 			for (const e of this.events) {
 				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 

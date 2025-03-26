@@ -20,7 +20,7 @@
     import Accordion from '$lib/components/atoms/Accordion.svelte';
     import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
     import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-    import { saveManager } from '$lib/store/save';
+    import { saveManager } from '$lib/store/save.svelte';
     import type { VisualObject } from '$lib/store/save_structure/save_latest';
     import type { Supports_VisualizerProps_V4 } from '$lib/store/save_structure/save_v4';
     import { lang } from '$lib/store/settings';

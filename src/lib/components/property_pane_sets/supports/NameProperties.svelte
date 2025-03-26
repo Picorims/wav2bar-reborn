@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
-	import { saveManager } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import type { Int } from '$lib/types/common_types';

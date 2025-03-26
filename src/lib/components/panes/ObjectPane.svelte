@@ -6,7 +6,7 @@
 		visualObject_types,
 		type VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
-	import { saveManager } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
 
 	/*

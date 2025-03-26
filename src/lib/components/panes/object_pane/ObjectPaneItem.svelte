@@ -8,7 +8,7 @@
 		VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
 	import type { UUIDv4 } from '$lib/types/common_types';
-	import { saveManager } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos

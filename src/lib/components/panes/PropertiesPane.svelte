@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { saveManager } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import { AlignCenter } from 'lucide-svelte';
 	import Accordion from '../atoms/Accordion.svelte';
 	import Button from '../atoms/buttons_group/Button.svelte';
