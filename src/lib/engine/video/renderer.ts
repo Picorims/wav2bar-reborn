@@ -72,7 +72,7 @@ export class Renderer {
 		this.app.ticker.autoStart = true;
 		this.app.ticker.add(() => this.update());
 
-		saveManager.subscribe(() => {
+		saveManager.subscribeToMutations(() => {
 			for (const e of this.events) {
 				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 
