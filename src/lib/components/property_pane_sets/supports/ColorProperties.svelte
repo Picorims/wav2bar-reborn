@@ -20,19 +20,16 @@
     */
 
 	import LabeledInputColor from "$lib/components/atoms/LabeledInputColor.svelte";
-	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import { saveManager } from "$lib/store/save";
 	import type { Supports_Color, VisualObject } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
 
     type ObjT = VisualObject & Supports_Color;
 
-    let data: ObjT | null = $state(null);
-    run(() => {
-        $activeObjectData, (data = $activeObjectData as ObjT | null);
-    });
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
     function updateColor(value: string) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.color = value as Supports_Color['color'];
             return obj;
         });

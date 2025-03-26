@@ -24,66 +24,62 @@
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save';
 	import type { Supports_TextProps, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { ArrowUpToLine, Bold, Italic, Strikethrough, Underline } from 'lucide-svelte';
-	import { run } from 'svelte/legacy';
 
 	type ObjT = VisualObject & Supports_TextProps;
 
-	let data: ObjT | null = $state(null);
-	run(() => {
-		$activeObjectData, (data = $activeObjectData as ObjT | null);
-	});
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
 	function updateTextType(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_type = value as Supports_TextProps['text_type'];
 			return obj;
 		});
 	}
 
 	function updateTextContent(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_content = value as Supports_TextProps['text_content'];
 			return obj;
 		});
 	}
 
 	function updateFontSize(value: number) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.font_size = value as Supports_TextProps['font_size'];
 			return obj;
 		});
 	}
 
 	function updateItalic(value: boolean) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_decoration.italic = value as Supports_TextProps['text_decoration']['italic'];
 			return obj;
 		});
 	}
 	function updateBold(value: boolean) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_decoration.bold = value as Supports_TextProps['text_decoration']['bold'];
 			return obj;
 		});
 	}
 	function updateUnderline(value: boolean) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_decoration.underline = value as Supports_TextProps['text_decoration']['underline'];
 			return obj;
 		});
 	}
 	function updateOverline(value: boolean) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_decoration.overline = value as Supports_TextProps['text_decoration']['overline'];
 			return obj;
 		});
 	}
 	function updateLineThrough(value: boolean) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_decoration.line_through =
 				value as Supports_TextProps['text_decoration']['line_through'];
 			return obj;
@@ -91,14 +87,14 @@
 	}
 
 	function updateTextAlign(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.text_align.horizontal = value as Supports_TextProps['text_align']['horizontal'];
 			return obj;
 		});
 	}
 
     function updateTextShadow(value: string) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.text_shadow = value as Supports_TextProps['text_shadow'];
             return obj;
         });

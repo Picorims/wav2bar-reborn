@@ -20,69 +20,65 @@
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save';
 	import type { Supports_ParticleProps, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
-    import { run } from 'svelte/legacy';
 
 	type ObjT = VisualObject & Supports_ParticleProps;
 
-	let data: ObjT | null = $state(null);
-	run(() => {
-        $activeObjectData, (data = $activeObjectData as ObjT | null);
-    });
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
 	function updateRadiusMin(value: number) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.particle_radius_range[0] = value as Supports_ParticleProps['particle_radius_range'][0];
 			return obj;
 		});
 	}
     
     function updateRadiusMax(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.particle_radius_range[1] = value as Supports_ParticleProps['particle_radius_range'][1];
             return obj;
         });
     }
 
     function updateFlowType(value: string) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.flow_type = value as Supports_ParticleProps['flow_type'];
             return obj;
         });
     }
 
     function updateFlowCenterX(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.flow_center[0] = value as Supports_ParticleProps['flow_center'][0];
             return obj;
         });
     }
 
     function updateFlowCenterY(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.flow_center[1] = value as Supports_ParticleProps['flow_center'][1];
             return obj;
         });
     }
 
     function updateFlowDirection(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.flow_direction = value as Supports_ParticleProps['flow_direction'];
             return obj;
         });
     }
 
     function updateSpawnProbability(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.particle_spawn_probability = value as Supports_ParticleProps['particle_spawn_probability'];
             return obj;
         });
     }
 
     function updateSpawnTests(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.particle_spawn_tests = value as Supports_ParticleProps['particle_spawn_tests'];
             return obj;
         });

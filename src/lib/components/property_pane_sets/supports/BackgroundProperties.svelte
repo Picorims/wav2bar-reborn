@@ -24,7 +24,7 @@
     */
 
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save';
 	import type {
 		Save,
 		Supports_Background,
@@ -36,10 +36,7 @@
 
 	type ObjT = VisualObject & Supports_Background;
 
-	let data: ObjT | null = $state(null);
-	run(() => {
-		$activeObjectData, (data = $activeObjectData as ObjT | null);
-	});
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
 	const DEFAULT_SIZE_TYPE = 'cover';
 	const DEFAULT_SIZE_X = 100;
@@ -49,21 +46,21 @@
 	let sizeY = $state(DEFAULT_SIZE_Y);
 
 	function updateBackgroundType(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.background.type = value as Supports_Background['background']['type'];
 			return obj;
 		});
 	}
 
 	function updateColor(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.background.last_color = value;
 			return obj;
 		});
 	}
 
 	function updateGradient(value: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.background.last_gradient = value;
 			return obj;
 		});
@@ -136,7 +133,7 @@
 	}
 
 	function updateBackgroundSize() {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.background.size = stringifyBackgroundSize(sizeType, sizeX.toString(), sizeY.toString());
 			return obj;
 		});
@@ -153,7 +150,7 @@
 	});
 
 	function updateBackgroundRepeat(v: string) {
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.background.repeat = v.replaceAll("-", "_") as Supports_Background['background']['repeat'];
 			return obj;
 		});

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import type { Int } from '$lib/types/common_types';
@@ -24,7 +24,7 @@
     */
 
 	function updateName(value: string) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.name = value;
 			return obj;
 		});
@@ -33,6 +33,6 @@
 
 <LabeledInputText
 	title={$lang.properties.name.title}
-	value={$activeObjectData?.name}
+	value={saveManager.activeObjectData?.name}
 	onChange={updateName}
 />

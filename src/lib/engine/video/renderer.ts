@@ -26,7 +26,7 @@ import {
 	type VisualObjectRenderer
 } from './visual_objects/visual_object_renderer';
 import { VO_Text } from './visual_objects/vo_text';
-import { save } from '$lib/store/save';
+import { saveManager } from '$lib/store/save';
 import { Log } from '$lib/log/logger';
 
 interface RendererEvent<T extends RendererEventName> {
@@ -72,14 +72,14 @@ export class Renderer {
 		this.app.ticker.autoStart = true;
 		this.app.ticker.add(() => this.update());
 
-		save.subscribe((newSave) => {
+		$effect(() => {
 			for (const e of this.events) {
 				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 
 				if (e.name === 'object_register') {
-					this.registerObject(e.payload.id, newSave.objects[e.payload.id]);
+					this.registerObject(e.payload.id, saveManager.save.objects[e.payload.id]);
 				} else if (e.name === 'object_update') {
-					this.updateObject(e.payload.id, newSave.objects[e.payload.id]);
+					this.updateObject(e.payload.id, saveManager.save.objects[e.payload.id]);
 				}
 			}
 			this.events = [];

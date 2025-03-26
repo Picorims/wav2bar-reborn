@@ -19,19 +19,15 @@
     */
    
     import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
-    import { mutateActiveObject, activeObjectData } from "$lib/store/save";
+    import { saveManager } from "$lib/store/save";
     import type { Supports_VisualizerBarProps, Supports_VisualizerCircularProps, VisualObject } from "$lib/store/save_structure/save_latest";
     import { lang } from "$lib/store/settings";
-    import { run } from 'svelte/legacy';
 
     type ObjT = VisualObject & Supports_VisualizerCircularProps;
-    let data: ObjT | null = $state(null);
-    run(() => {
-        $activeObjectData, data = $activeObjectData as ObjT | null;
-    });
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
     function updateRadius(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.visualizer_radius = value as Supports_VisualizerCircularProps['visualizer_radius'];
             return obj;
         });

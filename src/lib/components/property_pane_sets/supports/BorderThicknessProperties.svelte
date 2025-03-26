@@ -18,19 +18,16 @@
     */
 
 	import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
-	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import { saveManager } from "$lib/store/save";
 	import type { VisualObject, Supports_BorderThickness } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
     import { run } from 'svelte/legacy';
     
     type ObjT = VisualObject & Supports_BorderThickness;
-    let data: ObjT | null = $state(null);
-    run(() => {
-        $activeObjectData, data = $activeObjectData as ObjT | null;
-    });
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
     function updateBorderThickness(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.border_thickness = value as Supports_BorderThickness['border_thickness'];
             return obj;
         });
