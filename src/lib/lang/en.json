@@ -9,6 +9,7 @@
             "light": "Light",
             "dark": "Dark"
         },
+        "show_logs_dir": "Show logs path",
         "close": "OK"
     },
     "object_pane": {
