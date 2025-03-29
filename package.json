@@ -46,6 +46,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tauri-apps/plugin-log": "^2.3.1",
 		"@zip.js/zip.js": "^2.7.45",
 		"lucide-svelte": "^0.428.0",
 		"pixi.js": "^8.2.5",
