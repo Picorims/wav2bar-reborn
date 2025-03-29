@@ -18,6 +18,33 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import { nowUTCString } from "$lib/date";
 
+import { warn, debug, trace, info, error } from '@tauri-apps/plugin-log';
+
+/**
+ * overrides a default console function, by logging it
+ * and forwarding it to a tauri plugin.
+ * @see https://v2.tauri.app/plugin/logging/
+ * @param fnName 
+ * @param logger 
+ */
+function forwardConsole(
+  fnName: 'log' | 'debug' | 'info' | 'warn' | 'error' |'trace',
+  logger: (message: string) => Promise<void>
+) {
+  const original = console[fnName];
+  console[fnName] = (message) => {
+    original(message);
+    logger(message);
+  };
+}
+
+forwardConsole('log', debug);
+forwardConsole('trace', trace);
+forwardConsole('debug', debug);
+forwardConsole('info', info);
+forwardConsole('warn', warn);
+forwardConsole('error', error);
+
 class Logger {
     private _namespace: string;
     constructor(namespace: string = "default") {
