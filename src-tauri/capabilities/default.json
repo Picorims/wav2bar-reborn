@@ -8,6 +8,7 @@
   "permissions": [
     "core:default",
     "log:allow-log",
-    "log:default"
+    "log:default",
+    "opener:default"
   ]
 }
