@@ -22,7 +22,7 @@
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { activeObjectData, mutateActiveObject, save } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { CHAR_DEGREE } from '$lib/string';
@@ -40,45 +40,45 @@
 	} from 'lucide-svelte';
 
 	function updateX(value: number) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.coordinates.x = value as Int;
 			return obj;
 		});
 	}
 
 	function updateY(value: number) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.coordinates.y = value as Int;
 			return obj;
 		});
 	}
 
 	function updateRotation(value: number) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.rotation = value as AngleDegreesInt;
 			return obj;
 		});
 	}
 
 	function horizontalCenter() {
-		updateX($save.screen.width / 2 - $activeObjectData!.size.width / 2);
+		updateX(saveManager.save.screen.width / 2 - saveManager.activeObjectData!.size.width / 2);
 	}
 
 	function verticalCenter() {
-		updateY($save.screen.height / 2 - $activeObjectData!.size.height / 2);
+		updateY(saveManager.save.screen.height / 2 - saveManager.activeObjectData!.size.height / 2);
 	}
 
 	function toLeft() {
 		updateX(0);
 	}
 	function toRight() {
-		updateX($save.screen.width - $activeObjectData!.size.width);
+		updateX(saveManager.save.screen.width - saveManager.activeObjectData!.size.width);
 	}
 	function toTop() {
 		updateY(0);
 	}
 	function toBottom() {
-		updateY($save.screen.height - $activeObjectData!.size.height);
+		updateY(saveManager.save.screen.height - saveManager.activeObjectData!.size.height);
 	}
 </script>
 
@@ -86,19 +86,19 @@
 	<LabeledInputNumber
 		title={$lang.properties.position.x}
 		unit={'px'}
-		value={$activeObjectData?.coordinates.x}
+		value={saveManager.activeObjectData?.coordinates.x}
 		onChange={updateX}
 	/>
 	<LabeledInputNumber
 		title={$lang.properties.position.y}
 		unit={'px'}
-		value={$activeObjectData?.coordinates.y}
+		value={saveManager.activeObjectData?.coordinates.y}
 		onChange={updateY}
 	/>
 	<LabeledInputNumber
 		title={$lang.properties.position.rotation}
 		unit={CHAR_DEGREE}
-		value={$activeObjectData?.rotation}
+		value={saveManager.activeObjectData?.rotation}
 		min={0}
 		max={360}
 		onChange={updateRotation}

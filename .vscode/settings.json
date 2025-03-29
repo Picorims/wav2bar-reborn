@@ -8,4 +8,8 @@
         "markdown",
         "scss",
     ],
+    "cSpell.words": [
+        "bgnd",
+        "PIXI"
+    ],
 }

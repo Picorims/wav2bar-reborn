@@ -20,13 +20,12 @@
     import Accordion from '$lib/components/atoms/Accordion.svelte';
     import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
     import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-    import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+    import { saveManager } from '$lib/store/save.svelte';
     import type { VisualObject } from '$lib/store/save_structure/save_latest';
     import type { Supports_VisualizerProps_V4 } from '$lib/store/save_structure/save_v4';
     import { lang } from '$lib/store/settings';
     import VisualizerBarProperties from './VisualizerBarProperties.svelte';
     import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
-        import { run } from 'svelte/legacy';
     
     interface Props {
        kind?: "circular" | "bar";
@@ -35,42 +34,39 @@
     let { kind = "bar" }: Props = $props();
 
 	type ObjT = VisualObject & Supports_VisualizerProps_V4;
-	let data: ObjT | null = $state(null);
-	run(() => {
-        $activeObjectData, (data = $activeObjectData as ObjT | null);
-    });
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
 	function updateVisualizerPointsCount(value: number) {
 		if (value < 1) return;
-		mutateActiveObject<ObjT>((obj) => {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
 			obj.visualizer_points_count = value as Supports_VisualizerProps_V4['visualizer_points_count'];
 			return obj;
 		});
 	}
 
     function updateAnalyzerRangeMin(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.visualizer_analyzer_range[0] = value as Supports_VisualizerProps_V4['visualizer_analyzer_range'][0];
             return obj;
         });
     }
 
     function updateAnalyzerRangeMax(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.visualizer_analyzer_range[1] = value as Supports_VisualizerProps_V4['visualizer_analyzer_range'][1];
             return obj;
         });
     }
 
     function updateSmoothingType(value: string) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.visualization_smoothing_type = value as Supports_VisualizerProps_V4['visualization_smoothing_type'];
             return obj;
         });
     }
 
     function updateSmoothingFactor(value: number) {
-        mutateActiveObject<ObjT>((obj) => {
+        saveManager.mutateActiveObject<ObjT>((obj) => {
             obj.visualization_smoothing_factor = value as Supports_VisualizerProps_V4['visualization_smoothing_factor'];
             return obj;
         });

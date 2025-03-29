@@ -3,12 +3,12 @@
 
 	import VisualObjectIcon from '$lib/components/atoms/VisualObjectIcon.svelte';
 	import { Log } from '$lib/log/logger';
-	import { activeObject, saveObjects } from '$lib/store/save';
 	import type {
 		VisualObjectInterface,
 		VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
 	import type { UUIDv4 } from '$lib/types/common_types';
+	import { saveManager } from '$lib/store/save.svelte';
 
 	/*
     Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -29,7 +29,7 @@
     */
 
 	const handleClick = () => {
-        $activeObject = uuid;
+        saveManager.activeObject = uuid;
     };
 
 	interface Props {
@@ -37,10 +37,7 @@
 	}
 
 	let { uuid }: Props = $props();
-	let data: VisualObjectInterface<VisualObject_Type> | null = $state(null);
-	run(() => {
-		data = $saveObjects[uuid] as VisualObjectInterface<VisualObject_Type> | null;
-	});
+	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(saveManager.save.objects[uuid]);
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -51,7 +48,7 @@
 	onkeyup={(e) => {if (e.key === 'Enter') handleClick()}}
 	onclick={handleClick}
 	class="item"
-	class:selected={uuid === $activeObject}
+	class:selected={uuid === saveManager.activeObject}
     onfocus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
 >
 	{#if data}

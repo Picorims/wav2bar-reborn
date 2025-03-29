@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeObjectData } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import { AlignCenter } from 'lucide-svelte';
 	import Accordion from '../atoms/Accordion.svelte';
 	import Button from '../atoms/buttons_group/Button.svelte';
@@ -33,30 +33,32 @@
 	import VisualizerCircularBarPs from '../property_pane_sets/VisualizerCircularBarPS.svelte';
 	import VisualizerStraightWavePs from '../property_pane_sets/VisualizerStraightWavePS.svelte';
 	import VisualizerStraightBarPs from '../property_pane_sets/VisualizerStraightBarPS.svelte';
+
+	const data = $derived(saveManager.activeObjectData);
 </script>
 
 <div class="card">
-	{#if $activeObjectData}
+	{#if data}
 		<div class="card-header">
-			<VisualObjectIcon type={$activeObjectData.visual_object_type} />
-			<span class="title">{$activeObjectData.name}</span>
+			<VisualObjectIcon type={data.visual_object_type} />
+			<span class="title">{data.name}</span>
 		</div>
 		<div class="content">
-			{#if $activeObjectData.visual_object_type === 'particle_flow'}
+			{#if data.visual_object_type === 'particle_flow'}
 				<ParticleFlowPs />
-			{:else if $activeObjectData.visual_object_type === 'shape'}
+			{:else if data.visual_object_type === 'shape'}
 				<ShapePs />
-			{:else if $activeObjectData.visual_object_type === 'text'}
+			{:else if data.visual_object_type === 'text'}
 				<TextPs />
-			{:else if $activeObjectData.visual_object_type === 'timer_straight_bar'}
+			{:else if data.visual_object_type === 'timer_straight_bar'}
 				<TimerStraightBarPs />
-			{:else if $activeObjectData.visual_object_type === 'timer_straight_line_point'}
+			{:else if data.visual_object_type === 'timer_straight_line_point'}
 				<TimerStraightLinePointPs />
-			{:else if $activeObjectData.visual_object_type === 'visualizer_circular_bar'}
+			{:else if data.visual_object_type === 'visualizer_circular_bar'}
 				<VisualizerCircularBarPs />
-			{:else if $activeObjectData.visual_object_type === 'visualizer_straight_bar'}
+			{:else if data.visual_object_type === 'visualizer_straight_bar'}
 				<VisualizerStraightBarPs />
-			{:else if $activeObjectData.visual_object_type === 'visualizer_straight_wave'}
+			{:else if data.visual_object_type === 'visualizer_straight_wave'}
 				<VisualizerStraightWavePs />
 			{/if}
 		</div>

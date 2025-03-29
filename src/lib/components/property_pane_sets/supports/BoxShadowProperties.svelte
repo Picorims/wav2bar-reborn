@@ -17,19 +17,18 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
     */
    
-   import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
-   import { activeObjectData, mutateActiveObject } from "$lib/store/save";
-   import type { Supports_BorderRadius, Supports_BoxShadow, VisualObject } from "$lib/store/save_structure/save_latest";
-   import { lang } from "$lib/store/settings";
-   import { run } from 'svelte/legacy';
+    import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
+    import { saveManager } from "$lib/store/save.svelte";
+    import type { Supports_BorderRadius, Supports_BoxShadow, VisualObject } from "$lib/store/save_structure/save_latest";
+    import { lang } from "$lib/store/settings";
+    import { run } from 'svelte/legacy';
 
-    let data: (VisualObject & Supports_BoxShadow) | null = $state(null);
-    run(() => {
-        $activeObjectData, data = $activeObjectData as (VisualObject & Supports_BoxShadow) | null;
-    });
+    type ObjT = VisualObject & Supports_BoxShadow;
+
+    let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
     function updateBoxShadow(value: string) {
-		mutateActiveObject<VisualObject & Supports_BoxShadow>((obj) => {
+		saveManager.mutateActiveObject<VisualObject & Supports_BoxShadow>((obj) => {
 			obj.box_shadow = value;
 			return obj;
 		});

@@ -18,7 +18,7 @@
     */
 
     import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
-	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import { saveManager } from "$lib/store/save.svelte";
 	import type { VisualObject } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
 
@@ -27,7 +27,7 @@
     const SVG_FILTER_LIST_REGEX = new RegExp(`/^${ONE_FILTER_REGEX.source}(\\[#\\]${ONE_FILTER_REGEX})*$/g`);
 
     function updateSVGFilters(value: string) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.svg_filter = value;
 			return obj;
 		});
@@ -36,7 +36,7 @@
 
 <LabeledInputText
 	title={$lang.properties.svg_filter.title}
-	value={$activeObjectData?.svg_filter}
+	value={saveManager.activeObjectData?.svg_filter}
 	onChange={updateSVGFilters}
     pattern={SVG_FILTER_LIST_REGEX}
     required={false}

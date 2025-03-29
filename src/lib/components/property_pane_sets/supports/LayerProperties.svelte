@@ -18,13 +18,13 @@
     */
 
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
-	import { activeObjectData, mutateActiveObject } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import type { PositiveInt } from '$lib/types/common_types';
 
 	function updateLayer(value: number) {
-		mutateActiveObject<VisualObject>((obj) => {
+		saveManager.mutateActiveObject<VisualObject>((obj) => {
 			obj.layer = value as PositiveInt;
 			return obj;
 		});
@@ -33,6 +33,6 @@
 
 <LabeledInputNumber
 	title={$lang.properties.layer.title}
-	value={$activeObjectData?.layer}
+	value={saveManager.activeObjectData?.layer}
 	onChange={updateLayer}
 />

@@ -18,18 +18,16 @@
     */
 
     import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
-	import { activeObjectData, mutateActiveObject } from "$lib/store/save";
+	import { saveManager } from "$lib/store/save.svelte";
 	import type { Supports_BorderRadius, VisualObject } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
     import { run } from 'svelte/legacy';
 
-    let data: (VisualObject & Supports_BorderRadius) | null = $state(null);
-    run(() => {
-        $activeObjectData, data = $activeObjectData as (VisualObject & Supports_BorderRadius) | null;
-    });
+    type ObjT = VisualObject & Supports_BorderRadius;
+	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
     function updateBorderRadius(value: string) {
-		mutateActiveObject<VisualObject & Supports_BorderRadius>((obj) => {
+		saveManager.mutateActiveObject<VisualObject & Supports_BorderRadius>((obj) => {
 			obj.border_radius = value;
 			return obj;
 		});

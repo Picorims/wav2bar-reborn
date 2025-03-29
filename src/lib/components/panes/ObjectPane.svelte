@@ -6,7 +6,7 @@
 		visualObject_types,
 		type VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
-	import { addObject, saveObjects } from '$lib/store/save';
+	import { saveManager } from '$lib/store/save.svelte';
 	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
 
 	/*
@@ -30,7 +30,7 @@
 	function newObj() {
 		/* TODO: proper new obj action */
 		visualObject_types.forEach((type) => {
-			addObject(type as VisualObject_Type);
+			saveManager.addObject(type as VisualObject_Type);
 		});
 	}
 
@@ -67,7 +67,7 @@
 		tabindex="-1"
 	>
 		<!-- Content -->
-		{#each Object.keys($saveObjects) as k}
+		{#each Object.keys(saveManager.save.objects) as k}
 			<ObjectPaneItem uuid={k} />
 		{/each}
 	</div>
