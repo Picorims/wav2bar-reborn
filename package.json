@@ -46,6 +46,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@tauri-apps/api": "^2.4.0",
 		"@tauri-apps/plugin-log": "^2.3.1",
 		"@tauri-apps/plugin-opener": "^2.2.6",
 		"@zip.js/zip.js": "^2.7.45",
