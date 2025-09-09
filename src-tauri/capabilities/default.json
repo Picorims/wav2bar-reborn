@@ -6,6 +6,10 @@
     "main"
   ],
   "permissions": [
-    "core:default"
+    "core:default",
+    "log:allow-log",
+    "log:default",
+    "opener:default",
+    "opener:allow-open-path"
   ]
 }
