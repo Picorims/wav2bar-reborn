@@ -9,7 +9,11 @@
         "scss",
     ],
     "cSpell.words": [
+        "Appender",
+        "appenders",
         "bgnd",
-        "PIXI"
+        "chrono",
+        "PIXI",
+        "tauri"
     ],
 }
