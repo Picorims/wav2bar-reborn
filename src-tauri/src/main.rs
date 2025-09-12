@@ -32,24 +32,15 @@ fn main() {
     let file_appender = FileAppender::builder()
         .build(current_exe_dir.join(format!("logs/{}.log", chrono::Local::now().format("%Y-%m-%d__%H-%M-%S"))))
         .unwrap();
-        // .unwrap_or_else(|_| {
-        //     panic!("Could not create log file appender.")
-        // });
     
     let config = Config::builder()
         .appender(Appender::builder().build("stdout", Box::new(stdout_appender)))
         .appender(Appender::builder().build("file", Box::new(file_appender)))
         .build(Root::builder().appender("stdout").appender("file").build(log::LevelFilter::Trace))
         .unwrap();
-        // .unwrap_or_else(|_| {
-        //     panic!("Could not create log configuration.")
-        // });
 
     let _handle = log4rs::init_config(config)
         .unwrap();
-        // .unwrap_or_else(|_| {
-        //     panic!("Could not initialize log configuration.")
-        // });
 
     // log::... has no effect before this point.
 
