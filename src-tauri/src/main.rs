@@ -55,6 +55,14 @@ fn main() {
 
     log::info!("Current working dir: {}\n", current_exe_dir.display());
 
+    // setup temp dir if it doesn't exist
+    // we do not use the OS' temp dir, so that the cache can lie on any drive including external ones,
+    // for people with a limited main drive.
+    std::fs::create_dir_all(current_exe_dir.join("temp")).unwrap_or_else(|_| {
+        panic!("Could not create temp directory.")
+    }); // panic if temp directory cannot be created.
+
     log::info!("Initializing tauri...");
-        app_lib::run();
+    // from there, the web part will be launched.
+    app_lib::run();
 }
