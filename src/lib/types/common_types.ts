@@ -1,18 +1,31 @@
-type Opaque<T, K> = T & { __opaque__: K };
+// type Opaque<T, K> = T & { __opaque__: K };
 
-export type Int = Opaque<number, "Int">;
-export type PositiveInt = Opaque<number, "PositiveInt">;
-export type StrictlyPositiveInt = Opaque<number, "StrictlyPositiveInt">;
+// export type Int = Opaque<number, "Int">;
+// export type PositiveInt = Opaque<number, "PositiveInt">;
+// export type StrictlyPositiveInt = Opaque<number, "StrictlyPositiveInt">;
+// /** between 0 and 360 (allowing a different meaning for each), integer */
+// export type AngleDegreesInt = Opaque<number, "AngleDegrees">
+
+// export type Real = Opaque<number, "Real">;
+// export type PositiveReal = Opaque<number, "PositiveReal">;
+// /** between 0 and 2*PI, real */
+// export type AngleRadians = Opaque<number, "AngleRadians">;
+
+// export type UUIDv4 = Opaque<string, "UUID">
+// export type Color = Opaque<string, "Color">;
+export type Int = number;
+export type PositiveInt = number;
+export type StrictlyPositiveInt = number;
 /** between 0 and 360 (allowing a different meaning for each), integer */
-export type AngleDegreesInt = Opaque<number, "AngleDegrees">
+export type AngleDegreesInt = number;
 
-export type Real = Opaque<number, "Real">;
-export type PositiveReal = Opaque<number, "PositiveReal">;
+export type Real = number;
+export type PositiveReal = number;
 /** between 0 and 2*PI, real */
-export type AngleRadians = Opaque<number, "AngleRadians">;
+export type AngleRadians = number;
 
-export type UUIDv4 = Opaque<string, "UUID">
-export type Color = Opaque<string, "Color">;
+export type UUIDv4 = string;
+export type Color = string;
 
 // from: https://stackoverflow.com/questions/38123222/proper-way-to-declare-json-object-in-typescript
 export type JsonPrimitive = string | number | boolean | null;

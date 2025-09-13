@@ -6,7 +6,7 @@
  */
 
 export type Shape = {
-  visual_object_type?: "shape";
+  visual_object_type: "shape";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsBorderRadius &
@@ -17,19 +17,19 @@ export type Shape = {
  */
 export type AngleDegreesInt = number;
 export type ParticleFlow = {
-  visual_object_type?: "particle_flow";
+  visual_object_type: "particle_flow";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsParticleProps &
   SupportsColor;
 export type Text = {
-  visual_object_type?: "text";
+  visual_object_type: "text";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportTextProps &
   SupportsColor;
 export type TimerStraightBar = {
-  visual_object_type?: "timer_straight_bar";
+  visual_object_type: "timer_straight_bar";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsColor &
@@ -38,7 +38,7 @@ export type TimerStraightBar = {
   SupportsBoxShadow &
   SupportsTimerInnerSpacing;
 export type TimerStraightLinePoint = {
-  visual_object_type?: "timer_straight_line_point";
+  visual_object_type: "timer_straight_line_point";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsColor &
@@ -46,7 +46,7 @@ export type TimerStraightLinePoint = {
   SupportsBorderRadius &
   SupportsBoxShadow;
 export type VisualizerStraightBar = {
-  visual_object_type?: "visualizer_straight_bar";
+  visual_object_type: "visualizer_straight_bar";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsVisualizerProps &
@@ -54,13 +54,13 @@ export type VisualizerStraightBar = {
   SupportsBorderRadius &
   SupportsBoxShadow;
 export type VisualizerStraightWave = {
-  visual_object_type?: "visualizer_straight_wave";
+  visual_object_type: "visualizer_straight_wave";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsVisualizerProps &
   SupportsColor;
 export type VisualizerCircularBar = {
-  visual_object_type?: "visualizer_circular_bar";
+  visual_object_type: "visualizer_circular_bar";
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsVisualizerProps &
@@ -71,7 +71,7 @@ export type VisualizerCircularBar = {
   SupportsVisualizerCircularProps;
 
 /**
- * Schema for Wav2Bar save files, version 4. (from Wav2Bar v0.4.x beta versions corresponding to the legacy build).
+ * Schema for Wav2Bar save files, version 4. (For versions beta 0.3.0 indev and above).
  *
  *  Wav2Bar - Free software for creating audio visualization (motion design) videos.
  *  Copyright (C) 2025  Picorims <picorims.contact@gmail.com>
@@ -127,6 +127,7 @@ export interface Wav2BarSaveV4 {
   [k: string]: unknown;
 }
 export interface VisualObjectInterface {
+  visual_object_type?: string;
   name: string;
   layer: number;
   coordinates: {

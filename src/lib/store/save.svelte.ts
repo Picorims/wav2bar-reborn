@@ -1,22 +1,17 @@
 import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
-import Ajv from "ajv";
-import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
+// import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
 import { renderer, type Renderer } from "$lib/engine/video/renderer";
 import { Log } from "$lib/log/logger";
-import saveV4Schema from "$lib/schemas/save_v4.json";
-import type { Save_V4 } from "./save_structure/save_v4";
+import { validateSave, validateSaveVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
+import { version } from "$app/environment";
 
 
-// Check package.json - "npm run json2ts" script to update the types associated to JSON schemas.
-
-const ajv = new Ajv({useDefaults: true});
-const validateSaveV4 = ajv.compile(saveV4Schema);
 
 class SaveManager {
-    private _saveConfig = $state<Save>(defaultSaveConfig());
+    private _saveConfig = $state<Save>(this._getDefaultSave());
     private _saveObjects = $derived<Save["objects"]>(this._saveConfig.objects);
     public activeObject = $state<UUIDv4 | null>(null);
 
@@ -31,6 +26,30 @@ class SaveManager {
 
     get save() {
         return this._saveConfig;
+    }
+
+    private _getDefaultSave(): Save {
+        const baseObject = {
+            save_version: 4,
+            software_version_used: version,
+            software_version_first_created: version,
+        }
+        const validWithDefaults = validateSave(baseObject);
+        if (!validWithDefaults) {
+            throw new Error("Failed to create a default save because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
+        }
+        return baseObject as unknown as Save;
+    }
+
+    private _getDefaultVisualObject(type: VisualObject_Type): VisualObject {
+        const baseObject = {
+            visual_object_type: type,
+        }
+        const validWithDefaults = validateSaveVisualObject(baseObject);
+        if (!validWithDefaults) {
+            throw new Error("Failed to create a default visual object because:\n\n" + validateSaveVisualObject.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
+        }
+        return baseObject as unknown as VisualObject;
     }
 
     public openSave(renderer: Renderer) {
@@ -53,12 +72,12 @@ class SaveManager {
                 const saveString = await saveEntry.getData!(new zip.TextWriter());
                 const saveJSON = JSON.parse(saveString);
                 Log.save.info("Save file opened", JSON.stringify(saveJSON));
-                const valid = validateSaveV4(saveJSON);
+                const valid = validateSave(saveJSON);
                 if (!valid) {
-                    throw new Error("Save file does not match the schema because:\n\n" + validateSaveV4.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
+                    throw new Error("Save file does not match the schema because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
                 } else {
                     Log.save.info("Save file is valid, loading it");
-                    this._saveConfig = saveJSON as unknown as Save_V4;
+                    this._saveConfig = saveJSON as unknown as Save;
     
                     renderer.setAudioProvider(new LiveAudioProvider());        
                 }
@@ -86,10 +105,10 @@ class SaveManager {
             }
         });
         this._saveConfig.objects[uuid] = {
-            ...defaultVisualObject(type),
+            ...this._getDefaultVisualObject(type),
             name: type + "_" + Math.floor(Math.random() * 1000),
         };
-        this.dispatchMutationUpdate();
+        this._dispatchMutationUpdate();
     }
 
     /**
@@ -108,7 +127,7 @@ class SaveManager {
             }
         })
         this._saveConfig.objects[this.activeObject as UUIDv4] = mutator(typedDeepClone<T>(this.activeObjectData as T));
-        this.dispatchMutationUpdate();
+        this._dispatchMutationUpdate();
     }
 
     private _handlers: ((save: Save) => void)[] = [];
@@ -117,7 +136,7 @@ class SaveManager {
         this._handlers.push(callback);
     }
 
-    private dispatchMutationUpdate() {
+    private _dispatchMutationUpdate() {
         for (const handler of this._handlers) {
             handler(this.save);
         }
