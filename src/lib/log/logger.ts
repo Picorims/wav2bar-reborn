@@ -34,6 +34,10 @@ function forwardConsole(
   const original = console[fnName];
   console[fnName] = (message) => {
     original(message);
+    if (typeof message !== 'string') {
+        original("Logger: message is not a string, ignoring it.");
+        return;
+    }
     logger(message);
   };
 }
