@@ -1,9 +1,10 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Wav2Bar save v4",
+  "description": "Schema for Wav2Bar save files, version 4. (from Wav2Bar v0.4.x beta versions corresponding to the legacy build).\n\n Wav2Bar - Free software for creating audio visualization (motion design) videos.\n Copyright (C) 2025  Picorims <picorims.contact@gmail.com>\n\n \n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n any later version.\n \n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU General Public License for more details.\n \n You should have received a copy of the GNU General Public License\n along with this program.  If not, see <https://www.gnu.org/licenses/>.",
   "definitions": {
     "angle_degrees_int": {
-      "$comment": "degrees, clockwise. 0 and 360 may have a different meaning.",
+      "description": "degrees, clockwise. 0 and 360 may have a different meaning.",
       "type": "integer",
       "minimum": 0,
       "maximum": 360,
@@ -61,7 +62,7 @@
           "$ref": "#/definitions/angle_degrees_int"
         },
         "svg_filter": {
-          "$comment": "List of `<filter>` tags separated by `[#]` with no `<script>` tag.",
+          "description": "List of `<filter>` tags separated by `[#]` with no `<script>` tag.",
           "type": "string",
           "default": ""
         }
@@ -79,7 +80,7 @@
       "type": "object",
       "properties": {
         "border_radius": {
-          "$comment": "CSS border-radius",
+          "description": "CSS border-radius",
           "type": "string",
           "default": ""
         }
@@ -92,7 +93,7 @@
       "type": "object",
       "properties": {
         "box_shadow": {
-          "$comment": "CSS box-shadow",
+          "description": "CSS box-shadow",
           "type": "string",
           "default": ""
         }
@@ -117,22 +118,22 @@
               "default": "color"
             },
             "last_color": {
-              "$comment": "hex, rgb, rgba, hsv color, CSS syntax.",
+              "description": "hex, rgb, rgba, hsv color, CSS syntax.",
               "type": "string",
               "default": ""
             },
             "last_gradient": {
-              "$comment": "CSS gradient syntax.",
+              "description": "CSS gradient syntax.",
               "type": "string",
               "default": ""
             },
             "last_image": {
-              "$comment": "Name of the image with the extension, stored in the background folder of the object.",
+              "description": "Name of the image with the extension, stored in the background folder of the object.",
               "type": "string",
               "default": ""
             },
             "size": {
-              "$comment": "contain | cover | x% | x% y%",
+              "description": "contain | cover | x% | x% y%",
               "type": "string",
               "default": ""
             },
@@ -205,7 +206,7 @@
           "default": 0
         },
         "particle_spawn_tests": {
-          "$comment": "How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame",
+          "description": "How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame",
           "type": "integer",
           "minimum": 1,
           "default": 1
@@ -224,7 +225,7 @@
       "type": "object",
       "properties": {
         "color": {
-          "$comment": "hex, rgb, rgba",
+          "description": "hex, rgb, rgba",
           "type": "string",
           "default": "#ffffff"
         }
@@ -301,7 +302,7 @@
           ]
         },
         "text_shadow": {
-          "$comment": "CSS text-shadow",
+          "description": "CSS text-shadow",
           "type": "string",
           "default": ""
         }
@@ -350,7 +351,7 @@
           "default": 1
         },
         "visualizer_analyzer_range": {
-          "$comment": "Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.",
+          "description": "Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.",
           "type": "array",
           "items": {
             "type": "integer",
@@ -364,7 +365,7 @@
           ]
         },
         "visualization_smoothing_type": {
-          "$comment": "Interpolation type of the frequency array between frames.",
+          "description": "Interpolation type of the frequency array between frames.",
           "enum": [
             "proportional_decrease",
             "linear_decrease",
@@ -373,7 +374,7 @@
           "default": "proportional_decrease"
         },
         "visualization_smoothing_factor": {
-          "$comment": "Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.",
+          "description": "Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.",
           "type": "number",
           "minimum": 0,
           "default": 0
@@ -417,12 +418,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "shape"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -444,12 +445,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "particle_flow"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -468,12 +469,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "text"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -492,12 +493,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "timer_straight_bar"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -525,12 +526,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "timer_straight_line_point"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -555,12 +556,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "visualizer_straight_bar"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -585,12 +586,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "visualizer_straight_wave"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -609,12 +610,12 @@
         {
           "type": "object",
           "properties": {
-            "type": {
+            "visual_object_type": {
               "const": "visualizer_circular_bar"
             }
           },
           "required": [
-            "type"
+            "visual_object_type"
           ]
         },
         {
@@ -648,15 +649,15 @@
       "const": 4
     },
     "software_version_used": {
-      "$comment": "last version modifying this save",
+      "description": "last version modifying this save",
       "type": "string"
     },
     "software_version_first_created": {
-      "$comment": "first version creating this save",
+      "description": "first version creating this save",
       "type": "string"
     },
     "screen": {
-      "$comment": "video frame resolution",
+      "description": "video frame resolution",
       "type": "object",
       "properties": {
         "width": {
@@ -685,7 +686,7 @@
       "default": ""
     },
     "objects": {
-      "$comment": "Record of visual objects, indexed by a unique ID.",
+      "description": "Record of visual objects, indexed by a unique ID.",
       "type": "object",
       "additionalProperties": {
         "anyOf": [

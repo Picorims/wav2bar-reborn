@@ -1,11 +1,19 @@
 import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
-import { validateAgainstRecord } from "$lib/types/validator";
-import { defaultSaveConfig, defaultVisualObject, saveValidator, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
+import Ajv from "ajv";
+import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
 import { renderer, type Renderer } from "$lib/engine/video/renderer";
 import { Log } from "$lib/log/logger";
+import saveV4Schema from "$lib/schemas/save_v4.json";
+import type { Save_V4 } from "./save_structure/save_v4";
+
+
+// Check package.json - "npm run json2ts" script to update the types associated to JSON schemas.
+
+const ajv = new Ajv({useDefaults: true});
+const validateSaveV4 = ajv.compile(saveV4Schema);
 
 class SaveManager {
     private _saveConfig = $state<Save>(defaultSaveConfig());
@@ -44,13 +52,13 @@ class SaveManager {
             } else {
                 const saveString = await saveEntry.getData!(new zip.TextWriter());
                 const saveJSON = JSON.parse(saveString);
-                Log.save.info("Save file opened", saveJSON);
-                const validation = validateAgainstRecord(saveJSON, saveValidator);
-                if (!validation.success) {
-                    throw new Error("Save file does not match the schema because:\n\n" + validation.logs);
+                Log.save.info("Save file opened", JSON.stringify(saveJSON));
+                const valid = validateSaveV4(saveJSON);
+                if (!valid) {
+                    throw new Error("Save file does not match the schema because:\n\n" + validateSaveV4.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
                 } else {
                     Log.save.info("Save file is valid, loading it");
-                    this._saveConfig = saveJSON;
+                    this._saveConfig = saveJSON as unknown as Save_V4;
     
                     renderer.setAudioProvider(new LiveAudioProvider());        
                 }
