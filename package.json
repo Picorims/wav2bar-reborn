@@ -50,6 +50,7 @@
 		"@tauri-apps/plugin-log": "^2.3.1",
 		"@tauri-apps/plugin-opener": "^2.2.6",
 		"@zip.js/zip.js": "^2.7.45",
+		"ajv": "^8.17.1",
 		"lucide-svelte": "^0.428.0",
 		"pixi.js": "^8.2.5",
 		"svelte-splitpanes": "^8.0.9",

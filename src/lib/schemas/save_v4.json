@@ -1,0 +1,729 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Wav2Bar save v4",
+  "definitions": {
+    "angle_degrees_int": {
+      "$comment": "degrees, clockwise. 0 and 360 may have a different meaning.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 360,
+      "default": 0
+    },
+    "visual_object_interface": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": ""
+        },
+        "layer": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        },
+        "coordinates": {
+          "type": "object",
+          "properties": {
+            "x": {
+              "type": "integer",
+              "default": 0
+            },
+            "y": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          "required": [
+            "x",
+            "y"
+          ]
+        },
+        "size": {
+          "type": "object",
+          "properties": {
+            "width": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            },
+            "height": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": [
+            "width",
+            "height"
+          ]
+        },
+        "rotation": {
+          "$ref": "#/definitions/angle_degrees_int"
+        },
+        "svg_filter": {
+          "$comment": "List of `<filter>` tags separated by `[#]` with no `<script>` tag.",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "name",
+        "layer",
+        "coordinates",
+        "size",
+        "rotation",
+        "svg_filter"
+      ]
+    },
+    "supports_border_radius": {
+      "type": "object",
+      "properties": {
+        "border_radius": {
+          "$comment": "CSS border-radius",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "border_radius"
+      ]
+    },
+    "supports_box_shadow": {
+      "type": "object",
+      "properties": {
+        "box_shadow": {
+          "$comment": "CSS box-shadow",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "box_shadow"
+      ]
+    },
+    "supports_background": {
+      "type": "object",
+      "properties": {
+        "background": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "color",
+                "gradient",
+                "image"
+              ],
+              "default": "color"
+            },
+            "last_color": {
+              "$comment": "hex, rgb, rgba, hsv color, CSS syntax.",
+              "type": "string",
+              "default": ""
+            },
+            "last_gradient": {
+              "$comment": "CSS gradient syntax.",
+              "type": "string",
+              "default": ""
+            },
+            "last_image": {
+              "$comment": "Name of the image with the extension, stored in the background folder of the object.",
+              "type": "string",
+              "default": ""
+            },
+            "size": {
+              "$comment": "contain | cover | x% | x% y%",
+              "type": "string",
+              "default": ""
+            },
+            "repeat": {
+              "enum": [
+                "no-repeat",
+                "repeat",
+                "repeat-x",
+                "repeat-y"
+              ],
+              "default": "no-repeat"
+            }
+          },
+          "required": [
+            "type",
+            "last_color",
+            "last_gradient",
+            "last_image",
+            "size",
+            "repeat"
+          ]
+        }
+      },
+      "required": [
+        "background"
+      ]
+    },
+    "supports_particle_props": {
+      "type": "object",
+      "properties": {
+        "particle_radius_range": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [
+            1,
+            1
+          ]
+        },
+        "flow_type": {
+          "enum": [
+            "radial",
+            "directional"
+          ],
+          "default": "radial"
+        },
+        "flow_center": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [
+            0,
+            0
+          ]
+        },
+        "flow_direction": {
+          "$ref": "#/definitions/angle_degrees_int"
+        },
+        "particle_spawn_probability": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0
+        },
+        "particle_spawn_tests": {
+          "$comment": "How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame",
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "required": [
+        "particle_radius_range",
+        "flow_type",
+        "flow_center",
+        "flow_direction",
+        "particle_spawn_probability",
+        "particle_spawn_tests"
+      ]
+    },
+    "supports_color": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "$comment": "hex, rgb, rgba",
+          "type": "string",
+          "default": "#ffffff"
+        }
+      },
+      "required": [
+        "color"
+      ]
+    },
+    "support_text_props": {
+      "type": "object",
+      "properties": {
+        "text_type": {
+          "enum": [
+            "any",
+            "time"
+          ],
+          "default": "any"
+        },
+        "text_content": {
+          "type": "string",
+          "default": "text"
+        },
+        "font_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 18
+        },
+        "text_decoration": {
+          "type": "object",
+          "properties": {
+            "italic": {
+              "type": "boolean",
+              "default": false
+            },
+            "bold": {
+              "type": "boolean",
+              "default": false
+            },
+            "underline": {
+              "type": "boolean",
+              "default": false
+            },
+            "overline": {
+              "type": "boolean",
+              "default": false
+            },
+            "line_through": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "required": [
+            "italic",
+            "bold",
+            "underline",
+            "overline",
+            "line_through"
+          ]
+        },
+        "text_align": {
+          "type": "object",
+          "properties": {
+            "horizontal": {
+              "enum": [
+                "left",
+                "center",
+                "right"
+              ],
+              "default": "left"
+            }
+          },
+          "required": [
+            "horizontal"
+          ]
+        },
+        "text_shadow": {
+          "$comment": "CSS text-shadow",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "text_type",
+        "text_content",
+        "font_size",
+        "text_decoration",
+        "text_align",
+        "text_shadow"
+      ]
+    },
+    "supports_border_thickness": {
+      "type": "object",
+      "properties": {
+        "border_thickness": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "required": [
+        "border_thickness"
+      ]
+    },
+    "supports_timer_inner_spacing": {
+      "type": "object",
+      "properties": {
+        "timer_inner_spacing": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "required": [
+        "timer_inner_spacing"
+      ]
+    },
+    "supports_visualizer_props": {
+      "type": "object",
+      "properties": {
+        "visualizer_points_count": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1
+        },
+        "visualizer_analyzer_range": {
+          "$comment": "Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.",
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2,
+          "default": [
+            0,
+            1023
+          ]
+        },
+        "visualization_smoothing_type": {
+          "$comment": "Interpolation type of the frequency array between frames.",
+          "enum": [
+            "proportional_decrease",
+            "linear_decrease",
+            "average"
+          ],
+          "default": "proportional_decrease"
+        },
+        "visualization_smoothing_factor": {
+          "$comment": "Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.",
+          "type": "number",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "required": [
+        "visualizer_points_count",
+        "visualizer_analyzer_range",
+        "visualization_smoothing_type",
+        "visualization_smoothing_factor"
+      ]
+    },
+    "supports_visualizer_bar_props": {
+      "type": "object",
+      "properties": {
+        "visualizer_bar_thickness": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "required": [
+        "visualizer_bar_thickness"
+      ]
+    },
+    "supports_visualizer_circular_props": {
+      "type": "object",
+      "properties": {
+        "visualizer_radius": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "required": [
+        "visualizer_radius"
+      ]
+    },
+    "shape": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "shape"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_border_radius"
+        },
+        {
+          "$ref": "#/definitions/supports_box_shadow"
+        },
+        {
+          "$ref": "#/definitions/supports_background"
+        }
+      ]
+    },
+    "particle_flow": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "particle_flow"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_particle_props"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        }
+      ]
+    },
+    "text": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "text"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/support_text_props"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        }
+      ]
+    },
+    "timer_straight_bar": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "timer_straight_bar"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        },
+        {
+          "$ref": "#/definitions/supports_border_thickness"
+        },
+        {
+          "$ref": "#/definitions/supports_border_radius"
+        },
+        {
+          "$ref": "#/definitions/supports_box_shadow"
+        },
+        {
+          "$ref": "#/definitions/supports_timer_inner_spacing"
+        }
+      ]
+    },
+    "timer_straight_line_point": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "timer_straight_line_point"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        },
+        {
+          "$ref": "#/definitions/supports_border_thickness"
+        },
+        {
+          "$ref": "#/definitions/supports_border_radius"
+        },
+        {
+          "$ref": "#/definitions/supports_box_shadow"
+        }
+      ]
+    },
+    "visualizer_straight_bar": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "visualizer_straight_bar"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_visualizer_props"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        },
+        {
+          "$ref": "#/definitions/supports_border_radius"
+        },
+        {
+          "$ref": "#/definitions/supports_box_shadow"
+        }
+      ]
+    },
+    "visualizer_straight_wave": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "visualizer_straight_wave"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_visualizer_props"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        }
+      ]
+    },
+    "visualizer_circular_bar": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "const": "visualizer_circular_bar"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        {
+          "$ref": "#/definitions/visual_object_interface"
+        },
+        {
+          "$ref": "#/definitions/supports_visualizer_props"
+        },
+        {
+          "$ref": "#/definitions/supports_color"
+        },
+        {
+          "$ref": "#/definitions/supports_border_radius"
+        },
+        {
+          "$ref": "#/definitions/supports_box_shadow"
+        },
+        {
+          "$ref": "#/definitions/supports_visualizer_bar_props"
+        },
+        {
+          "$ref": "#/definitions/supports_visualizer_circular_props"
+        }
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "save_version": {
+      "type": "number",
+      "const": 4
+    },
+    "software_version_used": {
+      "$comment": "last version modifying this save",
+      "type": "string"
+    },
+    "software_version_first_created": {
+      "$comment": "first version creating this save",
+      "type": "string"
+    },
+    "screen": {
+      "$comment": "video frame resolution",
+      "type": "object",
+      "properties": {
+        "width": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1920
+        },
+        "height": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1080
+        }
+      },
+      "required": [
+        "width",
+        "height"
+      ]
+    },
+    "fps": {
+      "type": "number",
+      "minimum": 1,
+      "default": 60
+    },
+    "audio_filename": {
+      "type": "string",
+      "default": ""
+    },
+    "objects": {
+      "$comment": "Record of visual objects, indexed by a unique ID.",
+      "type": "object",
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "$ref": "#/definitions/shape"
+          },
+          {
+            "$ref": "#/definitions/particle_flow"
+          },
+          {
+            "$ref": "#/definitions/text"
+          },
+          {
+            "$ref": "#/definitions/timer_straight_bar"
+          },
+          {
+            "$ref": "#/definitions/timer_straight_line_point"
+          },
+          {
+            "$ref": "#/definitions/visualizer_straight_bar"
+          },
+          {
+            "$ref": "#/definitions/visualizer_straight_wave"
+          },
+          {
+            "$ref": "#/definitions/visualizer_circular_bar"
+          }
+        ]
+      }
+    }
+  },
+  "required": [
+    "save_version",
+    "software_version_used",
+    "software_version_first_created",
+    "screen",
+    "fps",
+    "audio_filename",
+    "objects"
+  ]
+}
