@@ -19,7 +19,7 @@ A tool to make custom audio visualization and export production videos for the a
 
 
 ## Important Notes
-- **This tool is a side project and is provided as is, without garantee of long term maintenance. If this is fine for you, you can proceed. Enjoy!**
+- **This tool is a side project and is provided as is, without guarantee of long term maintenance. If this is fine for you, you can proceed. Enjoy!**
 - **This tool is usable at this point, but is still in early development! Your work is subject to bugs, backup your saves!**
 - I have limited time and energy, and this is not my sole project. Do not expect regular and/or crazy activity!
 
