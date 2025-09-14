@@ -38,6 +38,9 @@ class SaveManager {
         if (!validWithDefaults) {
             throw new Error("Failed to create a default save because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
         }
+        // type is generated with the schema defaults,
+        // and the TypeScript type originates from the same schema.
+        // But TypeScript is not able to infer that here.
         return baseObject as unknown as Save;
     }
 
@@ -49,6 +52,9 @@ class SaveManager {
         if (!validWithDefaults) {
             throw new Error("Failed to create a default visual object because:\n\n" + validateSaveVisualObject.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
         }
+        // type is generated with the schema defaults,
+        // and the TypeScript type originates from the same schema.
+        // But TypeScript is not able to infer that here.
         return baseObject as unknown as VisualObject;
     }
 

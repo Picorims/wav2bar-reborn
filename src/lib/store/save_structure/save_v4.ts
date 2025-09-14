@@ -88,7 +88,8 @@ export const validateSaveV4VisualObject = ajv.compile({
 // 	| 'visualizer_straight_bar'
 // 	| 'visualizer_straight_wave'
 // 	| 'visualizer_circular_bar';
-export const visualObject_V4_types: Readonly<Wav2BarSaveV4["objects"][string]["visual_object_type"][]> = [
+type VisualObjectV4Type = Wav2BarSaveV4["objects"][string]["visual_object_type"];
+export const visualObject_V4_types: Readonly<VisualObjectV4Type[]> = [
 	'shape',
 	'particle_flow',
 	'text',
