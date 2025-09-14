@@ -1,16 +1,16 @@
 # Contributing
 
-> **Note:** I currently do NOT accept code contributions, as I can't wrap my mind around which open source licence to use yet. Accepting them would make me lose that choice because of GPL.
+> **Note:** I currently do NOT accept code contributions while the license is GPL, I will once the license is switched to MPL. You can keep an eye on issue [#104](https://github.com/Picorims/wav2bar-reborn/issues/104).
 
 First, thanks for your interest in contributing!
 
-If you are willing to partake into big contributions, please contact me first at picorims.contact@gmail.com so we can discuss the topic and I can setup an appropriate branch workflow.
+If you are willing to partake into big contributions, please contact me first (at picorims.contact@gmail.com, on Discord, in an issue, or discussion if too broad) so we can discuss the topic.
 
 ## What to be aware of
 
 Make sure to check out [docs/DEVELOPMENT_GUIDELINES](./docs/DEVELOPMENT_GUIDELINES.md) for more information on the project itself.
 
-Personal note (Picorims): I work on this project on my free time, while pursuing a computer science degree. That means that my availability is function to my life, work load and health. So please be patient, I may not be immediately available, but I will answer you when possible :).
+Personal note (Picorims): I work on this project on my free time, while working full-time. That means that my availability is function to my life, work load and health. So please be patient, I may not be immediately available, but I will answer you when possible :).
 
 ## Types of contributions
 
@@ -40,6 +40,8 @@ If you are new to contributing, here are some easy contributions:
 - opening detailed bug reports;
 - issues labelled as good first issues if any is available;
 - documentation detailing;
+- tutorials;
+- translation;
 - typos in documentation, README, assets files, etc.
 
 ### Contributions that doesn't help
