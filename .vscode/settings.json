@@ -9,11 +9,14 @@
         "scss",
     ],
     "cSpell.words": [
+        "analyzer",
         "Appender",
         "appenders",
         "bgnd",
         "chrono",
+        "indev",
         "PIXI",
+        "rgba",
         "tauri"
     ],
 }

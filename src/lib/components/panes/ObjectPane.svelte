@@ -34,10 +34,10 @@
 		});
 	}
 
-	let listDiv: HTMLDivElement = $state();
+	let listDiv: HTMLDivElement | undefined = $state();
 	function enterList(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
-			(listDiv.children[0] as HTMLDivElement).focus();
+			(listDiv?.children[0] as HTMLDivElement).focus();
 		}
 	}
 </script>
