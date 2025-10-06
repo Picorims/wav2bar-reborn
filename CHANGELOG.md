@@ -4,6 +4,27 @@ https://keepachangelog.com/en/1.0.0/
 
 ## 1.0.0-beta.1 (UNKNOWN_DATE)
 
+### Added
+
+- Added theming: now has dark and light themes.
+- Added localization support.
+- Added support for microphone input (for previewing only)
+
+### Changed
+
+- Completely rewrote the app.
+- Reorganized and redesigned the GUI.
+- Replaced the visual objects accordion with a list of objects and a properties container.
+- Switched from GPL-3.0 license to MPL-2.0 license.
+
+### Deprecated
+- SVG filters, while not removed from saves, are no longer rendered due to technical incompatibility with the new stack.
+
+### Fixed
+
+### Security
+- Migrated from Electron to Tauri, updating dependencies in the process.
+
 ## 0.3.3-beta (2023-02-04)
 
 ### Fixed
