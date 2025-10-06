@@ -1,3 +1,12 @@
+/*
+	Wav2Bar - Free software for creating audio visualization (motion design) videos
+	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
+
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at https://mozilla.org/MPL/2.0/.
+*/
+
 import type { UUIDv4 } from "$lib/types/common_types";
 import * as zip from "@zip.js/zip.js";
 // import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";

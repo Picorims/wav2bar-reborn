@@ -1,7 +1,5 @@
 # Contributing
 
-> **Note:** I currently do NOT accept code contributions while the license is GPL, I will once the license is switched to MPL. You can keep an eye on issue [#104](https://github.com/Picorims/wav2bar-reborn/issues/104).
-
 First, thanks for your interest in contributing!
 
 If you are willing to partake into big contributions, please contact me first (at picorims.contact@gmail.com, on Discord, in an issue, or discussion if too broad) so we can discuss the topic.

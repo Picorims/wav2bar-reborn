@@ -1,19 +1,10 @@
 /*
-Wav2Bar - Free software for creating audio visualization (motion design) videos
-Copyright (C) 2024  Picorims <picorims.contact@gmail.com>
+	Wav2Bar - Free software for creating audio visualization (motion design) videos
+	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/>.
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 // import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type, type VisualObject_V4, type Supports_BorderRadius_V4, type Supports_BoxShadow_V4, type Supports_Background_V4, type Supports_ParticleProps_V4, type Supports_Color_V4, type Supports_TextProps_V4, type Supports_BorderThickness_V4, type Supports_TimerInnerSpacing_V4, type Supports_VisualizerProps_V4, type Supports_VisualizerBarProps_V4, type Supports_VisualizerCircularProps_V4, type Text_V4 } from './save_v4';
