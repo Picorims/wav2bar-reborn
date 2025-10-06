@@ -1,6 +1,6 @@
-# Development guidelines NOT UP TO DATE !!!
+# Development guidelines
 
-NOT UP TO DATE !!!
+> **Note:** Make sure to also check the CONTRIBUTING.md file.
 
 ## Table of contents
 - [About this document](#about)
@@ -10,11 +10,12 @@ NOT UP TO DATE !!!
     - [Box of ideas](#box-of-ideas)
 - [Setup](#setup)
 - [Code styling](#code-styling)
-- [Organizing files](#organizing-files)
+- [File system structure](#file-system-structure)
 - [Modules and packages structuring](#modules-structuring)
 - [Architecture](#architecture)
-- [About the global context](#about-the-global-context)
-- [About Node integration in the renderer process](#about-node-integration)
+    - [Saves](#saves)
+    - [Rendering and audio processing](#rendering-and-audio-processing)
+    - [Localization and translations](#localization-and-translations)
 - [Documenting](#documenting)
 - [Creating UI components](#ui-components)
 - [Versioning and Git](#versioning-and-git)
@@ -26,21 +27,21 @@ NOT UP TO DATE !!!
 
 ## About this document
 
-This document describes the goals of the project, the direction it takes and what to know when working on it. This documented should be adapted as these different points change over time.
+This document describes the goals of the project, the direction it takes and what to know when working on it. This document should be adapted as these different points change over time.
 
 <a name="goal"></a>
 
 ## Goal
 
-Wav2Bar was created to have a free, open source software to create music visualization (or sound related motion graphics). This software can be used by artists, podcast authors, etc. to make a pleasant video to go with their work. The video can then be published online on social medias or on a webiste.
+Wav2Bar was created to have a free, open source software to create music visualization (or sound related motion graphics). This software can be used by artists, podcast authors, etc. to make a pleasant video to go with their work. The video can then be published online on social media or on a website.
 
-Wav2Bar is not designed to be a true professional video editing software full of super complex features. Instead, the goal is to have an easy to use software for someone not used to video editing. Help should be provided whenever it is needed, to guide the user as he discover the features.
+Wav2Bar is not designed to be a true professional video editing software full of super complex features. Instead, the goal is to have an easy to use software for someone not used to video editing. Help should be provided whenever it is needed, to guide the user as he discover the features. This does not mean that advanced features are outright excluded, but that they must be included in a way that won't disrupt beginner (hidden within an advanced tab, made easy to understand or manipulate, etc.).
 
-The current targeted platforms are Windows and Linux (and there is work to do for better Linux support). Mac is currently not considered although it can be somewhat runable from source.
+The current targeted platforms are Windows and Linux. Mac is currently not considered although it can be somewhat runnable from source (at least Tauri supports it).
 
-The goal is also to try considerating accessibility issues, even if the project is currently far from being able to cover all accessibility issues. Right now, the first consideration is to have a color palette that works for as many people as possible.
+The goal is also to try taking into account accessibility issues, even if the project is currently far from being able to cover all accessibility issues. Right now, the first consideration is to have a color palette that works for as many people as possible. Work must be done on key-bindings as well.
 
-Backward compatibility is also an important part to consider. Upgrading to a newer version shouldn't break user data, or as least as possible. Because nobody wants to keep configuring stuff again or redo projects from scratch all the time.
+Backward compatibility is also an important part to consider. Upgrading to a newer version shouldn't break user data, or as least as possible. Because nobody wants to keep configuring stuff again or redo projects from scratch all the time. Ideally, old saves should still be openable and upgradable in any later version. The only exception is that this rewrite dropped support for versions prior to v0.3.0 as the project had little to no visibility back then while this would be a lot of migration work. But any new save version introduced must include a migration script to the prior version (creating a pipeline which is triggered based on save version on save upload from the user).
 
 <a name="roadmap"></a>
 
@@ -49,44 +50,18 @@ Backward compatibility is also an important part to consider. Upgrading to a new
 <a name="internal-goals"></a>
 
 ### Internal goals
-- Reduce the amount of global variables and global context code.
-- Go towards object oriented code.
-- Keep an eye on the DRY (Don't Repeat Yourself) principle.
-- Make more canvas based rendering, less HTML based rendering.
-- Try automatic tests. Possible useful resource: https://github.com/electron/electron/blob/main/docs/tutorial/automated-testing-with-a-custom-driver.md
+- Make the engine and save part an independant module to support using the rendering engine as a standalone library.
+- Plan support for dynamic values (functions, keyframes, etc.)
+- Keep an eye on the DRY (Don't Repeat Yourself), SOLID principles.
+- Prefer subscription and data-binding over manual updates.
+- Plan support for key-bindings
+- Add more automatic tests. Consider no regression end-to-end manual test.
 
 <a name="box-of-ideas"></a>
 
 ### Box of ideas
 
-> **Note: I have stopped making plans for future versions as it is more stress for not any additional results. I will focus instead on what I feel like working on, but this list remains a good indication at what I am aiming for. Fixing reported bugs remains a priority though.**
-
-- technical:
-    - **convert CLI command ~~(0.3.1)~~.** This quick command would convert the save to a newer said version. There could also be a potential folder support to make migrations easier if you like to keep up to date saves.
-    - full CLI with dedicated terminal and script reading
-    - better linux support (once I find the good moment to setup a Linux dev environment)
-    - More accurate preview (time based instead of frame based)
-    - Make FFmpeg installation easier
-    - **Increase visualization accuracy/resolution ~~(0.4.0)~~.** The goal is to improve rendering of low frequencies.
-- customization:
-    - more particle options
-    - **New visualizers ~~(0.4.0 and further)~~.** Yes. Finally. Two would be a great goal to start with. I need to experiment stuff.
-    - **Extend existing objects customization ~~(0.4.0)~~.** That includes more options for text and particle flows.
-    - **Add .lrc lyrics suport ~~(0.4.0)~~.**
-- quality of life
-    - **Hide/show object feature ~~(0.4.0)~~.** This quality of life feature would help focusing on specific objects during design. It is not set yet if this will be saved or not.
-    - **Display object borders on hovering of its settings ~~(0.4.0)~~.** It is not always easy to see the boundaries of an object (like particle flow objects), which doesn't help setting its size. This feature aim to fix this.
-    - **Make object creation more intuitive ~~(0.4.0)~~.** (left to do: default size per type...)
-    - **Keep track of last used folder in file explorer ~~(0.3.1)~~.** Because always starting from home folder and doing all the clicks again is annoying!
-    - **favorite folders in file explorer ~~(0.4.1)~~.** This can act as shortcuts.
-    - gradient UI
-    - custom color picker
-    - mouse interactions to manipulate objects
-    - helper to make cool designs by picking between choices.
-    - factory templates
-- accessibility
-    - translations
-    - keyboard shortcuts
+This is now described by GitHub issues, milestones and the GitHub Project associated to wav2bar.
 
 <a name="setup"></a>
 
@@ -100,34 +75,32 @@ See `README.md`.
 
 ### Formatting
 
-#### JS
+#### JS/TS/Svelte
 |Type               |Formatting         |example        |
 |-                  |-                  |-              |
-|variable           |snake case         |`my_var`       |
+|variable           |camel case         |`myVar`        |
 |constant variable  |capital letters    |`MY_CONST`     |
-|lonely function    |pascal case        |`MyFunction`   |
-|class              |pascal case        |`MyClass`      |
-|private field      |snake case prefixed by an underscore|`_private_field`|
-|public field       |snake case         |`public_field` |
-|private method     |camel case prefixed by an underscore|`_myMethod`|
+|lonely function    |camel case         |`myFunction`   |
+|class/component    |pascal case        |`MyClass`      |
+|private field      |prefixed by an underscore|`_privateField`|
+|public field       |camel case         |`publicField`  |
+|private method     |prefixed by an underscore|`_myMethod`|
 |public method      |camel case         |`myMethod`     |
-|get/set property   |snake case         |`my_property`  |
-|module name        |snake case         |`module_name`  |
+|get/set property   |camel case         |`myProperty`   |
+|module name (dir)  |snake case         |`module_name`  |
 
-#### CSS (old)
-|Type               |Formatting         |example        |
-|-                  |-                  |-              |
-|id                 |snake case         |`#my_id`       |
-|class              |snake case         |`.my_class`    |
-
-#### CSS (new) (yes I changed of mind)
+#### CSS
 |Type               |Formatting         |example        |
 |-                  |-                  |-              |
 |id                 |kebab case         |`#my-id`       |
 |class              |kebab case         |`.my-class`    |
 
+#### Rust
+
+See the official Rust style guide.
+
 ### Tabs
-4 spaces.
+4 spaces. 2 spaces for JSON Schemas.
 
 ### Blocks
 ```js
@@ -137,13 +110,15 @@ if (thing === 1) {
 
 }
 
-function Name() {
+function name() {
 
 }
 ```
 
+Avoid inline blocks, especially avoid `if` blocks without brackets (`{}`).
+
 ### Decorators
-JSDoc decorators `/** @abstract */` and `/** @override */` are used above classes and methods as JavaScript do not support these natively, and they are important to the understanding of the codebase.
+JSDoc decorators may be used for describing things that TypeScript do not support. You can use an extension of your favourite IDE to make it easier to create doc comment blocks. While there is no strict rule on putting a comment for every method or function, consider adding one for complex functions, functions with unsupported edge cases, particular behaviour that is important to know, etc. All necessary info should be available without having to open the function (otherwise it means that the doc comment needs to be updated accordingly).
 
 ### Else
 - Prefer `===` over `==`.
@@ -162,63 +137,110 @@ JSDoc decorators `/** @abstract */` and `/** @override */` are used above classe
 
 //etc.
 ```
-- You can make basic type tests of the passed arguments that throw errors to limitate possibilities of unwanted data interacting with the code, and limit risks of bugs earlier in the execution. The `utils` module has pre made methods for that purpose (Some may be arguably useless but can help for readability).
+- You can make basic type tests of the passed arguments that throw errors to reduce possibilities of unwanted data interacting with the code, and limit risks of bugs earlier in the execution. Try to make your types as narrowed as possible to limit such checks.
+- Handle errors as much as possible. Inform the user if this may have an impact on his workflow or data. Keep crashing for unsolvable situations. Provide save backups when possible.
  
-<a name="organizing-files"></a>
+<a name="file-system-structure"></a>
 
-## Organizing files
+## File system structure
 
-- **assets:** Non code dependencies (text such as translations, icons, etc.);
-- **dev_utils:** Node scripts useful for Wav2Bar development and deployment;
-- **docs:** documentation, UML diagrams;
-- **html:** HTML code except index.html;
-- **js:** JavaScript code except main.js;
-- **logs:** automatic logs folder;
-- **node_modules:** Node modules! ;
-- **out:** Generated packages goes here;
-- **temp:** Temporary files for Wav2Bar if writing access is available;
-- **user:** User data storage if writing access is available, default settings;
+- **.github:** Issue templates, CI/CD, etc.
+- **.svelte-kit:** Used by Svelte, not included in Git.
+- **.vscode:** Snippets, shared settings.
+and deployment;
+- **build:** Used by Svelte, not included in Git.
+- **docs:** documentation;
+- **node_modules:** *[Check notes...]* Node modules! Not included in Git;
+- **src:** Front source code (Svelte)
+    - **lib:** Most of the app logic and assets. Small generic modules do not have a dedicated directory.
+        - **components:** Svelte components.
+        - **CSS:** Global CSS styles. (Keep component style within the same file!)
+        - **engine:** Renderer and audio processing (some might lie on the Rust side!).
+        - **lang:** Translation files as `<2 letters country id>.json` files.
+        - **log:** Logging utilities.
+        - **schemas:** JSON Schemas (saves, settings).
+        - **store:** Svelte stores (saves, settings, etc.). Global app states should go there.
+        - **types:** TypeScript type and validation related.
+            **schemas:** TypeScript types generated from `npm run json2ts`.
+    - **route:** App root (SPA, Single Page Application).
+- **src-tauri:** Tauri and Rust side, backend code.
+    - **tauri.conf.json:** Main configuration file. `Cargo.toml` and `package.json` still need to be updated manually notably regarding versions!
+- **static:** Static assets. Usually using `src/lib` is preferred for easier import and limiting risks of import breaks. This is mostly for things directly in the root `.html` Svelte file where a static URL is required.
+- **tests:** Playwright end-to-end tests (currently empty). All other tests go into a `.test.ts` file along the tested file.
+
+### At runtime
+- **temp:** Temporary files for Wav2Bar if writing access is available (not using the OS standard directory as not everyone has a lot of memory on their main drive!);
+- **user:** User data storage if writing access is available, default settings (same explanation as above);
+
+This may become configurable in the future.
 
 <a name="modules-structuring"></a>
 
 ## Modules and packages structuring
 
-Modules are grouped by theme, area or functionality. A package is represented by the following:
+Modules are grouped by theme, area or functionality. A package is generally represented by the following:
 - a folder named after the package name;
 - a main aggregating module named after the package name, that only serves to export sub modules so they can be all imported through one single module;
-- one or more submodules implementing features. Multiple functions or class can be grouped in one module if they are part of the same feature or have a very close relationship. (inheritence of a specific feature that still describe the same feature, group of utilities for the same group of usages, etc.)
-
-A JavaScript file not part of a package (i.e lying directly in the `js` folder) belongs to the global context. They share the same context together (so global variables and function definitions for example). Right now it is the main "module" at the head of all modules.
-
-> Note: Their relationship is documented at `docs/modules.plantuml` and `docs/out/modules/modules.svg`.
+- one or more submodules implementing features. Multiple functions or class can be grouped in one module if they are part of the same feature or have a very close relationship. (inheritance of a specific feature that still describe the same feature, group of utilities for the same group of usages, etc.)
 
 <a name="architecture"></a>
 
 ## Architecture
 
-Wav2Bar is developped in JavaScript using the Electron framework. It uses a main Node process for system actions, and a renderer process for the rest of the application. When Wav2Bar is started, the main process initiate the application, and launch the renderer process. Then, they communicate through IPCMain and IPCRenderer respectively to send messages, events and requests. There can be additional renderers for specific tasks, such as rendering for export.
+TODO
 
-The renderer process starts its execution in `index.js` through the global context. Some files of the global context are not systematically used, such as `export_*.js` that relies on specific renderers.
+Wav2Bar is developed mainly in TypeScript using SvelteKit, with bits in Rust using the Tauri framework. It uses Tauri rust commands for selected system actions, and a web browser process for the rest of the application. When Wav2Bar is started, the Rust process initializes Tauri after setting up backend tasks such as logging (`src-tauri/src/main.rs`). Tauri launches the web browser process. Then, they communicate through Tauri commands to send messages, events and requests. Actions are restricted by a permission system put in plate by Tauri for security reasons (see Tauri documentation regarding capabilities and permissions).
 
-Each renderer process is independant from each other and can communicate through the main process.
+The browser process starts its execution in the single svelte page (`src/routes/*`). Each component is then responsible for initialization of what it drives (rendering, save, etc.).
 
-> Note: For more information, see the Electron documenation.
+Wav2Bar requires FFMpeg in order to be able to export videos. TODO: document once integrated.
 
-Wav2Bar requires FFMpeg in order to be able to export videos. FFMpeg is manipulated through a Node layer using a dedicated library.
+<a name="saves"></a>
 
-<a name="about-the-global-context"></a>
+### Saves
 
-## About the global context
+Saves are in short zip files with a JSON data file and a file system hierarchy to store audio files, images, and other user assets. The data file references relatively the assets, and is made so that it is also easy to manipulate in JS and Svelte stores.
 
-The current goal is to shrink the global context to the minimum (or remove it if it ends up possible). We should avoid by any means to create new features in the global context, add global variables, etc. If we need to add features from code existing in the global context, we should consider if it is possible to migrate it into modules beforehand. If not, we can prepare the code to be movable by making it as independant from the global context as possible.
+Saves are versioned, to know in which version they were created, and what migrations steps are needed, if any. Since the rewrite, version 3 and below are dropped as the project had a very small amount of downloads back then and to reduce maintenance surface. Such versions much be upgraded to version 4 using the latest legacy build (0.3.4-beta).
 
-The global context is the first entry in the program, in `index.js`, through an event listener for when the page is ready. In the global context, modules are imported dynamically and stored in `imports.package_name`.
+Since the rewrite, they are defined using JSON Schemas to catch on and reduce as much as possible risks of corruptions. They are defined in `src/lib/schemas`, and compiled using `npm run json2ts` to produce TypeScript equivalent types in `src/lib/types/schemas`. While types are useful for some compilation time assertions and autocomplete, prefer using the installed `ajv` lib to make sure a JSON structure adhere to a corresponding save file schema.
 
-<a name="about-node-integration"></a>
+A yet to be defined system similar to legacy will allow to upgrade an old version incrementally through each version, to allow for support of very old saves easily.
 
-## About Node integration in the renderer process
+> **Note:** Settings will or are already following the same architecture and principles as described above.
 
-Node integration should only be used to require Electron's IPCRenderer. All system actions and use of the Node or Electron api should have a dedicated handler in the main process.
+<a name="rendering-and-audio-processing"></a>
+
+### Rendering and audio processing
+
+There are three key parts to rendering and audio processing:
+- The rendering engine, Pixi.js, for which you can find documentation online;
+- The renderer, built on top of it and translating the save data into an animated stream (it also handle live audio streams such as the microphone);
+- The audio processor, done on the Rust side which converts an audio stream into spectrums (FFT) and other useful audio analysis data. It is queried by the renderer to obtain audio data to visualize.
+
+#### The renderer
+
+The renderer is initialized in `src/lib/components/atoms/Renderer.svelte`, and its entry point lies in `src/lib/engine/video/renderer.ts`. The whole engine lies in `src/lib/engine`.
+
+The `Renderer` (singleton) is responsible for setting up Pixi.js and subscribing to save data mutations to adapt rendering accordingly. It is also the entry point for user interactions (seek, play, etc.) and data display (duration, progress, etc.)
+
+It interacts with an `AudioProvider`, which is an interface for interacting with the audio sent to speakers and getting audio analysis data. It allows to support multiple APIs, such as the Web Audio API for the microphone and the backend processing for audio files. It must be initialized together with the `Renderer`.
+
+Time is tracked using a `TickEngine` which is independant from Pixi.js' tick system to have maximum control over it (such as both supporting live updates and per frame updates for exporting). It also allows to pause time while keeping Pixi.js active, and update the rendering live even if paused as the user tweaks properties of objects.
+
+The `Renderer` itself is an orchestrator and do not render itself directly. Instead, it dedicate such task to a `VisualObjectRenderer`, which is responsible for drawing a very specific kind of visual object. It returns a Pixi.js tree of components which is inserted in Pixi.js' stage by the renderer upon update.
+
+To link data updates to object rendering, a `VisualObjectRenderer` provides a `TickUnit`. It is a state machine which has an initial state, and updates it according to the needs of a `VisualObjectRenderer` and based on data it can access in the `tick()` method. The renderer can then subscribe to mutations and act accordingly (mutating the Pixi.js tree, which is automatically handled by Pixi.js to update the rendering of the tree).
+
+#### The audio processor
+
+TODO TBD
+
+<a name="localization-and-translations"></a>
+
+### Localization and translations
+
+Translations are stored in `src/lib/lang/<language>.json` where `<language>` is the language identification code (such as `en` or `en_gb`). The JSON is loaded in a Svelte store. Thus it is easy to keep the UI in sync by referencing this store for every text string. If a new JSON file is injected in the store, all the UI is translated immediately. As such, everything which must support localization must have corresponding translation keys in `en.json` which is the reference and default file.
 
 <a name="documenting"></a>
 
@@ -226,13 +248,12 @@ Node integration should only be used to require Electron's IPCRenderer. All syst
 
 Here is the list of things that should be documented:
 - methods, classes, functions...
-    - through comments above them, either common comments or JSDoc comments.
-    - classes
-        - through PlantUML diagrams. PlantUML allows to write UML diagrams by text, which is more friendly with tools like git. You can preview them and generate them through the official utility, or through extensions and plugins. VSCode's PlantUML plugin is used to generate .svg files of the diagrams in `docs/out`. There should be one diagram per module. Classes should be grouped by packages, and classes from other packages should only be named/declared (in this case links within the package are not mandatory either, but can be added if it helps for readability).
+    - through comments above them, either common comments or JSDoc comments. Not required for simple functions, but you should consider if specific behaviour must be documented (assumptions of the function, edge cases, fallbacks, unsupported situations, etc.)
     - abstracts, overrides
-        - through dedicated JSDoc tags `@abstract` and `@override`. They are important for the integrity of the codebase.
+        - through TypeScript, or if not possible using dedicated JSDoc tags `@abstract` and `@override`. They are important for the integrity of the codebase.
     - complex and verbose topics
-        - through dedicated MarkDown files. (examples: Save format, CLI, etc.)
+        - in this document, or if verbose, through dedicated MarkDown files.
+        - If useful, through diagrams (using D2 or PlantUML).
 
 All the documentation is written in the `docs` folder and should be saved in git friendly, text based formats.
 
@@ -240,140 +261,27 @@ All the documentation is written in the `docs` folder and should be saved in git
 
 ## Creating UI components
 
-Web components are prefered over the older approach of components through classes and are in fact an evolution of it.
+Components goes in `src/lib/components`. They are grouped by their kind and role:
+- `atoms`: independent components that are assembled to form the UI. It is the smallest unit.
+- `panes`: container with a specific role, inserted in the app layout which is panes based.
+- `property_pane_sets`: Corresponds to the different group of components used in the property pane. The properties UI for a given visual object is defined in a svelte component named `VisualObjectNamePS` where `VisualObjectName` is the component name. Each of them uses the `groups/CommonProperties`, and insert other UI sections based on what it `supports`. This way, the UI for a given property is written once and can be reused for every visual object supporting it.
+- `window`: corresponds to the main views. Which are the app itself and modals that can be displayed on top of it. All `modals` are based on `Modal`.
 
-In the previous approach, every component is an extension of a class encapsulating a div and some utility functions. Every component can both have a UI parent and a DOM parent in order to be compatible with the DOM. The DOM parent allows to access the DOM nodes while the UI parent allows to use the functionalities of the component itself. This double approach is rather confusing and counter productive. Another caveat is having to instantiate and style all the elements through the JavaScript API, which leads to long constructors affecting readability. Finally, those components are bare bones that requires additional methods to manipulate it like a DOM element. 
-
-[Web components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) on the other hand keeps the class approach but integrates perfectly to the native DOM tree and JavaScript APIs. It creates a custom tag resuable anywhere as a classic HTML tag (within chevrons, through createElement, etc.). In addition, the declarated custom properties of the class are accessible through the node instance like any node manipulated in JS. At the same time, since it extends `HTMLElement`, the entire DOM api is supported on those components. Finally, by using HTML templates, the user interface can be written declaratively (to some extent) in a more consise and readable way. Note that web components do not need to be imported, since they are accessed using regular JS APIs instead. (You can use `customElements.get("tag");` to get the class definition.)
-
-Those aren't as powerful as full featured JS frameworks such as React, Vue, Angular or Svelte, however I do not wish to further complexify this project by bringing in other package managers, compilers, etc.
-
-### Creating web components the easy way
-
-While web components comes pretty handy for pure JS development, they are tedious to declare. You need to register them, create a shadow DOM, clone an instance of the template in the constructor (which requires a fetch if we want to separate the template in another file), etc. Thus the process has been abstracted by the `web_ui_custom_component` module. It comes with two important tools: the `WebUICustomComponent` class and the `register` asynchronous function. While the class handles creating the DOM shadow and cloning the template, the `register` function defines the element in `customElements` and cache the template.
-
-To create a component, create a new folder within `ui_components` called `web_<tag_name_underscore>`. Create a JS module and an HTML file named the same way inside your newly created folder. In the HTML file, write your UI withing a `<template>`. In the module, asynchronously call `register` with the tag name separated by hyphens (the actual tag) and the class definition extending `WebUICustomComponent`. in the constructor, call `super(<tag_name_hyphens>, <props_and_states>)`. In order for the component to load, add an `export *` to `ui_components.js`. Finally, to be able to use it in type definitions in JSDoc (from `uiComponents.<type>`), add it to `ui_components.d.ts`.
-
-It should look like this for `ui-foo-bar`:
-
-```
-web_ui_foo_bar
-|- web_ui_foo_bar.js
-|- web_ui_foo_bar.html
-```
-
-web_ui_foo_bar.html
-```html
-<template>
-    <!--your UI and style...-->
-</template>
-```
-
-web_ui_foo_bar.js
-```js
-import {WebUICustomComponent, register} from "../web_ui_custom_component.js";
-
-const TAG = "ui-foo-bar";
-// useful for intellisense and auto completion
-const PROPS = {
-    prop: "prop"
-};
-// declared here to have both in sight at the same time
-const PROPS_DEFAULTS = {
-    prop: "default"
-};
-
-// put complex structures in states. The prefix in the value is necessary here
-const STATES = {
-    allowed_extensions: "states/allowed_extensions"
-};
-const STATES_DEFAULTS = {
-    allowed_extensions: ["#any"]
-};
-
-const EVENTS = {
-    path_chosen: "path_chosen"
-};
-
-export class WebUIFooBar extends WebUICustomComponent {
-    /**
-     * List of properties of the element, accessible to the user.
-     * @enum
-     */
-    PROPS = {...PROPS};
-
-    /**
-     * List of states of the element, accessible to the user.
-     * @enum
-     */
-    STATES = {...STATES};
-
-    /**
-     * List of events of the element, accessible to the user.
-     * @enum
-     */
-    EVENTS = {...EVENTS};
-
-    constructor() {
-        /**
-         * every part here is optional.
-         * - Props are values accessible as HTML attributes, and are accessible
-         *  using getProp(prop), setProp(prop, value) instead of
-         * the state counterpart. You can subscribe to its changes using
-         * subscribeToProp(prop, function_handler(value)).
-         * /!\/!\/!\ DO NOT USE getState/setState TO ACCESS PROPS! /!\/!\/!\
-         * 
-         * - States can be used for cases non fitting props, and
-         * should preferably have getters and setters for the user.
-         * 
-         * - Private states can be used as you wish inside the component.
-         * 
-         * For more details on manipulating them (validators,
-         * event subscription, set state, etc.), see the StateMachineMixin.
-         */
-        super(TAG, {
-            props: {...PROPS_DEFAULTS}, //copy declared values.
-            states: {...STATES_DEFAULTS},
-            private_states: {},
-            events: {...EVENTS} 
-        });
-    }
-}
-// You could also use an anonymous class if you wanted, though typing it
-// allows to use the type elsewhere in the codebase (typeof, JSDoc, etc.).
-// The path is from the ui_component folder. It can be ommited if at the root.
-await register(TAG, WebUIFooBar, "path/to/folder_containing_component_folder");
-```
-
-ui_components.js
-```js
-//...
-export * from "./web_ui_foo_bar/web_ui_foo_bar.js";
-//...
-```
-
-ui_components.d.ts
-```ts
-//...
-export * from "./web_ui_foo_bar/web_ui_foo_bar.js";
-//...
-```
-
-It is (again) arguably not as convenient as a framework introducing custom syntax, but will do the job. 
-
-> **Note:** Make sur to export the components in `ui_components` in order for the web components to be loaded! Otherwise you will get errors telling you that the components does not exist.
+Components are styled using the global CSS elements defined in `src/lib/css`: design system, mixins, etc. It is imported through `globals_forward.scss`. This ensure that adjusting the UI is as easy as possible in terms of color, spacing, etc.
 
 <a name="versioning-and-git"></a>
 
 ## Versioning and Git
 
-`<giant_upgrade>.<major_update>.<small_update>[-beta]`.
-- **giant_upgrade:** Switching development phase (beta to release, gigantic rewrite and upgrade of features). Very unlikely to increment.
+Based on [Semantic versioning](https://semver.org/)
+
+`<giant_upgrade>.<major_update>.<small_update>[-beta.<iteration>]`.
+- **giant_upgrade:** Switching development phase (gigantic rewrite and upgrade of features). Very unlikely to increment (this rewrite is the only increment so far).
 - **major_update:** Update with multiple new features and breaking changes.
 - **small_update:** Small features and changes that are not breaking changes, bug fixes, security patches.
-- **-beta:** Beta release. All 0.x.y releases should have it as they are betas.
+- **-beta:** Beta release. Incrementation is done regardless of the kind of update, as we are still in a development phase (and to adhere to semantic versioning).
 
-> Note: **Do NOT use Git LFS!** It caused many issues in the past and should not be touched or used anymore.
+> Note: **Do NOT use Git LFS!** It caused many issues in the past (legacy repository) and should not be touched or used anymore.
 
 <a name="doing-a-release"></a>
 
@@ -381,31 +289,32 @@ It is (again) arguably not as convenient as a framework introducing custom synta
 
 1) verify the version number and type **( /!\ indev -> beta /!\ )** in:
     - `package.json`
-    - `package.lock.json`
-    - `index.js`
+    - `package-lock.json`
+    - `tauri.conf.json`
+    - `Cargo.toml`
 2) update [CHANGELOG.md](../CHANGELOG.md)
 
-3) comment out the `openDevTools` line in window functions in main.js
-4) do necessary fixes
+3) do necessary fixes
+4) push to master
 
-5) push to master
+5) build the app: TBD
+6) test the maked files (if not ok go back to step 3)
 
-6) `npm run make` (for local testing or manual builds)
-7) test the maked files (if not ok go back to #4)
+7) merge the release from `develop` to `main`
 
-8) merge the release from `develop` to `main`
-
-9) tag locally on `main` (`git tag -a v1.4 -m "my version 1.4"`)
-10) commit the tag (`git push origin --tags` or `git push origin tag_name`)
+8) tag locally on `main` (`git tag -a v1.4 -m "v1.4"`)
+9) commit the tag (`git push origin --tags` or `git push origin tag_name`)
 > **to get rid of a tag:**
 > - `git tag -d v1.4-lw`
 > - `git push origin --delete <tagname>`
-11)
+10) setup the release:
     - **local build:**
         - Do the GitHub release with appropriate packages and the right tag (source code already managed BUT without node modules)
     - **CI build:**
         - Wait for the tag CI action to finish. It will produce a release draft for the tag, with built packages attached to it.
-12) Fill the release information:
+11) Fill the release information:
+
+TODO see if needs an update once builds are setup
 ```md
 [description]
 
@@ -431,9 +340,10 @@ Mac is not supported at this moment, but you can give it a try using the source 
 For bug reports, please use the issues section of GitHub. For other support, use the discussions section or go over to my Discord server (https://discord.gg/EVGzfdP)
 ```
 
-13) Update the website links and release numbers (hard coded, yes I know what you will say, and it is OK as is for me right now).
-14) OPTIONAL : Blog post
-15) Do an archive of the Git repository and GitHub assets
+TODO review once new website is done.
+12) Update the website links and release numbers (hard coded, yes I know what you will say, and it is OK as is for me right now).
+13) OPTIONAL : Blog post
+14) Do an archive of the Git repository and GitHub assets
 
 <a name="questions-or-concerns"></a>
 
@@ -447,20 +357,25 @@ You can submit your concerns by opening an issue. For questions, use the discuss
 
 (Picorims answering)
 
-### Why using JavaScript and not TypeScript ?
-The project was started when my knowledge of programming was pretty basic. I didn't know classes at the time. Now, the code went through multiple rewrites, and more time should be spent towards improving the software (going out of the endless refactor loop basically and do it gradually). Thus rewriting again by adapting to TypeScript is not worth the work, especially considering the setup is tedious (there is no Webpack or Vite or else in the repository). JavaScript and JSDoc are sufficient right now.
+### Why a rewrite?
 
-### Why not using React/Vue/Angular/Svelte ?
-Same as below. By the time, a custom component system has been setup using ~~`UIComponent` and `EventMixin`~~ `WebUICustomComponent`, which is enough for the needs of the project.
+The old repository, `wav2bar`, was a hell of tech debt, bad architecture, multiple approaches tangled together, and ultimately reached a point of no maintenance possible. It didn't have TypeScript, which means less errors caught upfront. It didn't have a UI framework, which means maintaining a custom hacky UI library and struggling with states. Rendering was a mix of canvases and HTML, forcing to use screenshots to render frames in a very unoptimized manner. It had both ESM modules and old school scripts holding the whole thing together with many bugs. And so on. If you want to torture your mind, it is (this way)[https://github.com/picorims/wav2bar].
 
-### Why making it a desktop app ? Why not a web app ?
-Here, the "server" is shipped with the application. Otherwise, it would require maintaining and hosting a server capable of handling many video exports at the same time. So it is easier and cheaper, in addition to having a better native experience.
+### Why making it a desktop app? Why not a web app?
 
-### There are many similar apps on the Internet. Why Wav2Bar ?
-When I started the project, the only truly free option I knew was SonicCandle, which was discontinued. By the time I discovered some other projects exist as well. But hey, it's a good training and practice project for a student, as it covers many topics at the same time. This is mostly a side project to experiment, train and have fun, so concurrency isn't something I care much about. And the more options for the end user, the better!
+There are multiple reasons:
+- Here, the "server" is shipped with the application. Otherwise, it would require maintaining and hosting a server capable of handling many video exports at the same time (so powerful with a lot of storage and bandwidth). So it is easier and cheaper, in addition to having a better native experience.
+- It is easier to manage the multi-file saves in the file system than within JS or in a shared server disk (which would require enough space to store many potentially big audio and image files).
+- We can alleviate the user's hardware power to delegate intensive tasks to Rust where bottlenecks arise. Browser only approaches (such as in legacy) reduce the performance improvement window. If done server side, it would require powerful (and thus expensive) servers.
+- It is available at hand without requiring an internet connection, with a limited impact on disk space.
 
-### Why current Linux support is not very good ?
-I am limited to a virtual machine (VM) on a computer with only an integrated graphics card. I can build and quickly test the software but remain pretty limited (playing the preview can crash the VM altogether). The fact that I don't use Linux often and couldn't dual boot at home doesn't help either. However feel free to report any issue or suggestion regarding Linux support, I really enjoy that platform existing and want to do my best to support it.
+### There are many similar apps on the Internet. Why Wav2Bar?
+When I started the project, the only truly free option I knew was SonicCandle, which was discontinued. By the time I discovered some other projects exist as well. But hey, it's a good training and practice project, as it covers many topics at the same time. This is mostly a side project to experiment, train and have fun, that happens to be useful to me. And the more options for the end user, the better!
 
-### Why not supporting MacOSX ?
-Shipping to macOS requires signing packages, and is generally more troublesome than shipping on other operating systems. As I am the only maintainer doing it on my free time, I have to make choices and can't handle everything. (I also don't want to spend thousand of dollars to support a platform). But you can try running Wav2Bar from source, Electron is compatible with Mac after all, and share similarities with Linux.
+### Why current Linux support is not very good?
+> Note: I have not yet built the rewrite as of writing this.
+
+I am limited to a virtual machine (VM) (for now?). I can build and quickly test the software but remain pretty limited (playing the preview used to crash the VM altogether on an older PC). The fact that I don't use Linux often and couldn't dual boot at home doesn't help either. However feel free to report any issue or suggestion regarding Linux support, I really enjoy that platform existing and want to do my best to support it.
+
+### Why not supporting MacOSX?
+Shipping to macOS requires signing packages, and is generally more troublesome than shipping on other operating systems. As I am the only maintainer doing it on my free time, I have to make choices and can't handle everything. (I also don't want to spend thousand of dollars to support a platform). But you can try running Wav2Bar from source, Tauri is compatible with Mac after all, and share similarities with Linux.
