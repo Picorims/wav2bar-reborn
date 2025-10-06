@@ -7,7 +7,7 @@
 		"email": "picorims.contact@gmail.com",
 		"url": "https://picorims.github.io"
 	},
-	"license": "GPL-3.0-or-later",
+	"license": "MPL-2.0",
 	"scripts": {
 		"tauri:dev": "npx tauri dev",
 		"dev": "vite dev",

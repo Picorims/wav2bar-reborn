@@ -1,10 +1,10 @@
 [package]
-name = "app"
-version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+name = "wav2bar"
+version = "1.0.0-indev"
+description = "Free software for creating audio visualization (motion design) videos"
+authors = ["Charly Schmidt aka Picorims(picorims.contact@gmail.com)"]
+license = "MPL-2.0"
+repository = "https://github.com/picorims/wav2bar-reborn"
 edition = "2021"
 rust-version = "1.77.2"
 
