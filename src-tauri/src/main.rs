@@ -11,8 +11,9 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use core::panic;
-use std::{env::current_exe, path::Path};
+use std::path::PathBuf;
 
+use app_lib::get_current_exe_dir;
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
     config::{Appender, Root},
@@ -20,23 +21,7 @@ use log4rs::{
 };
 
 fn main() {
-    let current_exe =
-        current_exe().unwrap_or_else(|_| panic!("Could not get current executable path."));
-
-    let mut current_exe_dir = current_exe
-        .parent()
-        .unwrap_or_else(|| panic!("Could not get current executable directory."));
-
-    let dev_current_dir = current_exe_dir.join("../../dev_working_dir");
-    if cfg!(dev) {
-        // Prevents an infinite loop, as creating a dir in `debug` triggers reload.
-        // So in dev, we pick an arbitrary directory ignored by git.
-        print!(
-            "Running in dev mode, using dev working dir: {}\n",
-            dev_current_dir.display()
-        );
-        current_exe_dir = dev_current_dir.as_path();
-    }
+    let current_exe_dir = get_current_exe_dir();
 
     // create logs directory if it doesn't exist
     std::fs::create_dir_all(current_exe_dir.join("logs"))
@@ -76,4 +61,5 @@ fn main() {
     log::info!("Initializing tauri...");
     // from there, the web part will be launched.
     app_lib::run();
+
 }
