@@ -11,7 +11,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use core::panic;
-use std::path::PathBuf;
 
 use app_lib::get_current_exe_dir;
 use log4rs::{

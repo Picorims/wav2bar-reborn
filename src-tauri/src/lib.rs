@@ -17,7 +17,7 @@ use std::io;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_save])
+        .invoke_handler(tauri::generate_handler![open_save, read_save_json])
         .plugin(tauri_plugin_dialog::init())
         .plugin(
             tauri_plugin_log::Builder::new()
@@ -94,6 +94,22 @@ async fn open_save(path: String) -> Result<(), String> {
     let file = File::open(&temp_zip_path).map_err(|e| format!("Could not open temp zip file: {}", e))?;
     extract_zip(file, current_save_dir)?;
     Ok(())
+}
+
+/// Reads and returns the content of the save JSON file as a string.
+#[tauri::command]
+async fn read_save_json() -> Result<String, String> {
+    let temp_dir = get_temp_dir();
+    let current_save_dir = temp_dir.join("current_save");
+    let save_json_path = current_save_dir.join("data.json");
+    if !save_json_path.exists() {
+        let msg = "Save JSON file does not exist (is the save loaded?)".to_string();
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+    let json_content = std::fs::read_to_string(&save_json_path)
+        .map_err(|e| format!("Could not read save JSON file: {}", e))?;
+    Ok(json_content)
 }
 
 /// Returns the working directory's temp directory path.

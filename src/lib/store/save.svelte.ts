@@ -83,42 +83,28 @@ class SaveManager {
             Log.save.info("No file selected");
             return;
         } else {
-            const errorMsg: string | null = await invoke("open_save", { path: path as string });
-            if (errorMsg !== null) {
-                Log.save.error("Failed to open save file: " + errorMsg);
-                return;
-            } else {
+            try {
+                await invoke("open_save", { path: path as string });
                 Log.save.info("Save file opened successfully, reading JSON...");
+                const jsonStr = await invoke<string>("read_save_json");
+                Log.save.info("Read JSON from save file, parsing it...");
+                const saveJSON = JSON.parse(jsonStr);
+                Log.save.info("Validating save file...");
+                const valid = validateSave(saveJSON);
+                if (!valid) {
+                    throw new Error("Save file does not match the schema because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
+                } else {
+                    Log.save.info("Save file is valid, loading it");
+                    this._saveConfig = saveJSON as unknown as Save;
+
+                    renderer.setAudioProvider(new LiveAudioProvider());        
+                }
+
+            } catch (e) {
+                Log.save.error("Failed to open save file: " + (e as Error).message);
+                return;
             }
         }
-        
-        
-
-        // const file = (e.target as HTMLInputElement).files?.[0];
-        // if (!file) return;
-        // Log.save.info("Opening save file");
-        // // https://gildas-lormeau.github.io/zip.js/
-        // const blobReader = new zip.BlobReader(file);
-        // const reader = new zip.ZipReader(blobReader);
-        // const entries = await reader.getEntries();
-        // const saveEntry = entries.find((entry) => entry.filename === "data.json");
-        // if (saveEntry === undefined) {
-        //     throw new Error("No save.json file found in the zip");
-        // } else {
-        //     const saveString = await saveEntry.getData!(new zip.TextWriter());
-        //     const saveJSON = JSON.parse(saveString);
-        //     Log.save.info("Save file opened", JSON.stringify(saveJSON));
-        //     const valid = validateSave(saveJSON);
-        //     if (!valid) {
-        //         throw new Error("Save file does not match the schema because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
-        //     } else {
-        //         Log.save.info("Save file is valid, loading it");
-        //         this._saveConfig = saveJSON as unknown as Save;
-
-        //         renderer.setAudioProvider(new LiveAudioProvider());        
-        //     }
-        // }
-
     }    
 
     /**
