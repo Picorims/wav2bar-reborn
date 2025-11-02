@@ -8,7 +8,6 @@
 */
 
 import type { UUIDv4 } from "$lib/types/common_types";
-import * as zip from "@zip.js/zip.js";
 // import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
@@ -16,7 +15,7 @@ import { renderer, type Renderer } from "$lib/engine/video/renderer";
 import { Log } from "$lib/log/logger";
 import { validateSave, validateSaveVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { version } from "$app/environment";
-import { open } from "@tauri-apps/plugin-dialog";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 
 
@@ -105,7 +104,29 @@ class SaveManager {
                 return;
             }
         }
-    }    
+    }
+    
+    public async saveToFile() {
+        Log.save.info("Asking for a file to save to");
+        const path = await save({
+            title: "Pick a file to save to",
+            filters: [{extensions: ["w2bzip"], name: "Wav2Bar save file"}],
+            defaultPath: "project.w2bzip",
+        })
+
+        if (path === null) {
+            Log.save.info("No file selected");
+            return;
+        } else {
+            try {
+                await invoke("save_to_file", { pathStr: path });
+                Log.save.info("Save file saved successfully");
+            } catch (e) {
+                Log.save.error("Failed to save file: " + e);
+                return;
+            }
+        }
+    }
 
     /**
      * Adds a new object to the save from the given type

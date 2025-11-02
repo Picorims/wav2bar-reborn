@@ -8,16 +8,26 @@
 */
 
 use std::env::current_exe;
+use std::io::Read;
+use std::io::Write;
 use std::path::PathBuf;
 use std::path::Path;
 use std::fs::File;
 use std::fs;
 use std::io;
+use anyhow::Context;
+use zip::write::SimpleFileOptions;
+
+use walkdir::WalkDir;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_save, read_save_json])
+        .invoke_handler(tauri::generate_handler![
+            open_save,
+            read_save_json,
+            save_to_file
+        ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(
             tauri_plugin_log::Builder::new()
@@ -180,5 +190,69 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
         }
     }
 
+    Ok(())
+}
+
+#[tauri::command]
+async fn save_to_file(path_str: String) -> Result<(), String> {
+    log::info!("Requested to save to file: {}", path_str);
+    let temp_dir = get_temp_dir();
+    let current_save_dir = temp_dir.join("current_save");
+    if !current_save_dir.exists() {
+        let msg = "No current save to export (is the save loaded?)".to_string();
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+
+    // create zip file at given path
+    zip_dir(Path::new(&path_str), current_save_dir.as_path()).map_err(|e| format!("Failed to zip file: {}", e))?;
+
+    Ok(())
+}
+
+/// Based on zip example: https://github.com/zip-rs/zip2/blob/master/examples/write_dir.rs
+fn zip_dir(
+    dest_path: &Path,
+    src_path: &Path,
+) -> anyhow::Result<()> {
+    let file = File::create(dest_path).map_err(|e| anyhow::anyhow!("Could not create zip file: {}", e))?;
+
+    let walk_dir = WalkDir::new(src_path);
+
+    let mut zip = zip::ZipWriter::new(file);
+    let options = SimpleFileOptions::default()
+        .unix_permissions(0o755);
+
+    let prefix = Path::new(src_path);
+    let mut buffer = Vec::new();
+    for entry in walk_dir {
+        let dir_entry = entry.map_err(|e| anyhow::anyhow!("WalkDir Error: {}", e))?;
+        let path = dir_entry.path();
+        print!("Visiting path: {path:?}\n");
+        print!("  with prefix: {prefix:?}\n");
+        let name = path.strip_prefix(prefix).map_err(|e| anyhow::anyhow!("Path Strip Prefix Error: {}", e))?;
+        let path_as_string = name
+            .to_str()
+            .map(str::to_owned)
+            .with_context(|| format!("{name:?} Is a Non UTF-8 Path"))?;
+        
+        // Write file or directory explicitly
+        // Some unzip tools unzip files with directory paths correctly, some do not!
+        if path.is_file() {
+            println!("adding file {path:?} as {name:?} ...");
+            zip.start_file(path_as_string, options)?;
+            let mut f = File::open(path)?;
+
+            f.read_to_end(&mut buffer)?;
+            zip.write_all(&buffer)?;
+            buffer.clear();
+        } else if !name.as_os_str().is_empty() {
+            // Only if not root! Avoids path spec / warning
+            // and mapname conversion failed error on unzip
+            println!("adding dir {path_as_string:?} as {name:?} ...");
+            zip.add_directory(path_as_string, options)?;
+        }
+    }
+    zip.finish()?;
     Ok(())
 }
