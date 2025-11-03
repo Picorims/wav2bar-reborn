@@ -100,7 +100,12 @@ class SaveManager {
                 }
 
             } catch (e) {
-                Log.save.error("Failed to open save file: " + (e as Error).message);
+                // Tauri errors are strings
+                if (typeof e === "string") {
+                    Log.save.error("Failed to open save file: " + e);
+                } else {
+                    Log.save.error("Failed to open save file: " + (e as Error).message);
+                }
                 return;
             }
         }
@@ -122,6 +127,7 @@ class SaveManager {
                 await invoke("save_to_file", { pathStr: path });
                 Log.save.info("Save file saved successfully");
             } catch (e) {
+                // Tauri errors are strings
                 Log.save.error("Failed to save file: " + e);
                 return;
             }
