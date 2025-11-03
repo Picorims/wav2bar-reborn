@@ -131,7 +131,6 @@ fn get_temp_dir() -> std::path::PathBuf {
 
 /// Based on zip example: https://github.com/zip-rs/zip2/blob/master/examples/extract.rs
 fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
-    // FIXME
     let archive_wrapped = zip::ZipArchive::new(file);
     let mut archive = match archive_wrapped {
         Ok(archive) => archive,
