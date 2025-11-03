@@ -8,7 +8,6 @@
 */
 
 import type { UUIDv4 } from "$lib/types/common_types";
-import * as zip from "@zip.js/zip.js";
 // import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
@@ -16,6 +15,8 @@ import { renderer, type Renderer } from "$lib/engine/video/renderer";
 import { Log } from "$lib/log/logger";
 import { validateSave, validateSaveVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { version } from "$app/environment";
+import { open, save } from "@tauri-apps/plugin-dialog";
+import { invoke } from "@tauri-apps/api/core";
 
 
 
@@ -67,40 +68,71 @@ class SaveManager {
         return baseObject as unknown as VisualObject;
     }
 
-    public openSave(renderer: Renderer) {
+    public async openSave(renderer: Renderer) {
         Log.save.info("Asking for a file to open");
-        const fileElt = document.createElement("input");
-        fileElt.type = "file";
-        fileElt.accept = ".w2bzip";
-        fileElt.onchange = async (e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (!file) return;
-            Log.save.info("Opening save file");
-            // https://gildas-lormeau.github.io/zip.js/
-            const blobReader = new zip.BlobReader(file);
-            const reader = new zip.ZipReader(blobReader);
-            const entries = await reader.getEntries();
-            const saveEntry = entries.find((entry) => entry.filename === "data.json");
-            if (saveEntry === undefined) {
-                throw new Error("No save.json file found in the zip");
-            } else {
-                const saveString = await saveEntry.getData!(new zip.TextWriter());
-                const saveJSON = JSON.parse(saveString);
-                Log.save.info("Save file opened", JSON.stringify(saveJSON));
+        const path = await open({
+            title: "Pick a save file",
+            multiple: false,
+            directory: false,
+            recursive: false,
+            filters: [{extensions: ["w2bzip"], name: "Wav2Bar save file"}],
+        });
+
+        if (path === null) {
+            Log.save.info("No file selected");
+            return;
+        } else {
+            try {
+                await invoke("open_save", { path: path as string });
+                Log.save.info("Save file opened successfully, reading JSON...");
+                const jsonStr = await invoke<string>("read_save_json");
+                Log.save.info("Read JSON from save file, parsing it...");
+                const saveJSON = JSON.parse(jsonStr);
+                Log.save.info("Validating save file...");
                 const valid = validateSave(saveJSON);
                 if (!valid) {
                     throw new Error("Save file does not match the schema because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
                 } else {
                     Log.save.info("Save file is valid, loading it");
                     this._saveConfig = saveJSON as unknown as Save;
-    
+
                     renderer.setAudioProvider(new LiveAudioProvider());        
                 }
+
+            } catch (e) {
+                // Tauri errors are strings
+                if (typeof e === "string") {
+                    Log.save.error("Failed to open save file: " + e);
+                } else {
+                    Log.save.error("Failed to open save file: " + (e as Error).message);
+                }
+                return;
             }
+        }
+    }
     
-        };
-        fileElt.click();
-    }    
+    public async saveToFile() {
+        Log.save.info("Asking for a file to save to");
+        const path = await save({
+            title: "Pick a file to save to",
+            filters: [{extensions: ["w2bzip"], name: "Wav2Bar save file"}],
+            defaultPath: "project.w2bzip",
+        })
+
+        if (path === null) {
+            Log.save.info("No file selected");
+            return;
+        } else {
+            try {
+                await invoke("save_to_file", { pathStr: path });
+                Log.save.info("Save file saved successfully");
+            } catch (e) {
+                // Tauri errors are strings
+                Log.save.error("Failed to save file: " + e);
+                return;
+            }
+        }
+    }
 
     /**
      * Adds a new object to the save from the given type

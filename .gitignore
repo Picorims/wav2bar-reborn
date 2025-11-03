@@ -22,3 +22,6 @@ vite.config.ts.timestamp-*
 
 # Test
 /test-results
+
+# Rust
+/target/

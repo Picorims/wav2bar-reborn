@@ -24,6 +24,9 @@
 	function openAndLoadSave() {
 		saveManager.openSave(renderer);
 	}
+	function writeSave() {
+		saveManager.saveToFile();
+	}
 </script>
 
 <div class="card">
@@ -31,18 +34,23 @@
 	<IconButton onClick={() => {currentModal.set(ModalType.PROJECT_SETTINGS)}}>
 		<FileCog/>
 	</IconButton>
+
 	<IconButton>
 		<FilePlus/>
 	</IconButton>
+
 	<IconButton onClick={openAndLoadSave}>
 		<FolderOpen/>
 	</IconButton>
-	<IconButton>
+
+	<IconButton onClick={writeSave}>
 		<Save/>
 	</IconButton>
+
 	<IconButton onClick={openModalHandler(ModalType.SETTINGS)}>
 		<Settings/>
 	</IconButton>
+
 	<IconButton>
 		<HelpCircle/>
 	</IconButton>
