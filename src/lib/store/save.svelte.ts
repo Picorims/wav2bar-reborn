@@ -76,7 +76,7 @@ class SaveManager {
             directory: false,
             recursive: false,
             filters: [{extensions: ["w2bzip"], name: "Wav2Bar save file"}],
-        })
+        });
 
         if (path === null) {
             Log.save.info("No file selected");
