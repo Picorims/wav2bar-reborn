@@ -185,7 +185,7 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
             use std::os::unix::fs::PermissionsExt;
 
             if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&outpath, fs::Permissions::from_mode(mode)).map_err(|e| format!("Could not set permissions: {}", e))?;
+                fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).map_err(|e| format!("Could not set permissions: {}", e))?;
             }
         }
     }
