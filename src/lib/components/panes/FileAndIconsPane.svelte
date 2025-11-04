@@ -60,7 +60,9 @@
 	<SettingsModal bind:dialog={settingsModalDialog} />
 	<Modal bind:dialog={projectSettingsModalDialog} title="Project Settings">
 		<p>Project settings go here</p>
-		<button onclick={() => {projectSettingsModalDialog?.close()}}>Close</button>
+		{#snippet buttons()}
+			<button onclick={() => {projectSettingsModalDialog?.close()}}>Close</button>
+		{/snippet}
 	</Modal>
 
 </div>
