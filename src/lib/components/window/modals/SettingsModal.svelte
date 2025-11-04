@@ -9,7 +9,6 @@
     */
 	import Modal from '../Modal.svelte';
 	import { lang, settings } from '$lib/store/settings';
-	import { closeModalHandler } from '$lib/store/modal';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import {
 		LanguageOptions,
@@ -19,7 +18,12 @@
 	} from '$lib/store/settings_structure/settings_enums';
 	import {openPath} from "@tauri-apps/plugin-opener";
 	import { appLogDir } from "@tauri-apps/api/path";
-	import LabelWrapper from '$lib/components/atoms/LabelWrapper.svelte';
+
+	interface Props {
+		dialog: HTMLDialogElement | null;
+	}
+
+	let { dialog = $bindable() }: Props = $props();
 
 	const onLanguageChange = (key: string) => {
 		// note: only works because both enum keys and values are all caps!
@@ -40,7 +44,7 @@
 	}
 </script>
 
-<Modal title={$lang.settings.title}>
+<Modal bind:dialog title={$lang.settings.title}>
 	<LabeledDropdown
 		title={$lang.settings.language}
 		optionsObj={LanguageOptions}
@@ -64,7 +68,7 @@
 	</p>
 
     {#snippet buttons()}
-		<button  class="close" onclick={closeModalHandler}>{$lang.settings.close}</button>
+		<button  class="close" onclick={() => {dialog?.close()}}>{$lang.settings.close}</button>
 	{/snippet}
 </Modal>
 

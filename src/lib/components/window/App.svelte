@@ -13,16 +13,13 @@
 	import PropertiesPane from '$lib/components/panes/PropertiesPane.svelte';
 	import ControllerPane from '$lib/components/panes/ControllerPane.svelte';
 	import FileAndIconsPane from '$lib/components/panes/FileAndIconsPane.svelte';
-	import Modal from '$lib/components/window/Modal.svelte';
-	import { currentModal, ModalType } from '../../store/modal';
-	import SettingsModal from './modals/SettingsModal.svelte';
 	import Renderer from '$lib/components/atoms/Renderer.svelte';
 	import { minPercentFrom, maxPercentFrom, ratio, ratioToPercent } from '$lib/math';
 
 	let saved = false;
 	let projectTitle = "New Project";
-	let windowWidth: number = $state();
-	let windowHeight: number = $state();
+	let windowWidth: number = $state(1);
+	let windowHeight: number = $state(1);
 </script>
 
 <svelte:window bind:innerWidth={windowWidth} bind:innerHeight={windowHeight}/>
@@ -67,15 +64,6 @@
 		</div>
 	</Pane>
 </Splitpanes>
-
-{#if $currentModal === ModalType.PROJECT_SETTINGS}
-	<Modal title="Project Settings">
-		<p>Project settings go here</p>
-		<button onclick={() => {currentModal.set(null)}}>Close</button>
-	</Modal>
-{:else if $currentModal === ModalType.SETTINGS}
-	<SettingsModal/>
-{/if}
 
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
