@@ -13,11 +13,15 @@
         "Appender",
         "appenders",
         "bgnd",
+        "bindable",
         "Charly",
         "chrono",
+        "dialog",
         "indev",
         "PIXI",
         "rgba",
-        "tauri"
+        "serde",
+        "tauri",
+        "walkdir"
     ],
 }
