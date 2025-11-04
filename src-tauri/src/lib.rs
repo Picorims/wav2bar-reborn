@@ -19,6 +19,7 @@ use anyhow::Context;
 use zip::write::SimpleFileOptions;
 
 use walkdir::WalkDir;
+mod audio;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -26,7 +27,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             open_save,
             read_save_json,
-            save_to_file
+            save_to_file,
+            audio::bake_fft,
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(

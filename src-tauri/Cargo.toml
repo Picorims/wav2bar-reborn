@@ -24,7 +24,7 @@ log = "0.4"
 log4rs = { version = "1.4.0", features = ["pattern_encoder"] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-symphonia = "0.5.5"
+symphonia = { version = "0.5.5", features = ["mp3"] }
 tauri = { version = "2.4.0", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-log = "2.3.1"

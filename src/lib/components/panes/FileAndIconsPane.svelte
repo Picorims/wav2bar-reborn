@@ -13,6 +13,7 @@
 	import { renderer } from "$lib/engine/video/renderer";
 	import SettingsModal from "../window/modals/SettingsModal.svelte";
 	import Modal from "../window/Modal.svelte";
+	import { invoke } from "@tauri-apps/api/core";
 
 	interface Props {
 		title?: string;
@@ -28,6 +29,10 @@
 	}
 	function writeSave() {
 		saveManager.saveToFile();
+	}
+
+	function bakeFFT() {
+		invoke("bake_fft", {audioFileName: saveManager.save.audio_filename});
 	}
 </script>
 
@@ -60,6 +65,7 @@
 	<SettingsModal bind:dialog={settingsModalDialog} />
 	<Modal bind:dialog={projectSettingsModalDialog} title="Project Settings">
 		<p>Project settings go here</p>
+		<button onclick={bakeFFT}>bake fft</button>
 		{#snippet buttons()}
 			<button onclick={() => {projectSettingsModalDialog?.close()}}>Close</button>
 		{/snippet}
