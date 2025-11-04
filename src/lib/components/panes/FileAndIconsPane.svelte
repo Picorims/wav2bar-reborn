@@ -9,10 +9,10 @@
 	*/
 	import IconButton from "../atoms/IconButton.svelte";
 	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from "lucide-svelte";
-	import { currentModal, ModalType } from "$lib/store/modal";
-	import { openModalHandler } from "$lib/store/modal";
 	import { saveManager } from "$lib/store/save.svelte";
 	import { renderer } from "$lib/engine/video/renderer";
+	import SettingsModal from "../window/modals/SettingsModal.svelte";
+	import Modal from "../window/Modal.svelte";
 
 	interface Props {
 		title?: string;
@@ -20,6 +20,8 @@
 	}
 
 	let { title = "", saved = false }: Props = $props();
+	let settingsModalDialog = $state<HTMLDialogElement | null>(null);
+	let projectSettingsModalDialog = $state<HTMLDialogElement | null>(null);
 
 	function openAndLoadSave() {
 		saveManager.openSave(renderer);
@@ -31,7 +33,7 @@
 
 <div class="card">
 	<span class="project-title">{title}{saved? "" : "*"}</span>
-	<IconButton onClick={() => {currentModal.set(ModalType.PROJECT_SETTINGS)}}>
+	<IconButton onClick={() => {projectSettingsModalDialog?.showModal()}}>
 		<FileCog/>
 	</IconButton>
 
@@ -47,13 +49,20 @@
 		<Save/>
 	</IconButton>
 
-	<IconButton onClick={openModalHandler(ModalType.SETTINGS)}>
+	<IconButton onClick={() => {settingsModalDialog?.showModal()}}>
 		<Settings/>
 	</IconButton>
 
 	<IconButton>
 		<HelpCircle/>
 	</IconButton>
+
+	<SettingsModal bind:dialog={settingsModalDialog} />
+	<Modal bind:dialog={projectSettingsModalDialog} title="Project Settings">
+		<p>Project settings go here</p>
+		<button onclick={() => {projectSettingsModalDialog?.close()}}>Close</button>
+	</Modal>
+
 </div>
 
 <style lang="scss">

@@ -7,52 +7,53 @@
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
-	import { fade } from "svelte/transition";
+    import { type Snippet } from "svelte";
 
     interface Props {
         title?: string;
-        children?: import('svelte').Snippet;
-        buttons?: import('svelte').Snippet;
+        children?: Snippet;
+        buttons?: Snippet;
+        dialog?: HTMLDialogElement | null;
     }
 
-    let { title = "Default Title", children, buttons }: Props = $props();
+    let { title = "Default Title", children, buttons, dialog = $bindable(null) }: Props = $props();
 </script>
 
-<div class="background" transition:fade={{duration: 250}}>
-    <div class="modal">
-        <h2 class="title">{title}</h2>
+<dialog bind:this={dialog} class="modal">
+    <h2 class="title">{title}</h2>
 
-        {@render children?.()}
-        
-        <div class="buttons-container">
-            {@render buttons?.()}
-        </div>
+    {@render children?.()}
+    
+    <div class="buttons-container">
+        {@render buttons?.()}
     </div>
-</div>
+</dialog>
 
 <style lang="scss">
     @use '../../../lib/css/globals_forward.scss' as g;
 
-    .background {
-        position: fixed;
-        z-index: 10000;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
+    dialog.modal::backdrop {
         background-color: rgba(0, 0, 0, 0.5);
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        transition: background-color 0.25s ease;
     }
 
-    .modal {
+    @starting-style {
+        dialog.modal::backdrop {
+            background-color: rgba(0, 0, 0, 0);
+        }
+    }
+
+    dialog.modal {
         @include g.card;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         padding: g.$spacing-l;
-        margin: g.$spacing-l;
+        margin: 0;
         min-width: 300px;
-        flex: 0 1 auto;
+        color: g.$color-text;
+        border: none;
     }
 
     .title {
