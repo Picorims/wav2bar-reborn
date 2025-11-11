@@ -5281,6 +5281,7 @@ dependencies = [
  "log",
  "log4rs",
  "realfft",
+ "rustfft",
  "serde",
  "serde_json",
  "symphonia",
