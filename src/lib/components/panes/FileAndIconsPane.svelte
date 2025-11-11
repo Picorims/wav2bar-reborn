@@ -32,7 +32,7 @@
 	}
 
 	function bakeFFT() {
-		invoke("bake_fft", {audioFileName: saveManager.save.audio_filename});
+		invoke("bake_fft", {audioFileName: saveManager.save.audio_filename, fps: saveManager.save.fps, fftSize: 8192});
 	}
 </script>
 
