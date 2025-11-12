@@ -8,8 +8,9 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 use log::info;
-use realfft::RealFftPlanner;
-use tauri::{AppHandle, Emitter};
+use spectrum_analyzer::scaling::divide_by_N_sqrt;
+use spectrum_analyzer::windows::hann_window;
+use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use std::cmp::min;
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
@@ -18,9 +19,15 @@ use symphonia::core::formats::FormatOptions;
 use symphonia::core::io::MediaSourceStream;
 use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
+use tauri::{AppHandle, Emitter};
 
 #[tauri::command]
-pub async fn bake_fft(app: AppHandle, audio_file_name: String, fps: u16, fft_size: u16) -> Result<(), String> {
+pub async fn bake_fft(
+    app: AppHandle,
+    audio_file_name: String,
+    fps: u16,
+    fft_size: u16,
+) -> Result<(), String> {
     if audio_file_name.is_empty() {
         return Err("Audio file name is empty".to_string());
     }
@@ -107,6 +114,7 @@ pub async fn bake_fft(app: AppHandle, audio_file_name: String, fps: u16, fft_siz
     let mut current_dropped_samples = 0u64;
     let samples_cache_capacity = 16_384; // arbitrary capacity
     let samples_cache: &mut Vec<f32> = &mut Vec::with_capacity(samples_cache_capacity);
+    let block_file_size_in_frames = 60 * fps as u64; // 1 minute per file
 
     // while end of stream error not emitted, read packets:
     info!("Starting to read audio packets...");
@@ -182,45 +190,35 @@ pub async fn bake_fft(app: AppHandle, audio_file_name: String, fps: u16, fft_siz
         // add samples to cache
         samples_cache.extend_from_slice(samples);
 
-        // let pos_in_video_frames =
-        //     (current_read_samples as f64 * fps as f64 / sample_rate as f64).floor() as u64;
-        // app.emit("audio_fft_progress", 0.0_f64).unwrap_or(()); 
         loop {
             let current_video_frame_samples_pos =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
+            let start_index = (current_video_frame_samples_pos - current_dropped_samples) as usize;
 
             if current_read_samples <= current_video_frame_samples_pos + fft_size as u64 {
                 break;
             }
-            if samples_cache.len() < fft_size as usize {
+            if samples_cache.len() < start_index + fft_size as usize {
                 break;
             }
-            // we have enough samples to compute the FFT for the current video frame
-            let length = fft_size as usize;
+            // we have enough samples to compute the FFT for the current video frame =====================
+            let samples: &[f32] = &samples_cache[start_index..(start_index + fft_size as usize)];
+            // apply hann window for smoothing; length must be a power of 2 for the FFT
+            // 2048 is a good starting point with 44100 kHz
+            let hann_window = hann_window(samples);
+            // calc spectrum
+            let spectrum_hann_window = samples_fft_to_spectrum(
+                // (windowed) samples
+                &hann_window,
+                // sampling rate
+                sample_rate,
+                // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
+                FrequencyLimit::All,
+                // optional scale
+                Some(&divide_by_N_sqrt),
+            ).map_err(|e| format!("Failed to compute FFT: {}", e))?;
 
-            // make a planner
-            let mut real_planner = RealFftPlanner::<f32>::new();
-
-            // create a FFT
-            let r2c = real_planner.plan_fft_forward(length);
-            // make a dummy real-valued signal (filled with zeros)
-            let mut in_data = r2c.make_input_vec();
-            // copy samples from cache to in_data
-            for j in 0..length {
-                in_data[j] = samples_cache[min(
-                    (current_video_frame_samples_pos - current_dropped_samples) as usize + j,
-                    samples_cache.len() - 1,
-                )];
-            }
-            // make a vector for storing the spectrum
-            let mut out_spectrum = r2c.make_output_vec();
-
-            // Are they the length we expect?
-            assert_eq!(in_data.len(), length);
-            assert_eq!(out_spectrum.len(), length / 2 + 1);
-
-            // forward transform the signal
-            r2c.process(&mut in_data, &mut out_spectrum).unwrap();
+            // ===========================================================================================
 
             // clear samples not needed anymore from cache
             let samples_to_drain = (min(
@@ -230,17 +228,14 @@ pub async fn bake_fft(app: AppHandle, audio_file_name: String, fps: u16, fft_siz
             samples_cache.drain(0..(samples_to_drain + 1));
             current_dropped_samples += samples_to_drain as u64;
             current_video_frame += 1;
-
-            // TODO normalize
         }
 
         if i % 100 == 0 {
-            let progress = (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
+            let progress =
+                (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
             info!(
                 "Read packet {}, current read samples: {}, progress: {:.2}%",
-                i,
-                current_read_samples,
-                progress
+                i, current_read_samples, progress
             );
             app.emit("audio_fft_progress", progress).unwrap_or(());
         }
