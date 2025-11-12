@@ -8,6 +8,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 use log::info;
+use realfft::RealFftPlanner;
+use std::cmp::min;
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
 use symphonia::core::errors::Error;
@@ -15,6 +17,7 @@ use symphonia::core::formats::FormatOptions;
 use symphonia::core::io::MediaSourceStream;
 use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
+use symphonia::core::sample;
 
 #[tauri::command]
 pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Result<(), String> {
@@ -101,7 +104,8 @@ pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Resul
         .ok_or("Bit rate not available in codec parameters")?;
     let mut current_video_frame = 0u64;
     let mut current_read_samples = 0u64;
-    let samples_cache_capacity = 16_384; // arbitrary capacity, at least 2x max expected FFT size
+    let mut current_dropped_samples = 0u64;
+    let samples_cache_capacity = 16_384; // arbitrary capacity
     let samples_cache: &mut Vec<f32> = &mut Vec::with_capacity(samples_cache_capacity);
 
     // while end of stream error not emitted, read packets:
@@ -180,17 +184,53 @@ pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Resul
 
         // let pos_in_video_frames =
         //     (current_read_samples as f64 * fps as f64 / sample_rate as f64).floor() as u64;
-        // TODO 8096 FFT, there is overlapping to handle for two consecutive video frames.
-        let current_video_frame_samples_pos =
-            (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
+        loop {
+            let current_video_frame_samples_pos =
+                (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
 
-        if current_read_samples >= current_video_frame_samples_pos + fft_size as u64 {
+            if current_read_samples <= current_video_frame_samples_pos + fft_size as u64 {
+                break;
+            }
+            if samples_cache.len() < fft_size as usize {
+                break;
+            }
             // we have enough samples to compute the FFT for the current video frame
-            // TODO
+            let length = fft_size as usize;
+
+            // make a planner
+            let mut real_planner = RealFftPlanner::<f32>::new();
+
+            // create a FFT
+            let r2c = real_planner.plan_fft_forward(length);
+            // make a dummy real-valued signal (filled with zeros)
+            let mut in_data = r2c.make_input_vec();
+            // copy samples from cache to in_data
+            for j in 0..length {
+                in_data[j] = samples_cache[min(
+                    (current_video_frame_samples_pos - current_dropped_samples) as usize + j,
+                    samples_cache.len() - 1,
+                )];
+            }
+            // make a vector for storing the spectrum
+            let mut out_spectrum = r2c.make_output_vec();
+
+            // Are they the length we expect?
+            assert_eq!(in_data.len(), length);
+            assert_eq!(out_spectrum.len(), length / 2 + 1);
+
+            // forward transform the signal
+            r2c.process(&mut in_data, &mut out_spectrum).unwrap();
 
             // clear samples not needed anymore from cache
-            // samples_cache.drain(0..(current_video_frame_samples_pos as usize));
+            let samples_to_drain = (min(
+                current_video_frame_samples_pos - current_dropped_samples,
+                (samples_cache.len() as u64) - 1,
+            )) as usize;
+            samples_cache.drain(0..(samples_to_drain + 1));
+            current_dropped_samples += samples_to_drain as u64;
             current_video_frame += 1;
+
+            // TODO normalize
         }
 
         if i % 100 == 0 {
