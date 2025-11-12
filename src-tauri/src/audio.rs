@@ -9,6 +9,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 use log::info;
 use realfft::RealFftPlanner;
+use tauri::{AppHandle, Emitter};
 use std::cmp::min;
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
@@ -17,10 +18,9 @@ use symphonia::core::formats::FormatOptions;
 use symphonia::core::io::MediaSourceStream;
 use symphonia::core::meta::MetadataOptions;
 use symphonia::core::probe::Hint;
-use symphonia::core::sample;
 
 #[tauri::command]
-pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Result<(), String> {
+pub async fn bake_fft(app: AppHandle, audio_file_name: String, fps: u16, fft_size: u16) -> Result<(), String> {
     if audio_file_name.is_empty() {
         return Err("Audio file name is empty".to_string());
     }
@@ -184,6 +184,7 @@ pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Resul
 
         // let pos_in_video_frames =
         //     (current_read_samples as f64 * fps as f64 / sample_rate as f64).floor() as u64;
+        // app.emit("audio_fft_progress", 0.0_f64).unwrap_or(()); 
         loop {
             let current_video_frame_samples_pos =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
@@ -234,16 +235,18 @@ pub async fn bake_fft(audio_file_name: String, fps: u16, fft_size: u16) -> Resul
         }
 
         if i % 100 == 0 {
+            let progress = (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
             info!(
                 "Read packet {}, current read samples: {}, progress: {:.2}%",
                 i,
                 current_read_samples,
-                (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0
+                progress
             );
+            app.emit("audio_fft_progress", progress).unwrap_or(());
         }
         i += 1;
     }
-
+    app.emit("audio_fft_progress", 100.0_f64).unwrap_or(());
     info!("Finished baking FFT.");
 
     Ok(())
