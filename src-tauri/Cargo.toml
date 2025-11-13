@@ -22,6 +22,7 @@ anyhow = "1.0.100"
 chrono = {version = "0.4.42"}
 log = "0.4"
 log4rs = { version = "1.4.0", features = ["pattern_encoder"] }
+num = "0.4.3"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 spectrum-analyzer = "1.7.0"
