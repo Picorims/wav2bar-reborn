@@ -65,6 +65,8 @@
 	</Pane>
 </Splitpanes>
 
+<audio id="audio"></audio>
+
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
 	div.flex-column {

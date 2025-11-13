@@ -356,3 +356,14 @@ fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), S
 
     Ok(())
 }
+
+#[tauri::command]
+pub async fn get_audio_dir() -> Result<String, String> {
+    let working_dir = crate::get_current_exe_dir();
+    let full_path = working_dir
+        .join("temp/current_save/assets/audio");
+    if !full_path.exists() {
+        return Err(format!("Audio dir does not exist:"));
+    }
+    Ok(full_path.to_string_lossy().to_string())
+}

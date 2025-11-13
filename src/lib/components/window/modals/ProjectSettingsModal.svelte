@@ -13,6 +13,7 @@
 	import { listen } from "@tauri-apps/api/event";
 	import { saveManager } from "$lib/store/save.svelte";
 	import { onMount } from 'svelte';
+	import { SPECTRUM_SIZE_DEFAULT } from '$lib/engine/audio/file_audio_cached_fft_provider';
 
 	interface Props {
 		dialog: HTMLDialogElement | null;
@@ -28,7 +29,7 @@
 		invoke('bake_fft', {
 			audioFileName: saveManager.save.audio_filename,
 			fps: saveManager.save.fps,
-			fftSize: 4096 // TODO new save setting
+			fftSize: 2 * SPECTRUM_SIZE_DEFAULT // TODO new save setting
 		});
 	}
 

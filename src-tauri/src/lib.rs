@@ -29,6 +29,7 @@ pub fn run() {
             read_save_json,
             save_to_file,
             audio::bake_fft,
+            audio::get_audio_dir,
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(

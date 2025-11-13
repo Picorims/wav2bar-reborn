@@ -9,14 +9,15 @@
 
 import type { UUIDv4 } from "$lib/types/common_types";
 // import { defaultSaveConfig, defaultVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
-import { LiveAudioProvider } from "$lib/engine/audio/live_audio_provider";
 import { typedDeepClone } from "$lib/deep_clone";
 import { renderer, type Renderer } from "$lib/engine/video/renderer";
 import { Log } from "$lib/log/logger";
 import { validateSave, validateSaveVisualObject, type Save, type VisualObject, type VisualObject_Type } from "./save_structure/save_latest";
 import { version } from "$app/environment";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
+import { FileAudioCachedFFTProvider } from "$lib/engine/audio/file_audio_cached_fft_provider";
+import { join } from "@tauri-apps/api/path";
 
 
 
@@ -96,7 +97,21 @@ class SaveManager {
                     Log.save.info("Save file is valid, loading it");
                     this._saveConfig = saveJSON as unknown as Save;
 
-                    renderer.setAudioProvider(new LiveAudioProvider());        
+                    let audioFullPath: string | null = null;
+                    try {
+                        audioFullPath = await invoke<string>("get_audio_dir");
+                        audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
+                    } catch (e) {
+                        Log.save.warn("Failed to get audio full path from backend: " + (e as Error).message);
+                    }
+                    if (audioFullPath !== null) {
+                        Log.save.info("Setting audio source to file audio provider with name: " + this._saveConfig.audio_filename);
+                        const url = convertFileSrc(audioFullPath);
+                        const audioElement = document.getElementById("audio") as HTMLAudioElement;
+                        audioElement.src = url;
+                        audioElement.load();
+                        renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));        
+                    }
                 }
 
             } catch (e) {
