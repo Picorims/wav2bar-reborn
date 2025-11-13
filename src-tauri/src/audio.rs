@@ -122,6 +122,13 @@ pub async fn bake_fft(
     let mut fft_cache: Vec<u8> = Vec::new();
     let mut fft_frequencies_cache: Vec<u16> = Vec::new();
 
+    // clear existing data in fft directory if any
+    let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
+    if fft_dir.exists() {
+        std::fs::remove_dir_all(&fft_dir)
+            .map_err(|e| format!("Failed to clear existing FFT directory: {}", e))?;
+    }
+
     // while end of stream error not emitted, read packets:
     info!("Starting to read audio packets...");
     let mut i = 0;
@@ -197,6 +204,7 @@ pub async fn bake_fft(
         samples_cache.extend_from_slice(samples);
 
         loop {
+            // TODO see if it is needed to take into account the number of channels here
             let current_video_frame_samples_pos =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
             let start_index = (current_video_frame_samples_pos - current_dropped_samples) as usize;
