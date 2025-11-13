@@ -28,7 +28,7 @@
 		invoke('bake_fft', {
 			audioFileName: saveManager.save.audio_filename,
 			fps: saveManager.save.fps,
-			fftSize: 8192
+			fftSize: 4096 // TODO new save setting
 		});
 	}
 

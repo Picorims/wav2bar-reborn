@@ -8,10 +8,10 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 use log::info;
+use num::ToPrimitive;
 use spectrum_analyzer::scaling::divide_by_N_sqrt;
 use spectrum_analyzer::windows::hann_window;
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
-use std::cmp::min;
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
 use symphonia::core::errors::Error;
@@ -34,8 +34,8 @@ pub async fn bake_fft(
 
     info!("Baking FFT...");
     // get path
-    let workind_dir = crate::get_current_exe_dir();
-    let full_path = workind_dir
+    let working_dir = crate::get_current_exe_dir();
+    let full_path = working_dir
         .join("temp/current_save/assets/audio")
         .join(&audio_file_name);
 
@@ -114,7 +114,13 @@ pub async fn bake_fft(
     let mut current_dropped_samples = 0u64;
     let samples_cache_capacity = 16_384; // arbitrary capacity
     let samples_cache: &mut Vec<f32> = &mut Vec::with_capacity(samples_cache_capacity);
-    let block_file_size_in_frames = 60 * fps as u64; // 1 minute per file
+    const BLOCK_FILE_SIZE_SECONDS: u64 = 20;
+    let block_file_size_frames = BLOCK_FILE_SIZE_SECONDS * fps as u64; // 1 minute per file
+    let mut frames_in_current_block_file = 0;
+    let mut fft_file_index = 0;
+    let mut cached_fft_frequencies = false;
+    let mut fft_cache: Vec<u8> = Vec::new();
+    let mut fft_frequencies_cache: Vec<u16> = Vec::new();
 
     // while end of stream error not emitted, read packets:
     info!("Starting to read audio packets...");
@@ -204,7 +210,6 @@ pub async fn bake_fft(
             // we have enough samples to compute the FFT for the current video frame =====================
             let samples: &[f32] = &samples_cache[start_index..(start_index + fft_size as usize)];
             // apply hann window for smoothing; length must be a power of 2 for the FFT
-            // 2048 is a good starting point with 44100 kHz
             let hann_window = hann_window(samples);
             // calc spectrum
             let spectrum_hann_window = samples_fft_to_spectrum(
@@ -213,15 +218,46 @@ pub async fn bake_fft(
                 // sampling rate
                 sample_rate,
                 // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
-                FrequencyLimit::All,
+                FrequencyLimit::Range(20.0, 20_000.0),
                 // optional scale
                 Some(&divide_by_N_sqrt),
-            ).map_err(|e| format!("Failed to compute FFT: {}", e))?;
+            )
+            .map_err(|e| format!("Failed to compute FFT: {}", e))?;
+
+            // store FFT data in cache
+            spectrum_hann_window.data().iter().for_each(|freq_pair| {
+                if !cached_fft_frequencies {
+                    fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
+                }
+                let mut val: f32 = freq_pair.1.val();
+                val = ((1.0 - (-32.0*val).exp()) * 255.0).floor(); //(amplification with ceiling) * (scale to 0-255)
+                fft_cache.push(val.to_u8().unwrap_or(0));
+            });
+            frames_in_current_block_file += 1;
+            
+            // store frequencies in cache if not done yet
+            if !cached_fft_frequencies {
+                // flush frequencies cache to file
+                flush_frequencies_cache_to_file(&fft_frequencies_cache)
+                    .map_err(|e| format!("Failed to flush FFT frequencies cache to file: {}", e))?;
+                fft_frequencies_cache.clear();
+                cached_fft_frequencies = true;
+            }
+
+
+            // flush to file if block is full
+            if frames_in_current_block_file >= block_file_size_frames {
+                flush_fft_cache_to_file(&fft_cache, fft_file_index)
+                    .map_err(|e| format!("Failed to flush FFT cache to file: {}", e))?;
+                fft_cache.clear();
+                frames_in_current_block_file = 0;
+                fft_file_index += 1;
+            }
 
             // ===========================================================================================
 
             // clear samples not needed anymore from cache
-            let samples_to_drain = (min(
+            let samples_to_drain = (std::cmp::min(
                 current_video_frame_samples_pos - current_dropped_samples,
                 (samples_cache.len() as u64) - 1,
             )) as usize;
@@ -241,8 +277,74 @@ pub async fn bake_fft(
         }
         i += 1;
     }
+    // flush remaining FFT data to file
+    if !fft_cache.is_empty() {
+        flush_fft_cache_to_file(&fft_cache, fft_file_index)
+            .map_err(|e| format!("Failed to flush final FFT cache to file: {}", e))?;
+        fft_cache.clear();
+    }
+
+
     app.emit("audio_fft_progress", 100.0_f64).unwrap_or(());
     info!("Finished baking FFT.");
+
+    Ok(())
+}
+
+fn flush_fft_cache_to_file(fft_cache: &Vec<u8>, file_index: u32) -> Result<(), String> {
+    use std::io::{BufWriter, Write};
+    info!("Flushing FFT cache to file index {}", file_index);
+
+    let working_dir = crate::get_current_exe_dir();
+    let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
+    std::fs::create_dir_all(&fft_dir)
+        .map_err(|e| format!("Failed to create FFT directory: {}", e))?;
+
+    let fft_file_path = fft_dir.join(format!("fft_block_{}.bin", file_index));
+    let file = std::fs::File::create(&fft_file_path)
+        .map_err(|e| format!("Failed to create FFT file: {}", e))?;
+
+    let mut writer = BufWriter::new(file);
+
+    for value in fft_cache {
+        let bytes = value.to_be_bytes();
+        writer
+            .write_all(&bytes)
+            .map_err(|e| format!("Failed to write to FFT file: {}", e))?;
+    }
+
+    writer
+        .flush()
+        .map_err(|e| format!("Failed to flush FFT file: {}", e))?;
+
+    Ok(())
+}
+
+fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), String> {
+    use std::io::{BufWriter, Write};
+    info!("Flushing frequencies cache to file");
+
+    let working_dir = crate::get_current_exe_dir();
+    let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
+    std::fs::create_dir_all(&fft_dir)
+        .map_err(|e| format!("Failed to create FFT directory: {}", e))?;
+
+    let freq_file_path = fft_dir.join("fft_frequencies.bin");
+    let file = std::fs::File::create(&freq_file_path)
+        .map_err(|e| format!("Failed to create frequencies file: {}", e))?;
+
+    let mut writer = BufWriter::new(file);
+
+    for value in frequencies_cache {
+        let bytes = value.to_be_bytes();
+        writer
+            .write_all(&bytes)
+            .map_err(|e| format!("Failed to write to frequencies file: {}", e))?;
+    }
+
+    writer
+        .flush()
+        .map_err(|e| format!("Failed to flush frequencies file: {}", e))?;
 
     Ok(())
 }
