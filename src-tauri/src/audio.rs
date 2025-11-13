@@ -114,7 +114,7 @@ pub async fn bake_fft(
     let mut current_dropped_samples = 0u64;
     let samples_cache_capacity = 16_384; // arbitrary capacity
     let samples_cache: &mut Vec<f32> = &mut Vec::with_capacity(samples_cache_capacity);
-    const BLOCK_FILE_SIZE_SECONDS: u64 = 20;
+    const BLOCK_FILE_SIZE_SECONDS: u64 = 20; // must match file_audio_cached_fft_provider.ts FFT_BLOCK_SIZE_SECONDS
     let block_file_size_frames = BLOCK_FILE_SIZE_SECONDS * fps as u64; // 1 minute per file
     let mut frames_in_current_block_file = 0;
     let mut fft_file_index = 0;
@@ -364,6 +364,17 @@ pub async fn get_audio_dir() -> Result<String, String> {
         .join("temp/current_save/assets/audio");
     if !full_path.exists() {
         return Err(format!("Audio dir does not exist:"));
+    }
+    Ok(full_path.to_string_lossy().to_string())
+}
+
+#[tauri::command]
+pub async fn get_fft_dir() -> Result<String, String> {
+    let working_dir = crate::get_current_exe_dir();
+    let full_path = working_dir
+        .join("temp/current_save/baked_data/fft");
+    if !full_path.exists() {
+        return Err(format!("FFT dir does not exist:"));
     }
     Ok(full_path.to_string_lossy().to_string())
 }

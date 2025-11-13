@@ -30,6 +30,7 @@ pub fn run() {
             save_to_file,
             audio::bake_fft,
             audio::get_audio_dir,
+            audio::get_fft_dir,
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(

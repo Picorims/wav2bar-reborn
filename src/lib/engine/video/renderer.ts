@@ -89,6 +89,7 @@ export class Renderer {
 			this.audioProvider.init();
 		}
 		this.tickEngine.setAudioProvider(provider);
+		this.audioProvider.setRendererFPS(this.app.ticker.maxFPS);
 	}
 
 	/**

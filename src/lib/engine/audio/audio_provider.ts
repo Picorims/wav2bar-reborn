@@ -12,6 +12,7 @@
  */
 export abstract class AudioProvider {
     static DEFAULT_POINTS_COUNT = 1024;
+    protected rendererFPS: number = 30;
     abstract init(): Promise<void>;
     abstract hasInit(): boolean;
     abstract play(): void;
@@ -32,4 +33,7 @@ export abstract class AudioProvider {
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
     abstract getCurrentAudioWaveform(): Uint8Array | number[];
+    setRendererFPS(fps: number): void {
+        this.rendererFPS = fps;
+    }
 }
