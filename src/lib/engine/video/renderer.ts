@@ -19,6 +19,7 @@ import {
 import { VO_Text } from './visual_objects/vo_text';
 import { saveManager } from '$lib/store/save.svelte';
 import { Log } from '$lib/log/logger';
+import { clamp } from '$lib/math';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -47,11 +48,13 @@ export class Renderer {
 	private audioProvider: AudioProvider | null = null;
 	private visualObjects: Map<UUIDv4, VisualObjectRenderer<VisualObject>> = new Map();
 	private events: RendererEvent<RendererEventName>[] = [];
+	private paused: boolean;
 
 	constructor() {
 		this.app = new PIXI.Application();
 		globalThis.__PIXI_APP__ = this.app;
 		this.tickEngine = new TickEngine();
+		this.paused = true;
 	}
 
 	/**
@@ -76,6 +79,7 @@ export class Renderer {
 			this.events = [];
 		});
 
+		this.paused = true;
 		this.hasInitBool = true;
 	}
 
@@ -90,6 +94,7 @@ export class Renderer {
 		}
 		this.tickEngine.setAudioProvider(provider);
 		this.audioProvider.setRendererFPS(this.app.ticker.maxFPS);
+		this.paused = true;
 	}
 
 	/**
@@ -124,6 +129,7 @@ export class Renderer {
 		this.app.ticker.start();
 		this.tickEngine.play();
 		this.audioProvider?.play();
+		this.paused = false;
 	}
 	/**
 	 * Keeps the renderer active but stops the tick engine.
@@ -132,11 +138,16 @@ export class Renderer {
 	pauseTick() {
 		this.tickEngine.pause();
 		this.audioProvider?.pause();
+		this.paused = true;
+	}
+	isPaused() {
+		return this.paused;
 	}
 	stop() {
 		this.app.ticker.stop();
 		this.tickEngine.stop();
 		this.audioProvider?.stop();
+		this.paused = true;
 	}
 
 	seekToStart() {
@@ -144,6 +155,7 @@ export class Renderer {
 	}
 	seekToEnd() {
 		this.audioProvider?.seekTo(this.audioProvider.getDuration());
+		this.paused = true;
 	}
 	/**
 	 *
@@ -154,6 +166,15 @@ export class Renderer {
 		const duration = this.audioProvider.getDuration();
 		const time = (percent / 100) * duration;
 		this.audioProvider.seekTo(time);
+	}
+	seekToRelative(ms: number) {
+		if (!this.audioProvider) return;
+		const currentTime = this.audioProvider.getCurrentAudioTime();
+		const newTime = clamp(currentTime + ms, 0, this.audioProvider.getDuration());
+		if (newTime >= this.audioProvider.getDuration() - 0.001) {
+			this.paused = true;
+		}
+		this.audioProvider.seekTo(newTime);
 	}
 
 	/**

@@ -45,9 +45,17 @@
         sliderValue = progressMs / durationMs * 100;
     }
 
+    function onInput(event: Event) {
+        const target = event.target as HTMLInputElement;
+        const value = Number(target.value);
+        const seekMs = (value / 100) * durationMs;
+        renderer.seekToPercent(seekMs / durationMs * 100);
+    }
+
     onMount(() => {
 		const interval = setInterval(() => {
-			updateSlider();
+            updateSlider();
+            paused = renderer.isPaused();
 		}, 100);
 
 		return () => {
@@ -70,13 +78,13 @@
     <IconButton onClick={seekToEnd}>
         <SkipForward/>
     </IconButton>
-    <input type="range" min="0" max="100" value={sliderValue} class="slider"/>
+    <input type="range" min="0" max="100" value={sliderValue} class="slider" oninput={onInput}/>
     <span class="time-text">{msToMMSS(progressMs)} / {msToMMSS(durationMs)}</span>
     <SeparatorVertical/>
-    <IconButton>
+    <IconButton onClick={() => renderer.seekToRelative( -5000 )}>
         <IterationCw/>
     </IconButton>
-    <IconButton>
+    <IconButton onClick={() => renderer.seekToRelative( 5000 )}>
         <IterationCcw/>
     </IconButton>
     <IconButton>
