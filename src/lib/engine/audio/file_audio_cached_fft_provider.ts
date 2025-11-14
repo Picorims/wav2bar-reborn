@@ -18,7 +18,7 @@ const CACHE_CAPACITY = 25;
 const FFT_BLOCK_SIZE_SECONDS = 20; // must match audio.rs BLOCK_FILE_SIZE_SECONDS 
 
 /**
- * Use the microphone as audio input
+ * Use backed FFT data computed from the save audio file, which is the audio input.
  */
 export class FileAudioCachedFFTProvider extends AudioProvider {
     private hasInitBool = false;
@@ -33,7 +33,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     constructor(audioElement: HTMLAudioElement) {
         super();
         if (!audioElement) {
-            throw new Error("Audio element is required for LiveAudioProvider");
+            throw new Error("Audio element is required for FileAudioCachedFFTProvider");
         }
         this.audioElement = audioElement;
     }
@@ -109,10 +109,10 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setAudioSpectrumSize(_size: number) {
-        Log.audio.warn("LiveAudioProvider: setAudioSpectrumSize not supported");
+        Log.audio.warn("FileAudioCachedFFTProvider: setAudioSpectrumSize not supported");
     }
     getCurrentAudioWaveform(): Uint8Array {
-        Log.audio.warn("LiveAudioProvider: getCurrentAudioWaveform not supported");
+        Log.audio.warn("FileAudioCachedFFTProvider: getCurrentAudioWaveform not supported");
         const dataArray = new Uint8Array(this.getAudioSpectrumSize());
         return dataArray;
     }
@@ -144,7 +144,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
             return;
         }
         const fftDir = await invoke<string>("get_fft_dir");
-        const frequenciesFilePath = await join(fftDir, `frequencies.bin`);
+        const frequenciesFilePath = await join(fftDir, `fft_frequencies.bin`);
         try {
             const content = await readFile(frequenciesFilePath);
             this.frequenciesCache = content;
