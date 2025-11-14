@@ -12,7 +12,7 @@
 	import { saveManager } from "$lib/store/save.svelte";
 	import { renderer } from "$lib/engine/video/renderer";
 	import SettingsModal from "../window/modals/SettingsModal.svelte";
-	import Modal from "../window/Modal.svelte";
+	import ProjectSettingsModal from "../window/modals/ProjectSettingsModal.svelte";
 
 	interface Props {
 		title?: string;
@@ -58,13 +58,7 @@
 	</IconButton>
 
 	<SettingsModal bind:dialog={settingsModalDialog} />
-	<Modal bind:dialog={projectSettingsModalDialog} title="Project Settings">
-		<p>Project settings go here</p>
-		{#snippet buttons()}
-			<button onclick={() => {projectSettingsModalDialog?.close()}}>Close</button>
-		{/snippet}
-	</Modal>
-
+	<ProjectSettingsModal bind:dialog={projectSettingsModalDialog} />
 </div>
 
 <style lang="scss">

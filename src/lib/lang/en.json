@@ -12,6 +12,11 @@
         "show_logs_dir": "Show logs path",
         "close": "OK"
     },
+    "project_settings": {
+        "title": "Project Settings",
+        "bake_fft": "Bake Audio FFT Data",
+        "close": "Close"
+    },
     "object_pane": {
         "title": "Objects"
     },

@@ -18,9 +18,13 @@
         "chrono",
         "dialog",
         "indev",
+        "mapname",
         "PIXI",
+        "realfft",
         "rgba",
+        "rustfft",
         "serde",
+        "symphonia",
         "tauri",
         "walkdir"
     ],
