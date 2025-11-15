@@ -78,7 +78,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
         return !this.audioElement.paused;
     }
     shallLoop(loop: boolean): void {
-        this.audioElement.loop = loop; //TODO style + fix fin piste
+        this.audioElement.loop = loop;
     }
     getCurrentAudioSpectrum(): Uint8Array {
         const now = this.getCurrentAudioTime() / 1000; // seconds
