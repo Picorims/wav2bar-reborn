@@ -38,6 +38,8 @@ type RendererEventPayload<T extends RendererEventName> = T extends 'object_regis
 		? IdPayload
 		: never;
 
+
+const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
 /**
  * Pixi.js renderer, drives the tick and audio engines.
  */
@@ -174,7 +176,8 @@ export class Renderer {
 		if (!this.audioProvider) return;
 		const currentTime = this.audioProvider.getCurrentAudioTime();
 		const newTime = clamp(currentTime + ms, 0, this.audioProvider.getDuration());
-		if (newTime >= this.audioProvider.getDuration() - 0.001 && !this.looped) {
+		const duration = this.audioProvider.getDuration();
+		if (newTime >= duration - END_OF_TRACK_THRESHOLD_SECONDS && !this.looped) {
 			this.paused = true;
 		}
 		this.audioProvider.seekTo(newTime);
