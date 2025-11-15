@@ -48,8 +48,7 @@
     function onInput(event: Event) {
         const target = event.target as HTMLInputElement;
         const value = Number(target.value);
-        const seekMs = (value / 100) * durationMs;
-        renderer.seekToPercent(seekMs / durationMs * 100);
+        renderer.seekToPercent(value);
     }
 
     onMount(() => {
