@@ -83,6 +83,9 @@ export class LiveAudioProvider extends AudioProvider {
 	isPlaying() {
 		return this.chronoPause === -1;
 	}
+	shallLoop(loop: boolean): void {
+		Log.audio.info(`Live audio provider cannot loop, ignoring shallLoop(${loop})`);
+	}
 	getCurrentAudioSpectrum(): Uint8Array {
         // We can use Float32Array instead of Uint8Array if we want higher precision
 		if (this.lastSpectrum !== undefined && (this.stopped || this.chronoPause !== -1)) {

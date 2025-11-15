@@ -49,6 +49,7 @@ export class Renderer {
 	private visualObjects: Map<UUIDv4, VisualObjectRenderer<VisualObject>> = new Map();
 	private events: RendererEvent<RendererEventName>[] = [];
 	private paused: boolean;
+	private looped: boolean = false;
 
 	constructor() {
 		this.app = new PIXI.Application();
@@ -89,11 +90,13 @@ export class Renderer {
 
 	setAudioProvider(provider: AudioProvider) {
 		this.audioProvider = provider;
+		this.audioProvider.setRenderer(this);
 		if (!this.audioProvider.hasInit()) {
 			this.audioProvider.init();
 		}
 		this.tickEngine.setAudioProvider(provider);
 		this.audioProvider.setRendererFPS(this.app.ticker.maxFPS);
+		this.audioProvider.shallLoop(this.looped);
 		this.paused = true;
 	}
 
@@ -171,7 +174,7 @@ export class Renderer {
 		if (!this.audioProvider) return;
 		const currentTime = this.audioProvider.getCurrentAudioTime();
 		const newTime = clamp(currentTime + ms, 0, this.audioProvider.getDuration());
-		if (newTime >= this.audioProvider.getDuration() - 0.001) {
+		if (newTime >= this.audioProvider.getDuration() - 0.001 && !this.looped) {
 			this.paused = true;
 		}
 		this.audioProvider.seekTo(newTime);
@@ -192,6 +195,15 @@ export class Renderer {
 	getDuration() {
 		if (!this.audioProvider) return 0;
 		return this.audioProvider.getDuration();
+	}
+
+	shallLoop(loop: boolean) {
+		this.looped = loop;
+		this.audioProvider?.shallLoop(loop);
+		Log.renderer.info(`Set looped to ${loop}`);
+	}
+	isLooped() {
+		return this.looped;
 	}
 
 	/**

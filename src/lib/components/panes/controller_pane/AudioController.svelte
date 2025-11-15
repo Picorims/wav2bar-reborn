@@ -87,7 +87,7 @@
     <IconButton onClick={() => renderer.seekToRelative( 5000 )}>
         <IterationCcw/>
     </IconButton>
-    <IconButton>
+    <IconButton togglable onToggle={(looped) => {renderer.shallLoop(looped);}}>
         <Repeat/>
     </IconButton>
 </div>

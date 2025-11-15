@@ -26,6 +26,7 @@
         "serde",
         "symphonia",
         "tauri",
+        "togglable",
         "walkdir"
     ],
 }
