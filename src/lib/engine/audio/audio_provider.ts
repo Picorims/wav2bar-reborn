@@ -7,12 +7,19 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+import type { Renderer } from "../video/renderer";
+
 /**
  * Base class for defining a way to provide audio data to the renderer
  */
 export abstract class AudioProvider {
     static DEFAULT_POINTS_COUNT = 1024;
     protected rendererFPS: number = 30;
+    protected renderer: Renderer | null = null;
+    setRenderer(renderer: Renderer) {
+        this.renderer = renderer;
+    }
+
     abstract init(): Promise<void>;
     abstract hasInit(): boolean;
     abstract play(): void;
@@ -29,6 +36,7 @@ export abstract class AudioProvider {
      */
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;
+    abstract shallLoop(loop: boolean): void;
     abstract getCurrentAudioSpectrum(): Uint8Array | number[];
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;

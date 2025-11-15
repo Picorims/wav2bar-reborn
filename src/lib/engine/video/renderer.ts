@@ -19,6 +19,7 @@ import {
 import { VO_Text } from './visual_objects/vo_text';
 import { saveManager } from '$lib/store/save.svelte';
 import { Log } from '$lib/log/logger';
+import { clamp } from '$lib/math';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -37,6 +38,8 @@ type RendererEventPayload<T extends RendererEventName> = T extends 'object_regis
 		? IdPayload
 		: never;
 
+
+const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
 /**
  * Pixi.js renderer, drives the tick and audio engines.
  */
@@ -47,11 +50,14 @@ export class Renderer {
 	private audioProvider: AudioProvider | null = null;
 	private visualObjects: Map<UUIDv4, VisualObjectRenderer<VisualObject>> = new Map();
 	private events: RendererEvent<RendererEventName>[] = [];
+	private paused: boolean;
+	private looped: boolean = false;
 
 	constructor() {
 		this.app = new PIXI.Application();
 		globalThis.__PIXI_APP__ = this.app;
 		this.tickEngine = new TickEngine();
+		this.paused = true;
 	}
 
 	/**
@@ -76,6 +82,7 @@ export class Renderer {
 			this.events = [];
 		});
 
+		this.paused = true;
 		this.hasInitBool = true;
 	}
 
@@ -85,11 +92,14 @@ export class Renderer {
 
 	setAudioProvider(provider: AudioProvider) {
 		this.audioProvider = provider;
+		this.audioProvider.setRenderer(this);
 		if (!this.audioProvider.hasInit()) {
 			this.audioProvider.init();
 		}
 		this.tickEngine.setAudioProvider(provider);
 		this.audioProvider.setRendererFPS(this.app.ticker.maxFPS);
+		this.audioProvider.shallLoop(this.looped);
+		this.paused = true;
 	}
 
 	/**
@@ -124,6 +134,7 @@ export class Renderer {
 		this.app.ticker.start();
 		this.tickEngine.play();
 		this.audioProvider?.play();
+		this.paused = false;
 	}
 	/**
 	 * Keeps the renderer active but stops the tick engine.
@@ -132,11 +143,16 @@ export class Renderer {
 	pauseTick() {
 		this.tickEngine.pause();
 		this.audioProvider?.pause();
+		this.paused = true;
+	}
+	isPaused() {
+		return this.paused;
 	}
 	stop() {
 		this.app.ticker.stop();
 		this.tickEngine.stop();
 		this.audioProvider?.stop();
+		this.paused = true;
 	}
 
 	seekToStart() {
@@ -144,6 +160,7 @@ export class Renderer {
 	}
 	seekToEnd() {
 		this.audioProvider?.seekTo(this.audioProvider.getDuration());
+		this.paused = true;
 	}
 	/**
 	 *
@@ -154,6 +171,16 @@ export class Renderer {
 		const duration = this.audioProvider.getDuration();
 		const time = (percent / 100) * duration;
 		this.audioProvider.seekTo(time);
+	}
+	seekToRelative(ms: number) {
+		if (!this.audioProvider) return;
+		const currentTime = this.audioProvider.getCurrentAudioTime();
+		const newTime = clamp(currentTime + ms, 0, this.audioProvider.getDuration());
+		const duration = this.audioProvider.getDuration();
+		if (newTime >= duration - END_OF_TRACK_THRESHOLD_SECONDS && !this.looped) {
+			this.paused = true;
+		}
+		this.audioProvider.seekTo(newTime);
 	}
 
 	/**
@@ -171,6 +198,15 @@ export class Renderer {
 	getDuration() {
 		if (!this.audioProvider) return 0;
 		return this.audioProvider.getDuration();
+	}
+
+	shallLoop(loop: boolean) {
+		this.looped = loop;
+		this.audioProvider?.shallLoop(loop);
+		Log.renderer.info(`Set looped to ${loop}`);
+	}
+	isLooped() {
+		return this.looped;
 	}
 
 	/**

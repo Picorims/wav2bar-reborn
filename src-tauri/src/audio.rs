@@ -363,7 +363,7 @@ pub async fn get_audio_dir() -> Result<String, String> {
     let full_path = working_dir
         .join("temp/current_save/assets/audio");
     if !full_path.exists() {
-        return Err(format!("Audio dir does not exist:", [full_path.display()]));
+        return Err(format!("Audio dir does not exist: {:?}", [full_path.display()]));
     }
     Ok(full_path.to_string_lossy().to_string())
 }
@@ -374,7 +374,7 @@ pub async fn get_fft_dir() -> Result<String, String> {
     let full_path = working_dir
         .join("temp/current_save/baked_data/fft");
     if !full_path.exists() {
-        return Err(format!("FFT dir does not exist:", [full_path.display()]));
+        return Err(format!("FFT dir does not exist: {:?}", [full_path.display()]));
     }
     Ok(full_path.to_string_lossy().to_string())
 }

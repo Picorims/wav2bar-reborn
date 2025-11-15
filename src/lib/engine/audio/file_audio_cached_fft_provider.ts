@@ -39,6 +39,14 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     }
     async init() {
         if (this.hasInit()) return;
+        if (!this.renderer) {
+            throw new Error("Renderer must be set before init");
+        }
+
+        this.audioElement.onended = () => {
+            this.renderer?.pauseTick();
+        }
+
         this.hasInitBool = true;
     }
     hasInit() {
@@ -68,6 +76,9 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     }
     isPlaying() {
         return !this.audioElement.paused;
+    }
+    shallLoop(loop: boolean): void {
+        this.audioElement.loop = loop;
     }
     getCurrentAudioSpectrum(): Uint8Array {
         const now = this.getCurrentAudioTime() / 1000; // seconds
