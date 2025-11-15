@@ -12,7 +12,6 @@ import { invoke } from '@tauri-apps/api/core';
 import { AudioProvider } from './audio_provider';
 import { join } from '@tauri-apps/api/path';
 import { readFile } from '@tauri-apps/plugin-fs';
-import type { Renderer } from '../video/renderer';
 
 export const SPECTRUM_SIZE_DEFAULT = 2048;
 const CACHE_CAPACITY = 25;
