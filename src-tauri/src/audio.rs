@@ -231,7 +231,8 @@ pub async fn bake_fft(
                 // sampling rate
                 sample_rate,
                 // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
-                FrequencyLimit::Range(20.0, 20_000.0),
+                // FrequencyLimit::Range(20.0, 20_000.0), // truncate the output, not the wanted behaviour
+                FrequencyLimit::All,
                 // optional scale
                 Some(&divide_by_N_sqrt),
             )
