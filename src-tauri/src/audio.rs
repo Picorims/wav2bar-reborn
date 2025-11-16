@@ -238,11 +238,11 @@ pub async fn bake_fft(
                     fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
                 }
                 let mut val: f32 = freq_pair.1.val();
-                val = ((1.0 - (-32.0*val).exp()) * 255.0).floor(); //(amplification with ceiling) * (scale to 0-255)
+                val = ((1.0 - (-32.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling) * (scale to 0-255)
                 fft_cache.push(val.to_u8().unwrap_or(0));
             });
             frames_in_current_block_file += 1;
-            
+
             // store frequencies in cache if not done yet
             if !cached_fft_frequencies {
                 // flush frequencies cache to file
@@ -251,7 +251,6 @@ pub async fn bake_fft(
                 fft_frequencies_cache.clear();
                 cached_fft_frequencies = true;
             }
-
 
             // flush to file if block is full
             if frames_in_current_block_file >= block_file_size_frames {
@@ -291,7 +290,6 @@ pub async fn bake_fft(
             .map_err(|e| format!("Failed to flush final FFT cache to file: {}", e))?;
         fft_cache.clear();
     }
-
 
     app.emit("audio_fft_progress", 100.0_f64).unwrap_or(());
     info!("Finished baking FFT.");
@@ -360,10 +358,12 @@ fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), S
 #[tauri::command]
 pub async fn get_audio_dir() -> Result<String, String> {
     let working_dir = crate::get_current_exe_dir();
-    let full_path = working_dir
-        .join("temp/current_save/assets/audio");
+    let full_path = working_dir.join("temp/current_save/assets/audio");
     if !full_path.exists() {
-        return Err(format!("Audio dir does not exist: {:?}", [full_path.display()]));
+        return Err(format!(
+            "Audio dir does not exist: {:?}",
+            [full_path.display()]
+        ));
     }
     Ok(full_path.to_string_lossy().to_string())
 }
@@ -371,10 +371,12 @@ pub async fn get_audio_dir() -> Result<String, String> {
 #[tauri::command]
 pub async fn get_fft_dir() -> Result<String, String> {
     let working_dir = crate::get_current_exe_dir();
-    let full_path = working_dir
-        .join("temp/current_save/baked_data/fft");
+    let full_path = working_dir.join("temp/current_save/baked_data/fft");
     if !full_path.exists() {
-        return Err(format!("FFT dir does not exist: {:?}", [full_path.display()]));
+        return Err(format!(
+            "FFT dir does not exist: {:?}",
+            [full_path.display()]
+        ));
     }
     Ok(full_path.to_string_lossy().to_string())
 }

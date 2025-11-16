@@ -7,15 +7,15 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+use anyhow::Context;
 use std::env::current_exe;
+use std::fs;
+use std::fs::File;
+use std::io;
 use std::io::Read;
 use std::io::Write;
-use std::path::PathBuf;
 use std::path::Path;
-use std::fs::File;
-use std::fs;
-use std::io;
-use anyhow::Context;
+use std::path::PathBuf;
 use zip::write::SimpleFileOptions;
 
 use walkdir::WalkDir;
@@ -24,6 +24,7 @@ mod audio;
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
             open_save,
             read_save_json,
@@ -100,12 +101,12 @@ async fn open_save(path: String) -> Result<(), String> {
     // copy picked zip file at root of /temp
     // before extracting it in /temp/current_save
     let temp_zip_path = temp_dir.join("current_save.zip");
-    std::fs::copy(&path, &temp_zip_path)
-        .map_err(|e| format!("Could not copy save file: {}", e))?;
+    std::fs::copy(&path, &temp_zip_path).map_err(|e| format!("Could not copy save file: {}", e))?;
     log::info!("Copied save file to temp directory.");
 
     // extract it
-    let file = File::open(&temp_zip_path).map_err(|e| format!("Could not open temp zip file: {}", e))?;
+    let file =
+        File::open(&temp_zip_path).map_err(|e| format!("Could not open temp zip file: {}", e))?;
     extract_zip(file, current_save_dir)?;
     Ok(())
 }
@@ -165,7 +166,8 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
 
         if file.is_dir() {
             println!("File {} extracted to \"{}\"", i, out_path.display());
-            fs::create_dir_all(&out_path).map_err(|e| format!("Could not create directory: {}", e))?;
+            fs::create_dir_all(&out_path)
+                .map_err(|e| format!("Could not create directory: {}", e))?;
         } else {
             println!(
                 "File {} extracted to \"{}\" ({} bytes)",
@@ -178,8 +180,10 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
                     fs::create_dir_all(p).unwrap();
                 }
             }
-            let mut out_file = fs::File::create(&out_path).map_err(|e| format!("Could not create file: {}", e))?;
-            io::copy(&mut file, &mut out_file).map_err(|e| format!("Could not copy file contents: {}", e))?;
+            let mut out_file =
+                fs::File::create(&out_path).map_err(|e| format!("Could not create file: {}", e))?;
+            io::copy(&mut file, &mut out_file)
+                .map_err(|e| format!("Could not copy file contents: {}", e))?;
         }
 
         // Get and Set permissions
@@ -188,7 +192,8 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
             use std::os::unix::fs::PermissionsExt;
 
             if let Some(mode) = file.unix_mode() {
-                fs::set_permissions(&out_path, fs::Permissions::from_mode(mode)).map_err(|e| format!("Could not set permissions: {}", e))?;
+                fs::set_permissions(&out_path, fs::Permissions::from_mode(mode))
+                    .map_err(|e| format!("Could not set permissions: {}", e))?;
             }
         }
     }
@@ -208,23 +213,21 @@ async fn save_to_file(path_str: String) -> Result<(), String> {
     }
 
     // create zip file at given path
-    zip_dir(Path::new(&path_str), current_save_dir.as_path()).map_err(|e| format!("Failed to zip file: {}", e))?;
+    zip_dir(Path::new(&path_str), current_save_dir.as_path())
+        .map_err(|e| format!("Failed to zip file: {}", e))?;
 
     Ok(())
 }
 
 /// Based on zip example: https://github.com/zip-rs/zip2/blob/master/examples/write_dir.rs
-fn zip_dir(
-    dest_path: &Path,
-    src_path: &Path,
-) -> anyhow::Result<()> {
-    let file = File::create(dest_path).map_err(|e| anyhow::anyhow!("Could not create zip file: {}", e))?;
+fn zip_dir(dest_path: &Path, src_path: &Path) -> anyhow::Result<()> {
+    let file =
+        File::create(dest_path).map_err(|e| anyhow::anyhow!("Could not create zip file: {}", e))?;
 
     let walk_dir = WalkDir::new(src_path);
 
     let mut zip = zip::ZipWriter::new(file);
-    let options = SimpleFileOptions::default()
-        .unix_permissions(0o755);
+    let options = SimpleFileOptions::default().unix_permissions(0o755);
 
     let prefix = Path::new(src_path);
     let mut buffer = Vec::new();
@@ -233,12 +236,14 @@ fn zip_dir(
         let path = dir_entry.path();
         print!("Visiting path: {path:?}\n");
         print!("  with prefix: {prefix:?}\n");
-        let name = path.strip_prefix(prefix).map_err(|e| anyhow::anyhow!("Path Strip Prefix Error: {}", e))?;
+        let name = path
+            .strip_prefix(prefix)
+            .map_err(|e| anyhow::anyhow!("Path Strip Prefix Error: {}", e))?;
         let path_as_string = name
             .to_str()
             .map(str::to_owned)
             .with_context(|| format!("{name:?} Is a Non UTF-8 Path"))?;
-        
+
         // Write file or directory explicitly
         // Some unzip tools unzip files with directory paths correctly, some do not!
         if path.is_file() {

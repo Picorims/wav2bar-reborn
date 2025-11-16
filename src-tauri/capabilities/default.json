@@ -11,6 +11,8 @@
     "log:default",
     "opener:default",
     "opener:allow-open-path",
-    "dialog:default"
+    "dialog:default",
+    "fs:default",
+    "fs:read-files"
   ]
 }

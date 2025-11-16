@@ -60,5 +60,4 @@ fn main() {
     log::info!("Initializing tauri...");
     // from there, the web part will be launched.
     app_lib::run();
-
 }
