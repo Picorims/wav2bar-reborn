@@ -13,6 +13,9 @@
     "opener:allow-open-path",
     "dialog:default",
     "fs:default",
-    "fs:read-files"
+    {
+      "identifier": "fs:allow-read-file",
+      "allow": ["**"]
+    }
   ]
 }
