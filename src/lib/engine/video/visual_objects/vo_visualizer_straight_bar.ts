@@ -66,21 +66,21 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         graphics.clear();
         const barsCount = this._barsCount;
         const barWidth = this._barWidth;
-        const width = this._width;
-        const height = this._height;
+        const containerWidth = this._width;
+        const containerHeight = this._height;
 
-        const gap = (width - (barsCount * barWidth)) / (barsCount - 1);
+        const gap = (containerWidth - (barsCount * barWidth)) / (barsCount - 1);
         const step = barWidth + gap;
 
         for (let i = 0; i < barsCount; i++) {
             const spectrumIndex = Math.floor((i / barsCount) * this._spectrum.length);
             const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
-            const barHeight = magnitude * height;
-            const x1 = i * step
-            const y1 = height - barHeight;
-            const x2 = x1 + barWidth;
-            const y2 = height;
-            graphics.rect(x1, y1, x2, y2);
+            const barHeight = magnitude * containerHeight;
+            const x = i * step
+            const y = containerHeight - barHeight;
+            const width = barWidth;
+            const height = barHeight;
+            graphics.rect(x, y, width, height);
         }
         graphics.fill(this._color);
     }
