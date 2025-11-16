@@ -601,6 +601,9 @@
           "$ref": "#/definitions/supports_visualizer_props"
         },
         {
+          "$ref": "#/definitions/supports_visualizer_bar_props"
+        },
+        {
           "$ref": "#/definitions/supports_color"
         },
         {

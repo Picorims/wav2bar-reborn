@@ -122,6 +122,11 @@ pub async fn bake_fft(
     let mut fft_cache: Vec<u8> = Vec::new();
     let mut fft_frequencies_cache: Vec<u16> = Vec::new();
 
+    info!("FFT size: {}", fft_size);
+    info!("FPS: {}", fps);
+    info!("Block file size (in frames): {}", block_file_size_frames);
+    info!("Expected bytes per block file: {}", block_file_size_frames * (fft_size / 2) as u64);
+
     // clear existing data in fft directory if any
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
     if fft_dir.exists() {

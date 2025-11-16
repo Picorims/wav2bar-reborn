@@ -37,10 +37,10 @@ export abstract class AudioProvider {
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;
     abstract shallLoop(loop: boolean): void;
-    abstract getCurrentAudioSpectrum(): Uint8Array | number[];
+    abstract getCurrentAudioSpectrum(): Uint8Array;
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
-    abstract getCurrentAudioWaveform(): Uint8Array | number[];
+    abstract getCurrentAudioWaveform(): Uint8Array;
     setRendererFPS(fps: number): void {
         this.rendererFPS = fps;
     }

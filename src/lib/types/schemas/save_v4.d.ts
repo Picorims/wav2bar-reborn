@@ -5,6 +5,15 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type VisualObject =
+  | Shape
+  | ParticleFlow
+  | Text
+  | TimerStraightBar
+  | TimerStraightLinePoint
+  | VisualizerStraightBar
+  | VisualizerStraightWave
+  | VisualizerCircularBar;
 export type Shape = {
   visual_object_type: "shape";
   [k: string]: unknown;
@@ -12,10 +21,6 @@ export type Shape = {
   SupportsBorderRadius &
   SupportsBoxShadow &
   SupportsBackground;
-/**
- * degrees, clockwise. 0 and 360 may have a different meaning.
- */
-export type AngleDegreesInt = number;
 export type ParticleFlow = {
   visual_object_type: "particle_flow";
   [k: string]: unknown;
@@ -50,6 +55,7 @@ export type VisualizerStraightBar = {
   [k: string]: unknown;
 } & VisualObjectInterface &
   SupportsVisualizerProps &
+  SupportsVisualizerBarProps &
   SupportsColor &
   SupportsBorderRadius &
   SupportsBoxShadow;
@@ -114,15 +120,7 @@ export interface Wav2BarSaveV4 {
    * Record of visual objects, indexed by a unique ID.
    */
   objects: {
-    [k: string]:
-      | Shape
-      | ParticleFlow
-      | Text
-      | TimerStraightBar
-      | TimerStraightLinePoint
-      | VisualizerStraightBar
-      | VisualizerStraightWave
-      | VisualizerCircularBar;
+    [k: string]: VisualObject;
   };
   [k: string]: unknown;
 }
@@ -140,7 +138,10 @@ export interface VisualObjectInterface {
     height: number;
     [k: string]: unknown;
   };
-  rotation: AngleDegreesInt;
+  /**
+   * degrees, clockwise. 0 and 360 may have a different meaning.
+   */
+  rotation: number;
   /**
    * List of `<filter>` tags separated by `[#]` with no `<script>` tag.
    */
@@ -197,7 +198,10 @@ export interface SupportsParticleProps {
    * @maxItems 2
    */
   flow_center: [number, number];
-  flow_direction: AngleDegreesInt;
+  /**
+   * degrees, clockwise. 0 and 360 may have a different meaning.
+   */
+  flow_direction: number;
   particle_spawn_probability: number;
   /**
    * How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame

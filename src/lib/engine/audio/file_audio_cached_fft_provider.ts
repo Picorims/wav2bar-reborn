@@ -96,10 +96,18 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
         // as per audio.rs command bake_fft, each block file contains SPECTRUM_SIZE_DEFAULT * FFT_BLOCK_SIZE_SECONDS * 1 byte
         const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * this.rendererFPS);
         const offset = expectedBlockFrame * SPECTRUM_SIZE_DEFAULT;
-        if (!cacheEntry || cacheEntry.loading || offset + SPECTRUM_SIZE_DEFAULT > cacheEntry.data.length) {
-            Log.audio.warn("FFT block still loading or invalid offset: " + blockIndex);
+
+        const returnError = (msg: string) => {
+            Log.audio.warn(msg);
             const dataArray = new Uint8Array(this.getAudioSpectrumSize());
             return dataArray;
+        }
+        if (!cacheEntry) {
+            return returnError(`Cache entry missing for block index ${blockIndex}`);
+        } else if (cacheEntry.loading) {
+            return returnError(`Cache entry still loading for block index ${blockIndex}`);
+        } else if (offset + SPECTRUM_SIZE_DEFAULT > cacheEntry.data.length) {
+            return returnError(`Invalid offset ${offset} for cache entry data length ${cacheEntry.data.length}`);
         }
         cacheEntry.reads += 1;
         const dataArray = cacheEntry.data.slice(offset, offset + SPECTRUM_SIZE_DEFAULT);
@@ -146,7 +154,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 
             this.pruneCacheIfNeeded();
         } catch (e) {
-            Log.audio.error("Failed to read FFT block file: " + fftFilePath + " Error: " + (e as Error).message);
+            Log.audio.error("Failed to read FFT block file: " + fftFilePath + " Error: " + ((e as Error).message ?? e));
         }
     }
 

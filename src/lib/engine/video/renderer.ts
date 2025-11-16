@@ -20,6 +20,7 @@ import { VO_Text } from './visual_objects/vo_text';
 import { saveManager } from '$lib/store/save.svelte';
 import { Log } from '$lib/log/logger';
 import { clamp } from '$lib/math';
+import { VO_VisualizerStraightBar } from './visual_objects/vo_visualizer_straight_bar';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -229,6 +230,8 @@ export class Renderer {
 
 		if (obj.visual_object_type === 'text') {
 			newVisualObject = new VO_Text(id);
+		} else if (obj.visual_object_type === 'visualizer_straight_bar') {
+			newVisualObject = new VO_VisualizerStraightBar(id);
 		} else {
 			Log.renderer.warn('Unknown object type, registering placeholder object');
 		}

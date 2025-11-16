@@ -8,7 +8,7 @@
 */
 
 // import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type, type VisualObject_V4, type Supports_BorderRadius_V4, type Supports_BoxShadow_V4, type Supports_Background_V4, type Supports_ParticleProps_V4, type Supports_Color_V4, type Supports_TextProps_V4, type Supports_BorderThickness_V4, type Supports_TimerInnerSpacing_V4, type Supports_VisualizerProps_V4, type Supports_VisualizerBarProps_V4, type Supports_VisualizerCircularProps_V4, type Text_V4 } from './save_v4';
-import type { Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
+import type { Text, VisualizerStraightBar, Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
 import { ARCHIVE_STRUCTURE_V4, EXTENSION_V4, validateSaveV4, validateSaveV4VisualObject, visualObject_V4_types } from './save_v4';
 
 export const EXTENSION = EXTENSION_V4;
@@ -19,7 +19,8 @@ export const validateSaveVisualObject = validateSaveV4VisualObject;
 
 export type Save = Wav2BarSaveV4;
 export type VisualObject = Wav2BarSaveV4['objects'][string];
-// export type SaveVO_Text = Text_V4;
+export type SaveVO_Text = Text;
+export type SaveVO_VisualizerStraightBar = VisualizerStraightBar
 
 // =========================================================
 // PROPERTIES ==============================================
