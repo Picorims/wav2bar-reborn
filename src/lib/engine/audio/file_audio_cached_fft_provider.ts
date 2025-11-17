@@ -155,6 +155,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
             this.pruneCacheIfNeeded();
         } catch (e) {
             Log.audio.error("Failed to read FFT block file: " + fftFilePath + " Error: " + ((e as Error).message ?? e));
+            this.cache.delete(blockIndex);
         }
     }
 
