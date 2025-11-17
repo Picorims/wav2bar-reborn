@@ -14,7 +14,6 @@ import type { Renderer } from "../video/renderer";
  */
 export abstract class AudioProvider {
     static DEFAULT_POINTS_COUNT = 1024;
-    protected rendererFPS: number = 30;
     protected renderer: Renderer | null = null;
     setRenderer(renderer: Renderer) {
         this.renderer = renderer;
@@ -41,7 +40,4 @@ export abstract class AudioProvider {
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
     abstract getCurrentAudioWaveform(): Uint8Array;
-    setRendererFPS(fps: number): void {
-        this.rendererFPS = fps;
-    }
 }

@@ -97,6 +97,8 @@ class SaveManager {
                     Log.save.info("Save file is valid, loading it");
                     this._saveConfig = saveJSON as unknown as Save;
 
+                    renderer.setFPS(this._saveConfig.fps);
+
                     let audioFullPath: string | null = null;
                     try {
                         audioFullPath = await invoke<string>("get_audio_dir");
@@ -110,7 +112,7 @@ class SaveManager {
                         const audioElement = document.getElementById("audio") as HTMLAudioElement;
                         audioElement.src = url;
                         audioElement.load();
-                        renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));        
+                        renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));
                     }
                 }
 

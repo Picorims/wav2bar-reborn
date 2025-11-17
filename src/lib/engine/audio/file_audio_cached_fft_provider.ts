@@ -82,7 +82,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     }
     getCurrentAudioSpectrum(): Uint8Array {
         const now = this.getCurrentAudioTime() / 1000; // seconds
-        const currentFrame = Math.floor(now * this.rendererFPS);
+        const currentFrame = Math.floor(now * (this.renderer?.getFPS() ?? 30));
         const blockIndex = Math.floor(now / FFT_BLOCK_SIZE_SECONDS);
         
         if (!this.cache.has(blockIndex)) {
@@ -94,7 +94,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 
         const cacheEntry = this.cache.get(blockIndex);
         // as per audio.rs command bake_fft, each block file contains SPECTRUM_SIZE_DEFAULT * FFT_BLOCK_SIZE_SECONDS * 1 byte
-        const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * this.rendererFPS);
+        const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * (this.renderer?.getFPS() ?? 30));
         const offset = expectedBlockFrame * SPECTRUM_SIZE_DEFAULT;
 
         const returnError = (msg: string) => {
