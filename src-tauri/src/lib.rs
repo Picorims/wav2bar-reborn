@@ -71,10 +71,10 @@ pub fn get_current_exe_dir() -> PathBuf {
     if cfg!(dev) {
         // Prevents an infinite loop, as creating a dir in `debug` triggers reload.
         // So in dev, we pick an arbitrary directory ignored by git.
-        print!(
-            "Running in dev mode, using dev working dir: {}\n",
-            dev_current_dir.display()
-        );
+        // print!(
+        //     "Running in dev mode, using dev working dir: {}\n",
+        //     dev_current_dir.display()
+        // );
         current_exe_dir = dev_current_dir.as_path();
     }
     current_exe_dir.to_path_buf()

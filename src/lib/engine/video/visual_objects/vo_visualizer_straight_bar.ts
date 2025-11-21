@@ -34,8 +34,8 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         this._graphics = new Graphics();
 		this._tickUnit = new AudioSpectrumProcessor();
         this._spectrum = new Uint8Array(0);
-		this._tickUnit.subscribe((spectrum) => {
-            this._spectrum = spectrum;
+		this._tickUnit.subscribe(([spectrum, frequencies]) => {
+            this._spectrum = this._tickUnit.toLogSpectrum(spectrum, frequencies);
             this._render(this._graphics);
 		});
 

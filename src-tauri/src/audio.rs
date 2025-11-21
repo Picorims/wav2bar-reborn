@@ -8,8 +8,8 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 use log::info;
-use num::{ToPrimitive, range_step};
-use spectrum_analyzer::scaling::{divide_by_N, divide_by_N_sqrt};
+use num::ToPrimitive;
+use spectrum_analyzer::scaling::divide_by_N;
 use spectrum_analyzer::windows::hann_window;
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use symphonia::core::audio::SampleBuffer;
@@ -119,6 +119,7 @@ pub async fn bake_fft(
     let mut frames_in_current_block_file = 0;
     let mut fft_file_index = 0;
     let mut cached_fft_frequencies = false;
+    let mut stored_fft_frequencies = false;
     let mut fft_cache: Vec<u8> = Vec::new();
     let mut fft_frequencies_cache: Vec<u16> = Vec::new();
 
@@ -220,13 +221,18 @@ pub async fn bake_fft(
             let current_video_frame_samples_pos_per_channel =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
             // Convert to interleaved buffer position (multiply by channel count)
-            let current_video_frame_samples_pos = current_video_frame_samples_pos_per_channel * track_channels_count;
+            let current_video_frame_samples_pos =
+                current_video_frame_samples_pos_per_channel * track_channels_count;
             let start_index = (current_video_frame_samples_pos - current_dropped_samples) as usize;
 
-            if current_read_samples <= current_video_frame_samples_pos + (fft_size as u64 * track_channels_count) {
+            if current_read_samples
+                <= current_video_frame_samples_pos + (fft_size as u64 * track_channels_count)
+            {
                 break;
             }
-            if samples_cache.len() < start_index + (fft_size as usize * track_channels_count as usize) {
+            if samples_cache.len()
+                < start_index + (fft_size as usize * track_channels_count as usize)
+            {
                 break;
             }
             // We have enough samples to compute the FFT for the current video frame =====================
@@ -234,7 +240,8 @@ pub async fn bake_fft(
             // For example in stereo we have two channels, so we will have LRLRLR...,
             // with L at one index and R at the next index,
             // so twice the amount of samples.
-            let samples: &[f32] = &samples_cache[start_index..(start_index + (fft_size as u64 * track_channels_count) as usize)];
+            let samples: &[f32] = &samples_cache
+                [start_index..(start_index + (fft_size as u64 * track_channels_count) as usize)];
             // Isolate each channel's samples
             let channel_samples: Vec<Vec<f32>> = (0..track_channels_count)
                 .map(|channel| {
@@ -247,7 +254,10 @@ pub async fn bake_fft(
                 })
                 .collect();
             for channel in 0..track_channels_count as usize {
-                assert!(channel_samples[channel].len() == fft_size as usize, "Channel samples length does not match FFT size");
+                assert!(
+                    channel_samples[channel].len() == fft_size as usize,
+                    "Channel samples length does not match FFT size"
+                );
             }
             // compute FFT for each channel and average the results
             let mut out_fft: Vec<f32> = vec![0.0; (fft_size / 2) as usize];
@@ -272,15 +282,21 @@ pub async fn bake_fft(
                 .map_err(|e| format!("Failed to compute FFT: {}", e))?;
 
                 // for debugging, print some FFT data
-                if frames_in_current_block_file % 60 == 0 {
-                    print!("this channel samples length: {} ", this_channel_samples.len());
+                if frames_in_current_block_file % 200 == 0 {
+                    print!(
+                        "this channel samples length: {} ",
+                        this_channel_samples.len()
+                    );
                     print!("hann window length: {} ", hann_window.len());
-                    print!("spectrum hann window length: {} ", spectrum_hann_window.data().len());
+                    print!(
+                        "spectrum hann window length: {} ",
+                        spectrum_hann_window.data().len()
+                    );
                     print!("out_fft length: {} ", out_fft.len());
                     print!("max: {}\n", spectrum_hann_window.max().1.val());
-                    for (fr, fr_val) in spectrum_hann_window.data().iter() {
-                        print!("{}Hz => {} ;", fr, fr_val)
-                    }
+                    // for (fr, fr_val) in spectrum_hann_window.data().iter() {
+                    //     print!("{}Hz => {} ;", fr, fr_val)
+                    // }
                 }
 
                 // accumulate results for averaging later
@@ -296,27 +312,27 @@ pub async fn bake_fft(
                         fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
                     }
                 }
+                cached_fft_frequencies = true;
             }
             // average
             for sample in out_fft.iter_mut() {
                 *sample /= track_channels_count.to_f32().unwrap_or(1.0);
             }
 
-
             // store FFT data in cache
             out_fft.iter().for_each(|val| {
-                let processed_val = ((1.0 - (-32.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling) * (scale to 0-255)
+                let processed_val = ((1.0 - (-64.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
                 fft_cache.push(processed_val.to_u8().unwrap_or(0));
             });
             frames_in_current_block_file += 1;
 
             // store frequencies in cache if not done yet
-            if !cached_fft_frequencies {
+            if !stored_fft_frequencies {
                 // flush frequencies cache to file
                 flush_frequencies_cache_to_file(&fft_frequencies_cache)
                     .map_err(|e| format!("Failed to flush FFT frequencies cache to file: {}", e))?;
                 fft_frequencies_cache.clear();
-                cached_fft_frequencies = true;
+                stored_fft_frequencies = true;
             }
 
             // flush to file if block is full
@@ -344,8 +360,12 @@ pub async fn bake_fft(
             let progress =
                 (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
             info!(
-                "Read packet {}, current read samples: {}, progress: {:.2}%",
-                i, current_read_samples, progress
+                "Read packet {}, current read samples: {}, progress: {:.2}%, time position: {:.0}:{:.0}",
+                i,
+                current_read_samples,
+                progress,
+                (current_read_samples / track_channels_count / sample_rate as u64) / 60,
+                (current_read_samples / track_channels_count / sample_rate as u64) % 60
             );
             app.emit("audio_fft_progress", progress).unwrap_or(());
         }
@@ -395,7 +415,10 @@ fn flush_fft_cache_to_file(fft_cache: &Vec<u8>, file_index: u32) -> Result<(), S
 
 fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), String> {
     use std::io::{BufWriter, Write};
-    info!("Flushing frequencies cache to file");
+    info!(
+        "Flushing frequencies cache to file, length: {}",
+        frequencies_cache.len()
+    );
 
     let working_dir = crate::get_current_exe_dir();
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");

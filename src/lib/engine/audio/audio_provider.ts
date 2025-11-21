@@ -39,5 +39,6 @@ export abstract class AudioProvider {
     abstract getCurrentAudioSpectrum(): Uint8Array;
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
+    abstract getFrequencies(): Uint16Array;
     abstract getCurrentAudioWaveform(): Uint8Array;
 }

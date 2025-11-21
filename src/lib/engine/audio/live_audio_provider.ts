@@ -103,6 +103,28 @@ export class LiveAudioProvider extends AudioProvider {
 	setAudioSpectrumSize(size: number) {
 		this.analyser.fftSize = size * 2;
 	}
+	getFrequencies(): Uint16Array {
+		const bufferLength = this.analyser.frequencyBinCount;
+		const dataArray = new Uint16Array(bufferLength);
+		
+		// Currently, we don't have a way to cache frequencies over time in live audio
+		// But we can deduct them as explained on MDN:
+		// https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData
+		// quote:
+		// "Each item in the array represents the decibel value for a specific frequency.
+		// The frequencies are spread linearly from 0 to 1/2 of the sample rate.
+		// For example, for 48000 sample rate, the last item of the array
+		// will represent the decibel value for 24000 Hz."
+		const sampleRate = this.audioCtx.sampleRate;
+		const nyquist = sampleRate / 2;
+		const frequencyStep = nyquist / bufferLength;
+		for (let i = 0; i < bufferLength; i++) {
+			const frequency = i * frequencyStep;
+			dataArray[i] = frequency;
+		}
+
+		return dataArray;
+	}
     getCurrentAudioWaveform(): Uint8Array {
         // We can use Float32Array instead of Uint8Array if we want higher precision
 		if (this.lastWaveform !== undefined && (this.stopped || this.chronoPause !== -1)) {
