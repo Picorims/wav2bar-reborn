@@ -46,6 +46,10 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
             minPercent: obj.visualizer_analyzer_range[0] / 1024 * 100,
             maxPercent: obj.visualizer_analyzer_range[1] / 1024 * 100
         });
+        this._tickUnit.setSmoothingParams({
+            type: obj.visualization_smoothing_type,
+            factor: obj.visualization_smoothing_factor
+        });
 
         this._barsCount = obj.visualizer_points_count;
         this._barWidth = obj.visualizer_bar_thickness;

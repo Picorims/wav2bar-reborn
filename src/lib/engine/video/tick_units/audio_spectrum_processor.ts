@@ -8,6 +8,7 @@
 */
 
 import type { AudioProvider } from '$lib/engine/audio/audio_provider';
+import type { SupportsVisualizerProps } from '$lib/types/schemas/save_v4';
 import { TickUnit } from './tick_unit';
 
 type SpectrumData = [Uint8Array, Uint16Array]; // [spectrum, frequencies]
@@ -18,6 +19,64 @@ interface Mapping {
     minPercent: number;
     maxPercent: number;
 }
+
+interface SpectrumSmoothingParams {
+    type: SupportsVisualizerProps["visualization_smoothing_type"];
+    factor: number;
+}
+
+interface EaseFunctionParams {
+    /**
+     * Must be positive
+     */
+    prev: number;
+    /**
+     * Must be positive
+     */
+    curr: number;
+    maxT: number;
+    factor: number;
+}
+
+const easeFunction: Record<SupportsVisualizerProps["visualization_smoothing_type"], (params: EaseFunctionParams) => number> = {
+    "linear_decrease": ({prev, curr, factor, maxT}) => {
+        //The new value can't decrease more than the factor value between current[i] and previous[i].
+        //The decrease is linear as long as the new value is below the old value minus the factor.
+        //This factor defines how quick the decay is.
+
+        //factor = 0 prevents from decreasing. factor > (maximum possible value for current[i]) disables the smoothing.
+        const scaledSmoothFactor = factor * maxT; //0 to 1 -> 0 to max array value (255 with Int8Array)
+        const maxDecayLimit = prev - scaledSmoothFactor;
+        if (curr < maxDecayLimit ) {
+            return maxDecayLimit;
+        }
+        return curr;
+    },
+    "proportional_decrease": ({prev, curr, factor}) => {
+        //The new value can't decrease more than the previous[i]*factor.
+        //The higher current[i] is, the more impacted it is, making low smoothing for high values,
+        //but high smoothing for low values.
+        //The decrease is proportional as long as the new value is below the old value multiplicated by the factor.
+
+        //factor = 1 prevents from decreasing. factor > 1 indefinitely increase quicker and quicker previous[i].
+        //factor = 0 disables the smoothing
+        const maxProportionalDecayLimit = prev * factor;
+        if (curr < maxProportionalDecayLimit) {
+            return maxProportionalDecayLimit;
+        }
+        return curr;
+    },
+    "average": ({prev, curr, factor}) => {
+        //This is very similar to the smoothing system used by the Web Audio API.
+        //The formula is the following (|x|: absolute value of x):
+        //new[i] = factor * previous[i] + (1-factor) * |current[i]|
+
+        //factor = 0 disables the smoothing. factor = 1 freezes everything and keep previous[i] forever.
+        //factor not belonging to [0,1] creates uncontrolled behaviour.
+        return factor * prev + (1 - factor) * Math.abs(curr);
+    }
+}
+
 export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
     private static _DEFAULT_VALUE: SpectrumData = [new Uint8Array(0), new Uint16Array(0)];
     private _mapping: Mapping = {
@@ -34,6 +93,11 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
         minPercent: 0,
         maxPercent: 100
     }
+    private _previousSpectrum: Uint8Array = new Uint8Array(0);
+    private _spectrumSmoothingParams: SpectrumSmoothingParams = {
+        type: "average",
+        factor: 0.8
+    };
 
     constructor() {
         super(AudioSpectrumProcessor._DEFAULT_VALUE);
@@ -43,6 +107,12 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
         this._mapping = {
             ...this._mapping,
             ...mapping
+        };
+    }
+    setSmoothingParams(params: Partial<SpectrumSmoothingParams>) {
+        this._spectrumSmoothingParams = {
+            ...this._spectrumSmoothingParams,
+            ...params
         };
     }
 
@@ -71,6 +141,9 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
             );
         }
 
+        this._easeSpectrum(spectrum);
+
+        this._previousSpectrum = spectrum;
         return [spectrum, frequencies];
     }
 
@@ -216,5 +289,18 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
         //RETURN THE NEW ARRAY TO THE CALL
         return newArray;
+    }
+
+    private _easeSpectrum(spectrum: Uint8Array): void {
+        for (let i = 0; i < spectrum.length; i++) {
+            const prev = this._previousSpectrum[i] || 0;
+            const curr = spectrum[i];
+            spectrum[i] = easeFunction[this._spectrumSmoothingParams.type]({
+                prev,
+                curr,
+                maxT: 255,
+                factor: this._spectrumSmoothingParams.factor
+            });
+        }
     }
 }

@@ -97,7 +97,7 @@
     <LabeledInputNumber
         title={$lang.properties.visualizer_props.smoothing_factor}
         min={0}
-        step={0.01}
+        step={0.0001}
         value={data?.visualization_smoothing_factor}
         onChange={updateSmoothingFactor}
     />
