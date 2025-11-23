@@ -1,41 +1,85 @@
 /*
-	Wav2Bar - Free software for creating audio visualization (motion design) videos
-	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
+    Wav2Bar - Free software for creating audio visualization (motion design) videos
+    Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
-	This Source Code Form is subject to the terms of the Mozilla Public
-	License, v. 2.0. If a copy of the MPL was not distributed with this
-	file, You can obtain one at https://mozilla.org/MPL/2.0/.
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import type { AudioProvider } from "$lib/engine/audio/audio_provider";
-import { TickUnit } from "./tick_unit";
+import type { AudioProvider } from '$lib/engine/audio/audio_provider';
+import { TickUnit } from './tick_unit';
 
 type SpectrumData = [Uint8Array, Uint16Array]; // [spectrum, frequencies]
+
+interface Mapping {
+    toLog: boolean;
+    mappedLength: number;
+    minPercent: number;
+    maxPercent: number;
+}
 export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
     private static _DEFAULT_VALUE: SpectrumData = [new Uint8Array(0), new Uint16Array(0)];
+    private _mapping: Mapping = {
+        /**
+         * If true, the spectrum will be converted to a logarithmic scale.
+         * This is independent from mapping.
+         */
+        toLog: true,
+        /**
+         * use a value below or equal to 0 to disable mapping.
+         * This is independent from log scale remapping.
+         */
+        mappedLength: 1024,
+        minPercent: 0,
+        maxPercent: 100
+    }
 
     constructor() {
         super(AudioSpectrumProcessor._DEFAULT_VALUE);
+    }
+
+    setMapping(mapping: Partial<Mapping>) {
+        this._mapping = {
+            ...this._mapping,
+            ...mapping
+        };
     }
 
     getDefaultValue(): SpectrumData {
         return AudioSpectrumProcessor._DEFAULT_VALUE;
     }
 
-    protected computeNewState(_basis: SpectrumData, audioProvider: AudioProvider | null): SpectrumData {
+    protected computeNewState(
+        _basis: SpectrumData,
+        audioProvider: AudioProvider | null
+    ): SpectrumData {
         if (!audioProvider) {
             return this.getDefaultValue();
         }
+        let spectrum = audioProvider.getCurrentAudioSpectrum();
+        const frequencies = audioProvider.getFrequencies();
+        if (this._mapping.toLog) {
+            spectrum = this.toLogSpectrum(spectrum, frequencies);
+        }
+        if (this._mapping.mappedLength > 0) {
+            spectrum = this.mappedArray(
+                spectrum,
+                this._mapping.mappedLength,
+                Math.floor(this._mapping.minPercent * spectrum.length / 100),
+                Math.ceil(this._mapping.maxPercent * spectrum.length / 100)
+            );
+        }
 
-        return [audioProvider.getCurrentAudioSpectrum(), audioProvider.getFrequencies()];
+        return [spectrum, frequencies];
     }
 
     /**
      * @see https://youtu.be/BFld4EBO2RE?si=Qm3NV0ZGHhXkPF7d&t=203
-     * @param from 
-     * @param to 
-     * @param ratio 
-     * @returns 
+     * @param from
+     * @param to
+     * @param ratio
+     * @returns
      */
     private smoothStep(from: number, to: number, ratio: number) {
         const smoothedRatio = 3 * ratio * ratio - 2 * ratio * ratio * ratio;
@@ -43,7 +87,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
     }
 
     /**
-     * 
+     *
      * @param spectrum linear raw spectrum from FFT output
      * @param frequencies associated frequencies (must be of the same length!).
      * Assuming it is sorted with the highest frequency at the end.
@@ -51,7 +95,9 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
      */
     toLogSpectrum(spectrum: Uint8Array, frequencies: Uint16Array): Uint8Array {
         if (spectrum.length !== frequencies.length) {
-            throw new Error(`Spectrum (${spectrum.length}) and frequencies (${frequencies.length}) length mismatch`);
+            throw new Error(
+                `Spectrum (${spectrum.length}) and frequencies (${frequencies.length}) length mismatch`
+            );
         }
         const logSpectrum = new Uint8Array(spectrum.length);
         /**
@@ -67,7 +113,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
             // (log2 of 20_000 is index 14 approx, while we have
             // hundreds or thousands of indexes available)
             // we offset by RANGE[0] to avoid having very low frequencies taking a lot of space
-            const freq = Math.max(RANGE[0] + 1, frequencies[i]);  // +1 to avoid log2(x < 1)
+            const freq = Math.max(RANGE[0] + 1, frequencies[i]); // +1 to avoid log2(x < 1)
             const logIndex = Math.floor(Math.log2(freq - RANGE[0]) * scaleFactor);
             if (!dataMap.has(logIndex)) {
                 dataMap.set(logIndex, []);
@@ -83,7 +129,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
                 const interpolated = this.smoothStep(fromValue, toValue, j / (consecutiveEmptyCount + 1));
                 logSpectrum[fromIndex + j] = Math.round(interpolated);
             }
-        }
+        };
 
         //compute the array
         let consecutiveEmptyCount = 0;
@@ -110,13 +156,65 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
         if (consecutiveEmptyCount > 0) {
             // fill the end with the last known value
-            let fromIndex = (logSpectrum.length - 1) - consecutiveEmptyCount - 1;
+            let fromIndex = logSpectrum.length - 1 - consecutiveEmptyCount - 1;
             if (fromIndex < 0) {
                 fromIndex = 0;
             }
             fillInterpolated(fromIndex, logSpectrum.length - 1);
         }
-        
+
         return logSpectrum;
+    }
+
+    /**
+     * function that remaps an array, within the given min and max, to a new length.
+     *
+     * @export
+     * @param array
+     * @param new_length
+     * @param min minimum index to consider for mapping.
+     * @param max maximum index to consider for mapping.
+     * It is NOT guaranteed that max will be included in the output array.
+     * @return The mapped array.
+     */
+    mappedArray(array: Uint8Array, new_length: number, min: number = 0, max: number = array.length-1): Uint8Array {
+        if (new_length < 0) {
+            throw new Error("new_length must be non-negative.");
+        }
+        if (array.length === 0 && new_length === 0) {
+            return new Uint8Array([]);
+        }
+        if (array.length === 0 && new_length > 0) {
+            throw new Error("Cannot map from an empty array to a non-empty array.");
+        }
+        if (min < 0) {
+            throw new Error("min index cannot be negative.");
+        }
+        if (max >= array.length) {
+            throw new Error("max index cannot be greater than or equal to array length.");
+        }
+        if (new_length === 0) {
+            return new Uint8Array([]);
+        }
+        
+        const newArray = new Uint8Array(new_length);
+        const step = (max - min + 1) / (new_length); // (range length) / new length.
+
+        let increment = min; //we start a the minimum of the range
+
+        //We want to take at equal distance a "new_length" number of values in the old array, from min to max.
+        //In order to know how much we need to increment, we create a step.
+        //If the range length is inferior than the new length, step < 1 since we have to get some values multiple times
+        //to match the new length.
+        //If the range length is superior than the new length, step > 1 since we have to skip some values to match the new length.
+
+        //ARRAY CREATION
+        for (let i = 0; i < new_length; i++) {
+            newArray[i] = (array[Math.floor(increment)]);
+            increment += step;
+        }
+
+        //RETURN THE NEW ARRAY TO THE CALL
+        return newArray;
     }
 }

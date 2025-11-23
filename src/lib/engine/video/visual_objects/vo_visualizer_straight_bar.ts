@@ -34,13 +34,19 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         this._graphics = new Graphics();
 		this._tickUnit = new AudioSpectrumProcessor();
         this._spectrum = new Uint8Array(0);
-		this._tickUnit.subscribe(([spectrum, frequencies]) => {
-            this._spectrum = this._tickUnit.toLogSpectrum(spectrum, frequencies);
+		this._tickUnit.subscribe(([spectrum]) => {
+            this._spectrum = spectrum
             this._render(this._graphics);
 		});
 
     }
     update(obj: VisualizerStraightBar): Container {
+        this._tickUnit.setMapping({
+            mappedLength: obj.visualizer_points_count,
+            minPercent: obj.visualizer_analyzer_range[0] / 1024 * 100,
+            maxPercent: obj.visualizer_analyzer_range[1] / 1024 * 100
+        });
+
         this._barsCount = obj.visualizer_points_count;
         this._barWidth = obj.visualizer_bar_thickness;
         this._width = obj.size.width;
