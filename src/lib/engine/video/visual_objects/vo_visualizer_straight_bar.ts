@@ -1,10 +1,10 @@
 /*
-	Wav2Bar - Free software for creating audio visualization (motion design) videos
-	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
+    Wav2Bar - Free software for creating audio visualization (motion design) videos
+    Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
-	This Source Code Form is subject to the terms of the Mozilla Public
-	License, v. 2.0. If a copy of the MPL was not distributed with this
-	file, You can obtain one at https://mozilla.org/MPL/2.0/.
+    This Source Code Form is subject to the terms of the Mozilla Public
+    License, v. 2.0. If a copy of the MPL was not distributed with this
+    file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 import type { SaveVO_VisualizerStraightBar } from "$lib/store/save_structure/save_latest";
@@ -17,7 +17,7 @@ import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 
 export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_VisualizerStraightBar> {
     private _saveId: UUIDv4;
-	private _container: Container;
+    private _container: Container;
     private _graphics: Graphics;
     private _tickUnit: AudioSpectrumProcessor;
     private _spectrum: Uint8Array;
@@ -29,15 +29,15 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
 
 
     constructor(saveId: UUIDv4) {
-		this._saveId = saveId;
-		this._container = new Container();
+        this._saveId = saveId;
+        this._container = new Container();
         this._graphics = new Graphics();
-		this._tickUnit = new AudioSpectrumProcessor();
+        this._tickUnit = new AudioSpectrumProcessor();
         this._spectrum = new Uint8Array(0);
-		this._tickUnit.subscribe(([spectrum]) => {
+        this._tickUnit.subscribe(([spectrum]) => {
             this._spectrum = spectrum;
             this._render(this._graphics);
-		});
+        });
 
     }
     update(obj: VisualizerStraightBar): Container {
