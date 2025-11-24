@@ -321,6 +321,12 @@ pub async fn bake_fft(
 
             // store FFT data in cache
             out_fft.iter().for_each(|val| {
+                // The factor within the exponential acts similarly to a compressor,
+                // amplifying lower values while capping higher ones.
+                // The more negative the factor (so the bigger the absolute value),
+                // the stronger the amplification of lower values.
+                // It can be helpful to print the max amplitude value
+                // and look at the function's curve to choose a good factor.
                 let processed_val = ((1.0 - (-64.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
                 fft_cache.push(processed_val.to_u8().unwrap_or(0));
             });
