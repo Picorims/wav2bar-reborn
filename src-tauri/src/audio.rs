@@ -218,6 +218,7 @@ pub async fn bake_fft(
 
         loop {
             // Calculate position in terms of samples per channel (time-based, not interleaved count)
+            // Said differently: we compute the position assuming a single channel (or a mono audio track).
             let current_video_frame_samples_pos_per_channel =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
             // Convert to interleaved buffer position (multiply by channel count)
