@@ -7,7 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use log::info;
+use log::{info, trace};
 use num::ToPrimitive;
 use spectrum_analyzer::scaling::divide_by_N;
 use spectrum_analyzer::windows::hann_window;
@@ -283,17 +283,17 @@ pub async fn bake_fft(
 
                 // for debugging, print some FFT data
                 if frames_in_current_block_file % 200 == 0 {
-                    print!(
+                    trace!(
                         "this channel samples length: {} ",
                         this_channel_samples.len()
                     );
-                    print!("hann window length: {} ", hann_window.len());
-                    print!(
+                    trace!("hann window length: {} ", hann_window.len());
+                    trace!(
                         "spectrum hann window length: {} ",
                         spectrum_hann_window.data().len()
                     );
-                    print!("out_fft length: {} ", out_fft.len());
-                    print!("max: {}\n", spectrum_hann_window.max().1.val());
+                    trace!("out_fft length: {} ", out_fft.len());
+                    trace!("max: {}\n", spectrum_hann_window.max().1.val());
                     // for (fr, fr_val) in spectrum_hann_window.data().iter() {
                     //     print!("{}Hz => {} ;", fr, fr_val)
                     // }

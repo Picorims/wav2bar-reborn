@@ -41,7 +41,7 @@ fn main() {
             Root::builder()
                 .appender("stdout")
                 .appender("file")
-                .build(log::LevelFilter::Trace),
+                .build(log::LevelFilter::Debug),
         )
         .unwrap();
 
