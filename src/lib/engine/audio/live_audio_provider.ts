@@ -108,7 +108,7 @@ export class LiveAudioProvider extends AudioProvider {
 		const dataArray = new Uint16Array(bufferLength);
 		
 		// Currently, we don't have a way to cache frequencies over time in live audio
-		// But we can deduct them as explained on MDN:
+		// But we can deduce them as explained on MDN:
 		// https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/getByteFrequencyData
 		// quote:
 		// "Each item in the array represents the decibel value for a specific frequency.

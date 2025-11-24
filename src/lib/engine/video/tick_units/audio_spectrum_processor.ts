@@ -56,7 +56,7 @@ const easeFunction: Record<SupportsVisualizerProps["visualization_smoothing_type
         //The new value can't decrease more than the previous[i]*factor.
         //The higher current[i] is, the more impacted it is, making low smoothing for high values,
         //but high smoothing for low values.
-        //The decrease is proportional as long as the new value is below the old value multiplicated by the factor.
+        //The decrease is proportional as long as the new value is below the old value multiplied by the factor.
 
         //factor = 1 prevents from decreasing. factor > 1 indefinitely increase quicker and quicker previous[i].
         //factor = 0 disables the smoothing
