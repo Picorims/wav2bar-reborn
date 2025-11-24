@@ -16,6 +16,7 @@ import { readFile } from '@tauri-apps/plugin-fs';
 export const SPECTRUM_SIZE_DEFAULT = 2048;
 const CACHE_CAPACITY = 25; // TODO possible bug if cache is full
 const FFT_BLOCK_SIZE_SECONDS = 20; // must match audio.rs BLOCK_FILE_SIZE_SECONDS 
+const DEFAULT_FPS = 30;
 
 /**
  * Use backed FFT data computed from the save audio file, which is the audio input.
@@ -89,7 +90,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     }
     getCurrentAudioSpectrum(): Uint8Array {
         const now = this.getCurrentAudioTime() / 1000; // seconds
-        const currentFrame = Math.floor(now * (this.renderer?.getFPS() ?? 30));
+        const currentFrame = Math.floor(now * (this.renderer?.getFPS() ?? DEFAULT_FPS));
         const blockIndex = Math.floor(now / FFT_BLOCK_SIZE_SECONDS);
         
         if (!this.cache.has(blockIndex)) {
@@ -104,7 +105,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 
         const cacheEntry = this.cache.get(blockIndex);
         // as per audio.rs command bake_fft, each block file contains SPECTRUM_SIZE_DEFAULT * FFT_BLOCK_SIZE_SECONDS * 1 byte
-        const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * (this.renderer?.getFPS() ?? 30));
+        const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * (this.renderer?.getFPS() ?? DEFAULT_FPS));
         const offset = expectedBlockFrame * SPECTRUM_SIZE_DEFAULT;
 
         const returnError = (msg: string) => {
