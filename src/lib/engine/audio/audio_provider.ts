@@ -14,7 +14,6 @@ import type { Renderer } from "../video/renderer";
  */
 export abstract class AudioProvider {
     static DEFAULT_POINTS_COUNT = 1024;
-    protected rendererFPS: number = 30;
     protected renderer: Renderer | null = null;
     setRenderer(renderer: Renderer) {
         this.renderer = renderer;
@@ -37,11 +36,9 @@ export abstract class AudioProvider {
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;
     abstract shallLoop(loop: boolean): void;
-    abstract getCurrentAudioSpectrum(): Uint8Array | number[];
+    abstract getCurrentAudioSpectrum(): Uint8Array;
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
-    abstract getCurrentAudioWaveform(): Uint8Array | number[];
-    setRendererFPS(fps: number): void {
-        this.rendererFPS = fps;
-    }
+    abstract getFrequencies(): Uint16Array;
+    abstract getCurrentAudioWaveform(): Uint8Array;
 }

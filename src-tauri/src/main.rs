@@ -41,7 +41,7 @@ fn main() {
             Root::builder()
                 .appender("stdout")
                 .appender("file")
-                .build(log::LevelFilter::Trace),
+                .build(log::LevelFilter::Debug),
         )
         .unwrap();
 
@@ -58,7 +58,9 @@ fn main() {
         .unwrap_or_else(|_| panic!("Could not create temp directory.")); // panic if temp directory cannot be created.
 
     log::info!("Initializing tauri...");
+    if cfg!(dev) {
+        log::info!("Running in dev mode");
+    }
     // from there, the web part will be launched.
     app_lib::run();
-
 }

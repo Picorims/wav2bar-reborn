@@ -7,9 +7,9 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use log::info;
+use log::{info, trace};
 use num::ToPrimitive;
-use spectrum_analyzer::scaling::divide_by_N_sqrt;
+use spectrum_analyzer::scaling::divide_by_N;
 use spectrum_analyzer::windows::hann_window;
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use symphonia::core::audio::SampleBuffer;
@@ -119,8 +119,17 @@ pub async fn bake_fft(
     let mut frames_in_current_block_file = 0;
     let mut fft_file_index = 0;
     let mut cached_fft_frequencies = false;
+    let mut stored_fft_frequencies = false;
     let mut fft_cache: Vec<u8> = Vec::new();
     let mut fft_frequencies_cache: Vec<u16> = Vec::new();
+
+    info!("FFT size: {}", fft_size);
+    info!("FPS: {}", fps);
+    info!("Block file size (in frames): {}", block_file_size_frames);
+    info!(
+        "Expected bytes per block file: {}",
+        block_file_size_frames * (fft_size / 2) as u64
+    );
 
     // clear existing data in fft directory if any
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
@@ -137,6 +146,10 @@ pub async fn bake_fft(
         Some(channels) => channels.count() as u64,
         None => 1,
     };
+    info!(
+        "Total frames: {}, track channels count: {}",
+        frame_count, track_channels_count
+    );
 
     loop {
         let packet = match format_reader.next_packet() {
@@ -204,54 +217,130 @@ pub async fn bake_fft(
         samples_cache.extend_from_slice(samples);
 
         loop {
-            // TODO see if it is needed to take into account the number of channels here
-            let current_video_frame_samples_pos =
+            // Calculate position in terms of samples per channel (time-based, not interleaved count)
+            // Said differently: we compute the position assuming a single channel (or a mono audio track).
+            let current_video_frame_samples_pos_per_channel =
                 (current_video_frame as f64 * sample_rate as f64 / fps as f64).floor() as u64;
+            // Convert to interleaved buffer position (multiply by channel count)
+            let current_video_frame_samples_pos =
+                current_video_frame_samples_pos_per_channel * track_channels_count;
             let start_index = (current_video_frame_samples_pos - current_dropped_samples) as usize;
 
-            if current_read_samples <= current_video_frame_samples_pos + fft_size as u64 {
+            if current_read_samples
+                <= current_video_frame_samples_pos + (fft_size as u64 * track_channels_count)
+            {
                 break;
             }
-            if samples_cache.len() < start_index + fft_size as usize {
+            if samples_cache.len()
+                < start_index + (fft_size as usize * track_channels_count as usize)
+            {
                 break;
             }
-            // we have enough samples to compute the FFT for the current video frame =====================
-            let samples: &[f32] = &samples_cache[start_index..(start_index + fft_size as usize)];
-            // apply hann window for smoothing; length must be a power of 2 for the FFT
-            let hann_window = hann_window(samples);
-            // calc spectrum
-            let spectrum_hann_window = samples_fft_to_spectrum(
-                // (windowed) samples
-                &hann_window,
-                // sampling rate
-                sample_rate,
-                // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
-                FrequencyLimit::Range(20.0, 20_000.0),
-                // optional scale
-                Some(&divide_by_N_sqrt),
-            )
-            .map_err(|e| format!("Failed to compute FFT: {}", e))?;
+            // We have enough samples to compute the FFT for the current video frame =====================
+            // We need to compute FFT for each channel separately (data is interleaved)
+            // For example in stereo we have two channels, so we will have LRLRLR...,
+            // with L at one index and R at the next index,
+            // so twice the amount of samples.
+            let samples: &[f32] = &samples_cache
+                [start_index..(start_index + (fft_size as u64 * track_channels_count) as usize)];
+            // Isolate each channel's samples
+            let channel_samples: Vec<Vec<f32>> = (0..track_channels_count)
+                .map(|channel| {
+                    samples
+                        .iter()
+                        .skip(channel as usize)
+                        .step_by(track_channels_count as usize)
+                        .copied()
+                        .collect::<Vec<f32>>()
+                })
+                .collect();
+            for channel in 0..track_channels_count as usize {
+                assert!(
+                    channel_samples[channel].len() == fft_size as usize,
+                    "Channel samples length does not match FFT size"
+                );
+            }
+            // compute FFT for each channel and average the results
+            let mut out_fft: Vec<f32> = vec![0.0; (fft_size / 2) as usize];
+            for channel in 0..track_channels_count as usize {
+                let this_channel_samples = channel_samples[channel].as_slice();
+                // apply hann window for smoothing; length must be a power of 2 for the FFT
+                let hann_window = hann_window(this_channel_samples);
+                // calc spectrum
+                // Note: output is half the fft_size + 1 due to symmetry of FFT for real input.
+                // The +1 is for the Nyquist frequency.
+                let spectrum_hann_window = samples_fft_to_spectrum(
+                    // (windowed) samples
+                    &hann_window,
+                    // sampling rate
+                    sample_rate,
+                    // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
+                    // FrequencyLimit::Range(20.0, 20_000.0), // truncate the output, not the wanted behaviour
+                    FrequencyLimit::All,
+                    // optional scale
+                    Some(&divide_by_N),
+                )
+                .map_err(|e| format!("Failed to compute FFT: {}", e))?;
+
+                // for debugging, print some FFT data
+                if frames_in_current_block_file % 200 == 0 {
+                    trace!(
+                        "this channel samples length: {} ",
+                        this_channel_samples.len()
+                    );
+                    trace!("hann window length: {} ", hann_window.len());
+                    trace!(
+                        "spectrum hann window length: {} ",
+                        spectrum_hann_window.data().len()
+                    );
+                    trace!("out_fft length: {} ", out_fft.len());
+                    trace!("max: {}\n", spectrum_hann_window.max().1.val());
+                    // for (fr, fr_val) in spectrum_hann_window.data().iter() {
+                    //     print!("{}Hz => {} ;", fr, fr_val)
+                    // }
+                }
+
+                // accumulate results for averaging later
+                for (i, freq_pair) in spectrum_hann_window.data().iter().enumerate() {
+                    // ignore Nyquist frequency to have even number of bins
+                    if i >= out_fft.len() {
+                        break;
+                    }
+                    out_fft[i] += freq_pair.1.val();
+
+                    // cache frequencies only once
+                    if !cached_fft_frequencies && channel == 0 {
+                        fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
+                    }
+                }
+                cached_fft_frequencies = true;
+            }
+            // average
+            for sample in out_fft.iter_mut() {
+                *sample /= track_channels_count.to_f32().unwrap_or(1.0);
+            }
 
             // store FFT data in cache
-            spectrum_hann_window.data().iter().for_each(|freq_pair| {
-                if !cached_fft_frequencies {
-                    fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
-                }
-                let mut val: f32 = freq_pair.1.val();
-                val = ((1.0 - (-32.0*val).exp()) * 255.0).floor(); //(amplification with ceiling) * (scale to 0-255)
-                fft_cache.push(val.to_u8().unwrap_or(0));
+            out_fft.iter().for_each(|val| {
+                // The factor within the exponential acts similarly to a compressor,
+                // amplifying lower values while capping higher ones.
+                // The more negative the factor (so the bigger the absolute value),
+                // the stronger the amplification of lower values.
+                // It can be helpful to print the max amplitude value
+                // and look at the function's curve to choose a good factor.
+                let processed_val = ((1.0 - (-64.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
+                fft_cache.push(processed_val.to_u8().unwrap_or(0));
             });
             frames_in_current_block_file += 1;
-            
+
             // store frequencies in cache if not done yet
-            if !cached_fft_frequencies {
+            if !stored_fft_frequencies {
                 // flush frequencies cache to file
                 flush_frequencies_cache_to_file(&fft_frequencies_cache)
                     .map_err(|e| format!("Failed to flush FFT frequencies cache to file: {}", e))?;
                 fft_frequencies_cache.clear();
-                cached_fft_frequencies = true;
+                stored_fft_frequencies = true;
             }
-
 
             // flush to file if block is full
             if frames_in_current_block_file >= block_file_size_frames {
@@ -278,8 +367,12 @@ pub async fn bake_fft(
             let progress =
                 (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
             info!(
-                "Read packet {}, current read samples: {}, progress: {:.2}%",
-                i, current_read_samples, progress
+                "Read packet {}, current read samples: {}, progress: {:.2}%, time position: {:.0}:{:.0}",
+                i,
+                current_read_samples,
+                progress,
+                (current_read_samples / track_channels_count / sample_rate as u64) / 60,
+                (current_read_samples / track_channels_count / sample_rate as u64) % 60
             );
             app.emit("audio_fft_progress", progress).unwrap_or(());
         }
@@ -291,7 +384,6 @@ pub async fn bake_fft(
             .map_err(|e| format!("Failed to flush final FFT cache to file: {}", e))?;
         fft_cache.clear();
     }
-
 
     app.emit("audio_fft_progress", 100.0_f64).unwrap_or(());
     info!("Finished baking FFT.");
@@ -330,7 +422,10 @@ fn flush_fft_cache_to_file(fft_cache: &Vec<u8>, file_index: u32) -> Result<(), S
 
 fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), String> {
     use std::io::{BufWriter, Write};
-    info!("Flushing frequencies cache to file");
+    info!(
+        "Flushing frequencies cache to file, length: {}",
+        frequencies_cache.len()
+    );
 
     let working_dir = crate::get_current_exe_dir();
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
@@ -360,10 +455,12 @@ fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), S
 #[tauri::command]
 pub async fn get_audio_dir() -> Result<String, String> {
     let working_dir = crate::get_current_exe_dir();
-    let full_path = working_dir
-        .join("temp/current_save/assets/audio");
+    let full_path = working_dir.join("temp/current_save/assets/audio");
     if !full_path.exists() {
-        return Err(format!("Audio dir does not exist: {:?}", [full_path.display()]));
+        return Err(format!(
+            "Audio dir does not exist: {:?}",
+            [full_path.display()]
+        ));
     }
     Ok(full_path.to_string_lossy().to_string())
 }
@@ -371,10 +468,12 @@ pub async fn get_audio_dir() -> Result<String, String> {
 #[tauri::command]
 pub async fn get_fft_dir() -> Result<String, String> {
     let working_dir = crate::get_current_exe_dir();
-    let full_path = working_dir
-        .join("temp/current_save/baked_data/fft");
+    let full_path = working_dir.join("temp/current_save/baked_data/fft");
     if !full_path.exists() {
-        return Err(format!("FFT dir does not exist: {:?}", [full_path.display()]));
+        return Err(format!(
+            "FFT dir does not exist: {:?}",
+            [full_path.display()]
+        ));
     }
     Ok(full_path.to_string_lossy().to_string())
 }
