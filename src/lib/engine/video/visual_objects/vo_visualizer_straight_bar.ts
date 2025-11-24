@@ -79,7 +79,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         const containerWidth = this._width;
         const containerHeight = this._height;
 
-        const gap = (containerWidth - (barsCount * barWidth)) / (barsCount - 1);
+        const gap = (containerWidth - (barsCount * barWidth)) / Math.max(1, barsCount - 1);
         const step = barWidth + gap;
 
         for (let i = 0; i < barsCount; i++) {
