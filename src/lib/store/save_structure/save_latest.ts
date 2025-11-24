@@ -20,7 +20,7 @@ export const validateSaveVisualObject = validateSaveV4VisualObject;
 export type Save = Wav2BarSaveV4;
 export type VisualObject = Wav2BarSaveV4['objects'][string];
 export type SaveVO_Text = Text;
-export type SaveVO_VisualizerStraightBar = VisualizerStraightBar
+export type SaveVO_VisualizerStraightBar = VisualizerStraightBar;
 
 // =========================================================
 // PROPERTIES ==============================================
