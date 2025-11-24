@@ -247,7 +247,8 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
      * @param new_length
      * @param min minimum index to consider for mapping.
      * @param max maximum index to consider for mapping.
-     * It is NOT guaranteed that max will be included in the output array.
+     * It is NOT guaranteed that the value at the maximum index
+     * will be included in the output array.
      * @return The mapped array.
      */
     mappedArray(array: Uint8Array, new_length: number, min: number = 0, max: number = array.length-1): Uint8Array {
