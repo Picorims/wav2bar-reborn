@@ -86,7 +86,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
             const spectrumIndex = Math.floor((i / barsCount) * this._spectrum.length);
             const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
-            const x = i * step
+            const x = i * step;
             const y = containerHeight - barHeight;
             const width = barWidth;
             const height = barHeight;
