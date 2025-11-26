@@ -28,7 +28,6 @@
 			const payload = event.payload;
 			setLoadingInfoDetail(payload.message);
             setLoadingProgress(payload.progressPercent);
-            console.log(payload);
 		});
 		stopListening = unsubscribe;
 	}
