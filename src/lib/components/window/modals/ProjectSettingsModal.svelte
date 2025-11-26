@@ -25,7 +25,7 @@
 		console.warn("stopListening called before being set!");
 	});
 
-		function bakeFFT() {
+	function bakeFFT() {
 		invoke('bake_fft', {
 			audioFileName: saveManager.save.audio_filename,
 			fps: saveManager.save.fps,
