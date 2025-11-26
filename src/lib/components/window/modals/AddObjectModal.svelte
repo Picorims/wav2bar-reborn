@@ -6,7 +6,7 @@
 	This Source Code Form is subject to the terms of the Mozilla Public
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
-    */
+	*/
 	import Modal from '../Modal.svelte';
 	import { lang } from '$lib/store/settings';
 	import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
@@ -86,8 +86,8 @@
 			{@render typeButtons(category)}
 		{/each}
 	</div>
-    {#snippet buttons()}
-		<button  class="close" onclick={() => {dialog?.close()}}>{$lang.modal.add_object.close}</button>
+	{#snippet buttons()}
+		<button class="close" onclick={() => {dialog?.close()}}>{$lang.modal.add_object.close}</button>
 	{/snippet}
 </Modal>
 
