@@ -8,7 +8,6 @@
 */
 
 use anyhow::Context;
-use tauri::App;
 use tauri::AppHandle;
 use tauri::Emitter;
 use std::env::current_exe;
