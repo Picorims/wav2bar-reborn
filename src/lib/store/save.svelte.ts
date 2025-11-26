@@ -18,6 +18,7 @@ import { open, save } from "@tauri-apps/plugin-dialog";
 import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { FileAudioCachedFFTProvider } from "$lib/engine/audio/file_audio_cached_fft_provider";
 import { join } from "@tauri-apps/api/path";
+import { setLoading, setLoadingInfo } from "./app_state.svelte";
 
 
 
@@ -83,18 +84,23 @@ class SaveManager {
             Log.save.info("No file selected");
             return;
         } else {
+            setLoading(true);
             try {
+                setLoadingInfo("Opening save file...");
                 await invoke("open_save", { path: path as string });
                 Log.save.info("Save file opened successfully, reading JSON...");
+                setLoadingInfo("Reading save file...");
                 const jsonStr = await invoke<string>("read_save_json");
                 Log.save.info("Read JSON from save file, parsing it...");
                 const saveJSON = JSON.parse(jsonStr);
                 Log.save.info("Validating save file...");
+                setLoadingInfo("Validating save file...");
                 const valid = validateSave(saveJSON);
                 if (!valid) {
                     throw new Error("Save file does not match the schema because:\n\n" + validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join("\n"));
                 } else {
                     Log.save.info("Save file is valid, loading it");
+                    setLoadingInfo("Loading save file...");
                     this._saveConfig = saveJSON as unknown as Save;
 
                     renderer.setFPS(this._saveConfig.fps);
@@ -124,6 +130,8 @@ class SaveManager {
                     Log.save.error("Failed to open save file: " + (e as Error).message);
                 }
                 return;
+            } finally {
+                setLoading(false);
             }
         }
     }
@@ -140,13 +148,18 @@ class SaveManager {
             Log.save.info("No file selected");
             return;
         } else {
+            setLoading(true);
+            setLoadingInfo("Saving file...");
             try {
+                //FIXME write JSON to backend first
                 await invoke("save_to_file", { pathStr: path });
                 Log.save.info("Save file saved successfully");
             } catch (e) {
                 // Tauri errors are strings
                 Log.save.error("Failed to save file: " + e);
                 return;
+            } finally {
+                setLoading(false);
             }
         }
     }
