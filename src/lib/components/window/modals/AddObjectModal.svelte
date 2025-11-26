@@ -93,12 +93,12 @@
 
 {#snippet typeButtons(category: Category)}
 	{#each Object.entries(entries).filter(([_, e]) => e.category === category) as [type, entry]}
-		<button class="type-button" onclick={() => {
+		<button class="type-button" aria-label={$lang.modal.add_object.categories[category] + ": " + entry.label} onclick={() => {
 			dialog?.close();
 			onTypeChosen(type as VisualObject_Type /*type is lost after calling entries()*/);
 		}}>
 			<!-- svg icon -->
-			{@html entry.iconSvg}
+			<span role="img" aria-label={entry.label}>{@html entry.iconSvg}</span>
 			<span>{entry.label}</span>
 		</button>
 	{/each}
