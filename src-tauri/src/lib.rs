@@ -258,7 +258,7 @@ fn zip_dir(dest_path: &Path, src_path: &Path, app: AppHandle) -> anyhow::Result<
             .with_context(|| format!("{name:?} Is a Non UTF-8 Path"))?;
 
         app.emit("set_loading_info_detail_progress", LoadingInfo {
-            message: &format!("Adding file to zip {}/{}: {}", index, length, path_as_string),
+            message: &format!("Adding file to zip {}/{}: {}", index + 1, length, path_as_string),
             progress_percent: Some(((index + 1) * 100 / length) as usize),
         }).map_err(|e| anyhow::anyhow!("Could not emit loading info event: {}", e))?;
 
