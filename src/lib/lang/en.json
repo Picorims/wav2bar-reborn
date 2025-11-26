@@ -20,6 +20,27 @@
     "object_pane": {
         "title": "Objects"
     },
+    "modal": {
+        "add_object": {
+            "title": "Add Object",
+            "close": "Cancel",
+            "visual_object_types": {
+                "shape": "Shape",
+                "text": "Text",
+                "particle_flow": "Particle flow",
+                "timer_straight_bar": "Straight bar",
+                "timer_straight_line_point": "Straight line",
+                "visualizer_straight_bar": "Straight bars",
+                "visualizer_straight_wave": "Straight waves",
+                "visualizer_circular_bar": "Circular bars"
+            },
+            "categories": {
+                "general": "General",
+                "timer": "Timer",
+                "visualizer": "Audio Visualizer"
+            }
+        }
+    },
     "properties": {
         "size": {
             "title": "Size",

@@ -1,14 +1,4 @@
 <script lang="ts">
-	import { lang } from '$lib/store/settings';
-	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
-	import IconButton from '../atoms/IconButton.svelte';
-	import {
-		visualObject_types,
-		type VisualObject_Type
-	} from '$lib/store/save_structure/save_latest';
-	import { saveManager } from '$lib/store/save.svelte';
-	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
-
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
@@ -18,11 +8,21 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 
+	import { lang } from '$lib/store/settings';
+	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
+	import IconButton from '../atoms/IconButton.svelte';
+	import {
+		visualObject_types,
+		type VisualObject_Type
+	} from '$lib/store/save_structure/save_latest';
+	import { saveManager } from '$lib/store/save.svelte';
+	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
+	import AddObjectModal from '../window/modals/AddObjectModal.svelte';
+
+	let addObjectModalDialog: HTMLDialogElement | null = $state(null);
+
 	function newObj() {
-		/* TODO: proper new obj action */
-		visualObject_types.forEach((type) => {
-			saveManager.addObject(type as VisualObject_Type);
-		});
+		addObjectModalDialog?.showModal();
 	}
 
 	let listDiv: HTMLDivElement | undefined = $state();
@@ -30,6 +30,10 @@
 		if (e.key === 'Enter') {
 			(listDiv?.children[0] as HTMLDivElement).focus();
 		}
+	}
+
+	function createObject(type: VisualObject_Type) {
+		saveManager.addObject(type);
 	}
 </script>
 
@@ -62,6 +66,8 @@
 			<ObjectPaneItem uuid={k} />
 		{/each}
 	</div>
+
+	<AddObjectModal bind:dialog={addObjectModalDialog} onTypeChosen={createObject} />
 </div>
 
 <style lang="scss">
