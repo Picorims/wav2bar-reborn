@@ -51,3 +51,7 @@ This Source Code Form is subject to the terms of the Mozilla Public
 License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 ```
+
+### Additional icons
+
+Some additional icons in `src/lib/icons` are licensed under CC-BY-4.0. See the associated `LICENSE.md` file.
