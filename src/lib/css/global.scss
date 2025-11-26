@@ -197,3 +197,27 @@ input[type='range'] {
 		background: g.$color-primary-700;
 	}
 }
+
+progress {
+	/* Reset the default appearance */
+  	-webkit-appearance: none;
+   	appearance: none;
+
+	height: g.$size-2xs;
+	border: none;
+	border-radius: g.$border-radius-s;
+	background-color: g.$color-background-50;
+
+	&::-moz-progress-bar {
+		background-color: g.$color-background-50;
+		border-radius: g.$border-radius-s;
+	}
+	&::-webkit-progress-bar {
+		background-color: g.$color-background-50;
+		border-radius: g.$border-radius-s;
+	}
+	&::-webkit-progress-value {
+		background-color: g.$color-primary;
+		border-radius: g.$border-radius-s;
+	}
+}

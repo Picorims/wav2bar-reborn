@@ -8,6 +8,9 @@
 */
 
 use anyhow::Context;
+use tauri::App;
+use tauri::AppHandle;
+use tauri::Emitter;
 use std::env::current_exe;
 use std::fs;
 use std::fs::File;
@@ -17,9 +20,17 @@ use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
 use zip::write::SimpleFileOptions;
+use serde::Serialize;
 
 use walkdir::WalkDir;
 mod audio;
+
+#[derive(Clone, Serialize)]
+#[serde(rename_all = "camelCase")]
+struct LoadingInfo<'a> {
+  message: &'a str,
+  progress_percent: Option<usize>,
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -78,7 +89,7 @@ pub fn get_current_exe_dir() -> PathBuf {
 
 /// Extracts the given save file (zip) into the temp/current_save directory.
 #[tauri::command]
-async fn open_save(path: String) -> Result<(), String> {
+async fn open_save(path: String, app: AppHandle) -> Result<(), String> {
     log::info!("Requested to open save file: {}", path);
     // check if it exists first
     if !Path::new(&path).exists() {
@@ -103,7 +114,7 @@ async fn open_save(path: String) -> Result<(), String> {
     // extract it
     let file =
         File::open(&temp_zip_path).map_err(|e| format!("Could not open temp zip file: {}", e))?;
-    extract_zip(file, current_save_dir)?;
+    extract_zip(file, current_save_dir, app)?;
     Ok(())
 }
 
@@ -131,13 +142,14 @@ fn get_temp_dir() -> std::path::PathBuf {
 }
 
 /// Based on zip example: https://github.com/zip-rs/zip2/blob/master/examples/extract.rs
-fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
+fn extract_zip(file: File, dest: PathBuf, app: AppHandle) -> Result<(), String> {
     let archive_wrapped = zip::ZipArchive::new(file);
     let mut archive = match archive_wrapped {
         Ok(archive) => archive,
         Err(e) => return Err(format!("Could not read zip archive: {}", e)),
     };
 
+    let length = archive.len();
     for i in 0..archive.len() {
         let wrapped_file = archive.by_index(i);
         let mut file = match wrapped_file {
@@ -151,6 +163,10 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
             Some(path) => path,
             None => continue,
         };
+        app.emit("set_loading_info_detail_progress", LoadingInfo {
+            message: &format!("Extracting file {}/{}: {}", i + 1, length, out_path.display()),
+            progress_percent: Some(((i + 1) * 100 / length) as usize),
+        }).map_err(|e| format!("Could not emit loading info event: {}", e))?;
         let out_path = dest.join(out_path);
 
         {
@@ -198,7 +214,7 @@ fn extract_zip(file: File, dest: PathBuf) -> Result<(), String> {
 }
 
 #[tauri::command]
-async fn save_to_file(path_str: String) -> Result<(), String> {
+async fn save_to_file(path_str: String, app: AppHandle) -> Result<(), String> {
     log::info!("Requested to save to file: {}", path_str);
     let temp_dir = get_temp_dir();
     let current_save_dir = temp_dir.join("current_save");
@@ -209,14 +225,14 @@ async fn save_to_file(path_str: String) -> Result<(), String> {
     }
 
     // create zip file at given path
-    zip_dir(Path::new(&path_str), current_save_dir.as_path())
+    zip_dir(Path::new(&path_str), current_save_dir.as_path(), app)
         .map_err(|e| format!("Failed to zip file: {}", e))?;
 
     Ok(())
 }
 
 /// Based on zip example: https://github.com/zip-rs/zip2/blob/master/examples/write_dir.rs
-fn zip_dir(dest_path: &Path, src_path: &Path) -> anyhow::Result<()> {
+fn zip_dir(dest_path: &Path, src_path: &Path, app: AppHandle) -> anyhow::Result<()> {
     let file =
         File::create(dest_path).map_err(|e| anyhow::anyhow!("Could not create zip file: {}", e))?;
 
@@ -227,6 +243,8 @@ fn zip_dir(dest_path: &Path, src_path: &Path) -> anyhow::Result<()> {
 
     let prefix = Path::new(src_path);
     let mut buffer = Vec::new();
+    let length = WalkDir::new(src_path).into_iter().count();
+    let mut index = 0;
     for entry in walk_dir {
         let dir_entry = entry.map_err(|e| anyhow::anyhow!("WalkDir Error: {}", e))?;
         let path = dir_entry.path();
@@ -239,6 +257,11 @@ fn zip_dir(dest_path: &Path, src_path: &Path) -> anyhow::Result<()> {
             .to_str()
             .map(str::to_owned)
             .with_context(|| format!("{name:?} Is a Non UTF-8 Path"))?;
+
+        app.emit("set_loading_info_detail_progress", LoadingInfo {
+            message: &format!("Adding file to zip {}/{}: {}", index, length, path_as_string),
+            progress_percent: Some(((index + 1) * 100 / length) as usize),
+        }).map_err(|e| anyhow::anyhow!("Could not emit loading info event: {}", e))?;
 
         // Write file or directory explicitly
         // Some unzip tools unzip files with directory paths correctly, some do not!
@@ -256,6 +279,8 @@ fn zip_dir(dest_path: &Path, src_path: &Path) -> anyhow::Result<()> {
             println!("adding dir {path_as_string:?} as {name:?} ...");
             zip.add_directory(path_as_string, options)?;
         }
+
+        index += 1;
     }
     zip.finish()?;
     Ok(())

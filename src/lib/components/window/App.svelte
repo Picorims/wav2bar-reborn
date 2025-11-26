@@ -15,6 +15,8 @@
 	import FileAndIconsPane from '$lib/components/panes/FileAndIconsPane.svelte';
 	import Renderer from '$lib/components/atoms/Renderer.svelte';
 	import { minPercentFrom, maxPercentFrom, ratio, ratioToPercent } from '$lib/math';
+	import LoadingLockScreen from './LoadingLockScreen.svelte';
+	import { appState } from '$lib/store/app_state.svelte';
 
 	let saved = false;
 	let projectTitle = "New Project";
@@ -64,6 +66,8 @@
 		</div>
 	</Pane>
 </Splitpanes>
+
+<LoadingLockScreen enabled={appState.loading}/>
 
 <audio id="audio"></audio>
 
