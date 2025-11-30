@@ -212,7 +212,10 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
         if (this.cache.size <= CACHE_CAPACITY) {
             return;
         }
-        const items = Array.from(this.cache.entries()); // key value pairs
+        // The filtering will effectively not work if all items have reads = 0.
+        const items = Array.from(this.cache.entries()) // key value pairs
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            .filter(([_, entry]) => entry.reads > 0);
         items.sort((a, b) => a[1].reads - b[1].reads);
         while (this.cache.size > CACHE_CAPACITY) {
             const itemToDelete = items.shift();
