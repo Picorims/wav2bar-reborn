@@ -64,8 +64,23 @@ pub fn run() {
                 .build(),
         )
         .plugin(tauri_plugin_opener::init())
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app_handle, event| match event {
+            tauri::RunEvent::Exit => {
+                log::info!("Exiting Tauri application.");
+
+                log::info!("Cleaning up temp directory.");
+                let temp_dir = get_temp_dir();
+                if temp_dir.exists() {
+                    std::fs::remove_dir_all(&temp_dir)
+                        .unwrap_or_else(|_| log::error!("Could not remove temp directory."));
+                }
+
+                log::info!("Tauri application exited.");
+            }
+            _ => {}
+        });
 }
 
 /// Returns the working directory. In particular, handles the `dev` case.
