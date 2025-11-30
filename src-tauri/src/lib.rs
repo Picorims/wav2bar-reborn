@@ -74,7 +74,7 @@ pub fn run() {
                 let temp_dir = get_temp_dir();
                 if temp_dir.exists() {
                     std::fs::remove_dir_all(&temp_dir)
-                        .unwrap_or_else(|_| panic!("Could not remove temp directory."));
+                        .unwrap_or_else(|_| log::error!("Could not remove temp directory."));
                 }
 
                 log::info!("Tauri application exited.");
