@@ -38,6 +38,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             open_save,
             read_save_json,
+            write_save_json,
             save_to_file,
             audio::bake_fft,
             audio::get_audio_dir,
@@ -146,6 +147,22 @@ async fn read_save_json() -> Result<String, String> {
     let json_content = std::fs::read_to_string(&save_json_path)
         .map_err(|e| format!("Could not read save JSON file: {}", e))?;
     Ok(json_content)
+}
+
+/// Writes the given JSON content string into the save JSON file.
+#[tauri::command]
+async fn write_save_json(json_content: String) -> Result<(), String> {
+    let temp_dir = get_temp_dir();
+    let current_save_dir = temp_dir.join("current_save");
+    let save_json_path = current_save_dir.join("data.json");
+    if !save_json_path.exists() {
+        let msg = "Save JSON file does not exist (is the save loaded?)".to_string();
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+    std::fs::write(&save_json_path, json_content)
+        .map_err(|e| format!("Could not write save JSON file: {}", e))?;
+    Ok(())
 }
 
 /// Returns the working directory's temp directory path.
