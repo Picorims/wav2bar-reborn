@@ -136,6 +136,7 @@ async fn open_save(path: String, app: AppHandle) -> Result<(), String> {
 /// Reads and returns the content of the save JSON file as a string.
 #[tauri::command]
 async fn read_save_json() -> Result<String, String> {
+    log::info!("Requested to read save JSON file.");
     let temp_dir = get_temp_dir();
     let current_save_dir = temp_dir.join("current_save");
     let save_json_path = current_save_dir.join("data.json");
@@ -146,12 +147,14 @@ async fn read_save_json() -> Result<String, String> {
     }
     let json_content = std::fs::read_to_string(&save_json_path)
         .map_err(|e| format!("Could not read save JSON file: {}", e))?;
+    log::info!("Read save JSON file successfully.");
     Ok(json_content)
 }
 
 /// Writes the given JSON content string into the save JSON file.
 #[tauri::command]
 async fn write_save_json(json_content: String) -> Result<(), String> {
+    log::info!("Requested to write save JSON file.");
     let temp_dir = get_temp_dir();
     let current_save_dir = temp_dir.join("current_save");
     let save_json_path = current_save_dir.join("data.json");
@@ -162,6 +165,7 @@ async fn write_save_json(json_content: String) -> Result<(), String> {
     }
     std::fs::write(&save_json_path, json_content)
         .map_err(|e| format!("Could not write save JSON file: {}", e))?;
+    log::info!("Wrote save JSON file successfully.");
     Ok(())
 }
 

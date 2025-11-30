@@ -153,7 +153,7 @@ class SaveManager {
             try {
                 Log.save.info("Writing save JSON to file...");
                 await invoke<void>("write_save_json", { jsonContent: JSON.stringify(this._saveConfig) });
-                Log.save.info("Save JSON written to file, saving to file...");
+                Log.save.info("Save JSON written to file, creating zip archive...");
                 await invoke("save_to_file", { pathStr: path });
                 Log.save.info("Save file saved successfully");
             } catch (e) {
