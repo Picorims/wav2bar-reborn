@@ -119,6 +119,7 @@ class SaveManager {
                     this._saveConfig = saveJSON as unknown as Save;
 
                     renderer.setFPS(this._saveConfig.fps);
+                    renderer.setResolution(this._saveConfig.screen.width, this._saveConfig.screen.height);
 
                     let audioFullPath: string | null = null;
                     try {

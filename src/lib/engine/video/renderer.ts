@@ -129,17 +129,21 @@ export class Renderer {
 	}
 	setFPS(fps: number) {
 		if (!this.hasInit()) {
+			Log.renderer.info(`Delaying FPS set to ${fps} until initialization`);
 			this.pendingStateUpdates.fps = fps;
 			return;
 		}
+		Log.renderer.info(`Setting FPS to ${fps}`);
 		this.app.ticker.maxFPS = fps;
 	}
 	setResolution(width: number, height: number) {
 		if (!this.hasInit()) {
+			Log.renderer.info(`Delaying resolution set to ${width}x${height} until initialization`);
 			this.pendingStateUpdates.width = width;
 			this.pendingStateUpdates.height = height;
 			return;
 		}
+		Log.renderer.info(`Setting resolution to ${width}x${height}`);
 		this.app.renderer.resize(width, height);
 	}
 
