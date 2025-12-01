@@ -16,7 +16,7 @@
 	import { SPECTRUM_SIZE_DEFAULT } from '$lib/engine/audio/file_audio_cached_fft_provider';
 	import LabelInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	interface Props {
-		dialog: HTMLDialogElement | null;
+		dialog: HTMLDialogElement;
 	}
 
 	let { dialog = $bindable() }: Props = $props();
@@ -25,23 +25,22 @@
 		console.warn("stopListening called before being set!");
 	});
 
-	const DEFAULT_FPS = 60;
-	const DEFAULT_WIDTH = 1280;
-	const DEFAULT_HEIGHT = 720;
-	let fps = $state<number>(DEFAULT_FPS);
-	let width = $state<number>(DEFAULT_WIDTH);
-	let height = $state<number>(DEFAULT_HEIGHT);
+	let fps = $state<number>(saveManager.fps);
+	let width = $state<number>(saveManager.resolution.width);
+	let height = $state<number>(saveManager.resolution.height);
 
-	$effect(() => {
+	function onOpen() {
+		fps = saveManager.fps;
+		width = saveManager.resolution.width;
+		height = saveManager.resolution.height;
+	}
+
+	function updateFPS() {
 		saveManager.fps = fps;
-	});
-	$effect(() => {
-		saveManager.resolution = {
-			width: width,
-			height: height
-		};
-	});
-
+	}
+	function updateResolution() {
+		saveManager.resolution = { width, height };
+	}
 
 	function bakeFFT() {
 		invoke('bake_fft', {
@@ -61,33 +60,44 @@
 
 	onMount(() => {
 		listenForProgress();
-		return stopListening;
+		return () => {
+			stopListening();
+		};
 	});
 </script>
 
-<Modal bind:dialog title={$lang.modal.project_settings.title}>
+<Modal bind:dialog title={$lang.modal.project_settings.title} {onOpen}>
 	<LabelInputNumber
-		defaultValue={DEFAULT_FPS}
+		defaultValue={saveManager.fps}
 		title={$lang.modal.project_settings.fps}
 		value={fps}
-		onChange={(val: number) => (fps = val)}
+		onChange={(val: number) => {
+			fps = val;
+			updateFPS();
+		}}
 		min={1}
 		step={1}
 	/>
 	<LabelInputNumber
-		defaultValue={DEFAULT_WIDTH}
+		defaultValue={saveManager.resolution.width}
 		title={$lang.modal.project_settings.width}
 		value={width}
-		onChange={(val: number) => (width = val)}
+		onChange={(val: number) => {
+			width = val;
+			updateResolution();
+		}}
 		min={1}
 		step={1}
 		unit={'px'}
 	/>
 	<LabelInputNumber
-		defaultValue={DEFAULT_HEIGHT}
+		defaultValue={saveManager.resolution.height}
 		title={$lang.modal.project_settings.height}
 		value={height}
-		onChange={(val: number) => (height = val)}
+		onChange={(val: number) => {
+			height = val;
+			updateResolution();
+		}}
 		min={1}
 		step={1}
 		unit={'px'}

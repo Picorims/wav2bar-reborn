@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { renderer, Renderer } from "$lib/engine/video/renderer";
-	import { getContext, onMount } from "svelte";
+	import { renderer } from "$lib/engine/video/renderer";
+	import { onMount } from "svelte";
+    import { saveManager } from "$lib/store/save.svelte";
 
     /*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -14,7 +15,7 @@
     let canvas: HTMLCanvasElement | undefined;
     
     onMount(async () => {
-        await renderer.init(1280, 720, 60);
+        await renderer.init(saveManager.resolution.width, saveManager.resolution.height, saveManager.fps);
         canvas = renderer.getCanvas();
         document.getElementById("pixi-canvas-div")?.appendChild(canvas);
     });

@@ -20,7 +20,7 @@
 	import { appLogDir } from "@tauri-apps/api/path";
 
 	interface Props {
-		dialog: HTMLDialogElement | null;
+		dialog: HTMLDialogElement;
 	}
 
 	let { dialog = $bindable() }: Props = $props();
