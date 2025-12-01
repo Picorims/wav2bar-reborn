@@ -39,6 +39,11 @@ To be defined once Tauri builds are configured.
 
 There is no CLI support for now, however this is not excluded considering that Tauri supports it. It is not prioritized right now.
 
+## Dev troubleshooting
+
+### svelte component has no default export
+
+Restart the Svelte language server in VS Code (Command Palette → "Svelte: Restart Language Server")
 
 ## License
 This tool is licensed under MPL-2.0
