@@ -53,8 +53,18 @@ export class Renderer {
 	private events: RendererEvent<RendererEventName>[] = [];
 	private paused: boolean;
 	private looped: boolean = false;
+	private pendingStateUpdates: {
+		fps: number | null;
+		width: number | null;
+		height: number | null;
+	}
 
 	constructor() {
+		this.pendingStateUpdates = {
+			fps: null,
+			width: null,
+			height: null
+		};
 		this.app = new PIXI.Application();
 		globalThis.__PIXI_APP__ = this.app;
 		this.tickEngine = new TickEngine();
@@ -85,6 +95,17 @@ export class Renderer {
 
 		this.paused = true;
 		this.hasInitBool = true;
+
+		// Apply pending state updates that needed initialization
+		if (this.pendingStateUpdates.fps !== null) {
+			this.setFPS(this.pendingStateUpdates.fps);
+		}
+		if (this.pendingStateUpdates.width !== null && this.pendingStateUpdates.height !== null) {
+			this.setResolution(
+				this.pendingStateUpdates.width,
+				this.pendingStateUpdates.height
+			);
+		}
 	}
 
 	hasInit() {
@@ -103,12 +124,22 @@ export class Renderer {
 	}
 
 	getFPS() {
+		if (!this.hasInit()) throw new Error('Renderer not initialized');
 		return this.app.ticker.maxFPS;
 	}
 	setFPS(fps: number) {
+		if (!this.hasInit()) {
+			this.pendingStateUpdates.fps = fps;
+			return;
+		}
 		this.app.ticker.maxFPS = fps;
 	}
 	setResolution(width: number, height: number) {
+		if (!this.hasInit()) {
+			this.pendingStateUpdates.width = width;
+			this.pendingStateUpdates.height = height;
+			return;
+		}
 		this.app.renderer.resize(width, height);
 	}
 
