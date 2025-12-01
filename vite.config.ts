@@ -1,8 +1,14 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+import checker from 'vite-plugin-checker';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit(),
+		(!process.env.VITEST ? checker({
+			typescript: true,
+		}) : undefined)
+	],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
 	},

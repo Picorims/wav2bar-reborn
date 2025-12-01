@@ -8,7 +8,22 @@
 */
 
 // import { ARCHIVE_STRUCTURE_V4, defaultParticleFlow_V4, defaultSaveConfig_V4, defaultShape_V4, defaultText_V4, defaultTimerStraightBar_V4, defaultTimerStraightLinePoint_V4, defaultVisualizerCircularBar_V4, defaultVisualizerStraightBar_V4, defaultVisualizerStraightWave_V4, EXTENSION_V4, saveValidator_V4, visualObject_V4_types, type Save_V4, type VisualObjectInterface_V4, type VisualObject_V4_Type, type VisualObject_V4, type Supports_BorderRadius_V4, type Supports_BoxShadow_V4, type Supports_Background_V4, type Supports_ParticleProps_V4, type Supports_Color_V4, type Supports_TextProps_V4, type Supports_BorderThickness_V4, type Supports_TimerInnerSpacing_V4, type Supports_VisualizerProps_V4, type Supports_VisualizerBarProps_V4, type Supports_VisualizerCircularProps_V4, type Text_V4 } from './save_v4';
-import type { Text, VisualizerStraightBar, Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
+import type {
+	Text,
+	VisualizerStraightBar,
+	Wav2BarSaveV4,
+	SupportsBorderRadius,
+	SupportsBackground,
+	SupportsBorderThickness,
+	SupportsBoxShadow,
+	SupportsColor,
+	SupportsTextProps,
+	SupportsParticleProps,
+	SupportsTimerInnerSpacing,
+	SupportsVisualizerBarProps,
+	SupportsVisualizerCircularProps,
+	SupportsVisualizerProps
+} from '$lib/types/schemas/save_v4';
 import { ARCHIVE_STRUCTURE_V4, EXTENSION_V4, validateSaveV4, validateSaveV4VisualObject, visualObject_V4_types } from './save_v4';
 
 export const EXTENSION = EXTENSION_V4;
@@ -29,17 +44,17 @@ export type SaveVO_VisualizerStraightBar = VisualizerStraightBar;
 export type VisualObject_Type = Save['objects'][string]['visual_object_type'];
 export const visualObject_types = visualObject_V4_types;
 export type VisualObjectInterface<T extends VisualObject_Type> = Save['objects'][string] & { visual_object_type: T };
-// export type Supports_BorderRadius = Supports_BorderRadius_V4;
-// export type Supports_BoxShadow = Supports_BoxShadow_V4;
-// export type Supports_Background = Supports_Background_V4;
-// export type Supports_ParticleProps = Supports_ParticleProps_V4;
-// export type Supports_Color = Supports_Color_V4;
-// export type Supports_TextProps = Supports_TextProps_V4;
-// export type Supports_BorderThickness = Supports_BorderThickness_V4;
-// export type Supports_TimerInnerSpacing = Supports_TimerInnerSpacing_V4;
-// export type Supports_VisualizerProps = Supports_VisualizerProps_V4;
-// export type Supports_VisualizerBarProps = Supports_VisualizerBarProps_V4;
-// export type Supports_VisualizerCircularProps = Supports_VisualizerCircularProps_V4;
+export type Supports_BorderRadius = SupportsBorderRadius;
+export type Supports_BoxShadow = SupportsBoxShadow;
+export type Supports_Background = SupportsBackground;
+export type Supports_ParticleProps = SupportsParticleProps;
+export type Supports_Color = SupportsColor;
+export type Supports_TextProps = SupportsTextProps;
+export type Supports_BorderThickness = SupportsBorderThickness;
+export type Supports_TimerInnerSpacing = SupportsTimerInnerSpacing;
+export type Supports_VisualizerProps = SupportsVisualizerProps;
+export type Supports_VisualizerBarProps = SupportsVisualizerBarProps;
+export type Supports_VisualizerCircularProps = SupportsVisualizerCircularProps;
 
 // =========================================================
 // GLOBAL VALIDATION =======================================

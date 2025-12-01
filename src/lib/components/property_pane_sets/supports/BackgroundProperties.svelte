@@ -123,15 +123,15 @@
 		}
 	}
 
-	function updateBackgroundSize() {
+	function updateBackgroundSize(type: string, x: number, y: number) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size = stringifyBackgroundSize(sizeType, sizeX.toString(), sizeY.toString());
+			obj.background.size = stringifyBackgroundSize(type, x.toString(), y.toString());
 			return obj;
 		});
 	}
 
 	run(() => {
-		sizeType, sizeX, sizeY, updateBackgroundSize();
+		updateBackgroundSize(sizeType, sizeX, sizeY);
 	});
 	run(() => {
 		const parsed = parseBackgroundSize(data?.background.size ?? '');

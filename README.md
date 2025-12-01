@@ -27,7 +27,8 @@ A tool to make custom audio visualization and export production videos for the a
 - NodeJS must be installed (It will install npm too).
 - Rust must be installed: https://www.rust-lang.org/tools/install
 - Clone the git repository (you can also use GitHub's download button *if you only want to perform tests*).
-- Install node modules and dependencies using `npm install`.
+- Install node modules and dependencies using `npm ci`.
+- Husky hooks are set up automatically when you run `npm ci` or `npm install` (no need to run `husky init` manually).
 - Open the repository folder in a prompt and run `npm run tauri:dev`. On a first run, all Rust crates will be compiled as well as the Svelte front. It may take some time.
 - FFmpeg: To be defined once integrated.
 
@@ -39,6 +40,11 @@ To be defined once Tauri builds are configured.
 
 There is no CLI support for now, however this is not excluded considering that Tauri supports it. It is not prioritized right now.
 
+## Dev troubleshooting
+
+### svelte component has no default export
+
+Restart the Svelte language server in VS Code (Command Palette → "Svelte: Restart Language Server")
 
 ## License
 This tool is licensed under MPL-2.0
