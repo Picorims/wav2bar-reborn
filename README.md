@@ -28,7 +28,7 @@ A tool to make custom audio visualization and export production videos for the a
 - Rust must be installed: https://www.rust-lang.org/tools/install
 - Clone the git repository (you can also use GitHub's download button *if you only want to perform tests*).
 - Install node modules and dependencies using `npm ci`.
-- Setup Husky with `husky init` (https://typicode.github.io/husky/get-started.html)
+- Husky hooks are set up automatically when you run `npm ci` or `npm install` (no need to run `husky init` manually).
 - Open the repository folder in a prompt and run `npm run tauri:dev`. On a first run, all Rust crates will be compiled as well as the Svelte front. It may take some time.
 - FFmpeg: To be defined once integrated.
 
