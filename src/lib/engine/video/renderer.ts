@@ -108,6 +108,9 @@ export class Renderer {
 	setFPS(fps: number) {
 		this.app.ticker.maxFPS = fps;
 	}
+	setResolution(width: number, height: number) {
+		this.app.renderer.resize(width, height);
+	}
 
 	/**
 	 * After initialization, return the canvas

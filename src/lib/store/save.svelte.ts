@@ -40,6 +40,21 @@ class SaveManager {
         return this._saveConfig;
     }
 
+    get fps() {
+        return this._saveConfig.fps;
+    }
+    set fps(value: number) {
+        this._saveConfig.fps = value;
+        renderer.setFPS(value);
+    }
+    get resolution() {
+        return this._saveConfig.screen;
+    }
+    set resolution(value: { width: number; height: number }) {
+        this._saveConfig.screen = value;
+        renderer.setResolution(value.width, value.height);
+    }
+
     private _getDefaultSave(): Save {
         const baseObject = {
             save_version: 4,

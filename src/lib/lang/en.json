@@ -12,11 +12,6 @@
         "show_logs_dir": "Show logs path",
         "close": "OK"
     },
-    "project_settings": {
-        "title": "Project Settings",
-        "bake_fft": "Bake Audio FFT Data",
-        "close": "Close"
-    },
     "object_pane": {
         "title": "Objects"
     },
@@ -39,6 +34,14 @@
                 "timer": "Timer",
                 "visualizer": "Audio Visualizer"
             }
+        },
+        "project_settings": {
+            "title": "Project Settings",
+            "fps": "Frames Per Second (FPS)",
+            "width": "Width",
+            "height": "Height",
+            "bake_fft": "Bake Audio FFT Data",
+            "close": "Close"
         }
     },
     "properties": {
