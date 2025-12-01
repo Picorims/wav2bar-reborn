@@ -254,7 +254,7 @@
         "color"
       ]
     },
-    "support_text_props": {
+    "supports_text_props": {
       "type": "object",
       "properties": {
         "text_type": {
@@ -511,7 +511,7 @@
           "$ref": "#/definitions/visual_object_interface"
         },
         {
-          "$ref": "#/definitions/support_text_props"
+          "$ref": "#/definitions/supports_text_props"
         },
         {
           "$ref": "#/definitions/supports_color"
