@@ -29,6 +29,6 @@
     min={0}
     step={1}
     unit="px"
-    value={data?.inner_spacing}
+    value={data?.timer_inner_spacing}
     onChange={updateTimerInnerSpacing}
 />

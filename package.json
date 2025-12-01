@@ -21,7 +21,8 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "npx vitest",
-		"json2ts": "npx json2ts -i ./src/lib/schemas/ -o ./src/lib/types/schemas"
+		"json2ts": "npx json2ts -i ./src/lib/schemas/ -o ./src/lib/types/schemas",
+		"prepare": "husky"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -30,10 +31,12 @@
 		"@sveltejs/vite-plugin-svelte": "^4.0.4",
 		"@tauri-apps/cli": "^2.4.0",
 		"@types/eslint": "^8.56.7",
+		"@types/node": "^24.10.1",
 		"eslint": "^9.0.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.45.1",
 		"globals": "^15.0.0",
+		"husky": "^9.1.7",
 		"json-schema-to-typescript": "^15.0.4",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.2.6",
@@ -43,7 +46,8 @@
 		"tslib": "^2.4.1",
 		"typescript": "^5.5.0",
 		"typescript-eslint": "^8.0.0-alpha.20",
-		"vite": "^5.4.6",
+		"vite": "^5.4.20",
+		"vite-plugin-checker": "^0.11.0",
 		"vitest": "^1.2.0"
 	},
 	"type": "module",

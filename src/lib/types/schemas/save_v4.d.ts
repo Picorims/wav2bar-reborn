@@ -31,7 +31,7 @@ export type Text = {
   visual_object_type: "text";
   [k: string]: unknown;
 } & VisualObjectInterface &
-  SupportTextProps &
+  SupportsTextProps &
   SupportsColor;
 export type TimerStraightBar = {
   visual_object_type: "timer_straight_bar";
@@ -216,7 +216,7 @@ export interface SupportsColor {
   color: string;
   [k: string]: unknown;
 }
-export interface SupportTextProps {
+export interface SupportsTextProps {
   text_type: "any" | "time";
   text_content: string;
   font_size: number;
