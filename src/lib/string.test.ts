@@ -8,7 +8,7 @@
 */
 
 import { describe, expect, it } from "vitest";
-import { parseCSSTextShadow } from "./string";
+import { filenameWithExtensionFromPath, parseCSSTextShadow } from "./string";
 
 describe("string", () => {
     describe("parseCSSTextShadow", () => {
@@ -84,6 +84,23 @@ describe("string", () => {
                 blurRadius: 0,
                 color: "black"
             });
+        });
+    });
+    describe("filenameWithExtensionFromPath", () => {
+        it("extracts filename from Unix-style path", () => {
+            const test = "/home/user/documents/file.txt";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("file.txt");
+        });
+        it("extracts filename from Windows-style path", () => {
+            const test = "C:\\Users\\User\\Documents\\file.txt";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("file.txt");
+        });
+        it("extracts filename from path without directories", () => {
+            const test = "file.txt";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("file.txt");
         });
     });
 });

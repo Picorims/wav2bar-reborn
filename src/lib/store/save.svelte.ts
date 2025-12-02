@@ -121,21 +121,7 @@ class SaveManager {
                     renderer.setFPS(this._saveConfig.fps);
                     renderer.setResolution(this._saveConfig.screen.width, this._saveConfig.screen.height);
 
-                    let audioFullPath: string | null = null;
-                    try {
-                        audioFullPath = await invoke<string>("get_audio_dir");
-                        audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
-                    } catch (e) {
-                        Log.save.warn("Failed to get audio full path from backend: " + (e as Error).message);
-                    }
-                    if (audioFullPath !== null) {
-                        Log.save.info("Setting audio source to file audio provider with name: " + this._saveConfig.audio_filename);
-                        const url = convertFileSrc(audioFullPath);
-                        const audioElement = document.getElementById("audio") as HTMLAudioElement;
-                        audioElement.src = url;
-                        audioElement.load();
-                        renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));
-                    }
+                    await this.loadAudioFile();
                 }
 
             } catch (e) {
@@ -179,6 +165,24 @@ class SaveManager {
             } finally {
                 setLoading(false);
             }
+        }
+    }
+
+    public async loadAudioFile() {
+        let audioFullPath: string | null = null;
+        try {
+            audioFullPath = await invoke<string>("get_audio_dir");
+            audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
+        } catch (e) {
+            Log.save.warn("Failed to get audio full path from backend: " + (e as Error).message);
+        }
+        if (audioFullPath !== null) {
+            Log.save.info("Setting audio source to file audio provider with name: " + this._saveConfig.audio_filename);
+            const url = convertFileSrc(audioFullPath);
+            const audioElement = document.getElementById("audio") as HTMLAudioElement;
+            audioElement.src = url;
+            audioElement.load();
+            renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));
         }
     }
 

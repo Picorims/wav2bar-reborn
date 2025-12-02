@@ -477,3 +477,74 @@ pub async fn get_fft_dir() -> Result<String, String> {
     }
     Ok(full_path.to_string_lossy().to_string())
 }
+
+#[tauri::command]
+pub async fn copy_audio_file_to_save(
+    audio_file_path: String,
+) -> Result<(), String> {
+    info!("Copying audio file to save directory...");
+    let working_dir = crate::get_current_exe_dir();
+    let save_audio_dir = working_dir.join("temp/current_save/assets/audio");
+
+    // backup current audio directory path
+    if save_audio_dir.exists() {
+        let backup_dir = working_dir.join("temp/backup_audio");
+        // copy current audio dir to backup dir
+        std::fs::remove_dir_all(&backup_dir).ok(); // ignore error if backup dir does not exist
+        std::fs::create_dir_all(&backup_dir)
+            .map_err(|e| format!("Failed to create backup audio directory: {}", e))?;
+        std::fs::rename(&save_audio_dir, &backup_dir)
+            .map_err(|e| format!("Failed to backup existing audio directory: {}", e))?;
+        info!("Backed up existing audio directory to {:?}", backup_dir);
+    }
+
+    // purge existing audio directory if any
+    if save_audio_dir.exists() {
+        std::fs::remove_dir_all(&save_audio_dir)
+            .map_err(|e| format!("Failed to clear existing audio directory: {}", e))?;
+    }
+
+    std::fs::create_dir_all(&save_audio_dir)
+        .map_err(|e| format!("Failed to create audio directory: {}", e))?;
+
+    let source_path = std::path::Path::new(&audio_file_path);
+    if !source_path.exists() {
+        return Err(format!("Source audio file does not exist: {}", audio_file_path));
+    }
+
+    let file_name = source_path
+        .file_name()
+        .ok_or("Failed to get audio file name")?;
+    let destination_path = save_audio_dir.join(file_name);
+
+    std::fs::copy(&source_path, &destination_path)
+        .map_err(|e| format!("Failed to copy audio file: {}", e))?;
+
+    info!("Successfully copied audio file to save directory.");
+    Ok(())
+}
+
+#[tauri::command]
+pub async fn restore_last_audio_file_from_backup() -> Result<(), String> {
+    info!("Restoring last audio file from backup...");
+    let working_dir = crate::get_current_exe_dir();
+    let save_audio_dir = working_dir.join("temp/current_save/assets/audio");
+    let backup_dir = working_dir.join("temp/backup_audio");
+
+    if !backup_dir.exists() {
+        return Err("No backup audio directory found.".to_string());
+    }
+
+    // purge existing audio directory if any
+    if save_audio_dir.exists() {
+        std::fs::remove_dir_all(&save_audio_dir)
+            .map_err(|e| format!("Failed to clear existing audio directory: {}", e))?;
+    }
+
+    // restore backup
+    std::fs::rename(&backup_dir, &save_audio_dir)
+        .map_err(|e| format!("Failed to restore audio directory from backup: {}", e))?;
+
+    info!("Successfully restored audio file from backup.");
+    Ok(())
+}

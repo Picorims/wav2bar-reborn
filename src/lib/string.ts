@@ -79,3 +79,8 @@ export function msToMMSS(ms: number): string {
 export function withLeadingZero(n: number): string {
 	return n < 10 ? '0' + n : n.toString();
 }
+
+export function filenameWithExtensionFromPath(path: string): string {
+	const parts = path.split(/[/\\]/);
+	return parts[parts.length - 1];
+}

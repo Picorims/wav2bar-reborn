@@ -43,6 +43,8 @@ pub fn run() {
             audio::bake_fft,
             audio::get_audio_dir,
             audio::get_fft_dir,
+            audio::copy_audio_file_to_save,
+            audio::restore_last_audio_file_from_backup,
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(
