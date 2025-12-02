@@ -85,6 +85,10 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const y = containerHeight - barHeight;
             graphics.lineTo(x, y);
         }
+        // draw floor (two points at the bottom left and bottom right)
+        graphics.lineTo(containerWidth, containerHeight);
+        graphics.lineTo(0, containerHeight);
+        graphics.closePath();
         graphics.fill(this._color);
     }
     getContainer(): Container {
