@@ -18,7 +18,7 @@
 	import LabelInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { Log } from '$lib/log/logger';
 	import { filenameWithExtensionFromPath } from '$lib/string';
-	import { renderer } from '$lib/engine/video/renderer';
+
 	interface Props {
 		dialog: HTMLDialogElement;
 	}
