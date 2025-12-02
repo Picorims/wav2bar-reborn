@@ -97,10 +97,32 @@ describe("string", () => {
             const result = filenameWithExtensionFromPath(test);
             expect(result).to.equal("file.txt");
         });
+        it("extracts filename from mixed-style path", () => {
+            const test = "C:\\Users\\User\\Documents/file.txt";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("file.txt");
+        });
         it("extracts filename from path without directories", () => {
             const test = "file.txt";
             const result = filenameWithExtensionFromPath(test);
             expect(result).to.equal("file.txt");
+        });
+        it("extracts filename from path with multiple dots", () => {
+            const test = "/home/user/documents/archive.tar.gz";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("archive.tar.gz");
+        });
+
+        // edge cases
+        it("returns empty string for path ending with a slash", () => {
+            const test = "/home/user/documents/";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("");
+        });
+        it("returns empty string for empty path", () => {
+            const test = "";
+            const result = filenameWithExtensionFromPath(test);
+            expect(result).to.equal("");
         });
     });
 });
