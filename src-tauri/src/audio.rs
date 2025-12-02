@@ -493,7 +493,7 @@ pub async fn copy_audio_file_to_save(
         std::fs::remove_dir_all(&backup_dir).ok(); // ignore error if backup dir does not exist
         std::fs::create_dir_all(&backup_dir)
             .map_err(|e| format!("Failed to create backup audio directory: {}", e))?;
-        std::fs::rename(&save_audio_dir, &backup_dir)
+        copy_dir_all(&save_audio_dir, &backup_dir)
             .map_err(|e| format!("Failed to backup existing audio directory: {}", e))?;
         info!("Backed up existing audio directory to {:?}", backup_dir);
     }
@@ -542,9 +542,32 @@ pub async fn restore_last_audio_file_from_backup() -> Result<(), String> {
     }
 
     // restore backup
-    std::fs::rename(&backup_dir, &save_audio_dir)
+    copy_dir_all(&backup_dir, &save_audio_dir)
         .map_err(|e| format!("Failed to restore audio directory from backup: {}", e))?;
 
     info!("Successfully restored audio file from backup.");
+    Ok(())
+}
+
+// Source - https://stackoverflow.com/a
+// Posted by Simon Buchan, modified by community. See post 'Timeline' for change history
+// Retrieved 2025-12-02, License - CC BY-SA 4.0
+
+use std::path::Path;
+use std::{io, fs};
+
+/// Recursively copy a directory and its contents
+/// https://stackoverflow.com/a/65192210
+fn copy_dir_all(src: impl AsRef<Path>, dst: impl AsRef<Path>) -> io::Result<()> {
+    fs::create_dir_all(&dst)?;
+    for entry in fs::read_dir(src)? {
+        let entry = entry?;
+        let ty = entry.file_type()?;
+        if ty.is_dir() {
+            copy_dir_all(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        } else {
+            fs::copy(entry.path(), dst.as_ref().join(entry.file_name()))?;
+        }
+    }
     Ok(())
 }

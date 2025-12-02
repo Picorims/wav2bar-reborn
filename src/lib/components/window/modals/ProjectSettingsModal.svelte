@@ -92,6 +92,8 @@
 					Log.ui.info("Previous audio file restored from backup.");
 				} catch (e) {
 					Log.ui.error("Failed to restore previous audio file from backup:", e instanceof Error ? e.message : String(e));
+					saveManager.save.audio_filename = "";
+					audioFile = getAudioFileDisplay("");
 					alert($lang.modal.project_settings.audio_restore_failed);
 				}
 			}
