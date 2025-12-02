@@ -7,16 +7,33 @@
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
-    import { type Snippet } from "svelte";
+    import { onMount, type Snippet } from "svelte";
 
     interface Props {
         title?: string;
         children?: Snippet;
         buttons?: Snippet;
-        dialog?: HTMLDialogElement | null;
+        /**
+         * Use bind:dialog to get the dialog element reference.
+         */
+        dialog: HTMLDialogElement;
+        onOpen?: () => void;
     }
 
-    let { title = "Default Title", children, buttons, dialog = $bindable(null) }: Props = $props();
+    let { title = "Default Title", children, buttons, dialog = $bindable(), onOpen = () => {} }: Props = $props();
+
+    function onToggle() {
+        if (dialog.open) {
+            onOpen();
+        }
+    }
+
+    onMount(() => {
+        dialog.addEventListener("toggle", onToggle);
+        return () => {
+            dialog.removeEventListener("toggle", onToggle);
+        }; 
+    });
 </script>
 
 <dialog bind:this={dialog} class="modal">

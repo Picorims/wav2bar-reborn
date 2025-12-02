@@ -21,7 +21,7 @@
 	import visualizerStraightWaveIcon from '$lib/icons/visual_objects/visualizer_straight_wave.svg?raw';
 
 	interface Props {
-		dialog: HTMLDialogElement | null;
+		dialog: HTMLDialogElement;
 		onTypeChosen: (type: VisualObject_Type) => void;
 	}
 

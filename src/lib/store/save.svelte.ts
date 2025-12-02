@@ -40,6 +40,21 @@ class SaveManager {
         return this._saveConfig;
     }
 
+    get fps() {
+        return this._saveConfig.fps;
+    }
+    set fps(value: number) {
+        this._saveConfig.fps = value;
+        renderer.setFPS(value);
+    }
+    get resolution() {
+        return this._saveConfig.screen;
+    }
+    set resolution(value: { width: number; height: number }) {
+        this._saveConfig.screen = value;
+        renderer.setResolution(value.width, value.height);
+    }
+
     private _getDefaultSave(): Save {
         const baseObject = {
             save_version: 4,
@@ -104,22 +119,9 @@ class SaveManager {
                     this._saveConfig = saveJSON as unknown as Save;
 
                     renderer.setFPS(this._saveConfig.fps);
+                    renderer.setResolution(this._saveConfig.screen.width, this._saveConfig.screen.height);
 
-                    let audioFullPath: string | null = null;
-                    try {
-                        audioFullPath = await invoke<string>("get_audio_dir");
-                        audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
-                    } catch (e) {
-                        Log.save.warn("Failed to get audio full path from backend: " + (e as Error).message);
-                    }
-                    if (audioFullPath !== null) {
-                        Log.save.info("Setting audio source to file audio provider with name: " + this._saveConfig.audio_filename);
-                        const url = convertFileSrc(audioFullPath);
-                        const audioElement = document.getElementById("audio") as HTMLAudioElement;
-                        audioElement.src = url;
-                        audioElement.load();
-                        renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));
-                    }
+                    await this.loadAudioFile();
                 }
 
             } catch (e) {
@@ -163,6 +165,24 @@ class SaveManager {
             } finally {
                 setLoading(false);
             }
+        }
+    }
+
+    public async loadAudioFile() {
+        let audioFullPath: string | null = null;
+        try {
+            audioFullPath = await invoke<string>("get_audio_dir");
+            audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
+        } catch (e) {
+            Log.save.warn("Failed to get audio full path from backend: " + (e as Error).message);
+        }
+        if (audioFullPath !== null) {
+            Log.save.info("Setting audio source to file audio provider with name: " + this._saveConfig.audio_filename);
+            const url = convertFileSrc(audioFullPath);
+            const audioElement = document.getElementById("audio") as HTMLAudioElement;
+            audioElement.src = url;
+            audioElement.load();
+            renderer.setAudioProvider(new FileAudioCachedFFTProvider(audioElement));
         }
     }
 

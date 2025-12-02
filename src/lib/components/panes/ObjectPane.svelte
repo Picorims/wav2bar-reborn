@@ -19,7 +19,7 @@
 	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
 	import AddObjectModal from '../window/modals/AddObjectModal.svelte';
 
-	let addObjectModalDialog: HTMLDialogElement | null = $state(null);
+	let addObjectModalDialog: HTMLDialogElement = $state(document.createElement("dialog"));
 
 	function newObj() {
 		addObjectModalDialog?.showModal();

@@ -20,8 +20,8 @@
 	}
 
 	let { title = "", saved = false }: Props = $props();
-	let settingsModalDialog = $state<HTMLDialogElement | null>(null);
-	let projectSettingsModalDialog = $state<HTMLDialogElement | null>(null);
+	let settingsModalDialog = $state<HTMLDialogElement>(document.createElement("dialog"));
+	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement("dialog"));
 
 	function openAndLoadSave() {
 		saveManager.openSave(renderer);

@@ -12,11 +12,6 @@
         "show_logs_dir": "Show logs path",
         "close": "OK"
     },
-    "project_settings": {
-        "title": "Project Settings",
-        "bake_fft": "Bake Audio FFT Data",
-        "close": "Close"
-    },
     "object_pane": {
         "title": "Objects"
     },
@@ -39,6 +34,26 @@
                 "timer": "Timer",
                 "visualizer": "Audio Visualizer"
             }
+        },
+        "project_settings": {
+            "title": "Project Settings",
+            "fps": "Frames Per Second (FPS)",
+            "width": "Width",
+            "height": "Height",
+            "pick_audio": "Pick Audio File",
+            "no_audio_selected": "No audio file selected",
+            "audio_picker": {
+                "title": "Select an audio file",
+                "filters": {
+                    "all_supported_audio_files": "All supported audio files",
+                    "mp3_audio_file": "MP3 audio file",
+                    "wav_audio_file": "WAV audio file",
+                    "ogg_vorbis_audio_file": "Ogg Vorbis audio file"
+                }
+            },
+            "audio_restore_failed": "Failed to load the audio file and to restore the previous audio file from save folder. The current state is unstable, it is not recommended to save the project before picking a new audio file.",
+            "bake_fft": "Bake Audio FFT Data",
+            "close": "Close"
         }
     },
     "properties": {
