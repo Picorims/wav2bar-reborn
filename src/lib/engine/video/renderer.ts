@@ -28,7 +28,7 @@ interface RendererEvent<T extends RendererEventName> {
 	payload: RendererEventPayload<T>;
 }
 
-type RendererEventName = 'object_register' | 'object_update';
+type RendererEventName = 'object_register' | 'object_update' | 'clear_all_objects';
 
 type IdPayload = {
 	id: UUIDv4;
@@ -38,7 +38,9 @@ type RendererEventPayload<T extends RendererEventName> = T extends 'object_regis
 	? IdPayload
 	: T extends 'object_update'
 		? IdPayload
-		: never;
+		: T extends 'clear_all_objects'
+			? null
+			: never;
 
 
 const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
@@ -86,9 +88,13 @@ export class Renderer {
 				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 
 				if (e.name === 'object_register') {
-					this.registerObject(e.payload.id, saveManager.save.objects[e.payload.id]);
+					const payload = e.payload as RendererEvent<"object_register">['payload'];
+					this.registerObject(payload.id, saveManager.save.objects[payload.id]);
 				} else if (e.name === 'object_update') {
-					this.updateObject(e.payload.id, saveManager.save.objects[e.payload.id]);
+					const payload = e.payload as RendererEvent<"object_update">['payload'];
+					this.updateObject(payload.id, saveManager.save.objects[payload.id]);
+				} else if (e.name === 'clear_all_objects') {
+					this.clearAllObjects();
 				}
 			}
 			this.events = [];
@@ -304,6 +310,13 @@ export class Renderer {
 			this.app.stage.removeChild(oldContainer);
 			this.app.stage.addChild(updatedContainer);
 		}
+	}
+
+	private clearAllObjects() {
+		Log.renderer.info('Clearing all visual objects from renderer');
+		this.visualObjects.clear();
+		this.app.stage.removeChildren();
+		this.tickEngine.clearAllTickUnits();
 	}
 }
 

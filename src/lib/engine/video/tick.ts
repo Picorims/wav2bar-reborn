@@ -129,4 +129,8 @@ export class TickEngine {
             tickUnit.tick(this._audioProvider);
         }
     }
+
+    clearAllTickUnits() {
+        this._tickUnits = [];
+    }
 }

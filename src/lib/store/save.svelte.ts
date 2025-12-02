@@ -36,6 +36,14 @@ class SaveManager {
         return Object.keys(this._saveObjects).length;
     }
 
+    /**
+     * In the following situations, the save state should not be directly mutated,
+     * but rather through the provided methods:
+     * - when opening a save file
+     * - when adding/removing objects
+     * - when changing fps or resolution
+     * - when mutating the active object
+     */
     get save() {
         return this._saveConfig;
     }
@@ -46,6 +54,7 @@ class SaveManager {
     set fps(value: number) {
         this._saveConfig.fps = value;
         renderer.setFPS(value);
+        this._dispatchMutationUpdate();
     }
     get resolution() {
         return this._saveConfig.screen;
@@ -53,6 +62,7 @@ class SaveManager {
     set resolution(value: { width: number; height: number }) {
         this._saveConfig.screen = value;
         renderer.setResolution(value.width, value.height);
+        this._dispatchMutationUpdate();
     }
 
     private _getDefaultSave(): Save {
@@ -122,6 +132,10 @@ class SaveManager {
                     renderer.setResolution(this._saveConfig.screen.width, this._saveConfig.screen.height);
 
                     await this.loadAudioFile();
+
+                    this.reloadAllObjects();
+
+                    Log.save.info("Save file loaded successfully");
                 }
 
             } catch (e) {
@@ -207,6 +221,22 @@ class SaveManager {
             ...this._getDefaultVisualObject(type),
             name: type + "_" + Math.floor(Math.random() * 1000),
         };
+        this._dispatchMutationUpdate();
+    }
+
+    public reloadAllObjects() {
+        renderer.scheduleRendererEvent({
+            name: "clear_all_objects",
+            payload: null
+        });
+        for (const id of Object.keys(this._saveConfig.objects)) {
+            renderer.scheduleRendererEvent({
+                name: "object_register",
+                payload: {
+                    id: id as UUIDv4,
+                }
+            });
+        }
         this._dispatchMutationUpdate();
     }
 
