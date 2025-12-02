@@ -99,12 +99,14 @@ export class Renderer {
 		// Apply pending state updates that needed initialization
 		if (this.pendingStateUpdates.fps !== null) {
 			this.setFPS(this.pendingStateUpdates.fps);
+			this.pendingStateUpdates.fps = null;
 		}
 		if (this.pendingStateUpdates.width !== null && this.pendingStateUpdates.height !== null) {
 			this.setResolution(
 				this.pendingStateUpdates.width,
 				this.pendingStateUpdates.height
 			);
+			this.pendingStateUpdates.width = null;
 		}
 	}
 
