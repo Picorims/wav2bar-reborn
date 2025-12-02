@@ -8,7 +8,6 @@
 */
 
 import type { SaveVO_VisualizerStraightBar } from "$lib/store/save_structure/save_latest";
-import type { VisualizerStraightBar } from "$lib/types/schemas/save_v4";
 import { Container, Graphics } from "pixi.js";
 import type { TickUnit } from "../tick_units/tick_unit";
 import type { VisualObjectRenderer } from "./visual_object_renderer";
@@ -40,7 +39,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         });
 
     }
-    update(obj: VisualizerStraightBar): Container {
+    update(obj: SaveVO_VisualizerStraightBar): Container {
         this._tickUnit.setMapping({
             mappedLength: obj.visualizer_points_count,
             minPercent: obj.visualizer_analyzer_range[0] / 1024 * 100,
