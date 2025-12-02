@@ -10,11 +10,11 @@
 	import Modal from '../Modal.svelte';
 	import { lang } from '$lib/store/settings';
 	import { invoke } from "@tauri-apps/api/core";
-	import { open, save } from '@tauri-apps/plugin-dialog';
+	import { open } from '@tauri-apps/plugin-dialog';
 	import { listen } from "@tauri-apps/api/event";
 	import { saveManager } from "$lib/store/save.svelte";
 	import { onMount } from 'svelte';
-	import { FileAudioCachedFFTProvider, SPECTRUM_SIZE_DEFAULT } from '$lib/engine/audio/file_audio_cached_fft_provider';
+	import { SPECTRUM_SIZE_DEFAULT } from '$lib/engine/audio/file_audio_cached_fft_provider';
 	import LabelInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { Log } from '$lib/log/logger';
 	import { filenameWithExtensionFromPath } from '$lib/string';
