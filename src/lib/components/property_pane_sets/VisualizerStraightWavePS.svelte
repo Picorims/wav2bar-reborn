@@ -16,4 +16,4 @@
 
 <CommonProperties />
 <ColorProperties />
-<VisualizerProperties kind="bar" />
+<VisualizerProperties />

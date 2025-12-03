@@ -19,10 +19,11 @@
     import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
     
     interface Props {
-       kind?: "circular" | "bar";
+       barProps?: boolean;
+       circularProps?: boolean;
     }
 
-    let { kind = "bar" }: Props = $props();
+    let { barProps, circularProps }: Props = $props();
 
 	type ObjT = VisualObject & Supports_VisualizerProps;
 	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
@@ -102,10 +103,10 @@
         onChange={updateSmoothingFactor}
     />
 
-    {#if kind === "circular"}
+    {#if circularProps}
         <VisualizerCircularProperties />
     {/if}
-    {#if kind === "bar"}
+    {#if barProps}
         <VisualizerBarProperties />
     {/if}
 </Accordion>

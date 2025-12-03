@@ -20,4 +20,4 @@
 <ColorProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />
-<VisualizerProperties kind="circular" />
+<VisualizerProperties barProps circularProps />
