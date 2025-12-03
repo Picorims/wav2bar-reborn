@@ -45,3 +45,46 @@ export function ratio(n: number, d: number): [number, number] {
 export function clamp(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }
+
+/**
+ * Immutable 2D vector class (always return new instances on operations)
+ */
+export class Vec2 {
+    private _x: number;
+    private _y: number;
+    get x(): number {
+        return this._x;
+    }
+    get y(): number {
+        return this._y;
+    }
+    constructor(x: number, y: number) {
+        this._x = x;
+        this._y = y;
+    }
+    add(other: Vec2): Vec2 {
+        return new Vec2(this.x + other.x, this.y + other.y);
+    }
+    sub(other: Vec2): Vec2 {
+        return new Vec2(this.x - other.x, this.y - other.y);
+    }
+    negate(): Vec2 {
+        return new Vec2(-this.x, -this.y);
+    }
+    scale(factor: number): Vec2 {
+        return new Vec2(this.x * factor, this.y * factor);
+    }
+    get length(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+    normalize(): Vec2 {
+        const len = this.length;
+        if (len === 0) {
+            return new Vec2(0, 0);
+        }
+        return new Vec2(this.x / len, this.y / len);
+    }
+    dot(other: Vec2): number {
+        return this.x * other.x + this.y * other.y;
+    }
+}
