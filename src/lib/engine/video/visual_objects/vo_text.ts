@@ -9,7 +9,7 @@
 
 import type { UUIDv4 } from '$lib/types/common_types';
 import { Container, Text, TextStyle } from 'pixi.js';
-import type { VisualObjectRenderer } from './visual_object_renderer';
+import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_Text } from '$lib/store/save_structure/save_latest';
 import { parseCSSTextShadow } from '$lib/string';
 import { TextTimeStringFormatter } from '../tick_units/text_time_string_formatter';
@@ -43,12 +43,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	update(obj: SaveVO_Text): Container {
 		const textShadow = parseCSSTextShadow(obj.text_shadow);
 
-		const container = new Container({
-			zIndex: obj.layer,
-			x: obj.coordinates.x,
-			y: obj.coordinates.y,
-			angle: obj.rotation // angle is in degrees
-		});
+		const container = getBaseVOContainer(obj);
 		const shadowDistance = Math.sqrt(textShadow.offsetX ** 2 + textShadow.offsetY ** 2);
 		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
 

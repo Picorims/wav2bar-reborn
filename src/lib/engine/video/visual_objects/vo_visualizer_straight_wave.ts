@@ -10,7 +10,7 @@
 import type { SaveVO_VisualizerStraightWave } from "$lib/store/save_structure/save_latest";
 import { Container, Graphics } from "pixi.js";
 import type { TickUnit } from "../tick_units/tick_unit";
-import type { VisualObjectRenderer } from "./visual_object_renderer";
+import { getBaseVOContainer, type VisualObjectRenderer } from "./visual_object_renderer";
 import type { UUIDv4 } from "$lib/types/common_types";
 import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 import { Vec2 } from "$lib/math";
@@ -60,12 +60,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         this._height = obj.size.height;
         this._color = obj.color;
 
-        const container = new Container({
-            zIndex: obj.layer,
-            x: obj.coordinates.x,
-            y: obj.coordinates.y,
-            angle: obj.rotation // angle is in degrees
-        });
+        const container = getBaseVOContainer(obj);
 
         const graphics = new Graphics();
         const debugGraphics = new Graphics();
