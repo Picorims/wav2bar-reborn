@@ -15,7 +15,7 @@ import type { UUIDv4 } from "$lib/types/common_types";
 import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 import { Vec2 } from "$lib/math";
 
-const DRAW_DEBUG = true;
+const DRAW_DEBUG = false;
 
 export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_VisualizerStraightWave> {
     private _saveId: UUIDv4;
@@ -80,6 +80,13 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         return this._container;
     }
     private _render(graphics: Graphics, debugGraphics: Graphics): void {
+        if (this._spectrum.length === 0) {
+            return;
+        }
+        if (this._pointsCount !== this._spectrum.length) {
+            // should not happen if mapping is set correctly
+            console.warn("Points count does not match spectrum length");
+        }
         graphics.clear();
         if (DRAW_DEBUG) {
             debugGraphics.clear();
@@ -90,16 +97,11 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
 
         const step = containerWidth / Math.max(pointsCount - 1, 1);
 
-        const getSpectrumIndex = (i: number): number => {
-            return Math.floor((i / pointsCount) * this._spectrum.length);
-        }
-
         const points: {cpPrev: Vec2, cpNext: Vec2, point: Vec2}[] = [];
         
         // compute points and control points
         for (let i = 0; i < pointsCount; i++) {
-            const spectrumIndex = getSpectrumIndex(i);
-            const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
+            const magnitude = this._spectrum[i] / 255; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
             const x = i * step;
             const y = containerHeight - barHeight;
@@ -121,14 +123,12 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const nextIndex = Math.min(i + 1, pointsCount - 1);
 
             const prevX = prevIndex * step;
-            const prevSpectrumIndex = getSpectrumIndex(prevIndex);
-            const prevMagnitude = this._spectrum[prevSpectrumIndex] / 255;
+            const prevMagnitude = this._spectrum[prevIndex] / 255;
             const prevBarHeight = prevMagnitude * containerHeight;
             const prevY = containerHeight - prevBarHeight;
 
             const nextX = nextIndex * step;
-            const nextSpectrumIndex = getSpectrumIndex(nextIndex);
-            const nextMagnitude = this._spectrum[nextSpectrumIndex] / 255;
+            const nextMagnitude = this._spectrum[nextIndex] / 255;
             const nextBarHeight = nextMagnitude * containerHeight;
             const nextY = containerHeight - nextBarHeight;
             
