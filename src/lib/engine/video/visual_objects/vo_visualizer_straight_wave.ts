@@ -7,21 +7,20 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import type { SaveVO_VisualizerStraightBar } from "$lib/store/save_structure/save_latest";
+import type { SaveVO_VisualizerStraightWave } from "$lib/store/save_structure/save_latest";
 import { Container, Graphics } from "pixi.js";
 import type { TickUnit } from "../tick_units/tick_unit";
 import type { VisualObjectRenderer } from "./visual_object_renderer";
 import type { UUIDv4 } from "$lib/types/common_types";
 import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 
-export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_VisualizerStraightBar> {
+export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_VisualizerStraightWave> {
     private _saveId: UUIDv4;
     private _container: Container;
     private _graphics: Graphics;
     private _tickUnit: AudioSpectrumProcessor;
     private _spectrum: Uint8Array;
-    private _barsCount: number = 1;
-    private _barWidth: number = 1;
+    private _pointsCount: number = 1;
     private _width: number = 1;
     private _height: number = 1;
     private _color: string = "#FFFFFF";
@@ -39,7 +38,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         });
 
     }
-    update(obj: SaveVO_VisualizerStraightBar): Container {
+    update(obj: SaveVO_VisualizerStraightWave): Container {
         this._tickUnit.setMapping({
             mappedLength: obj.visualizer_points_count,
             minPercent: obj.visualizer_analyzer_range[0] / 1024 * 100,
@@ -50,8 +49,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
             factor: obj.visualization_smoothing_factor
         });
 
-        this._barsCount = obj.visualizer_points_count;
-        this._barWidth = obj.visualizer_bar_thickness;
+        this._pointsCount = obj.visualizer_points_count;
         this._width = obj.size.width;
         this._height = obj.size.height;
         this._color = obj.color;
@@ -73,24 +71,26 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
     }
     private _render(graphics: Graphics) {
         graphics.clear();
-        const barsCount = this._barsCount;
-        const barWidth = this._barWidth;
+        const pointsCount = this._pointsCount;
         const containerWidth = this._width;
         const containerHeight = this._height;
 
-        const gap = (containerWidth - (barsCount * barWidth)) / Math.max(1, barsCount - 1);
-        const step = barWidth + gap;
+        const step = containerWidth / Math.max(pointsCount - 1, 1);
 
-        for (let i = 0; i < barsCount; i++) {
-            const spectrumIndex = Math.floor((i / barsCount) * this._spectrum.length);
+        // same computation for the move than inside the loop for i=0
+        graphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
+        for (let i = 0; i < pointsCount; i++) {
+            const spectrumIndex = Math.floor((i / pointsCount) * this._spectrum.length);
             const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
             const x = i * step;
             const y = containerHeight - barHeight;
-            const width = barWidth;
-            const height = barHeight;
-            graphics.rect(x, y, width, height);
+            graphics.lineTo(x, y);
         }
+        // draw floor (two points at the bottom left and bottom right)
+        graphics.lineTo(containerWidth, containerHeight);
+        graphics.lineTo(0, containerHeight);
+        graphics.closePath();
         graphics.fill(this._color);
     }
     getContainer(): Container {
