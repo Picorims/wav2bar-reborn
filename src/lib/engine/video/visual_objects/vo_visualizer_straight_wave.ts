@@ -134,7 +134,8 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const nextY = containerHeight - nextBarHeight;
             
             // how far the control points are from the current point along the direction vector
-            // A value between 0 and 1 is recommended.
+            // A value between 0 and 1 is recommended, though there is no upper limit.
+            // 0 will produce straight lines, 1 will produce very curvy lines (possibly too stretched).
             const FACTOR = 0.5;
             
             const from = new Vec2(prevX, prevY);
