@@ -25,7 +25,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     //FIXME underscores in front of private fields
     private hasInitBool = false;
     private audioElement: HTMLAudioElement;
-    private cache: Map<number, {data: Uint8Array, loading: boolean, reads: number}> = new Map();
+    private cache: Map<number, {data: Uint16Array, loading: boolean, reads: number}> = new Map();
     /**
      * As per audio.rs command bake_fft, contains the list of frequencies
      * in Hz corresponding to the FFT values. The size is SPECTRUM_SIZE_DEFAULT.
@@ -88,7 +88,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     shallLoop(loop: boolean): void {
         this.audioElement.loop = loop;
     }
-    getCurrentAudioSpectrum(): Uint8Array {
+    getCurrentAudioSpectrum(): Uint16Array {
         const now = this.getCurrentAudioTime() / 1000; // seconds
         const currentFrame = Math.floor(now * (this.renderer?.getFPS() ?? DEFAULT_FPS));
         const blockIndex = Math.floor(now / FFT_BLOCK_SIZE_SECONDS);
@@ -99,7 +99,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
                 Log.audio.warn("FFT block not yet cached: " + blockIndex);
                 this.lastWarnMap.set(blockIndex, performance.now());
             }
-            const dataArray = new Uint8Array(this.getAudioSpectrumSize());
+            const dataArray = new Uint16Array(this.getAudioSpectrumSize());
             return dataArray;
         }
 
@@ -108,12 +108,12 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
         const expectedBlockFrame = currentFrame % (FFT_BLOCK_SIZE_SECONDS * (this.renderer?.getFPS() ?? DEFAULT_FPS));
         const offset = expectedBlockFrame * SPECTRUM_SIZE_DEFAULT;
 
-        const returnError = (msg: string) => {
+        const returnError: (msg: string) => Uint16Array = (msg) => {
             if (!this.lastWarnMap.has(blockIndex) || (this.lastWarnMap.get(blockIndex) ?? 0) + 5000 < performance.now()) {
                 Log.audio.warn(msg);
                 this.lastWarnMap.set(blockIndex, performance.now());
             }
-            const dataArray = new Uint8Array(this.getAudioSpectrumSize());
+            const dataArray = new Uint16Array(this.getAudioSpectrumSize());
             return dataArray;
         }
         if (!cacheEntry) {
@@ -173,12 +173,13 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
             return;
         }
 
-        this.cache.set(blockIndex, {data: new Uint8Array(), loading: true, reads: 0});
+        this.cache.set(blockIndex, {data: new Uint16Array(), loading: true, reads: 0});
         const fftDir = await invoke<string>("get_fft_dir");
         const fftFilePath = await join(fftDir, `fft_block_${blockIndex}.bin`);
         try {
             const content = await readFile(fftFilePath);
-            this.cache.set(blockIndex, {data: content, loading: false, reads: 0});
+            const uint16Array = new Uint16Array(content.buffer, content.byteOffset, content.byteLength / Uint16Array.BYTES_PER_ELEMENT);
+            this.cache.set(blockIndex, {data: uint16Array, loading: false, reads: 0});
 
             this.pruneCacheIfNeeded();
         } catch (e) {

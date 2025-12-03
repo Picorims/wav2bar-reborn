@@ -21,7 +21,7 @@ export class LiveAudioProvider extends AudioProvider {
 	private chronoStart: number;
 	private chronoPause: number;
 	private stopped: boolean;
-	private lastSpectrum: Uint8Array | undefined;
+	private lastSpectrum: Uint16Array | undefined;
 	private lastWaveform: Uint8Array | undefined;
 
     constructor() {
@@ -86,16 +86,19 @@ export class LiveAudioProvider extends AudioProvider {
 	shallLoop(loop: boolean): void {
 		Log.audio.info(`Live audio provider cannot loop, ignoring shallLoop(${loop})`);
 	}
-	getCurrentAudioSpectrum(): Uint8Array {
-        // We can use Float32Array instead of Uint8Array if we want higher precision
+	getCurrentAudioSpectrum(): Uint16Array {
 		if (this.lastSpectrum !== undefined && (this.stopped || this.chronoPause !== -1)) {
 			return this.lastSpectrum;
 		}
 		const bufferLength = this.analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
-        this.analyser.getByteFrequencyData(dataArray);
-		this.lastSpectrum = dataArray;
-        return dataArray;
+        const dataArray = new Float32Array(bufferLength);
+        this.analyser.getFloatFrequencyData(dataArray);
+		const uint16Array = new Uint16Array(bufferLength);
+		for (let i = 0; i < bufferLength; i++) {
+			uint16Array[i] = Math.max(0, Math.min(65535, Math.floor((dataArray[i]) * 65535)));
+		}
+		this.lastSpectrum = uint16Array;
+        return uint16Array;
 	}
 	getAudioSpectrumSize() {
 		return this.analyser.frequencyBinCount;

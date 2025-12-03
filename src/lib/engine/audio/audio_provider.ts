@@ -36,7 +36,7 @@ export abstract class AudioProvider {
     abstract seekTo(time: number): void;
     abstract isPlaying(): boolean;
     abstract shallLoop(loop: boolean): void;
-    abstract getCurrentAudioSpectrum(): Uint8Array;
+    abstract getCurrentAudioSpectrum(): Uint16Array;
     abstract getAudioSpectrumSize(): number;
     abstract setAudioSpectrumSize(size: number): void;
     abstract getFrequencies(): Uint16Array;

@@ -11,7 +11,7 @@ import type { AudioProvider } from '$lib/engine/audio/audio_provider';
 import type { SupportsVisualizerProps } from '$lib/types/schemas/save_v4';
 import { TickUnit } from './tick_unit';
 
-type SpectrumData = [Uint8Array, Uint16Array]; // [spectrum, frequencies]
+type SpectrumData = [Uint16Array, Uint16Array]; // [spectrum, frequencies]
 
 interface Mapping {
     toLog: boolean;
@@ -78,7 +78,7 @@ const easeFunction: Record<SupportsVisualizerProps["visualization_smoothing_type
 }
 
 export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
-    private static _DEFAULT_VALUE: SpectrumData = [new Uint8Array(0), new Uint16Array(0)];
+    private static _DEFAULT_VALUE: SpectrumData = [new Uint16Array(0), new Uint16Array(0)];
     private _mapping: Mapping = {
         /**
          * If true, the spectrum will be converted to a logarithmic scale.
@@ -93,7 +93,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
         minPercent: 0,
         maxPercent: 100
     }
-    private _previousSpectrum: Uint8Array = new Uint8Array(0);
+    private _previousSpectrum: Uint16Array = new Uint16Array(0);
     private _spectrumSmoothingParams: SpectrumSmoothingParams = {
         type: "average",
         factor: 0.8
@@ -166,13 +166,13 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
      * Assuming it is sorted with the highest frequency at the end.
      * @returns the logarithmic scaled spectrum with smoothstep interpolation where needed
      */
-    toLogSpectrum(spectrum: Uint8Array, frequencies: Uint16Array): Uint8Array {
+    toLogSpectrum(spectrum: Uint16Array, frequencies: Uint16Array): Uint16Array {
         if (spectrum.length !== frequencies.length) {
             throw new Error(
                 `Spectrum (${spectrum.length}) and frequencies (${frequencies.length}) length mismatch`
             );
         }
-        const logSpectrum = new Uint8Array(spectrum.length);
+        const logSpectrum = new Uint16Array(spectrum.length);
         /**
          * index -> list of values for this frequency index
          */
@@ -251,12 +251,12 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
      * will be included in the output array.
      * @return The mapped array.
      */
-    mappedArray(array: Uint8Array, new_length: number, min: number = 0, max: number = array.length-1): Uint8Array {
+    mappedArray(array: Uint16Array, new_length: number, min: number = 0, max: number = array.length-1): Uint16Array {
         if (new_length < 0) {
             throw new Error("new_length must be non-negative.");
         }
         if (array.length === 0 && new_length === 0) {
-            return new Uint8Array([]);
+            return new Uint16Array([]);
         }
         if (array.length === 0 && new_length > 0) {
             throw new Error("Cannot map from an empty array to a non-empty array.");
@@ -268,10 +268,10 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
             throw new Error("max index cannot be greater than or equal to array length.");
         }
         if (new_length === 0) {
-            return new Uint8Array([]);
+            return new Uint16Array([]);
         }
         
-        const newArray = new Uint8Array(new_length);
+        const newArray = new Uint16Array(new_length);
         const step = (max - min + 1) / (new_length); // (range length) / new length.
 
         let increment = min; //we start a the minimum of the range
@@ -292,14 +292,14 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
         return newArray;
     }
 
-    private _easeSpectrum(spectrum: Uint8Array): void {
+    private _easeSpectrum(spectrum: Uint16Array): void {
         for (let i = 0; i < spectrum.length; i++) {
             const prev = this._previousSpectrum[i] || 0;
             const curr = spectrum[i];
             spectrum[i] = easeFunction[this._spectrumSmoothingParams.type]({
                 prev,
                 curr,
-                maxT: 255,
+                maxT: 65_535,
                 factor: this._spectrumSmoothingParams.factor
             });
         }

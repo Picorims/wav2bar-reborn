@@ -17,6 +17,7 @@ import { Vec2 } from "$lib/math";
 
 const DRAW_DEBUG = false;
 const DIV_BY_ZERO_SAFEGUARD = 0.0001
+const SPECTRUM_VALUE_MAX = 65_536;
 
 export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_VisualizerStraightWave> {
     private _saveId: UUIDv4;
@@ -24,7 +25,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
     private _graphics: Graphics;
     private _debugGraphics: Graphics;
     private _tickUnit: AudioSpectrumProcessor;
-    private _spectrum: Uint8Array;
+    private _spectrum: Uint16Array;
     private _pointsCount: number = 1;
     private _width: number = 1;
     private _height: number = 1;
@@ -37,7 +38,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         this._graphics = new Graphics();
         this._debugGraphics = new Graphics();
         this._tickUnit = new AudioSpectrumProcessor();
-        this._spectrum = new Uint8Array(0);
+        this._spectrum = new Uint16Array(0);
         this._tickUnit.subscribe(([spectrum]) => {
             this._spectrum = spectrum;
             this._render(this._graphics, this._debugGraphics);
@@ -97,7 +98,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         
         // compute points and control points
         for (let i = 0; i < pointsCount; i++) {
-            const magnitude = this._spectrum[i] / 255; // Normalize to [0, 1]
+            const magnitude = this._spectrum[i] / SPECTRUM_VALUE_MAX; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
             const x = i * step;
             const y = containerHeight - barHeight;
@@ -119,12 +120,12 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const nextIndex = Math.min(i + 1, pointsCount - 1);
 
             const prevX = prevIndex * step;
-            const prevMagnitude = this._spectrum[prevIndex] / 255;
+            const prevMagnitude = this._spectrum[prevIndex] / SPECTRUM_VALUE_MAX;
             const prevBarHeight = prevMagnitude * containerHeight;
             const prevY = containerHeight - prevBarHeight;
 
             const nextX = nextIndex * step;
-            const nextMagnitude = this._spectrum[nextIndex] / 255;
+            const nextMagnitude = this._spectrum[nextIndex] / SPECTRUM_VALUE_MAX;
             const nextBarHeight = nextMagnitude * containerHeight;
             const nextY = containerHeight - nextBarHeight;
             
@@ -148,9 +149,9 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         }
 
         // same computation for the move as inside the loop for i=0
-        graphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
+        graphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_MAX) * containerHeight);
         if (DRAW_DEBUG) {
-            debugGraphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
+            debugGraphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_MAX) * containerHeight);
         }
         
         for (let i = 0; i < pointsCount; i++) {

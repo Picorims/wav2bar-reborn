@@ -120,7 +120,7 @@ pub async fn bake_fft(
     let mut fft_file_index = 0;
     let mut cached_fft_frequencies = false;
     let mut stored_fft_frequencies = false;
-    let mut fft_cache: Vec<u8> = Vec::new();
+    let mut fft_cache: Vec<u16> = Vec::new();
     let mut fft_frequencies_cache: Vec<u16> = Vec::new();
 
     info!("FFT size: {}", fft_size);
@@ -328,8 +328,8 @@ pub async fn bake_fft(
                 // the stronger the amplification of lower values.
                 // It can be helpful to print the max amplitude value
                 // and look at the function's curve to choose a good factor.
-                let processed_val = ((1.0 - (-64.0 * val).exp()) * 255.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
-                fft_cache.push(processed_val.to_u8().unwrap_or(0));
+                let processed_val = ((1.0 - (-64.0 * val).exp()) * 65536.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
+                fft_cache.push(processed_val.to_u16().unwrap_or(0));
             });
             frames_in_current_block_file += 1;
 
@@ -391,7 +391,7 @@ pub async fn bake_fft(
     Ok(())
 }
 
-fn flush_fft_cache_to_file(fft_cache: &Vec<u8>, file_index: u32) -> Result<(), String> {
+fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32) -> Result<(), String> {
     use std::io::{BufWriter, Write};
     info!("Flushing FFT cache to file index {}", file_index);
 
