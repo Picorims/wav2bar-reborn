@@ -20,4 +20,4 @@
 <ColorProperties />
 <BorderRadiusProperties />
 <BoxShadowProperties />
-<VisualizerProperties kind="bar" />
+<VisualizerProperties barProps />
