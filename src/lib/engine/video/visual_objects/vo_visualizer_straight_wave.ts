@@ -75,7 +75,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         const containerWidth = this._width;
         const containerHeight = this._height;
 
-        const step = containerWidth / Math.max(pointsCount, 1);
+        const step = containerWidth / Math.max(pointsCount - 1, 1);
 
         // same computation for the move than inside the loop for i=0
         graphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
