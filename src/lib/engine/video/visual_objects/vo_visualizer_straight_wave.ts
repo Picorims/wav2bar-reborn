@@ -16,6 +16,7 @@ import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 import { Vec2 } from "$lib/math";
 
 const DRAW_DEBUG = false;
+const DIV_BY_ZERO_SAFEGUARD = 0.0001
 
 export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_VisualizerStraightWave> {
     private _saveId: UUIDv4;
@@ -142,15 +143,15 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const fromToVector = to.sub(from);
             const distancePrev = current.sub(from).length;
             const distanceNext = to.sub(current).length;
-            const fromScalingFactor = FACTOR * distancePrev / Math.max((distancePrev + distanceNext), 0.0001);
-            const toScalingFactor = FACTOR * distanceNext / Math.max((distancePrev + distanceNext), 0.0001);
+            const fromScalingFactor = FACTOR * distancePrev / Math.max((distancePrev + distanceNext), DIV_BY_ZERO_SAFEGUARD);
+            const toScalingFactor = FACTOR * distanceNext / Math.max((distancePrev + distanceNext), DIV_BY_ZERO_SAFEGUARD);
             const cp1 = current.sub(fromToVector.scale(fromScalingFactor));
             const cp2 = current.add(fromToVector.scale(toScalingFactor));
 
             points.push({cpPrev: cp1, cpNext: cp2, point: current});
         }
 
-        // same computation for the move than inside the loop for i=0
+        // same computation for the move as inside the loop for i=0
         graphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
         if (DRAW_DEBUG) {
             debugGraphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
