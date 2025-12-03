@@ -77,6 +77,8 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
 
         const step = containerWidth / Math.max(pointsCount, 1);
 
+        // same computation for the move than inside the loop for i=0
+        graphics.moveTo(0, containerHeight - (this._spectrum[0] / 255) * containerHeight);
         for (let i = 0; i < pointsCount; i++) {
             const spectrumIndex = Math.floor((i / pointsCount) * this._spectrum.length);
             const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
