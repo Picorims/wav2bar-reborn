@@ -224,6 +224,17 @@ class SaveManager {
         this._dispatchMutationUpdate();
     }
 
+    /**
+     * Clears all visual objects from the renderer and re-registers every object currently in the save.
+     * 
+     * This should be used after loading a save file or when the set of objects needs to be fully synchronized
+     * with the renderer. It ensures that the renderer's state matches the current save configuration.
+     * 
+     * Side effects:
+     * - Triggers a "clear_all_objects" event in the renderer, removing all currently registered objects.
+     * - Re-registers each object found in the save configuration.
+     * - Dispatches a mutation update to all subscribers.
+     */
     public reloadAllObjects() {
         renderer.scheduleRendererEvent({
             name: "clear_all_objects",
