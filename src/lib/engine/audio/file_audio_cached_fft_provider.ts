@@ -115,7 +115,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
             }
             const dataArray = new Uint16Array(this.getAudioSpectrumSize());
             return dataArray;
-        }
+        };
         if (!cacheEntry) {
             return returnError(`Cache entry missing for block index ${blockIndex}`);
         } else if (cacheEntry.loading) {
