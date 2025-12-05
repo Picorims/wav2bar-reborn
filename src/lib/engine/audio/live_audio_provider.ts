@@ -95,7 +95,9 @@ export class LiveAudioProvider extends AudioProvider {
         this.analyser.getFloatFrequencyData(dataArray);
 		const uint16Array = new Uint16Array(bufferLength);
 		for (let i = 0; i < bufferLength; i++) {
-			uint16Array[i] = Math.max(0, Math.min(65535, Math.floor((dataArray[i]) * 65535)));
+			// Convert dB to linear amplitude, clamp to [0,1], then scale to 16-bit
+			const linear = Math.pow(10, dataArray[i] / 20);
+			uint16Array[i] = Math.max(0, Math.min(65535, Math.floor(linear * 65535)));
 		}
 		this.lastSpectrum = uint16Array;
         return uint16Array;
