@@ -17,7 +17,7 @@ import { Vec2 } from "$lib/math";
 
 const DRAW_DEBUG = false;
 const DIV_BY_ZERO_SAFEGUARD = 0.0001
-const SPECTRUM_VALUE_MAX = 65_536;
+const SPECTRUM_VALUE_RESOLUTION = 65_536;
 
 export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_VisualizerStraightWave> {
     private _saveId: UUIDv4;
@@ -98,7 +98,7 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         
         // compute points and control points
         for (let i = 0; i < pointsCount; i++) {
-            const magnitude = this._spectrum[i] / SPECTRUM_VALUE_MAX; // Normalize to [0, 1]
+            const magnitude = this._spectrum[i] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
             const x = i * step;
             const y = containerHeight - barHeight;
@@ -120,12 +120,12 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
             const nextIndex = Math.min(i + 1, pointsCount - 1);
 
             const prevX = prevIndex * step;
-            const prevMagnitude = this._spectrum[prevIndex] / SPECTRUM_VALUE_MAX;
+            const prevMagnitude = this._spectrum[prevIndex] / SPECTRUM_VALUE_RESOLUTION;
             const prevBarHeight = prevMagnitude * containerHeight;
             const prevY = containerHeight - prevBarHeight;
 
             const nextX = nextIndex * step;
-            const nextMagnitude = this._spectrum[nextIndex] / SPECTRUM_VALUE_MAX;
+            const nextMagnitude = this._spectrum[nextIndex] / SPECTRUM_VALUE_RESOLUTION;
             const nextBarHeight = nextMagnitude * containerHeight;
             const nextY = containerHeight - nextBarHeight;
             
@@ -149,9 +149,9 @@ export class VO_VisualizerStraightWave implements VisualObjectRenderer<SaveVO_Vi
         }
 
         // same computation for the move as inside the loop for i=0
-        graphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_MAX) * containerHeight);
+        graphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight);
         if (DRAW_DEBUG) {
-            debugGraphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_MAX) * containerHeight);
+            debugGraphics.moveTo(0, containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight);
         }
         
         for (let i = 0; i < pointsCount; i++) {
