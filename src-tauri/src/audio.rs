@@ -328,7 +328,7 @@ pub async fn bake_fft(
                 // the stronger the amplification of lower values.
                 // It can be helpful to print the max amplitude value
                 // and look at the function's curve to choose a good factor.
-                let processed_val = ((1.0 - (-64.0 * val).exp()) * 65536.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-255)
+                let processed_val = ((1.0 - (-64.0 * val).exp()) * 65535.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-65535)
                 fft_cache.push(processed_val.to_u16().unwrap_or(0));
             });
             frames_in_current_block_file += 1;
