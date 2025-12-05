@@ -23,7 +23,8 @@ import type {
 	SupportsVisualizerBarProps,
 	SupportsVisualizerCircularProps,
 	SupportsVisualizerProps,
-	VisualizerStraightWave
+	VisualizerStraightWave,
+	VisualizerCircularBar
 } from '$lib/types/schemas/save_v4';
 import { ARCHIVE_STRUCTURE_V4, EXTENSION_V4, validateSaveV4, validateSaveV4VisualObject, visualObject_V4_types } from './save_v4';
 
@@ -37,6 +38,7 @@ export type Save = Wav2BarSaveV4;
 export type VisualObject = Wav2BarSaveV4['objects'][string];
 export type SaveVO_Text = Text;
 export type SaveVO_VisualizerStraightBar = VisualizerStraightBar;
+export type SaveVO_VisualizerCircularBar = VisualizerCircularBar;
 export type SaveVO_VisualizerStraightWave = VisualizerStraightWave;
 
 // =========================================================
