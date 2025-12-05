@@ -86,9 +86,9 @@ export class VO_VisualizerCircularBar implements VisualObjectRenderer<SaveVO_Vis
         for (let i = 0; i < barsCount; i++) {
             const magnitude = this._spectrum[i] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
             const barHeight = magnitude * maxBarLength;
-            const direction = new Vec2(Math.cos(i * angleStep), Math.sin(i * angleStep)).normalize();
+            const direction = new Vec2(Math.cos(i * angleStep), Math.sin(i * angleStep)); // normalized
             // rotation is 90 degrees offset clockwise
-            const directionTangent = new Vec2(-direction.y, direction.x).normalize();
+            const directionTangent = new Vec2(-direction.y, direction.x); // normalized
             const p1 = center.add(direction.scale(radiusMin)).add(directionTangent.scale(-barWidth / 2));
             const p2 = p1.add(direction.scale(barHeight));
             const p3 = p2.add(directionTangent.scale(barWidth));
