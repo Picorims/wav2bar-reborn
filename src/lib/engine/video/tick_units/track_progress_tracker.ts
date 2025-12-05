@@ -28,6 +28,9 @@ export class TrackProgressTracker extends TickUnit<number> {
         }
         
         const durationMs = audioProvider.getDuration();
+        if (durationMs <= 0) {
+            return this.getDefaultValue();
+        }
         const currentTimeMs = audioProvider.getCurrentAudioTime();
 
         return currentTimeMs / durationMs;
