@@ -14,12 +14,14 @@ import { getBaseVOContainer, type VisualObjectRenderer } from "./visual_object_r
 import type { UUIDv4 } from "$lib/types/common_types";
 import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 
+const SPECTRUM_VALUE_RESOLUTION = 65_536;
+
 export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_VisualizerStraightBar> {
     private _saveId: UUIDv4;
     private _container: Container;
     private _graphics: Graphics;
     private _tickUnit: AudioSpectrumProcessor;
-    private _spectrum: Uint8Array;
+    private _spectrum: Uint16Array;
     private _barsCount: number = 1;
     private _barWidth: number = 1;
     private _width: number = 1;
@@ -32,7 +34,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
         this._container = new Container();
         this._graphics = new Graphics();
         this._tickUnit = new AudioSpectrumProcessor();
-        this._spectrum = new Uint8Array(0);
+        this._spectrum = new Uint16Array(0);
         this._tickUnit.subscribe(([spectrum]) => {
             this._spectrum = spectrum;
             this._render(this._graphics);
@@ -78,7 +80,7 @@ export class VO_VisualizerStraightBar implements VisualObjectRenderer<SaveVO_Vis
 
         for (let i = 0; i < barsCount; i++) {
             const spectrumIndex = Math.floor((i / barsCount) * this._spectrum.length);
-            const magnitude = this._spectrum[spectrumIndex] / 255; // Normalize to [0, 1]
+            const magnitude = this._spectrum[spectrumIndex] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
             const barHeight = magnitude * containerHeight;
             const x = i * step;
             const y = containerHeight - barHeight;
