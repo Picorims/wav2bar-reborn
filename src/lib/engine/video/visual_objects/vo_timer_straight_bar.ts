@@ -58,7 +58,7 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
     private _render(graphics: Graphics) {
         graphics.clear();
         
-        // outer stroke bar (inset by half line thickness)
+        // outer stroke bar (inset)
         const outerX = 0;
         const outerY = 0;
         const outerWidth = this._width;
