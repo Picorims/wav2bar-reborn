@@ -25,7 +25,8 @@ import type {
 	SupportsVisualizerProps,
 	VisualizerStraightWave,
 	VisualizerCircularBar,
-	TimerStraightLinePoint
+	TimerStraightLinePoint,
+	TimerStraightBar
 } from '$lib/types/schemas/save_v4';
 import { ARCHIVE_STRUCTURE_V4, EXTENSION_V4, validateSaveV4, validateSaveV4VisualObject, visualObject_V4_types } from './save_v4';
 
@@ -42,6 +43,7 @@ export type SaveVO_VisualizerStraightBar = VisualizerStraightBar;
 export type SaveVO_VisualizerCircularBar = VisualizerCircularBar;
 export type SaveVO_VisualizerStraightWave = VisualizerStraightWave;
 export type SaveVO_TimerStraightLinePoint = TimerStraightLinePoint;
+export type SaveVO_TimerStraightBar = TimerStraightBar;
 
 // =========================================================
 // PROPERTIES ==============================================

@@ -18,7 +18,7 @@
 
     function updateTimerInnerSpacing(value: number) {
         saveManager.mutateActiveObject<ObjT>((obj) => {
-            obj.inner_spacing = value as Supports_TimerInnerSpacing['inner_spacing'];
+            obj.timer_inner_spacing = value as Supports_TimerInnerSpacing['timer_inner_spacing'];
             return obj;
         });
     }
