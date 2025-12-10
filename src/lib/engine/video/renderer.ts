@@ -25,6 +25,7 @@ import { VO_VisualizerStraightWave } from './visual_objects/vo_visualizer_straig
 import { VO_VisualizerCircularBar } from './visual_objects/vo_visualizer_circular_bar';
 import { VO_TimerStraightLinePoint } from './visual_objects/vo_timer_straight_line_point';
 import { VO_TimerStraightBar } from './visual_objects/vo_timer_straight_bar';
+import { VO_ParticleFlow } from './visual_objects/vo_particle_flow';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -296,6 +297,8 @@ export class Renderer {
 			newVisualObject = new VO_TimerStraightLinePoint(id);
 		} else if (obj.visual_object_type === "timer_straight_bar") {
 			newVisualObject = new VO_TimerStraightBar(id);
+		} else if (obj.visual_object_type === "particle_flow") {
+			newVisualObject = new VO_ParticleFlow(id);
 		} else {
 			Log.renderer.warn('Unknown object type, registering placeholder object');
 		}
