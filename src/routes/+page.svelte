@@ -9,7 +9,6 @@
     */
 	import App from '$lib/components/window/App.svelte';
 	import { settings } from '$lib/store/settings';
-	import { ThemeOptions } from '$lib/store/settings_structure/settings_enums';
 	import { onMount } from 'svelte';
 
 	onMount(() => {

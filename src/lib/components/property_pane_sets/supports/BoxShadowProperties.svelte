@@ -10,9 +10,8 @@
    
     import LabeledInputText from "$lib/components/atoms/LabeledInputText.svelte";
     import { saveManager } from "$lib/store/save.svelte";
-    import type { Supports_BorderRadius, Supports_BoxShadow, VisualObject } from "$lib/store/save_structure/save_latest";
+    import type { Supports_BoxShadow, VisualObject } from "$lib/store/save_structure/save_latest";
     import { lang } from "$lib/store/settings";
-    import { run } from 'svelte/legacy';
 
     type ObjT = VisualObject & Supports_BoxShadow;
 

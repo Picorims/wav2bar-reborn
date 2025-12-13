@@ -56,7 +56,7 @@
 		valid = input.checkValidity();
 		if (valid) lastValidValue = value;
 	};
-	const handleOnChange = (e: Event) => {
+	const handleOnChange = () => {
 		checkValidity();
 		if (valid) onChange(value);
 	};

@@ -16,7 +16,6 @@
 		type LanguagesType,
 		type ThemesType
 	} from '$lib/store/settings_structure/settings_enums';
-	import {openPath} from "@tauri-apps/plugin-opener";
 	import { appLogDir } from "@tauri-apps/api/path";
 
 	interface Props {
@@ -37,11 +36,6 @@
 	};
 
 	let logsDir = $state<Promise<string> | null>(null);
-
-	const openLogsDir = async () => {
-		const logDir = await appLogDir();
-		openPath(logDir);
-	}
 </script>
 
 <Modal bind:dialog title={$lang.settings.title}>
@@ -62,7 +56,7 @@
 			Loading...
 		{:then dir} 
 			{dir}
-		{:catch error}
+		{:catch}
 			System logs dir could not be retrieved.
 		{/await}
 	</p>

@@ -11,7 +11,7 @@
    
     import LabeledInputNumber from "$lib/components/atoms/LabeledInputNumber.svelte";
     import { saveManager } from "$lib/store/save.svelte";
-    import type { Supports_VisualizerBarProps, Supports_VisualizerCircularProps, VisualObject } from "$lib/store/save_structure/save_latest";
+    import type { Supports_VisualizerCircularProps, VisualObject } from "$lib/store/save_structure/save_latest";
     import { lang } from "$lib/store/settings";
 
     type ObjT = VisualObject & Supports_VisualizerCircularProps;

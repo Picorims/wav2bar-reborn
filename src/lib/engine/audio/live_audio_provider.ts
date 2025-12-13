@@ -60,7 +60,6 @@ export class LiveAudioProvider extends AudioProvider {
 	stop() {
 		this.stopped = true;
 	}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	setVolume(_volume: number) {
 		Log.audio.info("Live audio provider cannot set volume, doing nothing");
 	}
@@ -76,7 +75,6 @@ export class LiveAudioProvider extends AudioProvider {
 	getDuration() {
 		return this.getCurrentAudioTime();
 	}
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	seekTo(_time: number) {
 		Log.audio.info("Live audio provider cannot seek, doing nothing");
 	}

@@ -12,7 +12,6 @@
 	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
 	import IconButton from '../atoms/IconButton.svelte';
 	import {
-		visualObject_types,
 		type VisualObject_Type
 	} from '$lib/store/save_structure/save_latest';
 	import { saveManager } from '$lib/store/save.svelte';
@@ -53,7 +52,6 @@
 		</div>
 	</div>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 	<div
 		bind:this={listDiv}
 		class="content"

@@ -22,7 +22,6 @@ export class TextTimeStringFormatter extends TickUnit<string> {
         return TextTimeStringFormatter._DEFAULT_VALUE;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected computeNewState(_basis: string, audioProvider: AudioProvider | null): string {
         if (!audioProvider) {
             return this.getDefaultValue();

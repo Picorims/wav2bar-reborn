@@ -12,7 +12,6 @@
 	import { saveManager } from "$lib/store/save.svelte";
 	import type { Supports_BorderRadius, VisualObject } from "$lib/store/save_structure/save_latest";
 	import { lang } from "$lib/store/settings";
-    import { run } from 'svelte/legacy';
 
     type ObjT = VisualObject & Supports_BorderRadius;
 	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);

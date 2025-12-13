@@ -97,7 +97,8 @@
 			dialog?.close();
 			onTypeChosen(type as VisualObject_Type /*type is lost after calling entries()*/);
 		}}>
-			<!-- svg icon -->
+			<!-- svg icon - static and local, so low XSS attack risk -->
+			<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 			<span role="img" aria-label={entry.label}>{@html entry.iconSvg}</span>
 			<span>{entry.label}</span>
 		</button>

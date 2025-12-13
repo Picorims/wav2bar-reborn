@@ -17,9 +17,7 @@
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type {
-		Save,
 		Supports_Background,
-		Supports_BorderRadius,
 		VisualObject
 	} from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';

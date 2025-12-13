@@ -25,9 +25,6 @@
 		ArrowLeftToLine,
 		ArrowRightToLine,
 		ArrowUpToLine,
-		Move,
-		MoveHorizontal,
-		MoveVertical
 	} from 'lucide-svelte';
 
 	function updateX(value: number) {

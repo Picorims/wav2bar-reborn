@@ -21,7 +21,6 @@ export class TrackProgressTracker extends TickUnit<number> {
         return TrackProgressTracker._DEFAULT_VALUE;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     protected computeNewState(_basis: number, audioProvider: AudioProvider | null): number {
         if (!audioProvider) {
             return this.getDefaultValue();

@@ -27,7 +27,7 @@
         children,
         togglable = false,
         toggled = false,
-        onToggle = (value: boolean) => {},
+        onToggle = () => {},
         alt = '',
     }: Props = $props();
 

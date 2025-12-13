@@ -3,7 +3,6 @@
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
-	import type { Int } from '$lib/types/common_types';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos

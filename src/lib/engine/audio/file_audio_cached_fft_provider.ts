@@ -152,7 +152,6 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
     getAudioSpectrumSize() {
         return SPECTRUM_SIZE_DEFAULT;
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setAudioSpectrumSize(_size: number) {
         Log.audio.warn("FileAudioCachedFFTProvider: setAudioSpectrumSize not supported");
     }
@@ -215,7 +214,6 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
         }
         // The filtering will effectively not work if all items have reads = 0.
         const items = Array.from(this.cache.entries()) // key value pairs
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             .filter(([_, entry]) => entry.reads > 0);
         items.sort((a, b) => a[1].reads - b[1].reads);
         while (this.cache.size > CACHE_CAPACITY) {
