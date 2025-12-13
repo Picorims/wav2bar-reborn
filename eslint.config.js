@@ -25,13 +25,13 @@ export default [
 					argsIgnorePattern: '^_'
 				}
 			],
-			"no-underscore-dangle": [
-				"error",
+			'no-underscore-dangle': [
+				'error',
 				{
-					"allow": ["_id", "_rev", "__PIXI_APP__"],
-					"allowAfterThis": true,
-					"enforceInMethodNames": true,
-					"enforceInClassFields": true
+					allow: ['_id', '_rev', '__PIXI_APP__'],
+					allowAfterThis: true,
+					enforceInMethodNames: true,
+					enforceInClassFields: true
 				}
 			]
 		}
