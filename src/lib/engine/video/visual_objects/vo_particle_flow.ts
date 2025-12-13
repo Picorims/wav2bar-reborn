@@ -17,6 +17,7 @@ import { AudioSpectrumProcessor } from "../tick_units/audio_spectrum_processor";
 
 const SPECTRUM_VALUE_RESOLUTION = 65_536;
 const DEFAULT_PARTICLE_SPEED = 1;
+const OUT_OF_BOUNDS_MARGIN = 5;
 // TODO: https://github.com/Picorims/wav2bar/blob/develop/js/visual_objects/visual_object.js#L672
 
 
@@ -46,8 +47,15 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
         this._container = new Container();
         this._graphics = new Graphics();
         this._tickUnit = new AudioSpectrumProcessor();
+        this._tickUnit.setMapping({
+            mappedLength: -1,
+            minPercent: 0,
+            maxPercent: 100,
+            toLog: true,
+        });
         this._tickUnit.subscribe(([spectrum]) => {
             this._volume = this._tickUnit.average(spectrum) / SPECTRUM_VALUE_RESOLUTION;
+            this._tick();
             this._render(this._graphics);
         });
 
@@ -67,7 +75,7 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
         // spawn particles based on density to fill the initial area
         const count = this._width * this._height * this._density * 0.001;
         for (let i = 0; i < count; i++) {
-            const pos = this._getRandomPosition();
+            const pos = this._getRandomInitPosition();
             this._particles.push(new Particle(pos, this._getRandomRadius(), DEFAULT_PARTICLE_SPEED, this._getInitDirectionRadians(pos)));
         }
 
@@ -81,6 +89,34 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
         this._container = container;
         this._graphics = graphics;
         return this._container;
+    }
+    private _tick() {
+        // spawn new particles based on density
+        const spawnCountMin = Math.floor(this._density);
+        const spawnCountMax = Math.ceil(this._density);
+        const remainder = this._density - spawnCountMin;
+        // If we are closer to max, the biggest range is [0, remainder],
+        // which should be associated to the max to make it more frequent than min.
+        const spawnCount = Math.random() < remainder ? spawnCountMax : spawnCountMin;
+        for (let i = 0; i < spawnCount; i++) {
+            const radius = this._getRandomRadius();
+            const pos = this._getRandomSpawnPosition(radius);
+            this._particles.push(new Particle(pos, radius, DEFAULT_PARTICLE_SPEED, this._getSpawnDirectionRadians()));
+        }
+
+        // tick particles
+        for (const particle of this._particles) {
+            particle.tick(this._volume);
+        }
+
+        // remove particles that are out of bounds
+        // we use a margin to not kill just spawner particles in the "directional" configuration.
+        this._particles = this._particles.filter(particle => {
+            return particle.position.x + (particle.radius + OUT_OF_BOUNDS_MARGIN) >= 0 &&
+                   particle.position.x - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this._width &&
+                   particle.position.y + (particle.radius + OUT_OF_BOUNDS_MARGIN) >= 0 &&
+                   particle.position.y - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this._height;
+        });
     }
     private _render(graphics: Graphics) {
         graphics.clear();
@@ -98,11 +134,44 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
         return this._tickUnit as TickUnit<unknown>;
     }
 
-    private _getRandomPosition(): Vec2 {
+    /**
+     * Random position for the initial particles
+     */
+    private _getRandomInitPosition(): Vec2 {
         return new Vec2(
             Math.random() * this._width,
             Math.random() * this._height
         );
+    }
+    /**
+     * Random position for spawning new particles during playback
+     */
+    private _getRandomSpawnPosition(radius: number): Vec2 {
+        if (this._flowType === "radial") {
+            return this._flowCenter;
+        } else if (this._flowType === "directional") {
+            // to spread particle evenly, the amount spawned on each side depends on the flow direction
+            // IMPORTANT: 90° is down because the y axis goes downwards in screen coordinates
+            const verticalProbability = Math.abs(Math.sin(this._flowDirection * (Math.PI / 180)));
+            // horizontal probability = 1 - verticalProbability; so deduced and not needed.
+
+            const useVerticalAxis = Math.random() < verticalProbability;
+            if (useVerticalAxis) {
+                // vertical axis
+                const spawnTop = Math.sin(this._flowDirection * (Math.PI / 180)) > 0;
+                const y = spawnTop ? 0 - radius : this._height + radius;
+                const x = Math.random() * this._width;
+                return new Vec2(x, y);
+            } else {
+                // horizontal axis
+                const spawnLeft = Math.cos(this._flowDirection * (Math.PI / 180)) > 0;
+                const x = spawnLeft ? 0 - radius : this._width + radius;
+                const y = Math.random() * this._height;
+                return new Vec2(x, y);
+            }
+        } else {
+            return new Vec2(0, 0);
+        }
     }
 
     private _getRandomRadius(): number {
@@ -119,6 +188,15 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
             // based on the center position, we go away from the center
             const dirVec = pos.sub(this._flowCenter);
             return Math.atan2(dirVec.y, dirVec.x);
+        }
+        return 0;
+    }
+
+    private _getSpawnDirectionRadians(): number {
+        if (this._flowType === "directional") {
+            return this._flowDirection * (Math.PI / 180);
+        } else if (this._flowType === "radial") {
+            return Math.random() * 2 * Math.PI;
         }
         return 0;
     }
@@ -156,5 +234,13 @@ class Particle {
             Math.cos(direction) * speed,
             Math.sin(direction) * speed
         );
-    } 
+    }
+
+    public tick(volume: number): void {
+        this._velocity = new Vec2(
+            Math.cos(this._direction) * this._speed * Math.pow(volume * 10, 2),
+            Math.sin(this._direction) * this._speed * Math.pow(volume * 10, 2)
+        );
+        this._position = this._position.add(this._velocity);
+    }
 }

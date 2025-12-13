@@ -89,7 +89,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
          * use a value below or equal to 0 to disable mapping.
          * This is independent from log scale remapping.
          */
-        mappedLength: 1024,
+        mappedLength: 1024, //FIXME default may create an error?
         minPercent: 0,
         maxPercent: 100
     }
