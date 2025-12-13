@@ -12,14 +12,14 @@ import { withLeadingZero } from '$lib/string';
 import { TickUnit } from './tick_unit';
 
 export class TextTimeStringFormatter extends TickUnit<string> {
-	private static _DEFAULT_VALUE = '00:00 | 00:00';
+	private static DEFAULT_VALUE = '00:00 | 00:00';
 
 	constructor() {
-		super(TextTimeStringFormatter._DEFAULT_VALUE);
+		super(TextTimeStringFormatter.DEFAULT_VALUE);
 	}
 
 	getDefaultValue(): string {
-		return TextTimeStringFormatter._DEFAULT_VALUE;
+		return TextTimeStringFormatter.DEFAULT_VALUE;
 	}
 
 	protected computeNewState(_basis: string, audioProvider: AudioProvider | null): string {

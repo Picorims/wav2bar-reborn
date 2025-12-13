@@ -17,27 +17,27 @@ import type { TickUnit } from '../tick_units/tick_unit';
 import { Log } from '$lib/log/logger';
 
 export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
-	private _saveId: UUIDv4;
-	private _container: Container;
-	private _text: Text;
-	private _tickUnit: TextTimeStringFormatter;
-	private _type: 'any' | 'time' = 'any';
+	private saveId: UUIDv4;
+	private container: Container;
+	private text: Text;
+	private tickUnit: TextTimeStringFormatter;
+	private type: 'any' | 'time' = 'any';
 
 	constructor(saveId: UUIDv4) {
-		this._saveId = saveId;
-		this._container = new Container();
-		this._text = new Text();
-		this._tickUnit = new TextTimeStringFormatter();
+		this.saveId = saveId;
+		this.container = new Container();
+		this.text = new Text();
+		this.tickUnit = new TextTimeStringFormatter();
 
-		this._tickUnit.subscribe((data) => {
-			if (this._type === 'time') {
-				this._text.text = data;
+		this.tickUnit.subscribe((data) => {
+			if (this.type === 'time') {
+				this.text.text = data;
 			}
 		});
 	}
 
 	getTickUnit() {
-		return this._tickUnit as TickUnit<unknown>;
+		return this.tickUnit as TickUnit<unknown>;
 	}
 
 	update(obj: SaveVO_Text): Container {
@@ -47,12 +47,12 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		const shadowDistance = Math.sqrt(textShadow.offsetX ** 2 + textShadow.offsetY ** 2);
 		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
 
-		this._type = obj.text_type;
-		Log.default.debug(this._type, 'this._type');
+		this.type = obj.text_type;
+		Log.default.debug(this.type, 'this._type');
 
 		let textContent = obj.text_content;
-		if (this._type === 'time') {
-			textContent = this._tickUnit.getDefaultValue();
+		if (this.type === 'time') {
+			textContent = this.tickUnit.getDefaultValue();
 		}
 
 		// TODO: type, underline, overline, line through
@@ -84,11 +84,11 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 
 		container.addChild(text);
 
-		this._container = container;
-		this._text = text;
-		return this._container;
+		this.container = container;
+		this.text = text;
+		return this.container;
 	}
 	getContainer(): Container {
-		return this._container;
+		return this.container;
 	}
 }

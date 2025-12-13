@@ -22,65 +22,65 @@ const SPECTRUM_VALUE_RESOLUTION = 65_536;
 export class VO_VisualizerStraightWave
 	implements VisualObjectRenderer<SaveVO_VisualizerStraightWave>
 {
-	private _saveId: UUIDv4;
-	private _container: Container;
-	private _graphics: Graphics;
-	private _debugGraphics: Graphics;
-	private _tickUnit: AudioSpectrumProcessor;
-	private _spectrum: Uint16Array;
-	private _pointsCount: number = 1;
-	private _width: number = 1;
-	private _height: number = 1;
-	private _color: string = '#FFFFFF';
+	private saveId: UUIDv4;
+	private container: Container;
+	private graphics: Graphics;
+	private debugGraphics: Graphics;
+	private tickUnit: AudioSpectrumProcessor;
+	private spectrum: Uint16Array;
+	private pointsCount: number = 1;
+	private width: number = 1;
+	private height: number = 1;
+	private color: string = '#FFFFFF';
 
 	constructor(saveId: UUIDv4) {
-		this._saveId = saveId;
-		this._container = new Container();
-		this._graphics = new Graphics();
-		this._debugGraphics = new Graphics();
-		this._tickUnit = new AudioSpectrumProcessor();
-		this._spectrum = new Uint16Array(0);
-		this._tickUnit.subscribe(([spectrum]) => {
-			this._spectrum = spectrum;
-			this._render(this._graphics, this._debugGraphics);
+		this.saveId = saveId;
+		this.container = new Container();
+		this.graphics = new Graphics();
+		this.debugGraphics = new Graphics();
+		this.tickUnit = new AudioSpectrumProcessor();
+		this.spectrum = new Uint16Array(0);
+		this.tickUnit.subscribe(([spectrum]) => {
+			this.spectrum = spectrum;
+			this.render(this.graphics, this.debugGraphics);
 		});
 	}
 	update(obj: SaveVO_VisualizerStraightWave): Container {
-		this._tickUnit.setMapping({
+		this.tickUnit.setMapping({
 			mappedLength: obj.visualizer_points_count,
 			minPercent: (obj.visualizer_analyzer_range[0] / 1024) * 100,
 			maxPercent: (obj.visualizer_analyzer_range[1] / 1024) * 100
 		});
-		this._tickUnit.setSmoothingParams({
+		this.tickUnit.setSmoothingParams({
 			type: obj.visualization_smoothing_type,
 			factor: obj.visualization_smoothing_factor
 		});
 
-		this._pointsCount = obj.visualizer_points_count;
-		this._width = obj.size.width;
-		this._height = obj.size.height;
-		this._color = obj.color;
+		this.pointsCount = obj.visualizer_points_count;
+		this.width = obj.size.width;
+		this.height = obj.size.height;
+		this.color = obj.color;
 
 		const container = getBaseVOContainer(obj);
 
 		const graphics = new Graphics();
 		const debugGraphics = new Graphics();
-		this._render(graphics, debugGraphics);
+		this.render(graphics, debugGraphics);
 		container.addChild(graphics);
 		if (DRAW_DEBUG) {
 			container.addChild(debugGraphics);
 		}
 
-		this._container = container;
-		this._graphics = graphics;
-		this._debugGraphics = debugGraphics;
-		return this._container;
+		this.container = container;
+		this.graphics = graphics;
+		this.debugGraphics = debugGraphics;
+		return this.container;
 	}
-	private _render(graphics: Graphics, debugGraphics: Graphics): void {
-		if (this._spectrum.length === 0) {
+	private render(graphics: Graphics, debugGraphics: Graphics): void {
+		if (this.spectrum.length === 0) {
 			return;
 		}
-		if (this._pointsCount !== this._spectrum.length) {
+		if (this.pointsCount !== this.spectrum.length) {
 			// should not happen if mapping is set correctly
 			console.warn('Points count does not match spectrum length');
 		}
@@ -88,9 +88,9 @@ export class VO_VisualizerStraightWave
 		if (DRAW_DEBUG) {
 			debugGraphics.clear();
 		}
-		const pointsCount = this._pointsCount;
-		const containerWidth = this._width;
-		const containerHeight = this._height;
+		const pointsCount = this.pointsCount;
+		const containerWidth = this.width;
+		const containerHeight = this.height;
 
 		const step = containerWidth / Math.max(pointsCount - 1, 1);
 
@@ -98,7 +98,7 @@ export class VO_VisualizerStraightWave
 
 		// compute points and control points
 		for (let i = 0; i < pointsCount; i++) {
-			const magnitude = this._spectrum[i] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
+			const magnitude = this.spectrum[i] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
 			const barHeight = magnitude * containerHeight;
 			const x = i * step;
 			const y = containerHeight - barHeight;
@@ -119,12 +119,12 @@ export class VO_VisualizerStraightWave
 			const nextIndex = Math.min(i + 1, pointsCount - 1);
 
 			const prevX = prevIndex * step;
-			const prevMagnitude = this._spectrum[prevIndex] / SPECTRUM_VALUE_RESOLUTION;
+			const prevMagnitude = this.spectrum[prevIndex] / SPECTRUM_VALUE_RESOLUTION;
 			const prevBarHeight = prevMagnitude * containerHeight;
 			const prevY = containerHeight - prevBarHeight;
 
 			const nextX = nextIndex * step;
-			const nextMagnitude = this._spectrum[nextIndex] / SPECTRUM_VALUE_RESOLUTION;
+			const nextMagnitude = this.spectrum[nextIndex] / SPECTRUM_VALUE_RESOLUTION;
 			const nextBarHeight = nextMagnitude * containerHeight;
 			const nextY = containerHeight - nextBarHeight;
 
@@ -152,12 +152,12 @@ export class VO_VisualizerStraightWave
 		// same computation for the move as inside the loop for i=0
 		graphics.moveTo(
 			0,
-			containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight
+			containerHeight - (this.spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight
 		);
 		if (DRAW_DEBUG) {
 			debugGraphics.moveTo(
 				0,
-				containerHeight - (this._spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight
+				containerHeight - (this.spectrum[0] / SPECTRUM_VALUE_RESOLUTION) * containerHeight
 			);
 		}
 
@@ -190,13 +190,13 @@ export class VO_VisualizerStraightWave
 		graphics.lineTo(containerWidth, containerHeight);
 		graphics.lineTo(0, containerHeight);
 		graphics.closePath();
-		graphics.fill(this._color);
+		graphics.fill(this.color);
 	}
 
 	getContainer(): Container {
-		return this._container;
+		return this.container;
 	}
 	getTickUnit() {
-		return this._tickUnit as TickUnit<unknown>;
+		return this.tickUnit as TickUnit<unknown>;
 	}
 }

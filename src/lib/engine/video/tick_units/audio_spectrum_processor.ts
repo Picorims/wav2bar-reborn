@@ -81,8 +81,8 @@ const easeFunction: Record<
 };
 
 export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
-	private static _DEFAULT_VALUE: SpectrumData = [new Uint16Array(0), new Uint16Array(0)];
-	private _mapping: Mapping = {
+	private static DEFAULT_VALUE: SpectrumData = [new Uint16Array(0), new Uint16Array(0)];
+	private mapping: Mapping = {
 		/**
 		 * If true, the spectrum will be converted to a logarithmic scale.
 		 * This is independent from mapping.
@@ -96,31 +96,31 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		minPercent: 0,
 		maxPercent: 100
 	};
-	private _previousSpectrum: Uint16Array = new Uint16Array(0);
-	private _spectrumSmoothingParams: SpectrumSmoothingParams = {
+	private previousSpectrum: Uint16Array = new Uint16Array(0);
+	private spectrumSmoothingParams: SpectrumSmoothingParams = {
 		type: 'average',
 		factor: 0.8
 	};
 
 	constructor() {
-		super(AudioSpectrumProcessor._DEFAULT_VALUE);
+		super(AudioSpectrumProcessor.DEFAULT_VALUE);
 	}
 
 	setMapping(mapping: Partial<Mapping>) {
-		this._mapping = {
-			...this._mapping,
+		this.mapping = {
+			...this.mapping,
 			...mapping
 		};
 	}
 	setSmoothingParams(params: Partial<SpectrumSmoothingParams>) {
-		this._spectrumSmoothingParams = {
-			...this._spectrumSmoothingParams,
+		this.spectrumSmoothingParams = {
+			...this.spectrumSmoothingParams,
 			...params
 		};
 	}
 
 	getDefaultValue(): SpectrumData {
-		return AudioSpectrumProcessor._DEFAULT_VALUE;
+		return AudioSpectrumProcessor.DEFAULT_VALUE;
 	}
 
 	protected computeNewState(
@@ -132,21 +132,21 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		}
 		let spectrum = audioProvider.getCurrentAudioSpectrum();
 		const frequencies = audioProvider.getFrequencies();
-		if (this._mapping.toLog) {
+		if (this.mapping.toLog) {
 			spectrum = this.toLogSpectrum(spectrum, frequencies);
 		}
-		if (this._mapping.mappedLength > 0) {
+		if (this.mapping.mappedLength > 0) {
 			spectrum = this.mappedArray(
 				spectrum,
-				this._mapping.mappedLength,
-				Math.floor((this._mapping.minPercent * spectrum.length) / 100),
-				Math.ceil((this._mapping.maxPercent * spectrum.length) / 100)
+				this.mapping.mappedLength,
+				Math.floor((this.mapping.minPercent * spectrum.length) / 100),
+				Math.ceil((this.mapping.maxPercent * spectrum.length) / 100)
 			);
 		}
 
-		this._easeSpectrum(spectrum);
+		this.easeSpectrum(spectrum);
 
-		this._previousSpectrum = spectrum;
+		this.previousSpectrum = spectrum;
 		return [spectrum, frequencies];
 	}
 
@@ -311,15 +311,15 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		return sum / spectrum.length;
 	}
 
-	private _easeSpectrum(spectrum: Uint16Array): void {
+	private easeSpectrum(spectrum: Uint16Array): void {
 		for (let i = 0; i < spectrum.length; i++) {
-			const prev = this._previousSpectrum[i] || 0;
+			const prev = this.previousSpectrum[i] || 0;
 			const curr = spectrum[i];
-			spectrum[i] = easeFunction[this._spectrumSmoothingParams.type]({
+			spectrum[i] = easeFunction[this.spectrumSmoothingParams.type]({
 				prev,
 				curr,
 				maxT: 65_535,
-				factor: this._spectrumSmoothingParams.factor
+				factor: this.spectrumSmoothingParams.factor
 			});
 		}
 	}

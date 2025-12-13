@@ -50,7 +50,9 @@ export function clamp(value: number, min: number, max: number): number {
  * Immutable 2D vector class (always return new instances on operations)
  */
 export class Vec2 {
+	// eslint-disable-next-line no-underscore-dangle
 	private _x: number;
+	// eslint-disable-next-line no-underscore-dangle
 	private _y: number;
 	get x(): number {
 		return this._x;

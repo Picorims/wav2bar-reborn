@@ -293,10 +293,10 @@ describe('validator', () => {
 
 		for (const test in tests) {
 			it(test, () => {
-				const test_ = test as ValidatorName;
-				for (const [value, expected] of tests[test_]) {
+				const testName = test as ValidatorName;
+				for (const [value, expected] of tests[testName]) {
 					const testFunction = () => {
-						const result = validators[test_].f(value);
+						const result = validators[testName].f(value);
 						expect(result, test).toHaveProperty('success');
 						expect(result, test).toHaveProperty('logs');
 						expect(result.success, `${test} with ${value} shall be ${expected}`).toBe(expected);

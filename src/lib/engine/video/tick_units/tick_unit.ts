@@ -10,24 +10,24 @@
 import type { AudioProvider } from '$lib/engine/audio/audio_provider';
 
 export abstract class TickUnit<T> {
-	private _subscriptions: ((data: T) => void)[] = [];
-	private _state: T;
+	private subscriptions: ((data: T) => void)[] = [];
+	private state: T;
 
 	constructor(initState: T) {
-		this._state = initState;
+		this.state = initState;
 	}
 
 	subscribe(callback: (data: T) => void) {
-		this._subscriptions.push(callback);
+		this.subscriptions.push(callback);
 	}
 
 	unsubscribe(callback: (data: T) => void) {
-		this._subscriptions = this._subscriptions.filter((subscription) => subscription !== callback);
+		this.subscriptions = this.subscriptions.filter((subscription) => subscription !== callback);
 	}
 
 	private dispatchTick() {
-		this._subscriptions.forEach((subscription) => {
-			subscription(this._state);
+		this.subscriptions.forEach((subscription) => {
+			subscription(this.state);
 		});
 	}
 
@@ -35,7 +35,7 @@ export abstract class TickUnit<T> {
 	protected abstract computeNewState(basis: T, audioProvider: AudioProvider | null): T;
 
 	public tick(audioProvider: AudioProvider | null) {
-		this._state = this.computeNewState(this._state, audioProvider);
+		this.state = this.computeNewState(this.state, audioProvider);
 		this.dispatchTick();
 	}
 }

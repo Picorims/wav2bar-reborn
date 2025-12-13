@@ -11,14 +11,14 @@ import type { AudioProvider } from '$lib/engine/audio/audio_provider';
 import { TickUnit } from './tick_unit';
 
 export class TrackProgressTracker extends TickUnit<number> {
-	private static _DEFAULT_VALUE = 0;
+	private static DEFAULT_VALUE = 0;
 
 	constructor() {
-		super(TrackProgressTracker._DEFAULT_VALUE);
+		super(TrackProgressTracker.DEFAULT_VALUE);
 	}
 
 	getDefaultValue(): number {
-		return TrackProgressTracker._DEFAULT_VALUE;
+		return TrackProgressTracker.DEFAULT_VALUE;
 	}
 
 	protected computeNewState(_basis: number, audioProvider: AudioProvider | null): number {
