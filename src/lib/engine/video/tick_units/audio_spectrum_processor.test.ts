@@ -112,4 +112,19 @@ describe("AudioSpectrumProcessor", () => {
             assert.deepEqual(mapped, new Uint16Array([20, 20, 30, 30, 40, 40]));
         });
     });
+
+    describe("average", () => {
+        it("should compute average of full array", async () => {
+            const processor = new (await import("./audio_spectrum_processor")).AudioSpectrumProcessor();
+            const arr = new Uint16Array([10, 20, 30, 40, 50]);
+            const avg = processor.average(arr);
+            assert.equal(avg, 30);
+        });
+        it("should return 0 for empty array", async () => {
+            const processor = new (await import("./audio_spectrum_processor")).AudioSpectrumProcessor();
+            const arr = new Uint16Array([]);
+            const avg = processor.average(arr);
+            assert.equal(avg, 0);
+        });
+    });
 });

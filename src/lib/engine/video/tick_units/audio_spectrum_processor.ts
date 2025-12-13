@@ -89,7 +89,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
          * use a value below or equal to 0 to disable mapping.
          * This is independent from log scale remapping.
          */
-        mappedLength: 1024,
+        mappedLength: 1024, //FIXME default may create an error?
         minPercent: 0,
         maxPercent: 100
     }
@@ -290,6 +290,17 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
         //RETURN THE NEW ARRAY TO THE CALL
         return newArray;
+    }
+
+    average(spectrum: Uint16Array): number {
+        if (spectrum.length === 0) {
+            return 0;
+        }
+        let sum = 0;
+        for (let i = 0; i < spectrum.length; i++) {
+            sum += spectrum[i];
+        }
+        return sum / spectrum.length;
     }
 
     private _easeSpectrum(spectrum: Uint16Array): void {
