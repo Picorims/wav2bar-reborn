@@ -11,7 +11,6 @@
 	import { MoveVertical, XCircle } from 'lucide-svelte';
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
-
 	interface Props {
 		title?: string;
 		unit?: string;
@@ -56,7 +55,7 @@
 		valid = input.checkValidity();
 		if (valid) lastValidValue = value;
 	};
-	const handleOnChange = (e: Event) => {
+	const handleOnChange = () => {
 		checkValidity();
 		if (valid) onChange(value);
 	};

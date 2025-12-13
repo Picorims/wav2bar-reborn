@@ -8,6 +8,6 @@
 */
 
 declare namespace globalThis {
-    // eslint-disable-next-line no-var
-    var __PIXI_APP__: PIXI.Application;
+	// eslint-disable-next-line no-var
+	var __PIXI_APP__: PIXI.Application;
 }

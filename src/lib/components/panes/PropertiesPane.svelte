@@ -1,20 +1,14 @@
 <script lang="ts">
-	import { saveManager } from '$lib/store/save.svelte';
-	import { AlignCenter } from 'lucide-svelte';
-	import Accordion from '../atoms/Accordion.svelte';
-	import Button from '../atoms/buttons_group/Button.svelte';
-	import ButtonsGroup from '../atoms/buttons_group/ButtonsGroup.svelte';
-	import ButtonsRow from '../atoms/buttons_group/ButtonsRow.svelte';
-	import LabeledInputNumber from '../atoms/LabeledInputNumber.svelte';
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
-
+	
 	This Source Code Form is subject to the terms of the Mozilla Public
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 
+	import { saveManager } from '$lib/store/save.svelte';
 	import VisualObjectIcon from '../atoms/VisualObjectIcon.svelte';
 	import ParticleFlowPs from '../property_pane_sets/ParticleFlowPS.svelte';
 	import ShapePs from '../property_pane_sets/ShapePS.svelte';

@@ -12,9 +12,9 @@ export const prerender = true;
 /**
  * @see https://svelte.dev/docs/kit/single-page-apps
  */
-export const ssr = false; 
+export const ssr = false;
 
-import "$lib/css/global.scss";
+import '$lib/css/global.scss';
 
 // === done through @use and @forward, hence the commented imports below vvvvvv
 

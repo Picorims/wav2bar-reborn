@@ -10,13 +10,13 @@
 // see: https://www.typescriptlang.org/docs/handbook/enums.html#objects-vs-enums
 
 export const ThemeOptions = {
-    DEFAULT: "DEFAULT",
-    DARK: "DARK",
-    LIGHT: "LIGHT",
+	DEFAULT: 'DEFAULT',
+	DARK: 'DARK',
+	LIGHT: 'LIGHT'
 } as const;
-export type ThemesType = typeof ThemeOptions[keyof typeof ThemeOptions];
+export type ThemesType = (typeof ThemeOptions)[keyof typeof ThemeOptions];
 
 export const LanguageOptions = {
-    ENGLISH: "EN",
+	ENGLISH: 'EN'
 } as const;
-export type LanguagesType = typeof LanguageOptions[keyof typeof LanguageOptions];
+export type LanguagesType = (typeof LanguageOptions)[keyof typeof LanguageOptions];

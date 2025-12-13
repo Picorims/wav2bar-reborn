@@ -11,7 +11,6 @@
 	import { XCircle } from 'lucide-svelte';
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
-
 	// forwards =====
 	// =====
 	interface Props {
@@ -32,7 +31,7 @@
 		disabled = false,
 		required = true,
 		pattern = /.+/g,
-		defaultValue = "",
+		defaultValue = '',
 		value = $bindable(defaultValue)
 	}: Props = $props();
 	let lastValidValue: string = value;
@@ -50,7 +49,7 @@
 		valid = input.checkValidity();
 		if (valid) lastValidValue = value;
 	};
-	const handleOnChange = (e: Event) => {
+	const handleOnChange = () => {
 		checkValidity();
 		if (valid) onChange(value);
 	};

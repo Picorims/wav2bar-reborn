@@ -22,7 +22,7 @@ export interface CSSTextShadow {
 	blurRadius: number;
 	color: string;
 }
-export function parseCSSTextShadow(str: string): CSSTextShadow { 
+export function parseCSSTextShadow(str: string): CSSTextShadow {
 	if (str === 'none' || str === '') {
 		return {
 			offsetX: 0,
@@ -32,16 +32,16 @@ export function parseCSSTextShadow(str: string): CSSTextShadow {
 		};
 	}
 
-	const keywords = str.replaceAll(";","").split(' ');
+	const keywords = str.replaceAll(';', '').split(' ');
 	const values: CSSTextShadow = {
 		offsetX: 0,
 		offsetY: 0,
 		blurRadius: 0,
 		color: 'black'
 	};
-	
+
 	let pxKeywordIndex = 0;
-	
+
 	for (let i = 0; i < keywords.length; i++) {
 		if (keywords[i].endsWith('px')) {
 			if (pxKeywordIndex === 0) {
@@ -61,8 +61,8 @@ export function parseCSSTextShadow(str: string): CSSTextShadow {
 }
 
 /**
- * 
- * @param ms 
+ *
+ * @param ms
  * @returns "MM:SS" formatted string
  */
 export function msToMMSS(ms: number): string {
@@ -72,7 +72,7 @@ export function msToMMSS(ms: number): string {
 }
 
 /**
- * 
+ *
  * @param n value to process
  * @returns value with a leading zero if it is less than 10
  */

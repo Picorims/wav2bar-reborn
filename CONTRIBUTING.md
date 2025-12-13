@@ -23,6 +23,7 @@ Make sure the suggestion do not already have a dedicated issue opened. Describe 
 ### Fixing an issue, adding a feature, modifying the codebase
 
 First, thanks for your interest! Here is a step by step guide for you:
+
 - Add an issue corresponding to your contribution (which also opens discussion before diving too fast straight into code!)
 - Fork the repository;
 - Create a new branch;
@@ -35,6 +36,7 @@ First, thanks for your interest! Here is a step by step guide for you:
 ### Good first issues
 
 If you are new to contributing, here are some easy contributions:
+
 - opening detailed bug reports;
 - issues labelled as good first issues if any is available;
 - documentation detailing;
@@ -45,5 +47,6 @@ If you are new to contributing, here are some easy contributions:
 ### Contributions that doesn't help
 
 Make sure to check the following list before contributing:
+
 - Fixes about forgotten spaces or else alone are not worth it.
 - A too vague issue, or an issue with no reproducing steps is unlikely to be fixed.

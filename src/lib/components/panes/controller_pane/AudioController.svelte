@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -8,53 +8,61 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import IconButton from "$lib/components/atoms/IconButton.svelte";
-	import SeparatorVertical from "$lib/components/atoms/SeparatorVertical.svelte";
-	import { renderer } from "$lib/engine/video/renderer";
-	import { msToMMSS } from "$lib/string";
-	import { SkipBack, CirclePlay, CirclePause, SkipForward, IterationCw, IterationCcw, Repeat } from "lucide-svelte";
-	import { onMount } from "svelte";
+	import IconButton from '$lib/components/atoms/IconButton.svelte';
+	import SeparatorVertical from '$lib/components/atoms/SeparatorVertical.svelte';
+	import { renderer } from '$lib/engine/video/renderer';
+	import { msToMMSS } from '$lib/string';
+	import {
+		SkipBack,
+		CirclePlay,
+		CirclePause,
+		SkipForward,
+		IterationCw,
+		IterationCcw,
+		Repeat
+	} from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
-    let paused = $state(true);
-    let sliderValue = $state(0);
-    let progressMs = $state(0);
-    let durationMs = $state(0);
+	let paused = $state(true);
+	let sliderValue = $state(0);
+	let progressMs = $state(0);
+	let durationMs = $state(0);
 
-    function togglePause() {
-        paused = !paused;
-        if (paused) {
-            // Pause audio
-            renderer.pauseTick();
-        } else {
-            // Play audio
-            renderer.play();
-        }
-    }
+	function togglePause() {
+		paused = !paused;
+		if (paused) {
+			// Pause audio
+			renderer.pauseTick();
+		} else {
+			// Play audio
+			renderer.play();
+		}
+	}
 
-    function seekToStart() {
-        renderer.seekToStart();
-    }
-    function seekToEnd() {
-        renderer.seekToEnd();
-    }
+	function seekToStart() {
+		renderer.seekToStart();
+	}
+	function seekToEnd() {
+		renderer.seekToEnd();
+	}
 
-    function updateSlider() {
-        if (!renderer) return;
-        progressMs = renderer.getProgress();
-        durationMs = renderer.getDuration();
-        sliderValue = progressMs / durationMs * 100;
-    }
+	function updateSlider() {
+		if (!renderer) return;
+		progressMs = renderer.getProgress();
+		durationMs = renderer.getDuration();
+		sliderValue = (progressMs / durationMs) * 100;
+	}
 
-    function onInput(event: Event) {
-        const target = event.target as HTMLInputElement;
-        const value = Number(target.value);
-        renderer.seekToPercent(value);
-    }
+	function onInput(event: Event) {
+		const target = event.target as HTMLInputElement;
+		const value = Number(target.value);
+		renderer.seekToPercent(value);
+	}
 
-    onMount(() => {
+	onMount(() => {
 		const interval = setInterval(() => {
-            updateSlider();
-            paused = renderer.isPaused();
+			updateSlider();
+			paused = renderer.isPaused();
 		}, 100);
 
 		return () => {
@@ -64,52 +72,57 @@
 </script>
 
 <div class="container">
-    <IconButton onClick={seekToStart}>
-        <SkipBack/>
-    </IconButton>
-    <IconButton onClick={togglePause}>
-        {#if paused}
-            <CirclePlay/>
-        {:else}
-            <CirclePause/>
-        {/if}
-    </IconButton>
-    <IconButton onClick={seekToEnd}>
-        <SkipForward/>
-    </IconButton>
-    <input type="range" min="0" max="100" value={sliderValue} class="slider" oninput={onInput}/>
-    <span class="time-text">{msToMMSS(progressMs)} / {msToMMSS(durationMs)}</span>
-    <SeparatorVertical/>
-    <IconButton onClick={() => renderer.seekToRelative( -5000 )}>
-        <IterationCw/>
-    </IconButton>
-    <IconButton onClick={() => renderer.seekToRelative( 5000 )}>
-        <IterationCcw/>
-    </IconButton>
-    <IconButton togglable onToggle={(looped) => {renderer.shallLoop(looped);}}>
-        <Repeat/>
-    </IconButton>
+	<IconButton onClick={seekToStart}>
+		<SkipBack />
+	</IconButton>
+	<IconButton onClick={togglePause}>
+		{#if paused}
+			<CirclePlay />
+		{:else}
+			<CirclePause />
+		{/if}
+	</IconButton>
+	<IconButton onClick={seekToEnd}>
+		<SkipForward />
+	</IconButton>
+	<input type="range" min="0" max="100" value={sliderValue} class="slider" oninput={onInput} />
+	<span class="time-text">{msToMMSS(progressMs)} / {msToMMSS(durationMs)}</span>
+	<SeparatorVertical />
+	<IconButton onClick={() => renderer.seekToRelative(-5000)}>
+		<IterationCw />
+	</IconButton>
+	<IconButton onClick={() => renderer.seekToRelative(5000)}>
+		<IterationCcw />
+	</IconButton>
+	<IconButton
+		togglable
+		onToggle={(looped) => {
+			renderer.shallLoop(looped);
+		}}
+	>
+		<Repeat />
+	</IconButton>
 </div>
 
 <style lang="scss">
-    @use "../../../css/globals_forward.scss" as g;
+	@use '../../../css/globals_forward.scss' as g;
 
-    div.container {
-        display: flex;
-        flex-direction: row;
-        justify-content: flex-start;
-        align-items: center;
-        gap: g.$spacing-s;
-    }
+	div.container {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-start;
+		align-items: center;
+		gap: g.$spacing-s;
+	}
 
-    input.slider {
-        width: 150px;
-    }
+	input.slider {
+		width: 150px;
+	}
 
-    span.time-text {
-        @include g.text;
-        color: g.$color-text-800;
-        width: g.$size-3xl;
-        text-align: center;
-    }
+	span.time-text {
+		@include g.text;
+		color: g.$color-text-800;
+		width: g.$size-3xl;
+		text-align: center;
+	}
 </style>

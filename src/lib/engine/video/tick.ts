@@ -7,9 +7,9 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { floor } from "$lib/math";
-import type { AudioProvider } from "../audio/audio_provider";
-import type { TickUnit } from "./tick_units/tick_unit";
+import { floor } from '$lib/math';
+import type { AudioProvider } from '../audio/audio_provider';
+import type { TickUnit } from './tick_units/tick_unit';
 
 /**
  * manage the rendering state of the engine,
@@ -28,18 +28,18 @@ export class TickEngine {
 	 * in ms
 	 */
 	private _now: DOMHighResTimeStamp = 0;
-    /**
-     * in ms
-     */
-    private _whenPaused: DOMHighResTimeStamp = 0;
-    private _isPlaying = false;
-    /**
-     * ticks per second
-     */
-    public tps = 60;
+	/**
+	 * in ms
+	 */
+	private _whenPaused: DOMHighResTimeStamp = 0;
+	private _isPlaying = false;
+	/**
+	 * ticks per second
+	 */
+	public tps = 60;
 
-    private _tickUnits: TickUnit<unknown>[] = [];
-    private _audioProvider: AudioProvider | null = null;
+	private _tickUnits: TickUnit<unknown>[] = [];
+	private _audioProvider: AudioProvider | null = null;
 
 	constructor() {
 		this.reset();
@@ -49,22 +49,22 @@ export class TickEngine {
 		this._init = 0;
 		this._then = 0;
 		this._now = 0;
-        this._whenPaused = 0;
-        this._isPlaying = false;
-        this._tickUnits = [];
+		this._whenPaused = 0;
+		this._isPlaying = false;
+		this._tickUnits = [];
 	}
 
-    public setAudioProvider(audioProvider: AudioProvider) {
-        this._audioProvider = audioProvider;
-    }
+	public setAudioProvider(audioProvider: AudioProvider) {
+		this._audioProvider = audioProvider;
+	}
 
-    public addTickUnit(tickUnit: TickUnit<unknown>) {
-        this._tickUnits.push(tickUnit);
-    }
+	public addTickUnit(tickUnit: TickUnit<unknown>) {
+		this._tickUnits.push(tickUnit);
+	}
 
-    public removeTickUnit(tickUnit: TickUnit<unknown>) {
-        this._tickUnits = this._tickUnits.filter(unit => unit !== tickUnit);
-    }
+	public removeTickUnit(tickUnit: TickUnit<unknown>) {
+		this._tickUnits = this._tickUnits.filter((unit) => unit !== tickUnit);
+	}
 
 	private getWindowNow() {
 		return window.performance.now();
@@ -72,65 +72,65 @@ export class TickEngine {
 
 	play() {
 		this._isPlaying = true;
-        if (this._init === 0) {
-            this._init = this.getWindowNow();
-        } else {
-            /** shift the timeline to the duration ellapsed 
-             * to make it as it never stopped
-             */
-            this._init += this.getWindowNow() - this._whenPaused;
-        }
+		if (this._init === 0) {
+			this._init = this.getWindowNow();
+		} else {
+			/** shift the timeline to the duration ellapsed
+			 * to make it as it never stopped
+			 */
+			this._init += this.getWindowNow() - this._whenPaused;
+		}
 	}
 
-    pause() {
-        this._isPlaying = false;
-        this._whenPaused = this.getWindowNow();
-    }
+	pause() {
+		this._isPlaying = false;
+		this._whenPaused = this.getWindowNow();
+	}
 
 	stop() {
 		this.reset();
 	}
 
-    /**
-     * call `tickOnce()` as many times as needed
-     * based on ellapsed time and `tps`.
-     * @returns 
-     */
+	/**
+	 * call `tickOnce()` as many times as needed
+	 * based on ellapsed time and `tps`.
+	 * @returns
+	 */
 	tick() {
 		if (!this._isPlaying) return;
 		this._now = this.getWindowNow();
 		const thenFrame = floor(this._then, 1000 / this.tps, this._init) / this.tps;
-        const nowFrame = floor(this._now, 1000 / this.tps, this._init) / this.tps;
-        /**
-         * Number of ticks to perform
-         */
-        const deltaFrame = nowFrame - thenFrame;
+		const nowFrame = floor(this._now, 1000 / this.tps, this._init) / this.tps;
+		/**
+		 * Number of ticks to perform
+		 */
+		const deltaFrame = nowFrame - thenFrame;
 
-        if (deltaFrame < 1) return;
-        
-        for (let i = 0; i < deltaFrame; i++) {
-            this.tickOnce();
-        }
-        this._then = this._now;
+		if (deltaFrame < 1) return;
+
+		for (let i = 0; i < deltaFrame; i++) {
+			this.tickOnce();
+		}
+		this._then = this._now;
 	}
 
 	/**
-     * Update the state of the engine.
-     * If using tick, this is already called.
-     * Otherwise, it can be used for asynchronous (i.e manual)
-     * control.
-     */
-    tickOnce() {
-        // =========================== /!\ /!\ /!\ ===============================
-        // ALL UPDATES ARE FRAME BASED, NOT TIME BASED !!! (tick() is time based)
-        // =========================== /!\ /!\ /!\ ===============================
-    
-        for (const tickUnit of this._tickUnits) {
-            tickUnit.tick(this._audioProvider);
-        }
-    }
+	 * Update the state of the engine.
+	 * If using tick, this is already called.
+	 * Otherwise, it can be used for asynchronous (i.e manual)
+	 * control.
+	 */
+	tickOnce() {
+		// =========================== /!\ /!\ /!\ ===============================
+		// ALL UPDATES ARE FRAME BASED, NOT TIME BASED !!! (tick() is time based)
+		// =========================== /!\ /!\ /!\ ===============================
 
-    clearAllTickUnits() {
-        this._tickUnits = [];
-    }
+		for (const tickUnit of this._tickUnits) {
+			tickUnit.tick(this._audioProvider);
+		}
+	}
+
+	clearAllTickUnits() {
+		this._tickUnits = [];
+	}
 }

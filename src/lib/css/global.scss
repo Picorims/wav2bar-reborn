@@ -111,10 +111,10 @@ svg.grip-vertical {
 input[type='range'] {
 	height: 22px;
 	-webkit-appearance: none;
-    appearance: none;
+	appearance: none;
 	margin: 10px 0;
 	width: 100%;
-    background-color: transparent;
+	background-color: transparent;
 
 	&:focus {
 		outline: none;
@@ -126,7 +126,7 @@ input[type='range'] {
 		animate: 0.2s;
 		background: g.$color-primary;
 		border-radius: 4px;
-        border:none;
+		border: none;
 	}
 	&::-webkit-slider-thumb {
 		height: 16px;
@@ -136,7 +136,7 @@ input[type='range'] {
 		cursor: pointer;
 		-webkit-appearance: none;
 		margin-top: -6px;
-        border: none;
+		border: none;
 	}
 	&:focus::-webkit-slider-runnable-track {
 		background: g.$color-primary-700;
@@ -148,18 +148,19 @@ input[type='range'] {
 		animate: 0.2s;
 		background: g.$color-primary;
 		border-radius: 4px;
-        border: none;
+		border: none;
 	}
-    &:focus::-moz-range-track, &:active::-moz-range-track {
-        background: g.$color-primary-700;
-    }
+	&:focus::-moz-range-track,
+	&:active::-moz-range-track {
+		background: g.$color-primary-700;
+	}
 	&::-moz-range-thumb {
 		height: 16px;
 		width: 16px;
 		border-radius: 16px;
 		background: g.$color-background-950;
 		cursor: pointer;
-        border: none;
+		border: none;
 	}
 	&::-ms-track {
 		width: 100%;
@@ -169,17 +170,17 @@ input[type='range'] {
 		background: transparent;
 		border-color: transparent;
 		color: transparent;
-        border: none;
+		border: none;
 	}
 	&::-ms-fill-lower {
 		background: g.$color-primary;
 		border-radius: 8px;
-        border: none;
+		border: none;
 	}
 	&::-ms-fill-upper {
 		background: g.$color-primary;
 		border-radius: 8px;
-        border: none;
+		border: none;
 	}
 	&::-ms-thumb {
 		margin-top: 1px;
@@ -188,20 +189,22 @@ input[type='range'] {
 		border-radius: 16px;
 		background: g.$color-background-950;
 		cursor: pointer;
-        border: none;
+		border: none;
 	}
-	&:focus::-ms-fill-lower, &:active::-ms-fill-lower {
+	&:focus::-ms-fill-lower,
+	&:active::-ms-fill-lower {
 		background: g.$color-primary-700;
 	}
-	&:focus::-ms-fill-upper, &:active::-ms-fill-upper {
+	&:focus::-ms-fill-upper,
+	&:active::-ms-fill-upper {
 		background: g.$color-primary-700;
 	}
 }
 
 progress {
 	/* Reset the default appearance */
-  	-webkit-appearance: none;
-   	appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
 
 	height: g.$size-2xs;
 	border: none;

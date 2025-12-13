@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -12,11 +12,11 @@
 <div class="separator"></div>
 
 <style lang="scss">
-    @use '../../css/globals_forward.scss' as g;
+	@use '../../css/globals_forward.scss' as g;
 
-    .separator {
-        width: g.$size-5xs;
-        height: g.$size-ms;
-        background-color: g.$color-background-800;
-    }
+	.separator {
+		width: g.$size-5xs;
+		height: g.$size-ms;
+		background-color: g.$color-background-800;
+	}
 </style>

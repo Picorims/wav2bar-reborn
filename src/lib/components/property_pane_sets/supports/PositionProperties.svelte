@@ -24,10 +24,7 @@
 		ArrowDownToLine,
 		ArrowLeftToLine,
 		ArrowRightToLine,
-		ArrowUpToLine,
-		Move,
-		MoveHorizontal,
-		MoveVertical
+		ArrowUpToLine
 	} from 'lucide-svelte';
 
 	function updateX(value: number) {
@@ -99,32 +96,32 @@
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.position.buttons.left} onClick={toLeft}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<ArrowLeftToLine slot="icon-r" />
+				<ArrowLeftToLine slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.position.buttons.horizontal_center}
 				onClick={horizontalCenter}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<AlignHorizontalSpaceAround slot="icon-r" />
+				<AlignHorizontalSpaceAround slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.right} onClick={toRight}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<ArrowRightToLine slot="icon-r" />
+				<ArrowRightToLine slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.position.buttons.top} onClick={toTop}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<ArrowUpToLine slot="icon-r" />
+				<ArrowUpToLine slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.vertical_center} onClick={verticalCenter}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<AlignVerticalSpaceAround slot="icon-r" />
+				<AlignVerticalSpaceAround slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.position.buttons.bottom} onClick={toBottom}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<ArrowDownToLine slot="icon-r" />
+				<ArrowDownToLine slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 	</ButtonsGroup>

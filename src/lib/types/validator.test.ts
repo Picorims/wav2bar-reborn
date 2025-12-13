@@ -493,5 +493,4 @@ describe('validator', () => {
 			logs: 'The value "d" is not in the valid list: a, b, c.\n'
 		});
 	});
-		
 });

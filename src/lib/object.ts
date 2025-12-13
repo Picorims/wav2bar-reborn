@@ -14,5 +14,5 @@
  * @returns {Boolean}
  */
 export function objHasOwnProp(object: object, prop: PropertyKey) {
-    return Object.prototype.hasOwnProperty.call(object, prop);
+	return Object.prototype.hasOwnProperty.call(object, prop);
 }

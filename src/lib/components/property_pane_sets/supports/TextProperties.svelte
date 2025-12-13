@@ -7,7 +7,7 @@
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
-   
+
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
@@ -84,12 +84,12 @@
 		});
 	}
 
-    function updateTextShadow(value: string) {
-        saveManager.mutateActiveObject<ObjT>((obj) => {
-            obj.text_shadow = value as Supports_TextProps['text_shadow'];
-            return obj;
-        });
-    }
+	function updateTextShadow(value: string) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.text_shadow = value as Supports_TextProps['text_shadow'];
+			return obj;
+		});
+	}
 </script>
 
 <Accordion label={$lang.properties.text.title} open>
@@ -123,7 +123,7 @@
 				onToggle={updateItalic}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<Italic slot="icon-r" />
+				<Italic slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.bold}
@@ -132,7 +132,7 @@
 				onToggle={updateBold}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<Bold slot="icon-r" />
+				<Bold slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.underline}
@@ -141,7 +141,7 @@
 				onToggle={updateUnderline}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<Underline slot="icon-r" />
+				<Underline slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.overline}
@@ -150,7 +150,7 @@
 				onToggle={updateOverline}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<ArrowUpToLine slot="icon-r" />
+				<ArrowUpToLine slot="icon-r" />
 			</Button>
 			<Button
 				title={$lang.properties.text.text_decoration.line_through}
@@ -159,7 +159,7 @@
 				onToggle={updateLineThrough}
 			>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<Strikethrough slot="icon-r" />
+				<Strikethrough slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 	</ButtonsGroup>

@@ -7,39 +7,38 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import type { AudioProvider } from "$lib/engine/audio/audio_provider";
-import { withLeadingZero } from "$lib/string";
-import { TickUnit } from "./tick_unit";
+import type { AudioProvider } from '$lib/engine/audio/audio_provider';
+import { withLeadingZero } from '$lib/string';
+import { TickUnit } from './tick_unit';
 
 export class TextTimeStringFormatter extends TickUnit<string> {
-    private static _DEFAULT_VALUE = "00:00 | 00:00";
-    
-    constructor() {
-        super(TextTimeStringFormatter._DEFAULT_VALUE);
-    }
+	private static _DEFAULT_VALUE = '00:00 | 00:00';
 
-    getDefaultValue(): string {
-        return TextTimeStringFormatter._DEFAULT_VALUE;
-    }
+	constructor() {
+		super(TextTimeStringFormatter._DEFAULT_VALUE);
+	}
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    protected computeNewState(_basis: string, audioProvider: AudioProvider | null): string {
-        if (!audioProvider) {
-            return this.getDefaultValue();
-        }
-        
-        const durationMs = audioProvider.getDuration();
-        const currentTimeMs = audioProvider.getCurrentAudioTime();
+	getDefaultValue(): string {
+		return TextTimeStringFormatter._DEFAULT_VALUE;
+	}
 
-        const durationSeconds = Math.floor(durationMs / 1000);
-        const currentTimeSeconds = Math.floor(currentTimeMs / 1000);
+	protected computeNewState(_basis: string, audioProvider: AudioProvider | null): string {
+		if (!audioProvider) {
+			return this.getDefaultValue();
+		}
 
-        const durationMinutes = Math.floor(durationSeconds / 60);
-        const currentTimeMinutes = Math.floor(currentTimeSeconds / 60);
+		const durationMs = audioProvider.getDuration();
+		const currentTimeMs = audioProvider.getCurrentAudioTime();
 
-        const durationStr = `${withLeadingZero(durationMinutes)}:${withLeadingZero(durationSeconds % 60)}`;
-        const currentTimeStr = `${withLeadingZero(currentTimeMinutes)}:${withLeadingZero(currentTimeSeconds % 60)}`;
+		const durationSeconds = Math.floor(durationMs / 1000);
+		const currentTimeSeconds = Math.floor(currentTimeMs / 1000);
 
-        return `${currentTimeStr} | ${durationStr}`;
-    }
+		const durationMinutes = Math.floor(durationSeconds / 60);
+		const currentTimeMinutes = Math.floor(currentTimeSeconds / 60);
+
+		const durationStr = `${withLeadingZero(durationMinutes)}:${withLeadingZero(durationSeconds % 60)}`;
+		const currentTimeStr = `${withLeadingZero(currentTimeMinutes)}:${withLeadingZero(currentTimeSeconds % 60)}`;
+
+		return `${currentTimeStr} | ${durationStr}`;
+	}
 }

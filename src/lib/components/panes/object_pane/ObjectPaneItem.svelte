@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
+	/*
+	Wav2Bar - Free software for creating audio visualization (motion design) videos
+	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
+
+	This Source Code Form is subject to the terms of the Mozilla Public
+	License, v. 2.0. If a copy of the MPL was not distributed with this
+	file, You can obtain one at https://mozilla.org/MPL/2.0/.
+    */
 
 	import VisualObjectIcon from '$lib/components/atoms/VisualObjectIcon.svelte';
 	import { Log } from '$lib/log/logger';
@@ -10,37 +17,34 @@
 	import type { UUIDv4 } from '$lib/types/common_types';
 	import { saveManager } from '$lib/store/save.svelte';
 
-	/*
-	Wav2Bar - Free software for creating audio visualization (motion design) videos
-	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
-
-	This Source Code Form is subject to the terms of the Mozilla Public
-	License, v. 2.0. If a copy of the MPL was not distributed with this
-	file, You can obtain one at https://mozilla.org/MPL/2.0/.
-    */
-
 	const handleClick = () => {
-        saveManager.activeObject = uuid;
-    };
+		saveManager.activeObject = uuid;
+	};
 
 	interface Props {
 		uuid: UUIDv4;
 	}
 
 	let { uuid }: Props = $props();
-	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(saveManager.save.objects[uuid]);
+	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(
+		saveManager.save.objects[uuid]
+	);
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	role="listitem"
-    tabindex="0"
-	onkeyup={(e) => {if (e.key === 'Enter') handleClick()}}
+	tabindex="0"
+	onkeyup={(e) => {
+		if (e.key === 'Enter') handleClick();
+	}}
 	onclick={handleClick}
 	class="item"
 	class:selected={uuid === saveManager.activeObject}
-    onfocus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
+	onfocus={() => {
+		Log.ui.debug('ObjectPaneItem focused.');
+	}}
 >
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />

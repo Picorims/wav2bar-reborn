@@ -46,7 +46,6 @@ type RendererEventPayload<T extends RendererEventName> = T extends 'object_regis
 			? null
 			: never;
 
-
 const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
 /**
  * Pixi.js renderer, drives the tick and audio engines.
@@ -64,7 +63,7 @@ export class Renderer {
 		fps: number | null;
 		width: number | null;
 		height: number | null;
-	}
+	};
 
 	constructor() {
 		this.pendingStateUpdates = {
@@ -92,10 +91,10 @@ export class Renderer {
 				Log.renderer.debug(`Processing event ${e.name}`, e.toString());
 
 				if (e.name === 'object_register') {
-					const payload = e.payload as RendererEvent<"object_register">['payload'];
+					const payload = e.payload as RendererEvent<'object_register'>['payload'];
 					this.registerObject(payload.id, saveManager.save.objects[payload.id]);
 				} else if (e.name === 'object_update') {
-					const payload = e.payload as RendererEvent<"object_update">['payload'];
+					const payload = e.payload as RendererEvent<'object_update'>['payload'];
 					this.updateObject(payload.id, saveManager.save.objects[payload.id]);
 				} else if (e.name === 'clear_all_objects') {
 					this.clearAllObjects();
@@ -113,10 +112,7 @@ export class Renderer {
 			this.pendingStateUpdates.fps = null;
 		}
 		if (this.pendingStateUpdates.width !== null && this.pendingStateUpdates.height !== null) {
-			this.setResolution(
-				this.pendingStateUpdates.width,
-				this.pendingStateUpdates.height
-			);
+			this.setResolution(this.pendingStateUpdates.width, this.pendingStateUpdates.height);
 			this.pendingStateUpdates.width = null;
 		}
 	}
@@ -250,7 +246,7 @@ export class Renderer {
 		return this.audioProvider.getCurrentAudioTime();
 	}
 	/**
-	 * 
+	 *
 	 * @returns duration in ms
 	 */
 	getDuration() {
@@ -293,11 +289,11 @@ export class Renderer {
 			newVisualObject = new VO_VisualizerStraightWave(id);
 		} else if (obj.visual_object_type === 'visualizer_circular_bar') {
 			newVisualObject = new VO_VisualizerCircularBar(id);
-		} else if (obj.visual_object_type === "timer_straight_line_point") {
+		} else if (obj.visual_object_type === 'timer_straight_line_point') {
 			newVisualObject = new VO_TimerStraightLinePoint(id);
-		} else if (obj.visual_object_type === "timer_straight_bar") {
+		} else if (obj.visual_object_type === 'timer_straight_bar') {
 			newVisualObject = new VO_TimerStraightBar(id);
-		} else if (obj.visual_object_type === "particle_flow") {
+		} else if (obj.visual_object_type === 'particle_flow') {
 			newVisualObject = new VO_ParticleFlow(id);
 		} else {
 			Log.renderer.warn('Unknown object type, registering placeholder object');

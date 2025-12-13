@@ -35,9 +35,9 @@
 	type="button"
 	role={togglable ? 'switch' : 'button'}
 	aria-checked={togglable ? toggled : undefined}
-    aria-label={label ?? title}
+	aria-label={label ?? title}
 	{title}
-    class:toggled
+	class:toggled
 >
 	<slot name="icon-l" />
 	{#if label}

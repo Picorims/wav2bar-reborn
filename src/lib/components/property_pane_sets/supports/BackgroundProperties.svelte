@@ -16,12 +16,7 @@
 
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
-	import type {
-		Save,
-		Supports_Background,
-		Supports_BorderRadius,
-		VisualObject
-	} from '$lib/store/save_structure/save_latest';
+	import type { Supports_Background, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { keysUnderscoreToDash } from '$lib/string';
 
@@ -142,7 +137,7 @@
 
 	function updateBackgroundRepeat(v: string) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.repeat = v.replaceAll("-", "_") as Supports_Background['background']['repeat'];
+			obj.background.repeat = v.replaceAll('-', '_') as Supports_Background['background']['repeat'];
 			return obj;
 		});
 	}
@@ -209,7 +204,7 @@
 		<LabeledDropdown
 			optionsObj={keysUnderscoreToDash($lang.properties.background.repeat_types)}
 			title={$lang.properties.background.repeat}
-			value={data?.background.repeat.replaceAll("_", "-")}
+			value={data?.background.repeat.replaceAll('_', '-')}
 			onChange={updateBackgroundRepeat}
 		/>
 	{/if}

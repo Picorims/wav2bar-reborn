@@ -21,7 +21,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	private _container: Container;
 	private _text: Text;
 	private _tickUnit: TextTimeStringFormatter;
-	private _type: "any" | "time" = "any";
+	private _type: 'any' | 'time' = 'any';
 
 	constructor(saveId: UUIDv4) {
 		this._saveId = saveId;
@@ -30,7 +30,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		this._tickUnit = new TextTimeStringFormatter();
 
 		this._tickUnit.subscribe((data) => {
-			if (this._type === "time") {
+			if (this._type === 'time') {
 				this._text.text = data;
 			}
 		});
@@ -48,13 +48,12 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
 
 		this._type = obj.text_type;
-		Log.default.debug(this._type, "this._type");
-		
+		Log.default.debug(this._type, 'this._type');
+
 		let textContent = obj.text_content;
-		if (this._type === "time") {
+		if (this._type === 'time') {
 			textContent = this._tickUnit.getDefaultValue();
 		}
-
 
 		// TODO: type, underline, overline, line through
 		const text = new Text({
@@ -73,7 +72,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 					blur: textShadow.blurRadius,
 					angle: shadowAngle,
 					distance: shadowDistance
-				},
+				}
 			})
 		});
 

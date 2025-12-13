@@ -8,14 +8,14 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-    import LabelWrapper from './LabelWrapper.svelte';
+	import LabelWrapper from './LabelWrapper.svelte';
 
-    interface Props {
-        title?: string;
-        children?: import('svelte').Snippet;
-    }
+	interface Props {
+		title?: string;
+		children?: import('svelte').Snippet;
+	}
 
-    let { title = 'title', children }: Props = $props();
+	let { title = 'title', children }: Props = $props();
 </script>
 
 {#if title != ''}
@@ -36,7 +36,7 @@
 	div.input {
 		@include g.div-input;
 	}
-    div.input.alone {
-        margin: g.$spacing-m 0;
-    }
+	div.input.alone {
+		margin: g.$spacing-m 0;
+	}
 </style>

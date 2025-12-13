@@ -10,7 +10,7 @@
 
 	import { run } from 'svelte/legacy';
 
-	import LabelWrapper from "./LabelWrapper.svelte";
+	import LabelWrapper from './LabelWrapper.svelte';
 
 	interface Props {
 		optionsArr?: string[] | null;
@@ -27,33 +27,31 @@
 		onChange = () => {},
 		value = $bindable('')
 	}: Props = $props();
-	
+
 	const handleOnChange = (e: Event) => {
 		const select = e.target as HTMLSelectElement;
 		onChange(select.value);
-	}
-	
-	let options: {key: string, value: string}[] = $state([]);
+	};
+
+	let options: { key: string; value: string }[] = $state([]);
 	// TODO migrate to svelte 5
 	run(() => {
 		options = [];
 		if (optionsArr) {
 			for (let i = 0; i < optionsArr.length; i++) {
-				options.push({key: i.toString(), value: optionsArr[i]});
+				options.push({ key: i.toString(), value: optionsArr[i] });
 			}
-
 		} else if (optionsObj) {
 			const values = Object.values(optionsObj);
 			const keys = Object.keys(optionsObj);
 
 			for (let i = 0; i < values.length; i++) {
-				options.push({key: keys[i], value: values[i]});
+				options.push({ key: keys[i], value: values[i] });
 			}
-
 		} else {
 			options = [];
 		}
-		
+
 		if (value === '') {
 			value = options[0].key;
 		}

@@ -29,9 +29,9 @@
 // 	type ValueLoggedValidator
 // } from '$lib/types/validator';
 
-import saveV4Schema from "$lib/schemas/save_v4.json";
-import type { Wav2BarSaveV4 } from "$lib/types/schemas/save_v4";
-import Ajv from "ajv";
+import saveV4Schema from '$lib/schemas/save_v4.json';
+import type { Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
+import Ajv from 'ajv';
 
 /**
  * - For versions beta 0.3.0 indev and above
@@ -58,12 +58,12 @@ export const ARCHIVE_STRUCTURE_V4 = {
 
 // Check package.json - "npm run json2ts" script to update the types associated to JSON schemas.
 
-const ajv = new Ajv({useDefaults: true});
+const ajv = new Ajv({ useDefaults: true });
 export const validateSaveV4 = ajv.compile(saveV4Schema);
 export const validateSaveV4VisualObject = ajv.compile({
-	  $schema: "http://json-schema.org/draft-07/schema#",
-	  definitions: saveV4Schema.definitions,
-	  $ref: "#/definitions/visual_object"
+	$schema: 'http://json-schema.org/draft-07/schema#',
+	definitions: saveV4Schema.definitions,
+	$ref: '#/definitions/visual_object'
 });
 
 // =========================================================
@@ -79,7 +79,7 @@ export const validateSaveV4VisualObject = ajv.compile({
 // 	| 'visualizer_straight_bar'
 // 	| 'visualizer_straight_wave'
 // 	| 'visualizer_circular_bar';
-type VisualObjectV4Type = Wav2BarSaveV4["objects"][string]["visual_object_type"];
+type VisualObjectV4Type = Wav2BarSaveV4['objects'][string]['visual_object_type'];
 export const visualObject_V4_types: Readonly<VisualObjectV4Type[]> = [
 	'shape',
 	'particle_flow',

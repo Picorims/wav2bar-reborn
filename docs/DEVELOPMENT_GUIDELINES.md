@@ -3,19 +3,20 @@
 > **Note:** Make sure to also check the CONTRIBUTING.md file.
 
 ## Table of contents
+
 - [About this document](#about)
 - [Goal](#goal)
 - [Roadmap](#roadmap)
-    - [Internal Goals](#internal-goals)
-    - [Box of ideas](#box-of-ideas)
+  - [Internal Goals](#internal-goals)
+  - [Box of ideas](#box-of-ideas)
 - [Setup](#setup)
 - [Code styling](#code-styling)
 - [File system structure](#file-system-structure)
 - [Modules and packages structuring](#modules-structuring)
 - [Architecture](#architecture)
-    - [Saves](#saves)
-    - [Rendering and audio processing](#rendering-and-audio-processing)
-    - [Localization and translations](#localization-and-translations)
+  - [Saves](#saves)
+  - [Rendering and audio processing](#rendering-and-audio-processing)
+  - [Localization and translations](#localization-and-translations)
 - [Documenting](#documenting)
 - [Creating UI components](#ui-components)
 - [Versioning and Git](#versioning-and-git)
@@ -50,6 +51,7 @@ Backward compatibility is also an important part to consider. Upgrading to a new
 <a name="internal-goals"></a>
 
 ### Internal goals
+
 - Make the engine and save part an independant module to support using the rendering engine as a standalone library.
 - Plan support for dynamic values (functions, keyframes, etc.)
 - Keep an eye on the DRY (Don't Repeat Yourself), SOLID principles.
@@ -76,53 +78,56 @@ See `README.md`.
 ### Formatting
 
 #### JS/TS/Svelte
-|Type               |Formatting         |example        |
-|-                  |-                  |-              |
-|variable           |camel case         |`myVar`        |
-|constant variable  |capital letters    |`MY_CONST`     |
-|lonely function    |camel case         |`myFunction`   |
-|class/component    |pascal case        |`MyClass`      |
-|private field      |prefixed by an underscore|`_privateField`|
-|public field       |camel case         |`publicField`  |
-|private method     |prefixed by an underscore|`_myMethod`|
-|public method      |camel case         |`myMethod`     |
-|get/set property   |camel case         |`myProperty`   |
-|module name (dir)  |snake case         |`module_name`  |
+
+| Type              | Formatting                | example         |
+| ----------------- | ------------------------- | --------------- |
+| variable          | camel case                | `myVar`         |
+| constant variable | capital letters           | `MY_CONST`      |
+| lonely function   | camel case                | `myFunction`    |
+| class/component   | pascal case               | `MyClass`       |
+| private field     | prefixed by an underscore | `_privateField` |
+| public field      | camel case                | `publicField`   |
+| private method    | prefixed by an underscore | `_myMethod`     |
+| public method     | camel case                | `myMethod`      |
+| get/set property  | camel case                | `myProperty`    |
+| module name (dir) | snake case                | `module_name`   |
 
 #### CSS
-|Type               |Formatting         |example        |
-|-                  |-                  |-              |
-|id                 |kebab case         |`#my-id`       |
-|class              |kebab case         |`.my-class`    |
+
+| Type  | Formatting | example     |
+| ----- | ---------- | ----------- |
+| id    | kebab case | `#my-id`    |
+| class | kebab case | `.my-class` |
 
 #### Rust
 
 See the official Rust style guide.
 
 ### Tabs
+
 4 spaces. 2 spaces for JSON Schemas.
 
 ### Blocks
+
 ```js
 if (thing === 1) {
-
 } else {
-
 }
 
-function name() {
-
-}
+function name() {}
 ```
 
 Avoid inline blocks, especially avoid `if` blocks without brackets (`{}`).
 
 ### Decorators
+
 JSDoc decorators may be used for describing things that TypeScript do not support. You can use an extension of your favourite IDE to make it easier to create doc comment blocks. While there is no strict rule on putting a comment for every method or function, consider adding one for complex functions, functions with unsupported edge cases, particular behaviour that is important to know, etc. All necessary info should be available without having to open the function (otherwise it means that the doc comment needs to be updated accordingly).
 
 ### Else
+
 - Prefer `===` over `==`.
 - Put some space between root blocks, and group them by feature. You can make visible separations by using comments if needed, for example:
+
 ```js
 //#####
 //TITLE
@@ -137,9 +142,10 @@ JSDoc decorators may be used for describing things that TypeScript do not suppor
 
 //etc.
 ```
+
 - You can make basic type tests of the passed arguments that throw errors to reduce possibilities of unwanted data interacting with the code, and limit risks of bugs earlier in the execution. Try to make your types as narrowed as possible to limit such checks.
 - Handle errors as much as possible. Inform the user if this may have an impact on his workflow or data. Keep crashing for unsolvable situations. Provide save backups when possible.
- 
+
 <a name="file-system-structure"></a>
 
 ## File system structure
@@ -147,28 +153,29 @@ JSDoc decorators may be used for describing things that TypeScript do not suppor
 - **.github:** Issue templates, CI/CD, etc.
 - **.svelte-kit:** Used by Svelte, not included in Git.
 - **.vscode:** Snippets, shared settings.
-and deployment;
+  and deployment;
 - **build:** Used by Svelte, not included in Git.
 - **docs:** documentation;
-- **node_modules:** *[Check notes...]* Node modules! Not included in Git;
+- **node_modules:** _[Check notes...]_ Node modules! Not included in Git;
 - **src:** Front source code (Svelte)
-    - **lib:** Most of the app logic and assets. Small generic modules do not have a dedicated directory.
-        - **components:** Svelte components.
-        - **CSS:** Global CSS styles. (Keep component style within the same file!)
-        - **engine:** Renderer and audio processing (some might lie on the Rust side!).
-        - **lang:** Translation files as `<2 letters country id>.json` files.
-        - **log:** Logging utilities.
-        - **schemas:** JSON Schemas (saves, settings).
-        - **store:** Svelte stores (saves, settings, etc.). Global app states should go there.
-        - **types:** TypeScript type and validation related.
-            **schemas:** TypeScript types generated from `npm run json2ts`.
-    - **route:** App root (SPA, Single Page Application).
+  - **lib:** Most of the app logic and assets. Small generic modules do not have a dedicated directory.
+    - **components:** Svelte components.
+    - **CSS:** Global CSS styles. (Keep component style within the same file!)
+    - **engine:** Renderer and audio processing (some might lie on the Rust side!).
+    - **lang:** Translation files as `<2 letters country id>.json` files.
+    - **log:** Logging utilities.
+    - **schemas:** JSON Schemas (saves, settings).
+    - **store:** Svelte stores (saves, settings, etc.). Global app states should go there.
+    - **types:** TypeScript type and validation related.
+      **schemas:** TypeScript types generated from `npm run json2ts`.
+  - **route:** App root (SPA, Single Page Application).
 - **src-tauri:** Tauri and Rust side, backend code.
-    - **tauri.conf.json:** Main configuration file. `Cargo.toml` and `package.json` still need to be updated manually notably regarding versions!
+  - **tauri.conf.json:** Main configuration file. `Cargo.toml` and `package.json` still need to be updated manually notably regarding versions!
 - **static:** Static assets. Usually using `src/lib` is preferred for easier import and limiting risks of import breaks. This is mostly for things directly in the root `.html` Svelte file where a static URL is required.
 - **tests:** Playwright end-to-end tests (currently empty). All other tests go into a `.test.ts` file along the tested file.
 
 ### At runtime
+
 - **temp:** Temporary files for Wav2Bar if writing access is available (not using the OS standard directory as not everyone has a lot of memory on their main drive!);
 - **user:** User data storage if writing access is available, default settings (same explanation as above);
 
@@ -179,6 +186,7 @@ This may become configurable in the future.
 ## Modules and packages structuring
 
 Modules are grouped by theme, area or functionality. A package is generally represented by the following:
+
 - a folder named after the package name;
 - a main aggregating module named after the package name, that only serves to export sub modules so they can be all imported through one single module;
 - one or more submodules implementing features. Multiple functions or class can be grouped in one module if they are part of the same feature or have a very close relationship. (inheritance of a specific feature that still describe the same feature, group of utilities for the same group of usages, etc.)
@@ -214,6 +222,7 @@ A yet to be defined system similar to legacy will allow to upgrade an old versio
 ### Rendering and audio processing
 
 There are three key parts to rendering and audio processing:
+
 - The rendering engine, Pixi.js, for which you can find documentation online;
 - The renderer, built on top of it and translating the save data into an animated stream (it also handle live audio streams such as the microphone);
 - The audio processor, done on the Rust side which converts an audio stream into spectrums (FFT) and other useful audio analysis data. It is queried by the renderer to obtain audio data to visualize.
@@ -247,13 +256,14 @@ Translations are stored in `src/lib/lang/<language>.json` where `<language>` is 
 ## Documenting
 
 Here is the list of things that should be documented:
+
 - methods, classes, functions...
-    - through comments above them, either common comments or JSDoc comments. Not required for simple functions, but you should consider if specific behaviour must be documented (assumptions of the function, edge cases, fallbacks, unsupported situations, etc.)
-    - abstracts, overrides
-        - through TypeScript, or if not possible using dedicated JSDoc tags `@abstract` and `@override`. They are important for the integrity of the codebase.
-    - complex and verbose topics
-        - in this document, or if verbose, through dedicated MarkDown files.
-        - If useful, through diagrams (using D2 or PlantUML).
+  - through comments above them, either common comments or JSDoc comments. Not required for simple functions, but you should consider if specific behaviour must be documented (assumptions of the function, edge cases, fallbacks, unsupported situations, etc.)
+  - abstracts, overrides
+    - through TypeScript, or if not possible using dedicated JSDoc tags `@abstract` and `@override`. They are important for the integrity of the codebase.
+  - complex and verbose topics
+    - in this document, or if verbose, through dedicated MarkDown files.
+    - If useful, through diagrams (using D2 or PlantUML).
 
 All the documentation is written in the `docs` folder and should be saved in git friendly, text based formats.
 
@@ -262,6 +272,7 @@ All the documentation is written in the `docs` folder and should be saved in git
 ## Creating UI components
 
 Components goes in `src/lib/components`. They are grouped by their kind and role:
+
 - `atoms`: independent components that are assembled to form the UI. It is the smallest unit.
 - `panes`: container with a specific role, inserted in the app layout which is panes based.
 - `property_pane_sets`: Corresponds to the different group of components used in the property pane. The properties UI for a given visual object is defined in a svelte component named `VisualObjectNamePS` where `VisualObjectName` is the component name. Each of them uses the `groups/CommonProperties`, and insert other UI sections based on what it `supports`. This way, the UI for a given property is written once and can be reused for every visual object supporting it.
@@ -276,6 +287,7 @@ Components are styled using the global CSS elements defined in `src/lib/css`: de
 Based on [Semantic versioning](https://semver.org/)
 
 `<giant_upgrade>.<major_update>.<small_update>[-beta.<iteration>]`.
+
 - **giant_upgrade:** Switching development phase (gigantic rewrite and upgrade of features). Very unlikely to increment (this rewrite is the only increment so far).
 - **major_update:** Update with multiple new features and breaking changes.
 - **small_update:** Small features and changes that are not breaking changes, bug fixes, security patches.
@@ -287,63 +299,67 @@ Based on [Semantic versioning](https://semver.org/)
 
 ## Doing a release
 
-1) verify the version number and type **( /!\ indev -> beta /!\ )** in:
-    - `package.json`
-    - `package-lock.json`
-    - `tauri.conf.json`
-    - `Cargo.toml`
-2) update [CHANGELOG.md](../CHANGELOG.md)
+1. verify the version number and type **( /!\ indev -> beta /!\ )** in:
+   - `package.json`
+   - `package-lock.json`
+   - `tauri.conf.json`
+   - `Cargo.toml`
+2. update [CHANGELOG.md](../CHANGELOG.md)
 
-3) do necessary fixes
-4) push to master
+3. do necessary fixes
+4. push to master
 
-5) build the app: TBD
-6) test the maked files (if not ok go back to step 3)
+5. build the app: TBD
+6. test the maked files (if not ok go back to step 3)
 
-7) merge the release from `develop` to `main`
+7. merge the release from `develop` to `main`
 
-8) tag locally on `main` (`git tag -a v1.4 -m "v1.4"`)
-9) commit the tag (`git push origin --tags` or `git push origin tag_name`)
-> **to get rid of a tag:**
-> - `git tag -d v1.4-lw`
-> - `git push origin --delete <tagname>`
-10) setup the release:
+8. tag locally on `main` (`git tag -a v1.4 -m "v1.4"`)
+9. commit the tag (`git push origin --tags` or `git push origin tag_name`)
+   > **to get rid of a tag:**
+   >
+   > - `git tag -d v1.4-lw`
+   > - `git push origin --delete <tagname>`
+10. setup the release:
     - **local build:**
-        - Do the GitHub release with appropriate packages and the right tag (source code already managed BUT without node modules)
+      - Do the GitHub release with appropriate packages and the right tag (source code already managed BUT without node modules)
     - **CI build:**
-        - Wait for the tag CI action to finish. It will produce a release draft for the tag, with built packages attached to it.
-11) Fill the release information:
+      - Wait for the tag CI action to finish. It will produce a release draft for the tag, with built packages attached to it.
+11. Fill the release information:
 
 TODO see if needs an update once builds are setup
+
 ```md
 [description]
 
 # Changelog
+
 - a
 - b
 
 # Known issues
+
 - a
 - b
 
 # Note on Betas
+
 Wav2Bar is currently in beta, which means that things actively change (UI, saves, etc.)! Please **backup your saves**, especially when updating Wav2Bar.
 
 # Note for Linux
+
 Right now Linux is not very well supported, but I try my best to make it better bit by bit. For now you should be able to use Wav2Bar without much problem by using the zipped version or using the source code after installing the dependencies (see the README or the wiki). There are some predefined (but not tested) configs to make some other linux packages that you can try.
 
 # Note for Mac
+
 Mac is not supported at this moment, but you can give it a try using the source code (see the README or the wiki).
 
-
 # Support
+
 For bug reports, please use the issues section of GitHub. For other support, use the discussions section or go over to my Discord server (https://discord.gg/EVGzfdP)
 ```
 
-TODO review once new website is done.
-12) Update the website links and release numbers (hard coded, yes I know what you will say, and it is OK as is for me right now).
-13) OPTIONAL : Blog post
-14) Do an archive of the Git repository and GitHub assets
+TODO review once new website is done. 12) Update the website links and release numbers (hard coded, yes I know what you will say, and it is OK as is for me right now). 13) OPTIONAL : Blog post 14) Do an archive of the Git repository and GitHub assets
 
 <a name="questions-or-concerns"></a>
 
@@ -364,18 +380,22 @@ The old repository, `wav2bar`, was a hell of tech debt, bad architecture, multip
 ### Why making it a desktop app? Why not a web app?
 
 There are multiple reasons:
+
 - Here, the "server" is shipped with the application. Otherwise, it would require maintaining and hosting a server capable of handling many video exports at the same time (so powerful with a lot of storage and bandwidth). So it is easier and cheaper, in addition to having a better native experience.
 - It is easier to manage the multi-file saves in the file system than within JS or in a shared server disk (which would require enough space to store many potentially big audio and image files).
 - We can alleviate the user's hardware power to delegate intensive tasks to Rust where bottlenecks arise. Browser only approaches (such as in legacy) reduce the performance improvement window. If done server side, it would require powerful (and thus expensive) servers.
 - It is available at hand without requiring an internet connection, with a limited impact on disk space.
 
 ### There are many similar apps on the Internet. Why Wav2Bar?
+
 When I started the project, the only truly free option I knew was SonicCandle, which was discontinued. By the time I discovered some other projects exist as well. But hey, it's a good training and practice project, as it covers many topics at the same time. This is mostly a side project to experiment, train and have fun, that happens to be useful to me. And the more options for the end user, the better!
 
 ### Why current Linux support is not very good?
+
 > Note: I have not yet built the rewrite as of writing this.
 
 I am limited to a virtual machine (VM) (for now?). I can build and quickly test the software but remain pretty limited (playing the preview used to crash the VM altogether on an older PC). The fact that I don't use Linux often and couldn't dual boot at home doesn't help either. However feel free to report any issue or suggestion regarding Linux support, I really enjoy that platform existing and want to do my best to support it.
 
 ### Why not supporting MacOSX?
+
 Shipping to macOS requires signing packages, and is generally more troublesome than shipping on other operating systems. As I am the only maintainer doing it on my free time, I have to make choices and can't handle everything. (I also don't want to spend thousand of dollars to support a platform). But you can try running Wav2Bar from source, Tauri is compatible with Mac after all, and share similarities with Linux.

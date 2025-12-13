@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -8,15 +8,15 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import type { Snippet } from "svelte";
+	import type { Snippet } from 'svelte';
 
-    interface Props {
-        title: string;
-        fixedLabelWidth?: boolean;
-        children?: Snippet;
-    }
+	interface Props {
+		title: string;
+		fixedLabelWidth?: boolean;
+		children?: Snippet;
+	}
 
-    let { title, fixedLabelWidth = true, children }: Props = $props();
+	let { title, fixedLabelWidth = true, children }: Props = $props();
 </script>
 
 <label class="container">
@@ -30,18 +30,18 @@
 	label.container {
 		display: flex;
 		align-items: center;
-        justify-content: space-between;
-        margin: g.$spacing-m 0;
+		justify-content: space-between;
+		margin: g.$spacing-m 0;
 	}
 
 	span.label {
 		flex: 0 1 auto;
-        margin: g.$spacing-s 0;
-        margin-right: g.$spacing-m;
+		margin: g.$spacing-s 0;
+		margin-right: g.$spacing-m;
 
-        &.fixedLabelWidth {
-            width: 40%;
-            flex: 0 0 auto;
-        }
+		&.fixedLabelWidth {
+			width: 40%;
+			flex: 0 0 auto;
+		}
 	}
 </style>

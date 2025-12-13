@@ -7,7 +7,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { nowUTCString } from "$lib/date";
+import { nowUTCString } from '$lib/date';
 
 import { warn, debug, trace, info, error } from '@tauri-apps/plugin-log';
 
@@ -15,22 +15,22 @@ import { warn, debug, trace, info, error } from '@tauri-apps/plugin-log';
  * overrides a default console function, by logging it
  * and forwarding it to a tauri plugin.
  * @see https://v2.tauri.app/plugin/logging/
- * @param fnName 
- * @param logger 
+ * @param fnName
+ * @param logger
  */
 function forwardConsole(
-  fnName: 'log' | 'debug' | 'info' | 'warn' | 'error' |'trace',
-  logger: (message: string) => Promise<void>
+	fnName: 'log' | 'debug' | 'info' | 'warn' | 'error' | 'trace',
+	logger: (message: string) => Promise<void>
 ) {
-  const original = console[fnName];
-  console[fnName] = (message) => {
-    original(message);
-    if (typeof message !== 'string') {
-        original("Logger: message is not a string, ignoring it.");
-        return;
-    }
-    logger(message);
-  };
+	const original = console[fnName];
+	console[fnName] = (message) => {
+		original(message);
+		if (typeof message !== 'string') {
+			original('Logger: message is not a string, ignoring it.');
+			return;
+		}
+		logger(message);
+	};
 }
 
 forwardConsole('log', debug);
@@ -41,49 +41,49 @@ forwardConsole('warn', warn);
 forwardConsole('error', error);
 
 class Logger {
-    private _namespace: string;
-    constructor(namespace: string = "default") {
-        this._namespace = namespace;
-    }
+	private _namespace: string;
+	constructor(namespace: string = 'default') {
+		this._namespace = namespace;
+	}
 
-    private _prefix(level: string) {
-        return `[${nowUTCString()}] [${this._namespace}] [${level}] -`;
-    }
+	private _prefix(level: string) {
+		return `[${nowUTCString()}] [${this._namespace}] [${level}] -`;
+	}
 
-    trace(...messages: string[]) {
-        console.trace(`${this._prefix("trace")} ${messages.join(" ")}`);
-    }
-    debug(...messages: string[]) {
-        console.debug(`${this._prefix("debug")} ${messages.join(" ")}`);
-    }
-    info(...messages: string[]) {
-        console.info(`${this._prefix("info")} ${messages.join(" ")}`);
-    }
-    warn(...messages: string[]) {
-        console.warn(`${this._prefix("warn")} ${messages.join(" ")}`);
-    }
-    error(...messages: string[]) {
-        console.error(`${this._prefix("error")} ${messages.join(" ")}`);
-    }
-    fatal(...messages: string[]) {
-        console.error(`${this._prefix("fatal")} ${messages.join(" ")}`);
-    }
-    log(...messages: string[]) {
-        this.debug(...messages);
-    }
+	trace(...messages: string[]) {
+		console.trace(`${this._prefix('trace')} ${messages.join(' ')}`);
+	}
+	debug(...messages: string[]) {
+		console.debug(`${this._prefix('debug')} ${messages.join(' ')}`);
+	}
+	info(...messages: string[]) {
+		console.info(`${this._prefix('info')} ${messages.join(' ')}`);
+	}
+	warn(...messages: string[]) {
+		console.warn(`${this._prefix('warn')} ${messages.join(' ')}`);
+	}
+	error(...messages: string[]) {
+		console.error(`${this._prefix('error')} ${messages.join(' ')}`);
+	}
+	fatal(...messages: string[]) {
+		console.error(`${this._prefix('fatal')} ${messages.join(' ')}`);
+	}
+	log(...messages: string[]) {
+		this.debug(...messages);
+	}
 }
 
 export const Log = {
-    default: new Logger(),
-    renderer: new Logger("renderer"),
-    audio: new Logger("audio"),
-    video: new Logger("ticker"),
-    save: new Logger("save"),
-    ui: new Logger("ui"),
-}
+	default: new Logger(),
+	renderer: new Logger('renderer'),
+	audio: new Logger('audio'),
+	video: new Logger('ticker'),
+	save: new Logger('save'),
+	ui: new Logger('ui')
+};
 
 if (window !== undefined) {
-    window.addEventListener("error", (event) => {
-        Log.default.error(event.message);
-    });
+	window.addEventListener('error', (event) => {
+		Log.default.error(event.message);
+	});
 }
