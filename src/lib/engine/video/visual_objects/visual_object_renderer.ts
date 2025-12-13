@@ -29,22 +29,22 @@ export interface VisualObjectRenderer<T extends VisualObject> {
 }
 
 export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<VisualObject> {
-	private _container: Container;
+	private container: Container;
 
 	constructor() {
-		this._container = new Container();
+		this.container = new Container();
 	}
 
 	update(): Container {
 		// console.log("PlaceHolderVisualObjectRenderer.update() called");
 
-		return this._container;
+		return this.container;
 	}
 
 	getContainer(): Container {
 		// console.log("PlaceHolderVisualObjectRenderer.getContainer() called");
 
-		return this._container;
+		return this.container;
 	}
 
 	getTickUnit(): null {

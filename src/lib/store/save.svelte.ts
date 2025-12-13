@@ -27,17 +27,17 @@ import { join } from '@tauri-apps/api/path';
 import { setLoading, setLoadingInfo } from './app_state.svelte';
 
 class SaveManager {
-	private _saveConfig = $state<Save>(this._getDefaultSave());
-	private _saveObjects = $derived<Save['objects']>(this._saveConfig.objects);
+	private saveConfig = $state<Save>(this.getDefaultSave());
+	private saveObjects = $derived<Save['objects']>(this.saveConfig.objects);
 	public activeObject = $state<UUIDv4 | null>(null);
 
 	get activeObjectData() {
 		if (this.activeObject === null) return null;
-		return this._saveObjects[this.activeObject];
+		return this.saveObjects[this.activeObject];
 	}
 
 	get objectsCount() {
-		return Object.keys(this._saveObjects).length;
+		return Object.keys(this.saveObjects).length;
 	}
 
 	/**
@@ -49,27 +49,27 @@ class SaveManager {
 	 * - when mutating the active object
 	 */
 	get save() {
-		return this._saveConfig;
+		return this.saveConfig;
 	}
 
 	get fps() {
-		return this._saveConfig.fps;
+		return this.saveConfig.fps;
 	}
 	set fps(value: number) {
-		this._saveConfig.fps = value;
+		this.saveConfig.fps = value;
 		renderer.setFPS(value);
-		this._dispatchMutationUpdate();
+		this.dispatchMutationUpdate();
 	}
 	get resolution() {
-		return this._saveConfig.screen;
+		return this.saveConfig.screen;
 	}
 	set resolution(value: { width: number; height: number }) {
-		this._saveConfig.screen = value;
+		this.saveConfig.screen = value;
 		renderer.setResolution(value.width, value.height);
-		this._dispatchMutationUpdate();
+		this.dispatchMutationUpdate();
 	}
 
-	private _getDefaultSave(): Save {
+	private getDefaultSave(): Save {
 		const baseObject = {
 			save_version: 4,
 			software_version_used: version,
@@ -88,7 +88,7 @@ class SaveManager {
 		return baseObject as unknown as Save;
 	}
 
-	private _getDefaultVisualObject(type: VisualObject_Type): VisualObject {
+	private getDefaultVisualObject(type: VisualObject_Type): VisualObject {
 		const baseObject = {
 			visual_object_type: type
 		};
@@ -139,10 +139,10 @@ class SaveManager {
 				} else {
 					Log.save.info('Save file is valid, loading it');
 					setLoadingInfo('Loading save file...');
-					this._saveConfig = saveJSON as unknown as Save;
+					this.saveConfig = saveJSON as unknown as Save;
 
-					renderer.setFPS(this._saveConfig.fps);
-					renderer.setResolution(this._saveConfig.screen.width, this._saveConfig.screen.height);
+					renderer.setFPS(this.saveConfig.fps);
+					renderer.setResolution(this.saveConfig.screen.width, this.saveConfig.screen.height);
 
 					await this.loadAudioFile();
 
@@ -180,7 +180,7 @@ class SaveManager {
 			setLoadingInfo('Saving file...');
 			try {
 				Log.save.info('Writing save JSON to file...');
-				await invoke<void>('write_save_json', { jsonContent: JSON.stringify(this._saveConfig) });
+				await invoke<void>('write_save_json', { jsonContent: JSON.stringify(this.saveConfig) });
 				Log.save.info('Save JSON written to file, creating zip archive...');
 				await invoke('save_to_file', { pathStr: path });
 				Log.save.info('Save file saved successfully');
@@ -198,13 +198,13 @@ class SaveManager {
 		let audioFullPath: string | null = null;
 		try {
 			audioFullPath = await invoke<string>('get_audio_dir');
-			audioFullPath = await join(audioFullPath, this._saveConfig.audio_filename);
+			audioFullPath = await join(audioFullPath, this.saveConfig.audio_filename);
 		} catch (e) {
 			Log.save.warn('Failed to get audio full path from backend: ' + (e as Error).message);
 		}
 		if (audioFullPath !== null) {
 			Log.save.info(
-				'Setting audio source to file audio provider with name: ' + this._saveConfig.audio_filename
+				'Setting audio source to file audio provider with name: ' + this.saveConfig.audio_filename
 			);
 			const url = convertFileSrc(audioFullPath);
 			const audioElement = document.getElementById('audio') as HTMLAudioElement;
@@ -231,11 +231,11 @@ class SaveManager {
 				id: uuid
 			}
 		});
-		this._saveConfig.objects[uuid] = {
-			...this._getDefaultVisualObject(type),
+		this.saveConfig.objects[uuid] = {
+			...this.getDefaultVisualObject(type),
 			name: type + '_' + Math.floor(Math.random() * 1000)
 		};
-		this._dispatchMutationUpdate();
+		this.dispatchMutationUpdate();
 	}
 
 	/**
@@ -254,7 +254,7 @@ class SaveManager {
 			name: 'clear_all_objects',
 			payload: null
 		});
-		for (const id of Object.keys(this._saveConfig.objects)) {
+		for (const id of Object.keys(this.saveConfig.objects)) {
 			renderer.scheduleRendererEvent({
 				name: 'object_register',
 				payload: {
@@ -262,7 +262,7 @@ class SaveManager {
 				}
 			});
 		}
-		this._dispatchMutationUpdate();
+		this.dispatchMutationUpdate();
 	}
 
 	/**
@@ -280,20 +280,20 @@ class SaveManager {
 				id: this.activeObject as UUIDv4
 			}
 		});
-		this._saveConfig.objects[this.activeObject as UUIDv4] = mutator(
+		this.saveConfig.objects[this.activeObject as UUIDv4] = mutator(
 			typedDeepClone<T>(this.activeObjectData as T)
 		);
-		this._dispatchMutationUpdate();
+		this.dispatchMutationUpdate();
 	}
 
-	private _handlers: ((save: Save) => void)[] = [];
+	private handlers: ((save: Save) => void)[] = [];
 
 	public subscribeToMutations(callback: (save: Save) => void) {
-		this._handlers.push(callback);
+		this.handlers.push(callback);
 	}
 
-	private _dispatchMutationUpdate() {
-		for (const handler of this._handlers) {
+	private dispatchMutationUpdate() {
+		for (const handler of this.handlers) {
 			handler(this.save);
 		}
 	}

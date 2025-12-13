@@ -21,64 +21,64 @@ const OUT_OF_BOUNDS_MARGIN = 5;
 // TODO: https://github.com/Picorims/wav2bar/blob/develop/js/visual_objects/visual_object.js#L672
 
 export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow> {
-	private _saveId: UUIDv4;
-	private _container: Container;
-	private _graphics: Graphics;
-	private _tickUnit: AudioSpectrumProcessor;
-	private _width: number = 1;
-	private _height: number = 1;
-	private _radiusMin: number = 1;
-	private _radiusMax: number = 1;
-	private _flowType: 'directional' | 'radial' = 'directional';
-	private _flowCenter: Vec2 = new Vec2(0, 0);
+	private saveId: UUIDv4;
+	private container: Container;
+	private graphics: Graphics;
+	private tickUnit: AudioSpectrumProcessor;
+	private width: number = 1;
+	private height: number = 1;
+	private radiusMin: number = 1;
+	private radiusMax: number = 1;
+	private flowType: 'directional' | 'radial' = 'directional';
+	private flowCenter: Vec2 = new Vec2(0, 0);
 	/**
 	 * In degrees
 	 */
-	private _flowDirection: number = 0;
-	private _density: number = 1;
-	private _volume: number = 0;
-	private _color: string = '#FFFFFF';
-	private _particles: Particle[] = [];
+	private flowDirection: number = 0;
+	private density: number = 1;
+	private volume: number = 0;
+	private color: string = '#FFFFFF';
+	private particles: Particle[] = [];
 
 	constructor(saveId: UUIDv4) {
-		this._saveId = saveId;
-		this._container = new Container();
-		this._graphics = new Graphics();
-		this._tickUnit = new AudioSpectrumProcessor();
-		this._tickUnit.setMapping({
+		this.saveId = saveId;
+		this.container = new Container();
+		this.graphics = new Graphics();
+		this.tickUnit = new AudioSpectrumProcessor();
+		this.tickUnit.setMapping({
 			mappedLength: -1,
 			minPercent: 0,
 			maxPercent: 100,
 			toLog: true
 		});
-		this._tickUnit.subscribe(([spectrum]) => {
-			this._volume = this._tickUnit.average(spectrum) / SPECTRUM_VALUE_RESOLUTION;
-			this._tick();
-			this._render(this._graphics);
+		this.tickUnit.subscribe(([spectrum]) => {
+			this.volume = this.tickUnit.average(spectrum) / SPECTRUM_VALUE_RESOLUTION;
+			this.tick();
+			this.render(this.graphics);
 		});
 	}
 	update(obj: SaveVO_ParticleFlow): Container {
-		this._width = obj.size.width;
-		this._height = obj.size.height;
-		this._radiusMin = obj.particle_radius_range[0];
-		this._radiusMax = obj.particle_radius_range[1];
-		this._flowType = obj.flow_type;
-		this._flowCenter = new Vec2(obj.flow_center[0], obj.flow_center[1]);
-		this._flowDirection = obj.flow_direction;
-		this._density = obj.particle_spawn_probability * obj.particle_spawn_tests;
-		this._color = obj.color;
-		this._particles = [];
+		this.width = obj.size.width;
+		this.height = obj.size.height;
+		this.radiusMin = obj.particle_radius_range[0];
+		this.radiusMax = obj.particle_radius_range[1];
+		this.flowType = obj.flow_type;
+		this.flowCenter = new Vec2(obj.flow_center[0], obj.flow_center[1]);
+		this.flowDirection = obj.flow_direction;
+		this.density = obj.particle_spawn_probability * obj.particle_spawn_tests;
+		this.color = obj.color;
+		this.particles = [];
 
 		// spawn particles based on density to fill the initial area
-		const count = this._width * this._height * this._density * 0.001;
+		const count = this.width * this.height * this.density * 0.001;
 		for (let i = 0; i < count; i++) {
-			const pos = this._getRandomInitPosition();
-			this._particles.push(
+			const pos = this.getRandomInitPosition();
+			this.particles.push(
 				new Particle(
 					pos,
-					this._getRandomRadius(),
+					this.getRandomRadius(),
 					DEFAULT_PARTICLE_SPEED,
-					this._getInitDirectionRadians(pos)
+					this.getInitDirectionRadians(pos)
 				)
 			);
 		}
@@ -86,94 +86,94 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 		const container = getBaseVOContainer(obj);
 
 		const graphics = new Graphics();
-		this._render(graphics);
+		this.render(graphics);
 		container.addChild(graphics);
 
-		this._container = container;
-		this._graphics = graphics;
-		return this._container;
+		this.container = container;
+		this.graphics = graphics;
+		return this.container;
 	}
-	private _tick() {
+	private tick() {
 		// spawn new particles based on density
-		const spawnCountMin = Math.floor(this._density);
-		const spawnCountMax = Math.ceil(this._density);
-		const remainder = this._density - spawnCountMin;
+		const spawnCountMin = Math.floor(this.density);
+		const spawnCountMax = Math.ceil(this.density);
+		const remainder = this.density - spawnCountMin;
 		// If we are closer to max, the biggest range is [0, remainder],
 		// which should be associated to the max to make it more frequent than min.
 		const spawnCount = Math.random() < remainder ? spawnCountMax : spawnCountMin;
 		for (let i = 0; i < spawnCount; i++) {
-			const radius = this._getRandomRadius();
-			const pos = this._getRandomSpawnPosition(radius);
-			this._particles.push(
-				new Particle(pos, radius, DEFAULT_PARTICLE_SPEED, this._getSpawnDirectionRadians())
+			const radius = this.getRandomRadius();
+			const pos = this.getRandomSpawnPosition(radius);
+			this.particles.push(
+				new Particle(pos, radius, DEFAULT_PARTICLE_SPEED, this.getSpawnDirectionRadians())
 			);
 		}
 
 		// tick particles
-		for (const particle of this._particles) {
-			particle.tick(this._volume);
+		for (const particle of this.particles) {
+			particle.tick(this.volume);
 		}
 
 		// remove particles that are out of bounds
 		// we use a margin to not kill just spawner particles in the "directional" configuration.
-		this._particles = this._particles.filter((particle) => {
+		this.particles = this.particles.filter((particle) => {
 			return (
 				particle.position.x + (particle.radius + OUT_OF_BOUNDS_MARGIN) >= 0 &&
-				particle.position.x - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this._width &&
+				particle.position.x - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this.width &&
 				particle.position.y + (particle.radius + OUT_OF_BOUNDS_MARGIN) >= 0 &&
-				particle.position.y - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this._height
+				particle.position.y - (particle.radius + OUT_OF_BOUNDS_MARGIN) <= this.height
 			);
 		});
 	}
-	private _render(graphics: Graphics) {
+	private render(graphics: Graphics) {
 		graphics.clear();
 
-		for (const particle of this._particles) {
+		for (const particle of this.particles) {
 			graphics.circle(particle.position.x, particle.position.y, particle.radius);
 		}
 
-		graphics.fill(this._color);
+		graphics.fill(this.color);
 	}
 	getContainer(): Container {
-		return this._container;
+		return this.container;
 	}
 	getTickUnit() {
-		return this._tickUnit as TickUnit<unknown>;
+		return this.tickUnit as TickUnit<unknown>;
 	}
 
 	/**
 	 * Random position for the initial particles
 	 */
-	private _getRandomInitPosition(): Vec2 {
-		return new Vec2(Math.random() * this._width, Math.random() * this._height);
+	private getRandomInitPosition(): Vec2 {
+		return new Vec2(Math.random() * this.width, Math.random() * this.height);
 	}
 	/**
 	 * Random position for spawning new particles during playback
 	 */
-	private _getRandomSpawnPosition(radius: number): Vec2 {
-		if (this._flowType === 'radial') {
-			return this._flowCenter;
-		} else if (this._flowType === 'directional') {
+	private getRandomSpawnPosition(radius: number): Vec2 {
+		if (this.flowType === 'radial') {
+			return this.flowCenter;
+		} else if (this.flowType === 'directional') {
 			// to spread particles evenly, the amount spawned on each side depends on the flow direction
 			// IMPORTANT: 90° is down because the y axis goes downwards in screen coordinates
 
 			// FIXME: Consider optimization by not redoing the conversion each time
 
-			const verticalProbability = Math.abs(Math.sin(this._flowDirection * (Math.PI / 180)));
+			const verticalProbability = Math.abs(Math.sin(this.flowDirection * (Math.PI / 180)));
 			// horizontal probability = 1 - verticalProbability; so deduced and not needed.
 
 			const useVerticalAxis = Math.random() < verticalProbability;
 			if (useVerticalAxis) {
 				// vertical axis
-				const spawnTop = Math.sin(this._flowDirection * (Math.PI / 180)) > 0;
-				const y = spawnTop ? 0 - radius : this._height + radius;
-				const x = Math.random() * this._width;
+				const spawnTop = Math.sin(this.flowDirection * (Math.PI / 180)) > 0;
+				const y = spawnTop ? 0 - radius : this.height + radius;
+				const x = Math.random() * this.width;
 				return new Vec2(x, y);
 			} else {
 				// horizontal axis
-				const spawnLeft = Math.cos(this._flowDirection * (Math.PI / 180)) > 0;
-				const x = spawnLeft ? 0 - radius : this._width + radius;
-				const y = Math.random() * this._height;
+				const spawnLeft = Math.cos(this.flowDirection * (Math.PI / 180)) > 0;
+				const x = spawnLeft ? 0 - radius : this.width + radius;
+				const y = Math.random() * this.height;
 				return new Vec2(x, y);
 			}
 		} else {
@@ -181,28 +181,28 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 		}
 	}
 
-	private _getRandomRadius(): number {
-		if (this._radiusMin === this._radiusMax) {
-			return this._radiusMin;
+	private getRandomRadius(): number {
+		if (this.radiusMin === this.radiusMax) {
+			return this.radiusMin;
 		}
-		return this._radiusMin + Math.random() * (this._radiusMax - this._radiusMin);
+		return this.radiusMin + Math.random() * (this.radiusMax - this.radiusMin);
 	}
 
-	private _getInitDirectionRadians(pos: Vec2): number {
-		if (this._flowType === 'directional') {
-			return this._flowDirection * (Math.PI / 180);
-		} else if (this._flowType === 'radial') {
+	private getInitDirectionRadians(pos: Vec2): number {
+		if (this.flowType === 'directional') {
+			return this.flowDirection * (Math.PI / 180);
+		} else if (this.flowType === 'radial') {
 			// based on the center position, we go away from the center
-			const dirVec = pos.sub(this._flowCenter);
+			const dirVec = pos.sub(this.flowCenter);
 			return Math.atan2(dirVec.y, dirVec.x);
 		}
 		return 0;
 	}
 
-	private _getSpawnDirectionRadians(): number {
-		if (this._flowType === 'directional') {
-			return this._flowDirection * (Math.PI / 180);
-		} else if (this._flowType === 'radial') {
+	private getSpawnDirectionRadians(): number {
+		if (this.flowType === 'directional') {
+			return this.flowDirection * (Math.PI / 180);
+		} else if (this.flowType === 'radial') {
 			return Math.random() * 2 * Math.PI;
 		}
 		return 0;
@@ -213,14 +213,16 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
  * Particle flow's particle model
  */
 class Particle {
+	// eslint-disable-next-line no-underscore-dangle
 	private _radius: number;
-	private _speed: number;
+	private speed: number;
 	/**
 	 * In radians
 	 */
-	private _direction: number;
+	private direction: number;
+	// eslint-disable-next-line no-underscore-dangle
 	private _position: Vec2;
-	private _velocity: Vec2;
+	private velocity: Vec2;
 
 	get radius(): number {
 		return this._radius;
@@ -240,9 +242,9 @@ class Particle {
 	) {
 		this._position = position;
 		this._radius = radius;
-		this._speed = speed;
-		this._direction = direction;
-		this._velocity = new Vec2(Math.cos(direction) * speed, Math.sin(direction) * speed);
+		this.speed = speed;
+		this.direction = direction;
+		this.velocity = new Vec2(Math.cos(direction) * speed, Math.sin(direction) * speed);
 	}
 
 	public tick(volume: number): void {
@@ -251,10 +253,10 @@ class Particle {
 		// or simple multiplication (volume * 10) * (volume * 10).
 		// Since this is called every tick for every particle,
 		// the performance difference could be noticeable with many particles.
-		this._velocity = new Vec2(
-			Math.cos(this._direction) * this._speed * Math.pow(volume * 10, 2),
-			Math.sin(this._direction) * this._speed * Math.pow(volume * 10, 2)
+		this.velocity = new Vec2(
+			Math.cos(this.direction) * this.speed * Math.pow(volume * 10, 2),
+			Math.sin(this.direction) * this.speed * Math.pow(volume * 10, 2)
 		);
-		this._position = this._position.add(this._velocity);
+		this._position = this._position.add(this.velocity);
 	}
 }

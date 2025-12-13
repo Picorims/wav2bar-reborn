@@ -41,32 +41,32 @@ forwardConsole('warn', warn);
 forwardConsole('error', error);
 
 class Logger {
-	private _namespace: string;
+	private namespace: string;
 	constructor(namespace: string = 'default') {
-		this._namespace = namespace;
+		this.namespace = namespace;
 	}
 
-	private _prefix(level: string) {
-		return `[${nowUTCString()}] [${this._namespace}] [${level}] -`;
+	private prefix(level: string) {
+		return `[${nowUTCString()}] [${this.namespace}] [${level}] -`;
 	}
 
 	trace(...messages: string[]) {
-		console.trace(`${this._prefix('trace')} ${messages.join(' ')}`);
+		console.trace(`${this.prefix('trace')} ${messages.join(' ')}`);
 	}
 	debug(...messages: string[]) {
-		console.debug(`${this._prefix('debug')} ${messages.join(' ')}`);
+		console.debug(`${this.prefix('debug')} ${messages.join(' ')}`);
 	}
 	info(...messages: string[]) {
-		console.info(`${this._prefix('info')} ${messages.join(' ')}`);
+		console.info(`${this.prefix('info')} ${messages.join(' ')}`);
 	}
 	warn(...messages: string[]) {
-		console.warn(`${this._prefix('warn')} ${messages.join(' ')}`);
+		console.warn(`${this.prefix('warn')} ${messages.join(' ')}`);
 	}
 	error(...messages: string[]) {
-		console.error(`${this._prefix('error')} ${messages.join(' ')}`);
+		console.error(`${this.prefix('error')} ${messages.join(' ')}`);
 	}
 	fatal(...messages: string[]) {
-		console.error(`${this._prefix('fatal')} ${messages.join(' ')}`);
+		console.error(`${this.prefix('fatal')} ${messages.join(' ')}`);
 	}
 	log(...messages: string[]) {
 		this.debug(...messages);

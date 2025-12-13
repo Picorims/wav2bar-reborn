@@ -15,74 +15,74 @@ import type { UUIDv4 } from '$lib/types/common_types';
 import { TrackProgressTracker } from '../tick_units/track_progress_tracker';
 
 export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStraightBar> {
-	private _saveId: UUIDv4;
-	private _container: Container;
-	private _graphics: Graphics;
-	private _tickUnit: TrackProgressTracker;
-	private _width: number = 1;
-	private _height: number = 1;
-	private _lineThickness: number = 1;
-	private _innerSpacing: number = 0;
-	private _color: string = '#FFFFFF';
-	private _progressRatio: number = 0;
+	private saveId: UUIDv4;
+	private container: Container;
+	private graphics: Graphics;
+	private tickUnit: TrackProgressTracker;
+	private width: number = 1;
+	private height: number = 1;
+	private lineThickness: number = 1;
+	private innerSpacing: number = 0;
+	private color: string = '#FFFFFF';
+	private progressRatio: number = 0;
 
 	constructor(saveId: UUIDv4) {
-		this._saveId = saveId;
-		this._container = new Container();
-		this._graphics = new Graphics();
-		this._tickUnit = new TrackProgressTracker();
-		this._tickUnit.subscribe((ratio) => {
-			this._progressRatio = ratio;
-			this._render(this._graphics);
+		this.saveId = saveId;
+		this.container = new Container();
+		this.graphics = new Graphics();
+		this.tickUnit = new TrackProgressTracker();
+		this.tickUnit.subscribe((ratio) => {
+			this.progressRatio = ratio;
+			this.render(this.graphics);
 		});
 	}
 	update(obj: SaveVO_TimerStraightBar): Container {
-		this._width = obj.size.width;
-		this._height = obj.size.height;
-		this._color = obj.color;
-		this._lineThickness = obj.border_thickness;
-		this._innerSpacing = obj.timer_inner_spacing;
+		this.width = obj.size.width;
+		this.height = obj.size.height;
+		this.color = obj.color;
+		this.lineThickness = obj.border_thickness;
+		this.innerSpacing = obj.timer_inner_spacing;
 
 		const container = getBaseVOContainer(obj);
 
 		const graphics = new Graphics();
-		this._render(graphics);
+		this.render(graphics);
 		container.addChild(graphics);
 
-		this._container = container;
-		this._graphics = graphics;
-		return this._container;
+		this.container = container;
+		this.graphics = graphics;
+		return this.container;
 	}
-	private _render(graphics: Graphics) {
+	private render(graphics: Graphics) {
 		graphics.clear();
 
 		// outer stroke bar (inset)
 		const outerX = 0;
 		const outerY = 0;
-		const outerWidth = this._width;
-		const outerHeight = this._height;
+		const outerWidth = this.width;
+		const outerHeight = this.height;
 		graphics.rect(outerX, outerY, outerWidth, outerHeight);
 		graphics.stroke({
 			alignment: 1,
 			cap: 'square',
 			join: 'miter',
-			color: this._color,
-			width: this._lineThickness
+			color: this.color,
+			width: this.lineThickness
 		});
 
 		// inner filled bar
-		const innerX = this._lineThickness + this._innerSpacing;
-		const innerY = this._lineThickness + this._innerSpacing;
+		const innerX = this.lineThickness + this.innerSpacing;
+		const innerY = this.lineThickness + this.innerSpacing;
 		const innerWidth =
-			(this._width - 2 * this._lineThickness - 2 * this._innerSpacing) * this._progressRatio;
-		const innerHeight = this._height - 2 * this._lineThickness - 2 * this._innerSpacing;
+			(this.width - 2 * this.lineThickness - 2 * this.innerSpacing) * this.progressRatio;
+		const innerHeight = this.height - 2 * this.lineThickness - 2 * this.innerSpacing;
 		graphics.rect(innerX, innerY, innerWidth, innerHeight);
-		graphics.fill(this._color);
+		graphics.fill(this.color);
 	}
 	getContainer(): Container {
-		return this._container;
+		return this.container;
 	}
 	getTickUnit() {
-		return this._tickUnit as TickUnit<unknown>;
+		return this.tickUnit as TickUnit<unknown>;
 	}
 }

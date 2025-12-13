@@ -36,7 +36,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 	 * 0+: FFT block files
 	 */
 	private lastWarnMap: Map<number, number> = new Map();
-	private _frequenciesCacheProcessing: boolean = false;
+	private frequenciesCacheProcessing: boolean = false;
 
 	constructor(audioElement: HTMLAudioElement) {
 		super();
@@ -203,10 +203,10 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 	}
 
 	private async cacheFrequenciesIfNeeded() {
-		if (this.frequenciesCache !== null || this._frequenciesCacheProcessing) {
+		if (this.frequenciesCache !== null || this.frequenciesCacheProcessing) {
 			return;
 		}
-		this._frequenciesCacheProcessing = true;
+		this.frequenciesCacheProcessing = true;
 		const fftDir = await invoke<string>('get_fft_dir');
 		const frequenciesFilePath = await join(fftDir, `fft_frequencies.bin`);
 		try {
@@ -224,7 +224,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 					(e as Error).message
 			);
 		} finally {
-			this._frequenciesCacheProcessing = false;
+			this.frequenciesCacheProcessing = false;
 		}
 	}
 

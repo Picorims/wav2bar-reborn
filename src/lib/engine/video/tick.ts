@@ -19,51 +19,51 @@ export class TickEngine {
 	/**
 	 * in ms
 	 */
-	private _init: DOMHighResTimeStamp = 0;
+	private init: DOMHighResTimeStamp = 0;
 	/**
 	 * in ms
 	 */
-	private _then: DOMHighResTimeStamp = 0;
+	private then: DOMHighResTimeStamp = 0;
 	/**
 	 * in ms
 	 */
-	private _now: DOMHighResTimeStamp = 0;
+	private now: DOMHighResTimeStamp = 0;
 	/**
 	 * in ms
 	 */
-	private _whenPaused: DOMHighResTimeStamp = 0;
-	private _isPlaying = false;
+	private whenPaused: DOMHighResTimeStamp = 0;
+	private isPlaying = false;
 	/**
 	 * ticks per second
 	 */
 	public tps = 60;
 
-	private _tickUnits: TickUnit<unknown>[] = [];
-	private _audioProvider: AudioProvider | null = null;
+	private tickUnits: TickUnit<unknown>[] = [];
+	private audioProvider: AudioProvider | null = null;
 
 	constructor() {
 		this.reset();
 	}
 
 	private reset() {
-		this._init = 0;
-		this._then = 0;
-		this._now = 0;
-		this._whenPaused = 0;
-		this._isPlaying = false;
-		this._tickUnits = [];
+		this.init = 0;
+		this.then = 0;
+		this.now = 0;
+		this.whenPaused = 0;
+		this.isPlaying = false;
+		this.tickUnits = [];
 	}
 
 	public setAudioProvider(audioProvider: AudioProvider) {
-		this._audioProvider = audioProvider;
+		this.audioProvider = audioProvider;
 	}
 
 	public addTickUnit(tickUnit: TickUnit<unknown>) {
-		this._tickUnits.push(tickUnit);
+		this.tickUnits.push(tickUnit);
 	}
 
 	public removeTickUnit(tickUnit: TickUnit<unknown>) {
-		this._tickUnits = this._tickUnits.filter((unit) => unit !== tickUnit);
+		this.tickUnits = this.tickUnits.filter((unit) => unit !== tickUnit);
 	}
 
 	private getWindowNow() {
@@ -71,20 +71,20 @@ export class TickEngine {
 	}
 
 	play() {
-		this._isPlaying = true;
-		if (this._init === 0) {
-			this._init = this.getWindowNow();
+		this.isPlaying = true;
+		if (this.init === 0) {
+			this.init = this.getWindowNow();
 		} else {
 			/** shift the timeline to the duration ellapsed
 			 * to make it as it never stopped
 			 */
-			this._init += this.getWindowNow() - this._whenPaused;
+			this.init += this.getWindowNow() - this.whenPaused;
 		}
 	}
 
 	pause() {
-		this._isPlaying = false;
-		this._whenPaused = this.getWindowNow();
+		this.isPlaying = false;
+		this.whenPaused = this.getWindowNow();
 	}
 
 	stop() {
@@ -97,10 +97,10 @@ export class TickEngine {
 	 * @returns
 	 */
 	tick() {
-		if (!this._isPlaying) return;
-		this._now = this.getWindowNow();
-		const thenFrame = floor(this._then, 1000 / this.tps, this._init) / this.tps;
-		const nowFrame = floor(this._now, 1000 / this.tps, this._init) / this.tps;
+		if (!this.isPlaying) return;
+		this.now = this.getWindowNow();
+		const thenFrame = floor(this.then, 1000 / this.tps, this.init) / this.tps;
+		const nowFrame = floor(this.now, 1000 / this.tps, this.init) / this.tps;
 		/**
 		 * Number of ticks to perform
 		 */
@@ -111,7 +111,7 @@ export class TickEngine {
 		for (let i = 0; i < deltaFrame; i++) {
 			this.tickOnce();
 		}
-		this._then = this._now;
+		this.then = this.now;
 	}
 
 	/**
@@ -125,12 +125,12 @@ export class TickEngine {
 		// ALL UPDATES ARE FRAME BASED, NOT TIME BASED !!! (tick() is time based)
 		// =========================== /!\ /!\ /!\ ===============================
 
-		for (const tickUnit of this._tickUnits) {
-			tickUnit.tick(this._audioProvider);
+		for (const tickUnit of this.tickUnits) {
+			tickUnit.tick(this.audioProvider);
 		}
 	}
 
 	clearAllTickUnits() {
-		this._tickUnits = [];
+		this.tickUnits = [];
 	}
 }
