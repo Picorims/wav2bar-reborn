@@ -7,31 +7,31 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import type { AudioProvider } from "$lib/engine/audio/audio_provider";
-import { TickUnit } from "./tick_unit";
+import type { AudioProvider } from '$lib/engine/audio/audio_provider';
+import { TickUnit } from './tick_unit';
 
 export class TrackProgressTracker extends TickUnit<number> {
-    private static _DEFAULT_VALUE = 0;
-    
-    constructor() {
-        super(TrackProgressTracker._DEFAULT_VALUE);
-    }
+	private static _DEFAULT_VALUE = 0;
 
-    getDefaultValue(): number {
-        return TrackProgressTracker._DEFAULT_VALUE;
-    }
+	constructor() {
+		super(TrackProgressTracker._DEFAULT_VALUE);
+	}
 
-    protected computeNewState(_basis: number, audioProvider: AudioProvider | null): number {
-        if (!audioProvider) {
-            return this.getDefaultValue();
-        }
-        
-        const durationMs = audioProvider.getDuration();
-        if (durationMs <= 0) {
-            return this.getDefaultValue();
-        }
-        const currentTimeMs = audioProvider.getCurrentAudioTime();
+	getDefaultValue(): number {
+		return TrackProgressTracker._DEFAULT_VALUE;
+	}
 
-        return currentTimeMs / durationMs;
-    }
+	protected computeNewState(_basis: number, audioProvider: AudioProvider | null): number {
+		if (!audioProvider) {
+			return this.getDefaultValue();
+		}
+
+		const durationMs = audioProvider.getDuration();
+		if (durationMs <= 0) {
+			return this.getDefaultValue();
+		}
+		const currentTimeMs = audioProvider.getCurrentAudioTime();
+
+		return currentTimeMs / durationMs;
+	}
 }

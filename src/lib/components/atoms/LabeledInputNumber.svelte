@@ -11,7 +11,6 @@
 	import { MoveVertical, XCircle } from 'lucide-svelte';
 	import LabeledInputWrapper from './LabeledInputWrapper.svelte';
 
-
 	interface Props {
 		title?: string;
 		unit?: string;

@@ -7,25 +7,30 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { version } from "$app/environment";
-import { LanguageOptions, ThemeOptions, type LanguagesType, type ThemesType } from "../settings_structure/settings_enums";
+import { version } from '$app/environment';
+import {
+	LanguageOptions,
+	ThemeOptions,
+	type LanguagesType,
+	type ThemesType
+} from '../settings_structure/settings_enums';
 
 /**
  * For versions 1.0.0-beta.1 and above
  */
 export interface SettingsV2 {
-    save_version: 2;
-    software_version_used: string;
-    //TODO: software_version_first_created: string;
-    ffmpeg_path: string;
-    theme: ThemesType;
-    language: LanguagesType;
+	save_version: 2;
+	software_version_used: string;
+	//TODO: software_version_first_created: string;
+	ffmpeg_path: string;
+	theme: ThemesType;
+	language: LanguagesType;
 }
 
 export const defaultSettingsV2: SettingsV2 = {
-    save_version: 2,
-    software_version_used: version,
-    ffmpeg_path: "",
-    theme: ThemeOptions.DEFAULT,
-    language: LanguageOptions.ENGLISH,
-}
+	save_version: 2,
+	software_version_used: version,
+	ffmpeg_path: '',
+	theme: ThemeOptions.DEFAULT,
+	language: LanguageOptions.ENGLISH
+};

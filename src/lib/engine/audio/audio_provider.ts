@@ -7,38 +7,38 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import type { Renderer } from "../video/renderer";
+import type { Renderer } from '../video/renderer';
 
 /**
  * Base class for defining a way to provide audio data to the renderer
  */
 export abstract class AudioProvider {
-    static DEFAULT_POINTS_COUNT = 1024;
-    protected renderer: Renderer | null = null;
-    setRenderer(renderer: Renderer) {
-        this.renderer = renderer;
-    }
+	static DEFAULT_POINTS_COUNT = 1024;
+	protected renderer: Renderer | null = null;
+	setRenderer(renderer: Renderer) {
+		this.renderer = renderer;
+	}
 
-    abstract init(): Promise<void>;
-    abstract hasInit(): boolean;
-    abstract play(): void;
-    abstract pause(): void;
-    abstract stop(): void;
-    abstract setVolume(volume: number): void;
-    /** in ms */
-    abstract getCurrentAudioTime(): number;
-    /** in ms */
-    abstract getDuration(): number;
-    /**
-     * 
-     * @param time in ms
-     */
-    abstract seekTo(time: number): void;
-    abstract isPlaying(): boolean;
-    abstract shallLoop(loop: boolean): void;
-    abstract getCurrentAudioSpectrum(): Uint16Array;
-    abstract getAudioSpectrumSize(): number;
-    abstract setAudioSpectrumSize(size: number): void;
-    abstract getFrequencies(): Uint16Array;
-    abstract getCurrentAudioWaveform(): Uint8Array;
+	abstract init(): Promise<void>;
+	abstract hasInit(): boolean;
+	abstract play(): void;
+	abstract pause(): void;
+	abstract stop(): void;
+	abstract setVolume(volume: number): void;
+	/** in ms */
+	abstract getCurrentAudioTime(): number;
+	/** in ms */
+	abstract getDuration(): number;
+	/**
+	 *
+	 * @param time in ms
+	 */
+	abstract seekTo(time: number): void;
+	abstract isPlaying(): boolean;
+	abstract shallLoop(loop: boolean): void;
+	abstract getCurrentAudioSpectrum(): Uint16Array;
+	abstract getAudioSpectrumSize(): number;
+	abstract setAudioSpectrumSize(size: number): void;
+	abstract getFrequencies(): Uint16Array;
+	abstract getCurrentAudioWaveform(): Uint8Array;
 }

@@ -66,15 +66,15 @@
 		<ButtonsRow columns={3}>
 			<Button title={$lang.properties.size.buttons.full_width} onClick={fullWidth}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<MoveHorizontal slot="icon-r" />
+				<MoveHorizontal slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.size.buttons.full_height} onClick={fullHeight}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<MoveVertical slot="icon-r" />
+				<MoveVertical slot="icon-r" />
 			</Button>
 			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize}>
 				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-	<Move slot="icon-r" />
+				<Move slot="icon-r" />
 			</Button>
 		</ButtonsRow>
 	</ButtonsGroup>

@@ -18,27 +18,33 @@
 	import { saveManager } from '$lib/store/save.svelte';
 
 	const handleClick = () => {
-        saveManager.activeObject = uuid;
-    };
+		saveManager.activeObject = uuid;
+	};
 
 	interface Props {
 		uuid: UUIDv4;
 	}
 
 	let { uuid }: Props = $props();
-	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(saveManager.save.objects[uuid]);
+	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(
+		saveManager.save.objects[uuid]
+	);
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
 	role="listitem"
-    tabindex="0"
-	onkeyup={(e) => {if (e.key === 'Enter') handleClick()}}
+	tabindex="0"
+	onkeyup={(e) => {
+		if (e.key === 'Enter') handleClick();
+	}}
 	onclick={handleClick}
 	class="item"
 	class:selected={uuid === saveManager.activeObject}
-    onfocus={() => {Log.ui.debug("ObjectPaneItem focused.")}}
+	onfocus={() => {
+		Log.ui.debug('ObjectPaneItem focused.');
+	}}
 >
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />

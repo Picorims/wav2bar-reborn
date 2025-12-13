@@ -29,7 +29,13 @@ import type {
 	TimerStraightBar,
 	ParticleFlow
 } from '$lib/types/schemas/save_v4';
-import { ARCHIVE_STRUCTURE_V4, EXTENSION_V4, validateSaveV4, validateSaveV4VisualObject, visualObject_V4_types } from './save_v4';
+import {
+	ARCHIVE_STRUCTURE_V4,
+	EXTENSION_V4,
+	validateSaveV4,
+	validateSaveV4VisualObject,
+	visualObject_V4_types
+} from './save_v4';
 
 export const EXTENSION = EXTENSION_V4;
 export const ARCHIVE_STRUCTURE = ARCHIVE_STRUCTURE_V4;
@@ -53,7 +59,9 @@ export type SaveVO_ParticleFlow = ParticleFlow;
 
 export type VisualObject_Type = Save['objects'][string]['visual_object_type'];
 export const visualObject_types = visualObject_V4_types;
-export type VisualObjectInterface<T extends VisualObject_Type> = Save['objects'][string] & { visual_object_type: T };
+export type VisualObjectInterface<T extends VisualObject_Type> = Save['objects'][string] & {
+	visual_object_type: T;
+};
 export type Supports_BorderRadius = SupportsBorderRadius;
 export type Supports_BoxShadow = SupportsBoxShadow;
 export type Supports_Background = SupportsBackground;

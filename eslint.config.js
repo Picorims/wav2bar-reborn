@@ -19,10 +19,12 @@ export default [
 			}
 		},
 		rules: {
-			"@typescript-eslint/no-unused-vars": ["error", {
-				argsIgnorePattern: "^_",
-
-			}]
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{
+					argsIgnorePattern: '^_'
+				}
+			]
 		}
 	},
 	{
@@ -34,6 +36,6 @@ export default [
 		}
 	},
 	{
-		ignores: ['build/**/*', '.svelte-kit/**/*', 'dist/**/*', "target/**/*", "src-tauri/**/*"]
+		ignores: ['build/**/*', '.svelte-kit/**/*', 'dist/**/*', 'target/**/*', 'src-tauri/**/*']
 	}
 ];

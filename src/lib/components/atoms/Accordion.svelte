@@ -11,25 +11,25 @@
 	import { ChevronDown, ChevronRight } from 'lucide-svelte';
 	import type { Snippet } from 'svelte';
 
-    interface Props {
-        label: string;
-        open?: boolean;
-        children?: Snippet;
-    }
+	interface Props {
+		label: string;
+		open?: boolean;
+		children?: Snippet;
+	}
 
-    let { label, open = $bindable(false), children }: Props = $props();
+	let { label, open = $bindable(false), children }: Props = $props();
 </script>
 
 <details bind:open>
 	<summary>
-        <div>
-            {#if open}
-                <ChevronDown />
-            {:else}
-                <ChevronRight />
-            {/if}
-            <span>{label}</span>
-        </div>
+		<div>
+			{#if open}
+				<ChevronDown />
+			{:else}
+				<ChevronRight />
+			{/if}
+			<span>{label}</span>
+		</div>
 	</summary>
 	<div class="content">
 		{@render children?.()}
@@ -44,17 +44,17 @@
 		cursor: pointer;
 		color: g.$color-text;
 		list-style: none;
-        
-        & > div {
-            border: 1px solid g.$color-background-300;
-            border-radius: g.$border-radius-s;
-            display: flex;
-            gap: g.$spacing-s;
-            align-items: center;
-            height: g.$size-m;
-        }
 
-        & :hover {
+		& > div {
+			border: 1px solid g.$color-background-300;
+			border-radius: g.$border-radius-s;
+			display: flex;
+			gap: g.$spacing-s;
+			align-items: center;
+			height: g.$size-m;
+		}
+
+		& :hover {
 			background-color: g.$color-background-300;
 		}
 
@@ -76,7 +76,7 @@
 	div.content {
 		margin-left: g.$spacing-ml;
 		padding: g.$spacing-m;
-        padding-right: 0;
+		padding-right: 0;
 		border-left: 1px solid g.$color-background-800;
 	}
 </style>

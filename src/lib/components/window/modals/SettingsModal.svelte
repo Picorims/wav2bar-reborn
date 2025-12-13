@@ -16,7 +16,7 @@
 		type LanguagesType,
 		type ThemesType
 	} from '$lib/store/settings_structure/settings_enums';
-	import { appLogDir } from "@tauri-apps/api/path";
+	import { appLogDir } from '@tauri-apps/api/path';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -44,25 +44,29 @@
 		optionsObj={LanguageOptions}
 		onChange={onLanguageChange}
 	></LabeledDropdown>
-	
-    <LabeledDropdown
-        title={$lang.settings.theme}
-        optionsObj={ThemeOptions}
-        onChange={onThemeChange}
+
+	<LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}
 	></LabeledDropdown>
-	<button class="logs-btn" onclick={() => logsDir = appLogDir()}>{$lang.settings.show_logs_dir}</button>
+	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}
+		>{$lang.settings.show_logs_dir}</button
+	>
 	<p>
 		{#await logsDir}
 			Loading...
-		{:then dir} 
+		{:then dir}
 			{dir}
 		{:catch}
 			System logs dir could not be retrieved.
 		{/await}
 	</p>
 
-    {#snippet buttons()}
-		<button  class="close" onclick={() => {dialog?.close()}}>{$lang.settings.close}</button>
+	{#snippet buttons()}
+		<button
+			class="close"
+			onclick={() => {
+				dialog?.close();
+			}}>{$lang.settings.close}</button
+		>
 	{/snippet}
 </Modal>
 

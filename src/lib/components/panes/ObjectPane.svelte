@@ -11,14 +11,12 @@
 	import { lang } from '$lib/store/settings';
 	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
 	import IconButton from '../atoms/IconButton.svelte';
-	import {
-		type VisualObject_Type
-	} from '$lib/store/save_structure/save_latest';
+	import { type VisualObject_Type } from '$lib/store/save_structure/save_latest';
 	import { saveManager } from '$lib/store/save.svelte';
 	import ObjectPaneItem from './object_pane/ObjectPaneItem.svelte';
 	import AddObjectModal from '../window/modals/AddObjectModal.svelte';
 
-	let addObjectModalDialog: HTMLDialogElement = $state(document.createElement("dialog"));
+	let addObjectModalDialog: HTMLDialogElement = $state(document.createElement('dialog'));
 
 	function newObj() {
 		addObjectModalDialog?.showModal();
@@ -40,10 +38,10 @@
 	<div class="header">
 		<span class="title">{$lang.object_pane.title}</span>
 		<div class="header-buttons">
-			<IconButton onClick={() => alert("coming soon!")}>
+			<IconButton onClick={() => alert('coming soon!')}>
 				<Undo />
 			</IconButton>
-			<IconButton onClick={() => alert("coming soon!")}>
+			<IconButton onClick={() => alert('coming soon!')}>
 				<Redo />
 			</IconButton>
 			<IconButton variant="accent" onClick={newObj}>
@@ -52,13 +50,7 @@
 		</div>
 	</div>
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-	<div
-		bind:this={listDiv}
-		class="content"
-		role="list"
-		onkeyup={enterList}
-		tabindex="-1"
-	>
+	<div bind:this={listDiv} class="content" role="list" onkeyup={enterList} tabindex="-1">
 		<!-- Content -->
 		{#each Object.keys(saveManager.save.objects) as k}
 			<ObjectPaneItem uuid={k} />

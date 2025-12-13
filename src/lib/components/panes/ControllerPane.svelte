@@ -8,12 +8,11 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 
-	import AudioController from "./controller_pane/AudioController.svelte";
-
+	import AudioController from './controller_pane/AudioController.svelte';
 </script>
 
 <div class="card">
-	<AudioController/>
+	<AudioController />
 </div>
 
 <style lang="scss">

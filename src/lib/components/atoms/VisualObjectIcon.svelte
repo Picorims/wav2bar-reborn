@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -8,15 +8,14 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-    import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
+	import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
 	import { AudioLines, Box, Clock, Shapes, Sparkles, Type } from 'lucide-svelte';
 
-    interface Props {
+	interface Props {
+		type: VisualObject_Type;
+	}
 
-        type: VisualObject_Type;
-    }
-
-    let { type }: Props = $props();
+	let { type }: Props = $props();
 </script>
 
 {#if type === 'particle_flow'}

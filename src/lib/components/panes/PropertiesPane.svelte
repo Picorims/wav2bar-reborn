@@ -7,7 +7,7 @@
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
-	
+
 	import { saveManager } from '$lib/store/save.svelte';
 	import VisualObjectIcon from '../atoms/VisualObjectIcon.svelte';
 	import ParticleFlowPs from '../property_pane_sets/ParticleFlowPS.svelte';

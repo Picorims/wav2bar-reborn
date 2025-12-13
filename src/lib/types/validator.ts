@@ -154,28 +154,31 @@ export const validateAgainstArray: ArrayLoggedValidator = (value, validator) => 
 export const loggedWrapper = (validator: Validator): ValueLoggedValidator => ({
 	f: (v) => {
 		const success = validator(v);
-		return { success: success, logs: success? '' : `Invalid value: ${v}\n` };
+		return { success: success, logs: success ? '' : `Invalid value: ${v}\n` };
 	},
 	name: validator.name
 });
 
 /**
  * Declare a nested array validator.
- * @param validator 
- * @returns 
+ * @param validator
+ * @returns
  */
 export const arrayValidator = (validator: ValueLoggedValidator): ValueLoggedValidator => ({
 	f: (v) => validateAgainstArray(v as unknown[], validator),
-	name: validator.name + '[]',
+	name: validator.name + '[]'
 });
 
 /**
  * Declare a fixed length nested array validator.
- * @param validator 
- * @param length 
- * @returns 
+ * @param validator
+ * @param length
+ * @returns
  */
-export const fixedLengthArrayValidator = (validator: ValueLoggedValidator, length: number): ValueLoggedValidator => ({
+export const fixedLengthArrayValidator = (
+	validator: ValueLoggedValidator,
+	length: number
+): ValueLoggedValidator => ({
 	f: (v) => {
 		if (!validators.array.f(v).success) {
 			return {
@@ -190,30 +193,35 @@ export const fixedLengthArrayValidator = (validator: ValueLoggedValidator, lengt
 			};
 		}
 		return validateAgainstArray(v as unknown[], validator);
-		
 	},
-	name: validator.name + '['+length+']',
+	name: validator.name + '[' + length + ']'
 });
 
 /**
  * Declare a nested record validator.
- * @param validatorRecord 
- * @param name 
- * @returns 
+ * @param validatorRecord
+ * @param name
+ * @returns
  */
-export const recordValidator = (validatorRecord: ValidatorRecord, name: string): ValueLoggedValidator => ({
+export const recordValidator = (
+	validatorRecord: ValidatorRecord,
+	name: string
+): ValueLoggedValidator => ({
 	f: (v) => validateAgainstRecord(v, validatorRecord),
-	name: name,
+	name: name
 });
 
 /**
  * Declare a dictionary validator, with a validator for the key
  * in place of enforcing keys.
- * @param keyValidator 
- * @param valueValidator 
- * @returns 
+ * @param keyValidator
+ * @param valueValidator
+ * @returns
  */
-export const dictionaryValidator = (keyValidator: ValueLoggedValidator, valueValidator: ValueLoggedValidator): ValueLoggedValidator => ({
+export const dictionaryValidator = (
+	keyValidator: ValueLoggedValidator,
+	valueValidator: ValueLoggedValidator
+): ValueLoggedValidator => ({
 	f: (v) => {
 		if (!objectNonNullable(v)) {
 			return {
@@ -244,17 +252,20 @@ export const dictionaryValidator = (keyValidator: ValueLoggedValidator, valueVal
 		}
 		return result;
 	},
-	name: `Record<${keyValidator.name}, ${valueValidator.name}}>`,
+	name: `Record<${keyValidator.name}, ${valueValidator.name}}>`
 });
 
 /**
  * Validates both that the value matches the provided validator
  * and that it is in the provided list.
- * @param validList 
- * @param validator 
- * @returns 
+ * @param validList
+ * @param validator
+ * @returns
  */
-export const enumValidator = <T>(validList: T[], validator: ValueLoggedValidator): ValueLoggedValidator => ({
+export const enumValidator = <T>(
+	validList: T[],
+	validator: ValueLoggedValidator
+): ValueLoggedValidator => ({
 	f: (v) => {
 		if (!validator.f(v).success) {
 			return validator.f(v);
@@ -262,12 +273,12 @@ export const enumValidator = <T>(validList: T[], validator: ValueLoggedValidator
 		if (!validList.includes(v as T)) {
 			return {
 				success: false,
-				logs: `The value "${v}" is not in the valid list: ${validList.join(", ")}.\n`
+				logs: `The value "${v}" is not in the valid list: ${validList.join(', ')}.\n`
 			};
 		}
 		return { success: true, logs: '' };
 	},
-	name: `enum<${validList.join("|")}>`,
+	name: `enum<${validList.join('|')}>`
 });
 
 /**

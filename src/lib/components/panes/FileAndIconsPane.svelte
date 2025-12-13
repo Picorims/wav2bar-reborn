@@ -7,21 +7,21 @@
 	License, v. 2.0. If a copy of the MPL was not distributed with this
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
-	import IconButton from "../atoms/IconButton.svelte";
-	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from "lucide-svelte";
-	import { saveManager } from "$lib/store/save.svelte";
-	import { renderer } from "$lib/engine/video/renderer";
-	import SettingsModal from "../window/modals/SettingsModal.svelte";
-	import ProjectSettingsModal from "../window/modals/ProjectSettingsModal.svelte";
+	import IconButton from '../atoms/IconButton.svelte';
+	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from 'lucide-svelte';
+	import { saveManager } from '$lib/store/save.svelte';
+	import { renderer } from '$lib/engine/video/renderer';
+	import SettingsModal from '../window/modals/SettingsModal.svelte';
+	import ProjectSettingsModal from '../window/modals/ProjectSettingsModal.svelte';
 
 	interface Props {
 		title?: string;
 		saved?: boolean;
 	}
 
-	let { title = "", saved = false }: Props = $props();
-	let settingsModalDialog = $state<HTMLDialogElement>(document.createElement("dialog"));
-	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement("dialog"));
+	let { title = '', saved = false }: Props = $props();
+	let settingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
+	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 
 	function openAndLoadSave() {
 		saveManager.openSave(renderer);
@@ -32,29 +32,37 @@
 </script>
 
 <div class="card">
-	<span class="project-title">{title}{saved? "" : "*"}</span>
-	<IconButton onClick={() => {projectSettingsModalDialog?.showModal()}}>
-		<FileCog/>
+	<span class="project-title">{title}{saved ? '' : '*'}</span>
+	<IconButton
+		onClick={() => {
+			projectSettingsModalDialog?.showModal();
+		}}
+	>
+		<FileCog />
 	</IconButton>
 
 	<IconButton>
-		<FilePlus/>
+		<FilePlus />
 	</IconButton>
 
 	<IconButton onClick={openAndLoadSave}>
-		<FolderOpen/>
+		<FolderOpen />
 	</IconButton>
 
 	<IconButton onClick={writeSave}>
-		<Save/>
+		<Save />
 	</IconButton>
 
-	<IconButton onClick={() => {settingsModalDialog?.showModal()}}>
-		<Settings/>
+	<IconButton
+		onClick={() => {
+			settingsModalDialog?.showModal();
+		}}
+	>
+		<Settings />
 	</IconButton>
 
 	<IconButton>
-		<HelpCircle/>
+		<HelpCircle />
 	</IconButton>
 
 	<SettingsModal bind:dialog={settingsModalDialog} />

@@ -8,5 +8,5 @@
 */
 
 export function nowUTCString(): string {
-    return new Date().toISOString();
+	return new Date().toISOString();
 }

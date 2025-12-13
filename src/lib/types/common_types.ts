@@ -40,7 +40,7 @@ export type Color = string;
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonArray = (JsonPrimitive | JsonObject | JsonArray)[];
 export interface JsonObject {
-    [key: string]: JsonPrimitive | JsonObject | JsonArray;
+	[key: string]: JsonPrimitive | JsonObject | JsonArray;
 }
 
 export type JsonLike = JsonArray | JsonObject | JsonPrimitive;

@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -8,27 +8,27 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import LabeledInputColor from "$lib/components/atoms/LabeledInputColor.svelte";
-	import { saveManager } from "$lib/store/save.svelte";
-	import type { Supports_Color, VisualObject } from "$lib/store/save_structure/save_latest";
-	import { lang } from "$lib/store/settings";
+	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
+	import { saveManager } from '$lib/store/save.svelte';
+	import type { Supports_Color, VisualObject } from '$lib/store/save_structure/save_latest';
+	import { lang } from '$lib/store/settings';
 
-    type ObjT = VisualObject & Supports_Color;
+	type ObjT = VisualObject & Supports_Color;
 
 	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
-    function updateColor(value: string) {
-        saveManager.mutateActiveObject<ObjT>((obj) => {
-            obj.color = value as Supports_Color['color'];
-            return obj;
-        });
-    }
+	function updateColor(value: string) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.color = value as Supports_Color['color'];
+			return obj;
+		});
+	}
 </script>
 
 <LabeledInputColor
-    title={$lang.properties.color.title}
-    value={data?.color}
-    defaultValue="#ffffff"
-    required
-    onChange={updateColor}
+	title={$lang.properties.color.title}
+	value={data?.color}
+	defaultValue="#ffffff"
+	required
+	onChange={updateColor}
 />

@@ -8,40 +8,40 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 interface AppState {
-    loading: boolean;
-    loadingInfo: string;
-    loadingInfoDetail: string;
-    loadingProgress: number | null;
+	loading: boolean;
+	loadingInfo: string;
+	loadingInfoDetail: string;
+	loadingProgress: number | null;
 }
 
 export const appState = $state<AppState>({
-    loading: false,
-    loadingInfo: "",
-    loadingInfoDetail: "",
-    loadingProgress: null,
+	loading: false,
+	loadingInfo: '',
+	loadingInfoDetail: '',
+	loadingProgress: null
 });
 /**
  * Also resets loading info to empty string.
- * @param value 
+ * @param value
  */
 export function setLoading(value: boolean) {
-    appState.loading = value;
-    appState.loadingInfo = "";
-    appState.loadingInfoDetail = "";
-    appState.loadingProgress = null;
+	appState.loading = value;
+	appState.loadingInfo = '';
+	appState.loadingInfoDetail = '';
+	appState.loadingProgress = null;
 }
 /**
  * Also resets loading detail to empty string.
- * @param info 
+ * @param info
  */
 export function setLoadingInfo(info: string) {
-    appState.loadingInfo = info;
-    appState.loadingInfoDetail = "";
-    appState.loadingProgress = null;
+	appState.loadingInfo = info;
+	appState.loadingInfoDetail = '';
+	appState.loadingProgress = null;
 }
 export function setLoadingInfoDetail(detail: string) {
-    appState.loadingInfoDetail = detail;
+	appState.loadingInfoDetail = detail;
 }
 export function setLoadingProgress(progress: number | null) {
-    appState.loadingProgress = progress;
+	appState.loadingProgress = progress;
 }

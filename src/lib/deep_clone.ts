@@ -7,9 +7,9 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { objHasOwnProp } from "./object";
-import type { JsonArray, JsonLike, JsonObject } from "./types/common_types";
-import { validators } from "./types/validator";
+import { objHasOwnProp } from './object';
+import type { JsonArray, JsonLike, JsonObject } from './types/common_types';
+import { validators } from './types/validator';
 
 /**
  * Deep clones a value. support primitives, arrays (composed of the same things),
@@ -17,26 +17,23 @@ import { validators } from "./types/validator";
  * @param {*} value value to clone
  * @returns {*} copy
  */
-export function deepClone(value: JsonLike, depth=0): JsonLike {
-    let clone;
+export function deepClone(value: JsonLike, depth = 0): JsonLike {
+	let clone;
 
-    if (validators.array.f(value).success) {
-        clone = arrayDeepClone(value as JsonArray, depth++);
-    } else if (validators.objectNonNullable.f(value).success) {
-        clone = objDeepClone(value as JsonObject, depth++);
-    } else {
-        clone = value;
-    }            
+	if (validators.array.f(value).success) {
+		clone = arrayDeepClone(value as JsonArray, depth++);
+	} else if (validators.objectNonNullable.f(value).success) {
+		clone = objDeepClone(value as JsonObject, depth++);
+	} else {
+		clone = value;
+	}
 
-    return clone;
+	return clone;
 }
 
-
-export function typedDeepClone<T>(value: T, depth=0): T {
-    return deepClone(value as unknown as JsonLike, depth) as T;
+export function typedDeepClone<T>(value: T, depth = 0): T {
+	return deepClone(value as unknown as JsonLike, depth) as T;
 }
-
-
 
 /**
  * Deep clones an object. support primitives, arrays (composed of the same things),
@@ -44,16 +41,15 @@ export function typedDeepClone<T>(value: T, depth=0): T {
  * @param {Object} object object to clone
  * @returns {Object} copy
  */
-function objDeepClone(object: JsonObject, depth=0) {
-    const new_obj: JsonLike = {};
-    for (const key in object) {
-        if (objHasOwnProp(object, key)) {
-            new_obj[key] = deepClone(object[key], depth++);
-        }
-    }
-    return new_obj;
+function objDeepClone(object: JsonObject, depth = 0) {
+	const new_obj: JsonLike = {};
+	for (const key in object) {
+		if (objHasOwnProp(object, key)) {
+			new_obj[key] = deepClone(object[key], depth++);
+		}
+	}
+	return new_obj;
 }
-
 
 /**
  * Deep clones an array. support primitives, arrays (composed of the same things),
@@ -62,10 +58,10 @@ function objDeepClone(object: JsonObject, depth=0) {
  * @returns {Array} copy
  */
 
-function arrayDeepClone(array: JsonArray, depth=0) {
-    const new_array: JsonLike = [];
-    for (let i = 0; i < array.length; i++) {
-        new_array[i] = deepClone(array[i], depth++);
-    }
-    return new_array;
+function arrayDeepClone(array: JsonArray, depth = 0) {
+	const new_array: JsonLike = [];
+	for (let i = 0; i < array.length; i++) {
+		new_array[i] = deepClone(array[i], depth++);
+	}
+	return new_array;
 }

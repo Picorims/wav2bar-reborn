@@ -1,5 +1,5 @@
 <script lang="ts">
-    /*
+	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
 
@@ -8,11 +8,10 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import CommonProperties from "./groups/CommonProperties.svelte";
-	import BackgroundProperties from "./supports/BackgroundProperties.svelte";
-	import BorderRadiusProperties from "./supports/BorderRadiusProperties.svelte";
-	import BoxShadowProperties from "./supports/BoxShadowProperties.svelte";
-
+	import CommonProperties from './groups/CommonProperties.svelte';
+	import BackgroundProperties from './supports/BackgroundProperties.svelte';
+	import BorderRadiusProperties from './supports/BorderRadiusProperties.svelte';
+	import BoxShadowProperties from './supports/BoxShadowProperties.svelte';
 </script>
 
 <CommonProperties />
