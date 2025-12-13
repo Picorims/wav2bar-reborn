@@ -37,7 +37,7 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
      */
     private _flowDirection: number = 0;
     private _density: number = 1;
-    private _volume : number = 0;
+    private _volume: number = 0;
     private _color: string = "#FFFFFF";
     private _particles: Particle[] = [];
 
@@ -150,7 +150,7 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
         if (this._flowType === "radial") {
             return this._flowCenter;
         } else if (this._flowType === "directional") {
-            // to spread particle evenly, the amount spawned on each side depends on the flow direction
+            // to spread particles evenly, the amount spawned on each side depends on the flow direction
             // IMPORTANT: 90° is down because the y axis goes downwards in screen coordinates
             const verticalProbability = Math.abs(Math.sin(this._flowDirection * (Math.PI / 180)));
             // horizontal probability = 1 - verticalProbability; so deduced and not needed.
