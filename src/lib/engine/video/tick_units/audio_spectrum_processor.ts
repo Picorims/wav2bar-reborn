@@ -293,6 +293,9 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
     }
 
     average(spectrum: Uint16Array): number {
+        if (spectrum.length === 0) {
+            return 0;
+        }
         let sum = 0;
         for (let i = 0; i < spectrum.length; i++) {
             sum += spectrum[i];
