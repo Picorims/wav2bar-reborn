@@ -240,6 +240,11 @@ class Particle {
     }
 
     public tick(volume: number): void {
+        // FIXME: Copilot: Using Math.pow(volume * 10, 2) for squaring is less efficient
+        // than using the exponentiation operator (volume * 10) ** 2
+        // or simple multiplication (volume * 10) * (volume * 10).
+        // Since this is called every tick for every particle,
+        // the performance difference could be noticeable with many particles.
         this._velocity = new Vec2(
             Math.cos(this._direction) * this._speed * Math.pow(volume * 10, 2),
             Math.sin(this._direction) * this._speed * Math.pow(volume * 10, 2)
