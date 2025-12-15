@@ -25,6 +25,8 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
+		flex-wrap: wrap;
+		gap: g.$spacing-m;
 		width: calc(100% - g.$spacing-l);
 		height: calc(100% - g.$spacing-l);
 		@include g.card;
