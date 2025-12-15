@@ -40,9 +40,14 @@ export class TickEngine {
 
 	private tickUnits: TickUnit<unknown>[] = [];
 	private audioProvider: AudioProvider | null = null;
+	private lastTickDurationMS = 0;
 
 	constructor() {
 		this.reset();
+	}
+
+	get lastPerfTps(): number {
+		return this.lastTickDurationMS === 0 ? 0 : 1000 / this.lastTickDurationMS;
 	}
 
 	private reset() {
@@ -111,6 +116,7 @@ export class TickEngine {
 		for (let i = 0; i < deltaFrame; i++) {
 			this.tickOnce();
 		}
+		this.lastTickDurationMS = this.now - this.then;
 		this.then = this.now;
 	}
 

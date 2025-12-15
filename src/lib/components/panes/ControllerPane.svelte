@@ -9,10 +9,12 @@
 	*/
 
 	import AudioController from './controller_pane/AudioController.svelte';
+	import FPSDisplay from './controller_pane/FPSDisplay.svelte';
 </script>
 
 <div class="card">
 	<AudioController />
+	<FPSDisplay />
 </div>
 
 <style lang="scss">

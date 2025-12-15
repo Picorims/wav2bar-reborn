@@ -156,6 +156,19 @@ export class Renderer {
 		this.app.renderer.resize(width, height);
 	}
 
+	getPerfFPS() {
+		if (!this.hasInit()) {
+			return 0;
+		}
+		return this.app.ticker.FPS;
+	}
+	getPerfTPS() {
+		if (!this.hasInit()) {
+			return 0;
+		}
+		return this.tickEngine.lastPerfTps;
+	}
+
 	/**
 	 * After initialization, return the canvas
 	 */
