@@ -25,6 +25,7 @@
 		"rgba",
 		"rustfft",
 		"serde",
+		"strikethrough",
 		"symphonia",
 		"tauri",
 		"togglable",
