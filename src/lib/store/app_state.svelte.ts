@@ -12,13 +12,15 @@ interface AppState {
 	loadingInfo: string;
 	loadingInfoDetail: string;
 	loadingProgress: number | null;
+	zoomLevelPercent: number;
 }
 
 export const appState = $state<AppState>({
 	loading: false,
 	loadingInfo: '',
 	loadingInfoDetail: '',
-	loadingProgress: null
+	loadingProgress: null,
+	zoomLevelPercent: 100
 });
 /**
  * Also resets loading info to empty string.
@@ -44,4 +46,22 @@ export function setLoadingInfoDetail(detail: string) {
 }
 export function setLoadingProgress(progress: number | null) {
 	appState.loadingProgress = progress;
+}
+
+export function setZoomLevelPercent(zoomLevelPercent: number) {
+	appState.zoomLevelPercent = Math.min(Math.max(zoomLevelPercent, 1), 10_000);
+	for (const callback of zoomCallbacks) {
+		callback(appState.zoomLevelPercent);
+	}
+}
+
+const zoomCallbacks: Array<(zoomLevelPercent: number) => void> = [];
+export function onZoomChanged(callback: (zoomLevelPercent: number) => void): () => void {
+	zoomCallbacks.push(callback);
+	return () => {
+		const index = zoomCallbacks.indexOf(callback);
+		if (index !== -1) {
+			zoomCallbacks.splice(index, 1);
+		}
+	};
 }

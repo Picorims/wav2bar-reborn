@@ -72,36 +72,42 @@
 </script>
 
 <div class="container">
-	<IconButton onClick={seekToStart}>
-		<SkipBack />
-	</IconButton>
-	<IconButton onClick={togglePause}>
-		{#if paused}
-			<CirclePlay />
-		{:else}
-			<CirclePause />
-		{/if}
-	</IconButton>
-	<IconButton onClick={seekToEnd}>
-		<SkipForward />
-	</IconButton>
-	<input type="range" min="0" max="100" value={sliderValue} class="slider" oninput={onInput} />
-	<span class="time-text">{msToMMSS(progressMs)} / {msToMMSS(durationMs)}</span>
-	<SeparatorVertical />
-	<IconButton onClick={() => renderer.seekToRelative(-5000)}>
-		<IterationCw />
-	</IconButton>
-	<IconButton onClick={() => renderer.seekToRelative(5000)}>
-		<IterationCcw />
-	</IconButton>
-	<IconButton
-		togglable
-		onToggle={(looped) => {
-			renderer.shallLoop(looped);
-		}}
-	>
-		<Repeat />
-	</IconButton>
+	<div class="group">
+		<IconButton onClick={seekToStart}>
+			<SkipBack />
+		</IconButton>
+		<IconButton onClick={togglePause}>
+			{#if paused}
+				<CirclePlay />
+			{:else}
+				<CirclePause />
+			{/if}
+		</IconButton>
+		<IconButton onClick={seekToEnd}>
+			<SkipForward />
+		</IconButton>
+	</div>
+	<div class="group">
+		<input type="range" min="0" max="100" value={sliderValue} class="slider" oninput={onInput} />
+		<span class="time-text">{msToMMSS(progressMs)} / {msToMMSS(durationMs)}</span>
+	</div>
+	<div class="group">
+		<SeparatorVertical />
+		<IconButton onClick={() => renderer.seekToRelative(-5000)}>
+			<IterationCw />
+		</IconButton>
+		<IconButton onClick={() => renderer.seekToRelative(5000)}>
+			<IterationCcw />
+		</IconButton>
+		<IconButton
+			togglable
+			onToggle={(looped) => {
+				renderer.shallLoop(looped);
+			}}
+		>
+			<Repeat />
+		</IconButton>
+	</div>
 </div>
 
 <style lang="scss">
@@ -112,6 +118,16 @@
 		flex-direction: row;
 		justify-content: flex-start;
 		align-items: center;
+		flex-wrap: wrap;
+		gap: g.$spacing-s;
+		margin-right: g.$spacing-2xl;
+	}
+	div.group {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: nowrap;
 		gap: g.$spacing-s;
 	}
 

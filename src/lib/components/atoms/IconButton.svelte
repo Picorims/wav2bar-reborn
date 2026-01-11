@@ -45,6 +45,7 @@
 	role={togglable ? 'switch' : 'button'}
 	aria-checked={togglable ? toggled : undefined}
 	aria-label={alt}
+	title={alt}
 	class={`icon-button ${variant}`}
 	class:toggled={togglable && toggled}
 >

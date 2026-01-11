@@ -10,10 +10,12 @@
 
 	import AudioController from './controller_pane/AudioController.svelte';
 	import FPSDisplay from './controller_pane/FPSDisplay.svelte';
+	import ZoomController from './controller_pane/ZoomController.svelte';
 </script>
 
 <div class="card">
 	<AudioController />
+	<ZoomController />
 	<FPSDisplay />
 </div>
 
@@ -25,6 +27,8 @@
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
+		flex-wrap: wrap;
+		gap: g.$spacing-m;
 		width: calc(100% - g.$spacing-l);
 		height: calc(100% - g.$spacing-l);
 		@include g.card;

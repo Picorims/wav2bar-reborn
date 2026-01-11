@@ -15,6 +15,14 @@
 	"object_pane": {
 		"title": "Objects"
 	},
+	"controls_pane": {
+		"zoom": {
+			"input_title": "Zoom (%)",
+			"zoom_in": "Zoom In",
+			"zoom_out": "Zoom Out",
+			"reset_zoom": "Reset Zoom"
+		}
+	},
 	"modal": {
 		"add_object": {
 			"title": "Add Object",
