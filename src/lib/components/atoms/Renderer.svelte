@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { renderer } from '$lib/engine/video/renderer';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { saveManager } from '$lib/store/save.svelte';
+	import { appState, onZoomChanged } from '$lib/store/app_state.svelte';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -13,6 +14,7 @@
     */
 
 	let canvas: HTMLCanvasElement | undefined;
+	let unsubscribeFromZoom: () => void = $state(() => {});
 
 	onMount(async () => {
 		await renderer.init(
@@ -22,6 +24,15 @@
 		);
 		canvas = renderer.getCanvas();
 		document.getElementById('pixi-canvas-div')?.appendChild(canvas);
+		unsubscribeFromZoom = onZoomChanged((newZoom) => {
+			if (!canvas) return;
+			canvas.style.width = `${(saveManager.resolution.width * newZoom) / 100}px`;
+			canvas.style.height = `${(saveManager.resolution.height * newZoom) / 100}px`;
+		});
+	});
+	onDestroy(() => {
+		// can't go in onMount's return because that one is async
+		unsubscribeFromZoom();
 	});
 </script>
 

@@ -10,10 +10,12 @@
 
 	import AudioController from './controller_pane/AudioController.svelte';
 	import FPSDisplay from './controller_pane/FPSDisplay.svelte';
+	import ZoomController from './controller_pane/ZoomController.svelte';
 </script>
 
 <div class="card">
 	<AudioController />
+	<ZoomController />
 	<FPSDisplay />
 </div>
 
