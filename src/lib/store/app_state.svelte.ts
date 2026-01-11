@@ -20,7 +20,7 @@ export const appState = $state<AppState>({
 	loadingInfo: '',
 	loadingInfoDetail: '',
 	loadingProgress: null,
-	zoomLevelPercent: 100,
+	zoomLevelPercent: 100
 });
 /**
  * Also resets loading info to empty string.
