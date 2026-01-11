@@ -2,7 +2,7 @@
 	import { renderer } from '$lib/engine/video/renderer';
 	import { onDestroy, onMount } from 'svelte';
 	import { saveManager } from '$lib/store/save.svelte';
-	import { appState, onZoomChanged } from '$lib/store/app_state.svelte';
+	import { onZoomChanged } from '$lib/store/app_state.svelte';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
