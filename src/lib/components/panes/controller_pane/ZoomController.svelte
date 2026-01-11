@@ -14,19 +14,14 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	let zoomLevel = $state(appState.zoomLevelPercent);
-
 	function zoomIn() {
 		setZoomLevelPercent(appState.zoomLevelPercent + 10);
-		zoomLevel = appState.zoomLevelPercent;
 	}
 	function zoomOut() {
 		setZoomLevelPercent(appState.zoomLevelPercent - 10);
-		zoomLevel = appState.zoomLevelPercent;
 	}
 	function resetZoom() {
 		setZoomLevelPercent(100);
-		zoomLevel = appState.zoomLevelPercent;
 	}
 </script>
 
@@ -37,7 +32,7 @@
 		max={10000}
 		step={1}
 		title={$lang.controls_pane.zoom.input_title}
-		bind:value={zoomLevel}
+		value={appState.zoomLevelPercent}
 		onChange={(value) => setZoomLevelPercent(value)}
 	/>
 	<IconButton onClick={zoomOut} alt={$lang.controls_pane.zoom.zoom_out}>
