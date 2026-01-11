@@ -24,6 +24,7 @@
 		);
 		canvas = renderer.getCanvas();
 		document.getElementById('pixi-canvas-div')?.appendChild(canvas);
+		// note: not synced on app startup.
 		unsubscribeFromZoom = onZoomChanged((newZoom) => {
 			if (!canvas) return;
 			canvas.style.width = `${(saveManager.resolution.width * newZoom) / 100}px`;
