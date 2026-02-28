@@ -35,6 +35,7 @@
 	}
 
 	span.label {
+		@include g.text-small;
 		flex: 0 1 auto;
 		margin: g.$spacing-s 0;
 		margin-right: g.$spacing-m;

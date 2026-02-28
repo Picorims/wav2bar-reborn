@@ -90,6 +90,7 @@ pub fn run() {
         })
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
+            get_current_data_dir,
             open_save,
             read_save_json,
             write_save_json,
@@ -161,6 +162,11 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
     }
 }
 
+#[tauri::command]
+async fn get_current_data_dir(app: AppHandle) -> Result<String, String> {
+    let path = get_current_working_dir(&app)?;
+    Ok(path.to_str().unwrap_or_default().to_string())
+}
 
 /// Extracts the given save file (zip) into the temp/current_save directory.
 #[tauri::command]

@@ -9,6 +9,8 @@
 			"light": "Light",
 			"dark": "Dark"
 		},
+		"change_data_dir": "Change data directory",
+		"data_dir_change_info": "The new directory will be applied on restart. It must be empty beforehand. Settings will be copied. Existing files will NOT be deleted (except for temporary files)! You can keep it as a backup or clean it up yourself.",
 		"show_logs_dir": "Show logs path",
 		"close": "OK"
 	},

@@ -17,6 +17,8 @@
 		type ThemesType
 	} from '$lib/store/settings_structure/settings_enums';
 	import { appLogDir } from '@tauri-apps/api/path';
+	import { invoke } from '@tauri-apps/api/core';
+	import Callout from '$lib/components/atoms/Callout.svelte';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -35,10 +37,36 @@
 		$settings = $settings;
 	};
 
+	function changeDataDir() {
+		alert('TODO');
+	}
+
 	let logsDir = $state<Promise<string> | null>(null);
+	let currentDataDir = $state<Promise<string> | null>(invoke('get_current_data_dir'));
 </script>
 
 <Modal bind:dialog title={$lang.settings.title}>
+	<p class="label">
+		Current data directory:
+	</p>
+	<p>
+		{#await currentDataDir}
+			Loading...
+		{:then dir}
+			{dir}
+		{:catch}
+			System data dir could not be retrieved.
+		{/await}
+	</p>
+
+	<button class="change-data-dir-btn" onclick={changeDataDir}>
+		{$lang.settings.change_data_dir}
+	</button>
+
+	<Callout type="warning">
+		{$lang.settings.data_dir_change_info}
+	</Callout>
+
 	<LabeledDropdown
 		title={$lang.settings.language}
 		optionsObj={LanguageOptions}
@@ -47,9 +75,9 @@
 
 	<LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}
 	></LabeledDropdown>
-	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}
-		>{$lang.settings.show_logs_dir}</button
-	>
+	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}>
+		{$lang.settings.show_logs_dir}
+	</button>
 	<p>
 		{#await logsDir}
 			Loading...
@@ -75,11 +103,19 @@
 	.close {
 		@include g.button-primary;
 	}
-	.logs-btn {
+	button.logs-btn,
+	button.change-data-dir-btn {
 		@include g.button-secondary;
+	}
+	button.change-data-dir-btn {
+		margin-top: g.$spacing-m;
 	}
 	p {
 		@include g.text;
 		margin-top: g.$spacing-m;
+
+		&.label {
+			@include g.text-small;
+		}
 	}
 </style>
