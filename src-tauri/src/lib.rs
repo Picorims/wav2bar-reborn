@@ -91,6 +91,7 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
             get_current_data_dir,
+            request_new_data_dir_on_restart,
             open_save,
             read_save_json,
             write_save_json,
@@ -145,15 +146,28 @@ pub fn run() {
 /// Can be seen as a workspace.
 pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
     // TODO caching to reduce I/O.
-    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
-    let default_data_dir = app.path().app_data_dir().map_err(|_| "Cannot return working dir, couldn't resolve default data dir")?;
+    let cache_dir = app.path().app_cache_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let default_data_dir = app.path().app_data_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve default data dir")?;
     let data_dir_file = cache_dir.join("wav2bar_data_dir.txt");
     if !cache_dir.exists() {
-        fs::create_dir_all(&cache_dir).map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
+        fs::create_dir_all(&cache_dir)
+            .map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
     }
-    let mut input = File::open(&data_dir_file).map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+
+    if !data_dir_file.exists() {
+        let mut output = File::create(&data_dir_file)
+            .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+        write!(output, "{}", default_data_dir.to_str().unwrap_or_default())
+            .map_err(|e| format!("Cannot return current working dir, failed to cache default dir: {}", e))?;
+    }
+
+    let mut input = File::open(&data_dir_file)
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
     let mut data_dir_str = String::new();
-    input.read_to_string(&mut data_dir_str).map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    input.read_to_string(&mut data_dir_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
     let data_dir_str_trimmed = data_dir_str.trim();
     if !data_dir_str_trimmed.is_empty() {
         Ok(PathBuf::from(data_dir_str_trimmed))
@@ -162,11 +176,39 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
     }
 }
 
+pub fn set_future_working_dir_for_restart(app: &AppHandle, new_dir: &String) -> Result<(), String> {
+    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let data_dir_restart_file = cache_dir.join("wav2bar_data_dir_after_restart.txt");
+    if !cache_dir.exists() {
+        fs::create_dir_all(&cache_dir).map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
+    }
+    let mut output = File::create(&data_dir_restart_file).map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+    write!(output, "{}", new_dir).map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    Ok(())
+}
+
 #[tauri::command]
 async fn get_current_data_dir(app: AppHandle) -> Result<String, String> {
     let path = get_current_working_dir(&app)?;
     Ok(path.to_str().unwrap_or_default().to_string())
 }
+
+// create a new cache file indicating that upon next restart, a new location must be applied.
+#[tauri::command]
+async fn request_new_data_dir_on_restart(app: AppHandle, new_dir: String) -> Result<(), String> {
+    let new_dir_path = PathBuf::from(new_dir.clone());
+    if !new_dir_path.exists() {
+        fs::create_dir_all(&new_dir_path).map_err(|e| format!("Could not create new data directory: {}", e))?;
+    }
+    // if it is the same location, do nothing.
+    let current_dir = get_current_working_dir(&app)?;
+    if current_dir == new_dir_path {
+        return Ok(());
+    }
+    set_future_working_dir_for_restart(&app, &new_dir)?;
+    Ok(())
+}
+
 
 /// Extracts the given save file (zip) into the temp/current_save directory.
 #[tauri::command]

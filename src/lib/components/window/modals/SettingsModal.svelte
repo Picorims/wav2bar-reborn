@@ -18,7 +18,9 @@
 	} from '$lib/store/settings_structure/settings_enums';
 	import { appLogDir } from '@tauri-apps/api/path';
 	import { invoke } from '@tauri-apps/api/core';
+	import { open } from '@tauri-apps/plugin-dialog';
 	import Callout from '$lib/components/atoms/Callout.svelte';
+	import { lstat, readDir } from '@tauri-apps/plugin-fs';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -37,8 +39,31 @@
 		$settings = $settings;
 	};
 
-	function changeDataDir() {
-		alert('TODO');
+	async function changeDataDir() {
+		const path = await open({
+			title: $lang.settings.change_data_dir,
+			multiple: false,
+			directory: true,
+			recursive: false
+		});
+
+		if (path === null || path === "") {
+			return;
+		}
+
+		const stat = await lstat(path);
+		if (stat.isSymlink) {
+			alert($lang.settings.data_dir_symlink_error);
+			return;
+		}
+		const entries = await readDir(path);
+		if (entries.length > 0) {
+			alert($lang.settings.data_dir_not_empty_error);
+			return;
+		}
+
+		await invoke('request_new_data_dir_on_restart', { newDir: path });
+		currentDataDir = new Promise((resolve) => resolve(path));
 	}
 
 	let logsDir = $state<Promise<string> | null>(null);

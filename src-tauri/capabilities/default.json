@@ -13,6 +13,7 @@
     "opener:allow-open-path",
     "dialog:default",
     "fs:default",
+    "fs:allow-lstat",
     {
       "identifier": "fs:allow-read-file",
       "allow": ["**"]
