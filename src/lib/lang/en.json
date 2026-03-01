@@ -10,7 +10,7 @@
 			"dark": "Dark"
 		},
 		"change_data_dir": "Change data directory",
-		"data_dir_change_info": "The new directory will be applied on restart. It must be empty beforehand. Settings will be copied. Existing files will NOT be deleted (except for temporary files)! You can keep it as a backup or clean it up yourself.",
+		"data_dir_change_info": "The new directory will be applied on restart. It must be empty beforehand. Settings will be copied. Existing files will NOT be deleted nor moved! You can keep it as a backup or clean it up yourself (mainly log and temporary files).",
 		"data_dir_symlink_error": "The selected directory is a symbolic link, which is not allowed for data directory. Please select another directory that is not a symbolic link.",
 		"data_dir_not_empty_error": "The selected directory is not empty. Please select an empty directory to avoid potential data loss.",
 		"show_logs_dir": "Show logs path",

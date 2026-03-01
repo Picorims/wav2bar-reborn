@@ -30,6 +30,9 @@ use log4rs::{
 use walkdir::WalkDir;
 mod audio;
 
+const WORKING_DIR_CACHE_FILE: &str = "wav2bar_data_dir.txt";
+const WORKING_DIR_RESTART_CACHE_FILE: &str = "wav2bar_data_dir_after_restart.txt";
+
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct LoadingInfo<'a> {
@@ -42,6 +45,7 @@ pub fn run() {
     tauri::Builder::default()
         .setup(|app| {
             let cache_dir = app.path().app_cache_dir()?;
+            change_working_dir_if_requested_on_restart(app.app_handle())?;
             let current_data_dir = get_current_working_dir(app.app_handle())?;
 
             // create logs directory if it doesn't exist
@@ -150,7 +154,7 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
         .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
     let default_data_dir = app.path().app_data_dir()
         .map_err(|_| "Cannot return working dir, couldn't resolve default data dir")?;
-    let data_dir_file = cache_dir.join("wav2bar_data_dir.txt");
+    let data_dir_file = cache_dir.join(WORKING_DIR_CACHE_FILE);
     if !cache_dir.exists() {
         fs::create_dir_all(&cache_dir)
             .map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
@@ -178,12 +182,65 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
 
 pub fn set_future_working_dir_for_restart(app: &AppHandle, new_dir: &String) -> Result<(), String> {
     let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
-    let data_dir_restart_file = cache_dir.join("wav2bar_data_dir_after_restart.txt");
+    let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
     if !cache_dir.exists() {
         fs::create_dir_all(&cache_dir).map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
     }
     let mut output = File::create(&data_dir_restart_file).map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
     write!(output, "{}", new_dir).map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    Ok(())
+}
+
+fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), String> {
+    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
+
+    if !data_dir_restart_file.exists() {
+        return Ok(()); // no new dir requested, do nothing.
+    }
+
+    // read requested path
+    let mut input = File::open(&data_dir_restart_file)
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
+    let mut new_dir_str = String::new();
+    input.read_to_string(&mut new_dir_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
+    let new_dir_str_trimmed = new_dir_str.trim();
+
+    if new_dir_str_trimmed.is_empty() {
+        // remove empty file first
+        std::fs::remove_file(&data_dir_restart_file)
+            .map_err(|e| format!("Could not remove empty restart cache file: {}", e))?;
+        return Ok(()); // no new dir requested, do nothing.
+    }
+
+    // read existing path
+    let mut existing_input = File::open(cache_dir.join(WORKING_DIR_CACHE_FILE))
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
+    let mut existing_location_str = String::new();
+    existing_input.read_to_string(&mut existing_location_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
+    let existing_location_str_trimmed = existing_location_str.trim();
+
+    if existing_location_str_trimmed == new_dir_str_trimmed {
+        // remove restart cache file first
+        std::fs::remove_file(&data_dir_restart_file)
+            .map_err(|e| format!("Could not remove restart cache file: {}", e))?;
+        return Ok(()); // already the current dir, do nothing.
+    }
+
+    log::info!("Changing working directory from {} to {} as requested on restart.", existing_location_str_trimmed, new_dir_str_trimmed);
+    // TODO copy settings json file.
+
+    // set new path as current
+    let mut output = File::create(cache_dir.join(WORKING_DIR_CACHE_FILE))
+        .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+    write!(output, "{}", new_dir_str_trimmed)
+        .map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    // remove restart cache file first
+    std::fs::remove_file(&data_dir_restart_file)
+        .map_err(|e| format!("Could not remove restart cache file: {}", e))?;
+
     Ok(())
 }
 
