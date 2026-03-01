@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { BadgeCheck, Info, OctagonX, TriangleAlert } from 'lucide-svelte';
-	import { Triangle } from 'pixi.js';
 	import type { Snippet } from 'svelte';
 
 	/*
@@ -24,23 +23,18 @@
 	let success = $derived<boolean>(type === 'success');
 </script>
 
-<div class="callout" 
-    class:info={info}
-    class:warning={warning}
-    class:error={error}
-    class:success={success}
->
-    <div class="icon">
-        {#if info}
-            <Info />
-        {:else if warning}
-            <TriangleAlert />
-        {:else if error}
-            <OctagonX />
-        {:else if success}
-            <BadgeCheck />
-        {/if}
-    </div>
+<div class="callout" class:info class:warning class:error class:success>
+	<div class="icon">
+		{#if info}
+			<Info />
+		{:else if warning}
+			<TriangleAlert />
+		{:else if error}
+			<OctagonX />
+		{:else if success}
+			<BadgeCheck />
+		{/if}
+	</div>
 	{@render children()}
 </div>
 
@@ -49,34 +43,33 @@
 
 	div.callout.info {
 		--color: #{g.$color-status-info};
-
 	}
 	div.callout.warning {
-        --color: #{g.$color-status-warning};
+		--color: #{g.$color-status-warning};
 	}
 	div.callout.error {
-        --color: #{g.$color-status-error};
+		--color: #{g.$color-status-error};
 	}
 	div.callout.success {
-        --color: #{g.$color-status-success};
+		--color: #{g.$color-status-success};
 	}
-    
+
 	div.callout {
-        width: 100%;
-        padding: g.$spacing-m;
-        margin: g.$spacing-m 0;
-        border: g.$size-5xs solid var(--color);
+		width: 100%;
+		padding: g.$spacing-m;
+		margin: g.$spacing-m 0;
+		border: g.$size-5xs solid var(--color);
 		border-left: g.$size-2xs solid var(--color);
 		border-radius: g.$border-radius-m;
 		background-color: rgb(from var(--color) r g b / 0.3);
-        
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        gap: g.$spacing-m;
 
-        .icon {
-            color: var(--color);
-        }
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: g.$spacing-m;
+
+		.icon {
+			color: var(--color);
+		}
 	}
 </style>

@@ -47,7 +47,7 @@
 			recursive: false
 		});
 
-		if (path === null || path === "") {
+		if (path === null || path === '') {
 			return;
 		}
 
@@ -71,9 +71,7 @@
 </script>
 
 <Modal bind:dialog title={$lang.settings.title}>
-	<p class="label">
-		Current data directory:
-	</p>
+	<p class="label">Current data directory:</p>
 	<p>
 		{#await currentDataDir}
 			Loading...
