@@ -71,14 +71,14 @@
 </script>
 
 <Modal bind:dialog title={$lang.settings.title}>
-	<p class="label">Current data directory:</p>
+	<p class="label">{$lang.settings.current_data_dir}</p>
 	<p>
 		{#await currentDataDir}
-			Loading...
+			{$lang.settings.current_data_dir_loading}
 		{:then dir}
 			{dir}
 		{:catch}
-			System data dir could not be retrieved.
+			{$lang.settings.current_data_dir_error}
 		{/await}
 	</p>
 

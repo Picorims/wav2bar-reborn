@@ -9,6 +9,9 @@
 			"light": "Light",
 			"dark": "Dark"
 		},
+		"current_data_dir": "Current data directory:",
+		"current_data_dir_loading": "Loading...",
+		"current_data_dir_error": "System data directory could not be retrieved.",
 		"change_data_dir": "Change data directory",
 		"data_dir_change_info": "The new directory will be applied on restart. It must be empty beforehand. Settings will be copied. Existing files will NOT be deleted nor moved! You can keep it as a backup or clean it up yourself (mainly log and temporary files).",
 		"data_dir_symlink_error": "The selected directory is a symbolic link, which is not allowed for data directory. Please select another directory that is not a symbolic link.",
