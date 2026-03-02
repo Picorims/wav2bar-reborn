@@ -140,7 +140,7 @@ jobs:
           # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
           tag: # optional, default is 
           # The Github token.
-          token: # optional, default is ${{ github.token }}
+          token: ${{ github.token }} # optional, default is ${{ github.token }}
           # When allowUpdates is enabled, this will fail the action if the release it is updating is not a draft or a prerelease.
           updateOnlyUnreleased: # optional, default is false
                 
