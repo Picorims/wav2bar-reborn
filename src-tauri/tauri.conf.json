@@ -30,11 +30,20 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "category": "Video",
+    "copyright": "Wav2Bar - Free software for creating audio visualization (motion design) videos\nCopyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors.\n\nThis Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this\nfile, You can obtain one at https://mozilla.org/MPL/2.0/.",
+    "fileAssociations": [
+      {
+        "ext": [".w2bzip"],
+        "description": "Wav2Bar project"
+      }
+    ],
+    "homepage": "https://picorims.github.io/wav2bar-website/",
+    "shortDescription": "Wav2Bar is a tool to make custom audio visualization and export production videos for the audio and music industry.",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
-      "icons/icon.icns",
       "icons/icon.ico"
     ]
   }
