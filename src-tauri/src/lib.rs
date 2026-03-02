@@ -10,7 +10,7 @@
 use anyhow::Context;
 use tauri::AppHandle;
 use tauri::Emitter;
-use std::env::current_exe;
+use tauri::Manager;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -21,8 +21,17 @@ use std::path::PathBuf;
 use zip::write::SimpleFileOptions;
 use serde::Serialize;
 
+use log4rs::{
+    append::{console::ConsoleAppender, file::FileAppender},
+    config::{Appender, Root},
+    Config,
+};
+
 use walkdir::WalkDir;
 mod audio;
+
+const WORKING_DIR_CACHE_FILE: &str = "wav2bar_data_dir.txt";
+const WORKING_DIR_RESTART_CACHE_FILE: &str = "wav2bar_data_dir_after_restart.txt";
 
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -34,8 +43,59 @@ struct LoadingInfo<'a> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .setup(|app| {
+            let cache_dir = app.path().app_cache_dir()?;
+            change_working_dir_if_requested_on_restart(app.app_handle())?;
+            let current_data_dir = get_current_working_dir(app.app_handle())?;
+
+            // create logs directory if it doesn't exist
+            std::fs::create_dir_all(current_data_dir.join("logs"))
+                .unwrap_or_else(|_| panic!("Could not create logs directory.")); // panic if logs directory cannot be created.
+            let stdout_appender = ConsoleAppender::builder().build();
+
+            let file_appender = FileAppender::builder()
+                .build(current_data_dir.join(format!(
+                    "logs/{}.log",
+                    chrono::Local::now().format("%Y-%m-%d__%H-%M-%S")
+                )))
+                .unwrap();
+
+            let config = Config::builder()
+                .appender(Appender::builder().build("stdout", Box::new(stdout_appender)))
+                .appender(Appender::builder().build("file", Box::new(file_appender)))
+                .build(
+                    Root::builder()
+                        .appender("stdout")
+                        .appender("file")
+                        .build(log::LevelFilter::Debug),
+                )
+                .unwrap();
+
+            let _handle = log4rs::init_config(config).unwrap();
+
+            // log::... has no effect before this point.
+
+            
+            log::info!("Setting up Tauri application.");
+            log::info!("cache path: {}", cache_dir.display());
+            log::info!("Current data directory: {}", current_data_dir.display());
+
+            // setup temp dir if it doesn't exist
+            // we do not use the OS' temp dir, so that the cache can lie on any drive including external ones,
+            // for people with a limited main drive.
+            std::fs::create_dir_all(current_data_dir.join("temp"))
+                .unwrap_or_else(|_| panic!("Could not create temp directory.")); // panic if temp directory cannot be created.
+
+            if cfg!(dev) {
+                log::info!("Running in dev mode");
+            }
+
+            Ok(())
+        })
         .plugin(tauri_plugin_fs::init())
         .invoke_handler(tauri::generate_handler![
+            get_current_data_dir,
+            request_new_data_dir_on_restart,
             open_save,
             read_save_json,
             write_save_json,
@@ -74,7 +134,7 @@ pub fn run() {
                 log::info!("Exiting Tauri application.");
 
                 log::info!("Cleaning up temp directory.");
-                let temp_dir = get_temp_dir();
+                let temp_dir = get_temp_dir(_app_handle);
                 if temp_dir.exists() {
                     std::fs::remove_dir_all(&temp_dir)
                         .unwrap_or_else(|_| log::error!("Could not remove temp directory."));
@@ -86,23 +146,126 @@ pub fn run() {
         });
 }
 
-/// Returns the working directory. In particular, handles the `dev` case.
-pub fn get_current_exe_dir() -> PathBuf {
-    let current_exe =
-        current_exe().unwrap_or_else(|_| panic!("Could not get current executable path."));
-
-    let mut current_exe_dir = current_exe
-        .parent()
-        .unwrap_or_else(|| panic!("Could not get current executable directory."));
-
-    let dev_current_dir = current_exe_dir.join("../../dev_working_dir");
-    if cfg!(dev) {
-        // Prevents an infinite loop, as creating a dir in `debug` triggers reload.
-        // So in dev, we pick an arbitrary directory ignored by git.
-        current_exe_dir = dev_current_dir.as_path();
+/// Returns the working directory, where data is stored (settings, logs, cache, etc.).
+/// Can be seen as a workspace.
+pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
+    // TODO caching to reduce I/O.
+    let cache_dir = app.path().app_cache_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let default_data_dir = app.path().app_data_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve default data dir")?;
+    let data_dir_file = cache_dir.join(WORKING_DIR_CACHE_FILE);
+    if !cache_dir.exists() {
+        fs::create_dir_all(&cache_dir)
+            .map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
     }
-    current_exe_dir.to_path_buf()
+
+    if !data_dir_file.exists() {
+        let mut output = File::create(&data_dir_file)
+            .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+        write!(output, "{}", default_data_dir.to_str().unwrap_or_default())
+            .map_err(|e| format!("Cannot return current working dir, failed to cache default dir: {}", e))?;
+    }
+
+    let mut input = File::open(&data_dir_file)
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
+    let mut data_dir_str = String::new();
+    input.read_to_string(&mut data_dir_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
+    let data_dir_str_trimmed = data_dir_str.trim();
+    if !data_dir_str_trimmed.is_empty() {
+        Ok(PathBuf::from(data_dir_str_trimmed))
+    } else {
+        Ok(default_data_dir)
+    }
 }
+
+pub fn set_future_working_dir_for_restart(app: &AppHandle, new_dir: &String) -> Result<(), String> {
+    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
+    if !cache_dir.exists() {
+        fs::create_dir_all(&cache_dir).map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
+    }
+    let mut output = File::create(&data_dir_restart_file).map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+    write!(output, "{}", new_dir).map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    Ok(())
+}
+
+fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), String> {
+    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
+
+    if !data_dir_restart_file.exists() {
+        return Ok(()); // no new dir requested, do nothing.
+    }
+
+    // read requested path
+    let mut input = File::open(&data_dir_restart_file)
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
+    let mut new_dir_str = String::new();
+    input.read_to_string(&mut new_dir_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
+    let new_dir_str_trimmed = new_dir_str.trim();
+
+    if new_dir_str_trimmed.is_empty() {
+        // remove empty file first
+        std::fs::remove_file(&data_dir_restart_file)
+            .map_err(|e| format!("Could not remove empty restart cache file: {}", e))?;
+        return Ok(()); // no new dir requested, do nothing.
+    }
+
+    // read existing path
+    let mut existing_input = File::open(cache_dir.join(WORKING_DIR_CACHE_FILE))
+        .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
+    let mut existing_location_str = String::new();
+    existing_input.read_to_string(&mut existing_location_str)
+        .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
+    let existing_location_str_trimmed = existing_location_str.trim();
+
+    if existing_location_str_trimmed == new_dir_str_trimmed {
+        // remove restart cache file first
+        std::fs::remove_file(&data_dir_restart_file)
+            .map_err(|e| format!("Could not remove restart cache file: {}", e))?;
+        return Ok(()); // already the current dir, do nothing.
+    }
+
+    log::info!("Changing working directory from {} to {} as requested on restart.", existing_location_str_trimmed, new_dir_str_trimmed);
+    // TODO copy settings json file.
+
+    // set new path as current
+    let mut output = File::create(cache_dir.join(WORKING_DIR_CACHE_FILE))
+        .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+    write!(output, "{}", new_dir_str_trimmed)
+        .map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    // remove restart cache file first
+    std::fs::remove_file(&data_dir_restart_file)
+        .map_err(|e| format!("Could not remove restart cache file: {}", e))?;
+
+    Ok(())
+}
+
+#[tauri::command]
+async fn get_current_data_dir(app: AppHandle) -> Result<String, String> {
+    let path = get_current_working_dir(&app)?;
+    Ok(path.to_str().unwrap_or_default().to_string())
+}
+
+// create a new cache file indicating that upon next restart, a new location must be applied.
+#[tauri::command]
+async fn request_new_data_dir_on_restart(app: AppHandle, new_dir: String) -> Result<(), String> {
+    let new_dir_path = PathBuf::from(new_dir.clone());
+    if !new_dir_path.exists() {
+        fs::create_dir_all(&new_dir_path).map_err(|e| format!("Could not create new data directory: {}", e))?;
+    }
+    // if it is the same location, do nothing.
+    let current_dir = get_current_working_dir(&app)?;
+    if current_dir == new_dir_path {
+        return Ok(());
+    }
+    set_future_working_dir_for_restart(&app, &new_dir)?;
+    Ok(())
+}
+
 
 /// Extracts the given save file (zip) into the temp/current_save directory.
 #[tauri::command]
@@ -115,7 +278,7 @@ async fn open_save(path: String, app: AppHandle) -> Result<(), String> {
         return Err(msg);
     }
 
-    let temp_dir = get_temp_dir();
+    let temp_dir = get_temp_dir(&app);
     let current_save_dir = temp_dir.join("current_save");
     if !current_save_dir.exists() {
         std::fs::create_dir_all(&current_save_dir)
@@ -137,9 +300,9 @@ async fn open_save(path: String, app: AppHandle) -> Result<(), String> {
 
 /// Reads and returns the content of the save JSON file as a string.
 #[tauri::command]
-async fn read_save_json() -> Result<String, String> {
+async fn read_save_json(app: AppHandle) -> Result<String, String> {
     log::info!("Requested to read save JSON file.");
-    let temp_dir = get_temp_dir();
+    let temp_dir = get_temp_dir(&app);
     let current_save_dir = temp_dir.join("current_save");
     let save_json_path = current_save_dir.join("data.json");
     if !save_json_path.exists() {
@@ -155,9 +318,9 @@ async fn read_save_json() -> Result<String, String> {
 
 /// Writes the given JSON content string into the save JSON file.
 #[tauri::command]
-async fn write_save_json(json_content: String) -> Result<(), String> {
+async fn write_save_json(json_content: String, app: AppHandle) -> Result<(), String> {
     log::info!("Requested to write save JSON file.");
-    let temp_dir = get_temp_dir();
+    let temp_dir = get_temp_dir(&app);
     let current_save_dir = temp_dir.join("current_save");
     let save_json_path = current_save_dir.join("data.json");
     if !save_json_path.exists() {
@@ -172,8 +335,16 @@ async fn write_save_json(json_content: String) -> Result<(), String> {
 }
 
 /// Returns the working directory's temp directory path.
-fn get_temp_dir() -> std::path::PathBuf {
-    let mut path = get_current_exe_dir().to_path_buf();
+fn get_temp_dir(app_handle: &AppHandle) -> std::path::PathBuf {
+    let path_result = get_current_working_dir(app_handle);
+    let mut path: PathBuf = match path_result {
+        Ok(p) => p,
+        Err(e) => {
+            log::error!("Could not get current working dir: {}", e);
+            // fallback to OS temp dir if we cannot get the working dir for some reason
+            std::env::temp_dir().join("wav2bar")
+        }
+    };
     path.push("temp");
     path
 }
@@ -253,7 +424,7 @@ fn extract_zip(file: File, dest: PathBuf, app: AppHandle) -> Result<(), String> 
 #[tauri::command]
 async fn save_to_file(path_str: String, app: AppHandle) -> Result<(), String> {
     log::info!("Requested to save to file: {}", path_str);
-    let temp_dir = get_temp_dir();
+    let temp_dir = get_temp_dir(&app);
     let current_save_dir = temp_dir.join("current_save");
     if !current_save_dir.exists() {
         let msg = "No current save to export (is the save loaded?)".to_string();

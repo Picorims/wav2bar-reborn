@@ -75,6 +75,9 @@
 	--accent-950: #001a0c;
 
 	--status-error: #f01d4f;
+	--status-warning: #f5a623;
+	--status-info: #12b4f5;
+	--status-success: #00ff7b;
 }
 
 @mixin theme-dark {
@@ -145,4 +148,7 @@
 	--accent-950: #e5fff2;
 
 	--status-error: #f01d4f;
+	--status-warning: #f5a623;
+	--status-info: #12b4f5;
+	--status-success: #00ff7b;
 }

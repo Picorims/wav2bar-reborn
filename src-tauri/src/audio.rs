@@ -34,7 +34,7 @@ pub async fn bake_fft(
 
     info!("Baking FFT...");
     // get path
-    let working_dir = crate::get_current_exe_dir();
+    let working_dir = crate::get_current_working_dir(&app)?;
     let full_path = working_dir
         .join("temp/current_save/assets/audio")
         .join(&audio_file_name);
@@ -336,7 +336,7 @@ pub async fn bake_fft(
             // store frequencies in cache if not done yet
             if !stored_fft_frequencies {
                 // flush frequencies cache to file
-                flush_frequencies_cache_to_file(&fft_frequencies_cache)
+                flush_frequencies_cache_to_file(&fft_frequencies_cache, &app)
                     .map_err(|e| format!("Failed to flush FFT frequencies cache to file: {}", e))?;
                 fft_frequencies_cache.clear();
                 stored_fft_frequencies = true;
@@ -344,7 +344,7 @@ pub async fn bake_fft(
 
             // flush to file if block is full
             if frames_in_current_block_file >= block_file_size_frames {
-                flush_fft_cache_to_file(&fft_cache, fft_file_index)
+                flush_fft_cache_to_file(&fft_cache, fft_file_index, &app)
                     .map_err(|e| format!("Failed to flush FFT cache to file: {}", e))?;
                 fft_cache.clear();
                 frames_in_current_block_file = 0;
@@ -380,7 +380,7 @@ pub async fn bake_fft(
     }
     // flush remaining FFT data to file
     if !fft_cache.is_empty() {
-        flush_fft_cache_to_file(&fft_cache, fft_file_index)
+        flush_fft_cache_to_file(&fft_cache, fft_file_index, &app)
             .map_err(|e| format!("Failed to flush final FFT cache to file: {}", e))?;
         fft_cache.clear();
     }
@@ -391,11 +391,11 @@ pub async fn bake_fft(
     Ok(())
 }
 
-fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32) -> Result<(), String> {
+fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32, app: &AppHandle) -> Result<(), String> {
     use std::io::{BufWriter, Write};
     info!("Flushing FFT cache to file index {}", file_index);
 
-    let working_dir = crate::get_current_exe_dir();
+    let working_dir = crate::get_current_working_dir(app)?;
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
     std::fs::create_dir_all(&fft_dir)
         .map_err(|e| format!("Failed to create FFT directory: {}", e))?;
@@ -420,14 +420,14 @@ fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32) -> Result<(), 
     Ok(())
 }
 
-fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), String> {
+fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>, app: &AppHandle) -> Result<(), String> {
     use std::io::{BufWriter, Write};
     info!(
         "Flushing frequencies cache to file, length: {}",
         frequencies_cache.len()
     );
 
-    let working_dir = crate::get_current_exe_dir();
+    let working_dir = crate::get_current_working_dir(app)?;
     let fft_dir = working_dir.join("temp/current_save/baked_data/fft");
     std::fs::create_dir_all(&fft_dir)
         .map_err(|e| format!("Failed to create FFT directory: {}", e))?;
@@ -453,8 +453,8 @@ fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>) -> Result<(), S
 }
 
 #[tauri::command]
-pub async fn get_audio_dir() -> Result<String, String> {
-    let working_dir = crate::get_current_exe_dir();
+pub async fn get_audio_dir(app: AppHandle) -> Result<String, String> {
+    let working_dir = crate::get_current_working_dir(&app)?;
     let full_path = working_dir.join("temp/current_save/assets/audio");
     if !full_path.exists() {
         return Err(format!(
@@ -466,8 +466,8 @@ pub async fn get_audio_dir() -> Result<String, String> {
 }
 
 #[tauri::command]
-pub async fn get_fft_dir() -> Result<String, String> {
-    let working_dir = crate::get_current_exe_dir();
+pub async fn get_fft_dir(app: AppHandle) -> Result<String, String> {
+    let working_dir = crate::get_current_working_dir(&app)?;
     let full_path = working_dir.join("temp/current_save/baked_data/fft");
     if !full_path.exists() {
         return Err(format!(
@@ -481,9 +481,10 @@ pub async fn get_fft_dir() -> Result<String, String> {
 #[tauri::command]
 pub async fn copy_audio_file_to_save(
     audio_file_path: String,
+    app: AppHandle
 ) -> Result<(), String> {
     info!("Copying audio file to save directory...");
-    let working_dir = crate::get_current_exe_dir();
+    let working_dir = crate::get_current_working_dir(&app)?;
     let save_audio_dir = working_dir.join("temp/current_save/assets/audio");
 
     // backup current audio directory path
@@ -525,9 +526,9 @@ pub async fn copy_audio_file_to_save(
 }
 
 #[tauri::command]
-pub async fn restore_last_audio_file_from_backup() -> Result<(), String> {
+pub async fn restore_last_audio_file_from_backup(app: AppHandle) -> Result<(), String> {
     info!("Restoring last audio file from backup...");
-    let working_dir = crate::get_current_exe_dir();
+    let working_dir = crate::get_current_working_dir(&app)?;
     let save_audio_dir = working_dir.join("temp/current_save/assets/audio");
     let backup_dir = working_dir.join("temp/backup_audio");
 
