@@ -76,7 +76,7 @@ jobs:
           # The id of the workflow run where the desired download artifact was uploaded from. If github-token is specified, this is the run that artifacts will be downloaded from.
           run-id: # optional, default is ${{ github.run_id }}
           # If true, the downloaded artifact will not be automatically extracted/decompressed. This is useful when you want to handle the artifact as-is without extraction.
-          skip-decompress: # optional, default is false
+          skip-decompress: false # optional, default is false
           # The behavior when a downloaded artifact's digest does not match the expected digest. Options: ignore, info, warn, error. Default is error which will fail the action.
           digest-mismatch: # optional, default is error
           
