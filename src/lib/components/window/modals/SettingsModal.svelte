@@ -40,32 +40,38 @@
 	};
 
 	async function changeDataDir() {
-		const path = await open({
-			title: $lang.settings.change_data_dir,
-			multiple: false,
-			directory: true,
-			recursive: false
-		});
+		try {
+			const path = await open({
+				title: $lang.settings.change_data_dir,
+				multiple: false,
+				directory: true,
+				recursive: false
+			});
 
-		if (path === null || path === '') {
-			return;
-		}
+			if (path === null || path === '') {
+				return;
+			}
 
-		const stat = await lstat(path);
-		if (stat.isSymlink) {
-			alert($lang.settings.data_dir_symlink_error);
-			return;
-		}
-		const entries = await readDir(path);
-		if (entries.length > 0) {
-			alert($lang.settings.data_dir_not_empty_error);
-			return;
-		}
+			const stat = await lstat(path);
+			if (stat.isSymlink) {
+				alert($lang.settings.data_dir_symlink_error);
+				return;
+			}
+			const entries = await readDir(path);
+			if (entries.length > 0) {
+				alert($lang.settings.data_dir_not_empty_error);
+				return;
+			}
 
-		await invoke('request_new_data_dir_on_restart', { newDir: path });
-		currentDataDir = new Promise((resolve) => resolve(path));
+			await invoke('request_new_data_dir_on_restart', { newDir: path });
+			currentDataDir = new Promise((resolve) => resolve(path));
+		} catch (error) {
+			console.error('Error changing data directory:', error);
+			alert(
+				`${$lang.settings.change_data_dir_error}\n\n${error instanceof Error ? error.message : String(error)}`
+			);
+		}
 	}
-
 	let logsDir = $state<Promise<string> | null>(null);
 	let currentDataDir = $state<Promise<string> | null>(invoke('get_current_data_dir'));
 </script>
