@@ -1,7 +1,8 @@
 # Bundles the Tauri app, then create a draft GitHub release.
 
 permissions:
-  contents: read
+  contents: write
+  
 
 on:
   push:
