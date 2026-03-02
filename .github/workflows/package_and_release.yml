@@ -104,43 +104,43 @@ jobs:
           # Optionally marks this release as a draft release. Set to true to enable.
           draft: true # optional, default is 
           # Indicates if release notes should be automatically generated.
-          generateReleaseNotes: # optional, default is false
+          generateReleaseNotes: false # optional, default is false
           # An optional previous tag to use when generating release notes. This will limit the release notes to changes between the two tags.
           generateReleaseNotesPreviousTag: # optional, default is 
           # Indicates if immutable release creation should be used. When enabled, the action will first create a draft, upload artifacts, then publish the release.
-          immutableCreate: # optional, default is false
+          immutableCreate: false # optional, default is false
           # Indicates if the release should be the "latest" release or not.
           makeLatest: # optional, default is legacy
           # An optional name for the release. If this is omitted the tag will be used.
           name: # optional, default is 
           # Indicates if the release body should be omitted.
-          omitBody: # optional, default is false
+          omitBody: false # optional, default is false
           # Indicates if the release body should be omitted during updates. The body will still be applied for newly created releases. This will preserve the existing body during updates.
-          omitBodyDuringUpdate: # optional, default is false
+          omitBodyDuringUpdate: false # optional, default is false
           # Indicates if the draft flag should be omitted during updates. The draft flag will still be applied for newly created releases. This will preserve the existing draft state during updates.
-          omitDraftDuringUpdate: # optional, default is false
+          omitDraftDuringUpdate: false # optional, default is false
           # Indicates if the release name should be omitted.
-          omitName: # optional, default is false
+          omitName: false # optional, default is false
           # Indicates if the release name should be omitted during updates. The name will still be applied for newly created releases. This will preserve the existing name during updates.
-          omitNameDuringUpdate: # optional, default is false
+          omitNameDuringUpdate: false # optional, default is false
           # Indicates if the prerelease flag should be omitted during updates. The prerelease flag will still be applied for newly created releases. This will preserve the existing prerelease state during updates.
-          omitPrereleaseDuringUpdate: # optional, default is false
+          omitPrereleaseDuringUpdate: false # optional, default is false
           # Optionally specify the owner of the repo where the release should be generated. Defaults to current repo's owner.
           owner: # optional, default is 
           # Optionally marks this release as prerelease. Set to true to enable.
           prerelease: # optional, default is 
           # Indicates if existing release artifacts should be removed, Defaults to false.
-          removeArtifacts: # optional, default is false
+          removeArtifacts: false # optional, default is false
           # Indicates if existing release artifacts should be replaced. Defaults to true.
-          replacesArtifacts: # optional, default is true
+          replacesArtifacts: true # optional, default is true
           # Optionally specify the repo where the release should be generated. Defaults to current repo
           repo: # optional, default is 
           # When skipIfReleaseExists is enabled the action will be skipped if a non-draft release already exists for the provided tag.
-          skipIfReleaseExists: # optional, default is false
+          skipIfReleaseExists: false # optional, default is false
           # An optional tag for the release. If this is omitted the git ref will be used (if it is a tag).
           tag: # optional, default is 
           # The Github token.
           token: ${{ github.token }} # optional, default is ${{ github.token }}
           # When allowUpdates is enabled, this will fail the action if the release it is updating is not a draft or a prerelease.
-          updateOnlyUnreleased: # optional, default is false
+          updateOnlyUnreleased: false # optional, default is false
                 
