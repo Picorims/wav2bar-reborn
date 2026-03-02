@@ -55,6 +55,7 @@ jobs:
           archive: # optional, default is true
                 
   release:
+    needs: bundle
     runs-on: ubuntu-latest
     steps:
       - name: Download built artifacts - Windows
