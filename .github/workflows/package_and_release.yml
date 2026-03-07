@@ -11,7 +11,7 @@ on:
 
 jobs:
   bundle:
-    runs-on: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout
