@@ -3,6 +3,7 @@
 permissions:
   contents: write
   
+# To be finished, put on hold because jobs keep being queued forever. Use manual builds for now.
 
 on:
   push:
