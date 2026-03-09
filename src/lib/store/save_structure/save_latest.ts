@@ -27,7 +27,8 @@ import type {
 	VisualizerCircularBar,
 	TimerStraightLinePoint,
 	TimerStraightBar,
-	ParticleFlow
+	ParticleFlow,
+	Shape
 } from '$lib/types/schemas/save_v4';
 import {
 	ARCHIVE_STRUCTURE_V4,
@@ -52,6 +53,7 @@ export type SaveVO_VisualizerStraightWave = VisualizerStraightWave;
 export type SaveVO_TimerStraightLinePoint = TimerStraightLinePoint;
 export type SaveVO_TimerStraightBar = TimerStraightBar;
 export type SaveVO_ParticleFlow = ParticleFlow;
+export type SaveVO_ImageShape = Shape;
 
 // =========================================================
 // PROPERTIES ==============================================

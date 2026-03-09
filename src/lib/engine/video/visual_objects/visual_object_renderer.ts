@@ -14,13 +14,14 @@ import type {
 } from '$lib/store/save_structure/save_latest';
 import { Container } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
+import type { Atlas } from '../atlas';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
 	 * Updates the pixi container according to the current save state
 	 * and return the container
 	 */
-	update(obj: T): Container;
+	update(obj: T, atlas: Atlas): Container;
 	getContainer(): Container;
 	/**
 	 * returns null if there is no tick unit

@@ -26,6 +26,8 @@ import { VO_VisualizerCircularBar } from './visual_objects/vo_visualizer_circula
 import { VO_TimerStraightLinePoint } from './visual_objects/vo_timer_straight_line_point';
 import { VO_TimerStraightBar } from './visual_objects/vo_timer_straight_bar';
 import { VO_ParticleFlow } from './visual_objects/vo_particle_flow';
+import { Atlas } from './atlas';
+import { VO_ImageShape } from './visual_objects/vo_image_shape';
 
 interface RendererEvent<T extends RendererEventName> {
 	name: T;
@@ -64,6 +66,7 @@ export class Renderer {
 		width: number | null;
 		height: number | null;
 	};
+	private atlas: Atlas;
 
 	constructor() {
 		this.pendingStateUpdates = {
@@ -74,6 +77,7 @@ export class Renderer {
 		this.app = new PIXI.Application();
 		globalThis.__PIXI_APP__ = this.app;
 		this.tickEngine = new TickEngine();
+		this.atlas = new Atlas();
 		this.paused = true;
 	}
 
@@ -154,6 +158,10 @@ export class Renderer {
 		}
 		Log.renderer.info(`Setting resolution to ${width}x${height}`);
 		this.app.renderer.resize(width, height);
+	}
+
+	setImageResolutionMethod(method: (path: string) => Promise<ImageBitmap>) {
+		this.atlas.setImageResolutionMethod(method);
 	}
 
 	getPerfFPS() {
@@ -308,6 +316,8 @@ export class Renderer {
 			newVisualObject = new VO_TimerStraightBar(id);
 		} else if (obj.visual_object_type === 'particle_flow') {
 			newVisualObject = new VO_ParticleFlow(id);
+		} else if (obj.visual_object_type === 'shape') {
+			newVisualObject = new VO_ImageShape(id);
 		} else {
 			Log.renderer.warn('Unknown object type, registering placeholder object');
 		}
@@ -326,7 +336,7 @@ export class Renderer {
 			throw new Error('Object not found in renderer');
 		}
 		const oldContainer = this.visualObjects.get(id)!.getContainer();
-		const updatedContainer = this.visualObjects.get(id)!.update(obj);
+		const updatedContainer = this.visualObjects.get(id)!.update(obj, this.atlas);
 		if (updatedContainer) {
 			this.app.stage.removeChild(oldContainer);
 			this.app.stage.addChild(updatedContainer);

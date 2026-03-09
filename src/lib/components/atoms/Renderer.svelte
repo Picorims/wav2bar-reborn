@@ -3,6 +3,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import { onZoomChanged } from '$lib/store/app_state.svelte';
+	import { convertFileSrc, invoke } from '@tauri-apps/api/core';
+	import { join } from '@tauri-apps/api/path';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -30,6 +32,12 @@
 			canvas.style.width = `${(saveManager.resolution.width * newZoom) / 100}px`;
 			canvas.style.height = `${(saveManager.resolution.height * newZoom) / 100}px`;
 		});
+		renderer.setImageResolutionMethod(async (imagePath) => {
+			const dataDir = await invoke<string>('get_current_data_dir');
+			const fullPath = await join(dataDir, 'current_save', imagePath);
+			const src = convertFileSrc(fullPath);
+			return createImageBitmap(await fetch(src).then((res) => res.blob()));
+		})
 	});
 	onDestroy(() => {
 		// can't go in onMount's return because that one is async
