@@ -297,6 +297,36 @@ class SaveManager {
 			handler(this.save);
 		}
 	}
+
+	public async changeActiveObjectBackgroundImage(): Promise<string | null> {
+		if (this.activeObject === null) {
+			Log.save.warn('No active object to change background image of');
+			return null;
+		}
+		const id = this.activeObject;
+		const path = await open({
+			title: 'Pick an image file',
+			multiple: false,
+			directory: false,
+			recursive: false,
+			filters: [{ extensions: ['jpg', "jpeg", "png", "avif", "webp", "svg"], name: 'Image' }]
+		});
+
+		if (path === null) {
+			Log.save.info('No file selected');
+			return null;
+		} else {
+			try {
+				const fileName = await invoke<string>('change_object_background_image', {path, id});
+				Log.save.info('Object background image changed successfully');
+				return fileName;
+			} catch (e) {
+				// Tauri errors are strings
+				Log.save.error('Failed to change object background image: ' + e);
+				return null;
+			}
+		}
+	}
 }
 
 export const saveManager = new SaveManager();

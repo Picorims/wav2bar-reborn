@@ -84,8 +84,8 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 
     private async cacheTexture(obj: SaveVO_ImageShape, path: string, atlas: Atlas) {
         this.caching = true;
-        const image: ImageBitmap = await atlas.getImage(path);
-        const texture = await Assets.load<Texture>(image);
+        const imageURL = await atlas.getImageURL(path, this.saveId);
+        const texture = await Assets.load<Texture>(imageURL);
         this.texture = texture;
         // Trigger texture update on the renderer.
         // Do so before disabling caching to avoid potential multiple updates

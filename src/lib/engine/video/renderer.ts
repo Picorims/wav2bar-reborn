@@ -160,7 +160,7 @@ export class Renderer {
 		this.app.renderer.resize(width, height);
 	}
 
-	setImageResolutionMethod(method: (path: string) => Promise<ImageBitmap>) {
+	setImageURLResolutionMethod(method: (path: string, objectId: string) => Promise<string>) {
 		this.atlas.setImageResolutionMethod(method);
 	}
 
@@ -290,6 +290,7 @@ export class Renderer {
 	 * @param event
 	 */
 	scheduleRendererEvent(event: RendererEvent<RendererEventName>) {
+		console.log('Scheduling renderer event', event);
 		this.events.push(event);
 	}
 

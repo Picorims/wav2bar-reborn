@@ -8,20 +8,20 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 export class Atlas {
-    private imageResolutionMethod: (path: string) => Promise<ImageBitmap>;
+    private imageURLResolutionMethod: (path: string, objectId: string) => Promise<string>;
 
     constructor() {
-        this.imageResolutionMethod = async () => {
+        this.imageURLResolutionMethod = async () => {
             console.warn('No image resolution method set for Atlas. Using fallback that returns an empty ImageBitmap.');
-            return new ImageBitmap();
+            return "";
         }
     }
 
-    setImageResolutionMethod(method: (path: string) => Promise<ImageBitmap>) {
-        this.imageResolutionMethod = method;
+    setImageResolutionMethod(method: (path: string, objectId: string) => Promise<string>) {
+        this.imageURLResolutionMethod = method;
     }
 
-    async getImage(path: string): Promise<ImageBitmap> {
-        return this.imageResolutionMethod(path);
+    async getImageURL(path: string, objectId: string): Promise<string> {
+        return this.imageURLResolutionMethod(path, objectId);
     }
 }

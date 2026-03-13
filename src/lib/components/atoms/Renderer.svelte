@@ -32,11 +32,11 @@
 			canvas.style.width = `${(saveManager.resolution.width * newZoom) / 100}px`;
 			canvas.style.height = `${(saveManager.resolution.height * newZoom) / 100}px`;
 		});
-		renderer.setImageResolutionMethod(async (imagePath) => {
+		renderer.setImageURLResolutionMethod(async (imagePath, objectId) => {
 			const dataDir = await invoke<string>('get_current_data_dir');
-			const fullPath = await join(dataDir, 'current_save', imagePath);
+			const fullPath = await join(dataDir, 'temp', 'current_save', 'assets', objectId, 'background', imagePath);
 			const src = convertFileSrc(fullPath);
-			return createImageBitmap(await fetch(src).then((res) => res.blob()));
+			return src;
 		})
 	});
 	onDestroy(() => {
