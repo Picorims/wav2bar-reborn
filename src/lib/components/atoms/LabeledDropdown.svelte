@@ -8,8 +8,6 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import { run } from 'svelte/legacy';
-
 	import LabelWrapper from './LabelWrapper.svelte';
 
 	interface Props {
@@ -33,29 +31,31 @@
 		onChange(select.value);
 	};
 
-	let options: { key: string; value: string }[] = $state([]);
-	// TODO migrate to svelte 5
-	run(() => {
-		options = [];
+	let options: { key: string; value: string }[] = $derived.by(() => {
+		const entries: { key: string; value: string }[] = [];
 		if (optionsArr) {
 			for (let i = 0; i < optionsArr.length; i++) {
-				options.push({ key: i.toString(), value: optionsArr[i] });
+				entries.push({ key: i.toString(), value: optionsArr[i] });
 			}
+			return entries;
 		} else if (optionsObj) {
 			const values = Object.values(optionsObj);
 			const keys = Object.keys(optionsObj);
 
 			for (let i = 0; i < values.length; i++) {
-				options.push({ key: keys[i], value: values[i] });
+				entries.push({ key: keys[i], value: values[i] });
 			}
+			return entries;
 		} else {
-			options = [];
+			return [];
 		}
-
+	});
+	
+	$effect(() => {
 		if (value === '') {
 			value = options[0].key;
 		}
-	});
+	})
 </script>
 
 <LabelWrapper {title}>
