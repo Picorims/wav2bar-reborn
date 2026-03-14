@@ -8,7 +8,12 @@
 */
 
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_ERROR_MESSAGE, extractErrorMessage, filenameWithExtensionFromPath, parseCSSTextShadow } from './string';
+import {
+	DEFAULT_ERROR_MESSAGE,
+	extractErrorMessage,
+	filenameWithExtensionFromPath,
+	parseCSSTextShadow
+} from './string';
 
 describe('string', () => {
 	describe('parseCSSTextShadow', () => {

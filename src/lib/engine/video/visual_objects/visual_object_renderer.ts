@@ -55,10 +55,10 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
 /**
  * Returns a base pixi Container for the given visual object.
  * Handles position, layer, rotation and size.
- * 
+ *
  * The Container is configured with a centred rotation pivot,
  * positioned and rotated according to the visual object.
- * 
+ *
  * @param obj - The visual object configuration containing
  * coordinates, size, layer, and rotation.
  */
