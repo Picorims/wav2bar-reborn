@@ -20,6 +20,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use zip::write::SimpleFileOptions;
 use serde::Serialize;
+use regex::Regex;
 
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
@@ -347,6 +348,12 @@ async fn change_object_background_image(app: AppHandle, path: String, id: String
         return Err(msg);
     }
 
+    let id_regex = Regex::new(r"^[a-zA-Z0-9-]+$").unwrap();
+    if !id_regex.is_match(&id) {
+        let msg = format!("Invalid object ID: {}. Only alphanumeric characters and dashes are allowed.", id);
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
     let temp_dir = get_temp_dir(&app);
     let current_save_dir = temp_dir.join("current_save");
     let background_dir = current_save_dir.join(format!("assets/{}/background", id));
