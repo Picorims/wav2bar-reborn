@@ -13,7 +13,7 @@ export class Atlas {
 	constructor() {
 		this.imageURLResolutionMethod = async () => {
 			console.warn(
-				'No image resolution method set for Atlas. Using fallback that returns an empty ImageBitmap.'
+				'No image resolution method set for Atlas. Using fallback that returns an empty string.'
 			);
 			return '';
 		};
