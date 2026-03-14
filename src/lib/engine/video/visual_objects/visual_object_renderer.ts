@@ -21,7 +21,7 @@ export interface VisualObjectRenderer<T extends VisualObject> {
 	 * Updates the pixi container according to the current save state
 	 * and return the container
 	 */
-	update(obj: T, atlas: Atlas): Container;
+	update(obj: T, atlas: Atlas): void;
 	getContainer(): Container;
 	/**
 	 * returns null if there is no tick unit
@@ -36,7 +36,7 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
 		this.container = new Container();
 	}
 
-	update(): Container {
+	update() {
 		// console.log("PlaceHolderVisualObjectRenderer.update() called");
 
 		return this.container;
@@ -59,21 +59,16 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
  * @param obj - The visual object configuration containing coordinates, size, layer, and rotation.
  * @returns A configured Container with centered rotation pivot, positioned and rotated according to the visual object.
  */
-export function getBaseVOContainer<T extends VisualObject_Type>(
-	obj: VisualObjectInterface<T>
-): Container {
+export function mutateBaseVOContainer<T extends VisualObject_Type>(
+	obj: VisualObjectInterface<T>, container: Container
+): void {
 	// see: https://pixijs.com/8.x/examples?example=container_transform_origin
-	return new Container({
-		zIndex: obj.layer,
-		x: obj.coordinates.x + obj.size.width / 2,
-		y: obj.coordinates.y + obj.size.height / 2,
-		// center the rotation pivot
-		width: obj.size.width,
-		height: obj.size.height,
-		pivot: {
-			x: obj.size.width / 2,
-			y: obj.size.height / 2
-		},
-		angle: obj.rotation // angle is in degrees
-	});
+	container.zIndex = obj.layer;
+	container.x = obj.coordinates.x + obj.size.width / 2;
+	container.y = obj.coordinates.y + obj.size.height / 2;
+	// center the rotation pivot
+	container.width = obj.size.width;
+	container.height = obj.size.height;
+	container.pivot.set(obj.size.width / 2, obj.size.height / 2);
+	container.angle = obj.rotation;
 }

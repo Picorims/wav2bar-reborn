@@ -274,6 +274,7 @@ class SaveManager {
 		if (this.activeObjectData === null || this.activeObject === null) {
 			throw new Error('No active object to mutate');
 		}
+		Log.save.log('Mutating active object with id ' + this.activeObject);
 		renderer.scheduleRendererEvent({
 			name: 'object_update',
 			payload: {

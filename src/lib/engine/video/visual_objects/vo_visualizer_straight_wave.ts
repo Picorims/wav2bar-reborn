@@ -10,7 +10,7 @@
 import type { SaveVO_VisualizerStraightWave } from '$lib/store/save_structure/save_latest';
 import { Container, Graphics } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { AudioSpectrumProcessor } from '../tick_units/audio_spectrum_processor';
 import { Vec2 } from '$lib/math';
@@ -45,7 +45,7 @@ export class VO_VisualizerStraightWave
 			this.render(this.graphics, this.debugGraphics);
 		});
 	}
-	update(obj: SaveVO_VisualizerStraightWave): Container {
+	update(obj: SaveVO_VisualizerStraightWave) {
 		this.tickUnit.setMapping({
 			mappedLength: obj.visualizer_points_count,
 			minPercent: (obj.visualizer_analyzer_range[0] / 1024) * 100,
@@ -61,21 +61,21 @@ export class VO_VisualizerStraightWave
 		this.height = obj.size.height;
 		this.color = obj.color;
 
-		const container = getBaseVOContainer(obj);
+		this.container.removeChildren();
+		mutateBaseVOContainer(obj, this.container);
 
 		const graphics = new Graphics();
 		const debugGraphics = new Graphics();
 		this.render(graphics, debugGraphics);
-		container.addChild(graphics);
+		this.container.addChild(graphics);
 		if (DRAW_DEBUG) {
-			container.addChild(debugGraphics);
+			this.container.addChild(debugGraphics);
 		}
 
-		this.container = container;
 		this.graphics = graphics;
 		this.debugGraphics = debugGraphics;
-		return this.container;
 	}
+
 	private render(graphics: Graphics, debugGraphics: Graphics): void {
 		if (this.spectrum.length === 0) {
 			return;

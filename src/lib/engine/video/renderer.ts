@@ -328,19 +328,17 @@ export class Renderer {
 		if (tickUnit) {
 			this.tickEngine.addTickUnit(tickUnit);
 		}
-
-		this.updateObject(id, obj);
+		
+		this.updateObject(id, obj, true);
 	}
 
-	updateObject(id: UUIDv4, obj: VisualObject) {
+	updateObject(id: UUIDv4, obj: VisualObject, addContainer: boolean = false) {
 		if (!this.visualObjects.has(id)) {
 			throw new Error('Object not found in renderer');
 		}
-		const oldContainer = this.visualObjects.get(id)!.getContainer();
-		const updatedContainer = this.visualObjects.get(id)!.update(obj, this.atlas);
-		if (updatedContainer) {
-			this.app.stage.removeChild(oldContainer);
-			this.app.stage.addChild(updatedContainer);
+		this.visualObjects.get(id)!.update(obj, this.atlas);
+		if (addContainer) {
+			this.app.stage.addChild(this.visualObjects.get(id)!.getContainer());
 		}
 	}
 

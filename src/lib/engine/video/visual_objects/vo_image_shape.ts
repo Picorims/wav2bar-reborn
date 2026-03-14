@@ -9,7 +9,7 @@
 
 import type { UUIDv4 } from '$lib/types/common_types';
 import { Assets, Container, FillGradient, Graphics, Texture } from 'pixi.js';
-import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
 
@@ -30,7 +30,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
         return null;
     }
 
-    update(obj: SaveVO_ImageShape, atlas: Atlas): Container {
+    update(obj: SaveVO_ImageShape, atlas: Atlas) {
         const imageBackgroundDefined: boolean = obj.background.type === "image" && obj.background.last_image !== "";
         const shouldCreateImageCache: boolean = this.texture === null && !this.caching && imageBackgroundDefined;
         const shouldUpdateImageCache: boolean = !this.caching && imageBackgroundDefined && (this.currentType !== "image" || this.backgroundContent !== obj.background.last_image);
@@ -40,7 +40,8 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
             this.backgroundContent = obj.background.last_image;
         }
 
-        const container = getBaseVOContainer(obj);
+        this.container.removeChildren();
+        mutateBaseVOContainer(obj, this.container);
         const width = obj.size.width;
         const height = obj.size.height;
         
@@ -73,9 +74,8 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
             graphics.fill(gradient);
         }
 
-        container.addChild(graphics);
+        this.container.addChild(graphics);
 
-        this.container = container;
         return this.container;
     }
     getContainer(): Container {
