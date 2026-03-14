@@ -8,7 +8,7 @@
 */
 
 import { describe, expect, it } from 'vitest';
-import { filenameWithExtensionFromPath, parseCSSTextShadow } from './string';
+import { DEFAULT_ERROR_MESSAGE, extractErrorMessage, filenameWithExtensionFromPath, parseCSSTextShadow } from './string';
 
 describe('string', () => {
 	describe('parseCSSTextShadow', () => {
@@ -123,6 +123,23 @@ describe('string', () => {
 			const test = '';
 			const result = filenameWithExtensionFromPath(test);
 			expect(result).to.equal('');
+		});
+	});
+	describe('extractErrorMessage', () => {
+		it('extracts message from Error object', () => {
+			const error = new Error('Something went wrong');
+			const result = extractErrorMessage(error);
+			expect(result).to.equal('Something went wrong');
+		});
+		it('returns string if input is a string', () => {
+			const error = 'An error occurred';
+			const result = extractErrorMessage(error);
+			expect(result).to.equal('An error occurred');
+		});
+		it('returns default message for unknown error type', () => {
+			const error = { code: 500 };
+			const result = extractErrorMessage(error);
+			expect(result).to.equal(DEFAULT_ERROR_MESSAGE);
 		});
 	});
 });

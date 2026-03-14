@@ -12,6 +12,7 @@ import { Assets, Container, FillGradient, Graphics, Texture } from 'pixi.js';
 import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
+import { extractErrorMessage } from '$lib/string';
 
 export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 	private saveId: UUIDv4;
@@ -83,14 +84,19 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 
 	private async cacheTexture(obj: SaveVO_ImageShape, path: string, atlas: Atlas) {
 		this.caching = true;
-		const imageURL = await atlas.getImageURL(path, this.saveId);
-		const texture = await Assets.load<Texture>(imageURL);
-		this.texture = texture;
-		// Trigger texture update on the renderer.
-		// Do so before disabling caching to avoid potential multiple updates
-		// or unwanted infinite loops.
-		this.update(obj, atlas);
-		this.caching = false;
+		try {
+			const imageURL = await atlas.getImageURL(path, this.saveId);
+			const texture = await Assets.load<Texture>(imageURL);
+			this.texture = texture;
+			// Trigger texture update on the renderer.
+			// Do so before disabling caching to avoid potential multiple updates
+			// or unwanted infinite loops.
+			this.update(obj, atlas);
+		} catch (error) {
+			console.error(`Failed to load texture for path "${path}": ${extractErrorMessage(error)}`);
+		} finally {
+			this.caching = false;
+		}
 	}
 
 	/**
