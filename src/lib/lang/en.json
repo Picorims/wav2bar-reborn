@@ -130,6 +130,8 @@
 				"scale_size_control": "Scale Size Control",
 				"width_height_size_control": "Width Height Size Control"
 			},
+			"pick_image": "Pick Image",
+			"no_image": "No image imported.",
 			"repeat": "Repeat",
 			"repeat_types": {
 				"no_repeat": "No Repeat",

@@ -9,7 +9,7 @@
 
 import { Container, Graphics } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import type { SaveVO_ParticleFlow } from '$lib/store/save_structure/save_latest';
 import { Vec2 } from '$lib/math';
@@ -57,7 +57,7 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 			this.render(this.graphics);
 		});
 	}
-	update(obj: SaveVO_ParticleFlow): Container {
+	update(obj: SaveVO_ParticleFlow) {
 		this.width = obj.size.width;
 		this.height = obj.size.height;
 		this.radiusMin = obj.particle_radius_range[0];
@@ -83,15 +83,14 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 			);
 		}
 
-		const container = getBaseVOContainer(obj);
+		this.container.removeChildren();
+		mutateBaseVOContainer(obj, this.container);
 
 		const graphics = new Graphics();
 		this.render(graphics);
-		container.addChild(graphics);
+		this.container.addChild(graphics);
 
-		this.container = container;
 		this.graphics = graphics;
-		return this.container;
 	}
 	private tick() {
 		// spawn new particles based on density

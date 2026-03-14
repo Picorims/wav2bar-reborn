@@ -10,7 +10,7 @@
 import type { SaveVO_TimerStraightBar } from '$lib/store/save_structure/save_latest';
 import { Container, Graphics } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { TrackProgressTracker } from '../tick_units/track_progress_tracker';
 
@@ -36,23 +36,24 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 			this.render(this.graphics);
 		});
 	}
-	update(obj: SaveVO_TimerStraightBar): Container {
+
+	update(obj: SaveVO_TimerStraightBar) {
 		this.width = obj.size.width;
 		this.height = obj.size.height;
 		this.color = obj.color;
 		this.lineThickness = obj.border_thickness;
 		this.innerSpacing = obj.timer_inner_spacing;
 
-		const container = getBaseVOContainer(obj);
+		this.container.removeChildren();
+		mutateBaseVOContainer(obj, this.container);
 
 		const graphics = new Graphics();
 		this.render(graphics);
-		container.addChild(graphics);
+		this.container.addChild(graphics);
 
-		this.container = container;
 		this.graphics = graphics;
-		return this.container;
 	}
+
 	private render(graphics: Graphics) {
 		graphics.clear();
 

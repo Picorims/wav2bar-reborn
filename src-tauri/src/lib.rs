@@ -20,6 +20,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use zip::write::SimpleFileOptions;
 use serde::Serialize;
+use regex::Regex;
 
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
@@ -100,6 +101,7 @@ pub fn run() {
             read_save_json,
             write_save_json,
             save_to_file,
+            change_object_background_image,
             audio::bake_fft,
             audio::get_audio_dir,
             audio::get_fft_dir,
@@ -332,6 +334,47 @@ async fn write_save_json(json_content: String, app: AppHandle) -> Result<(), Str
         .map_err(|e| format!("Could not write save JSON file: {}", e))?;
     log::info!("Wrote save JSON file successfully.");
     Ok(())
+}
+
+/// Copy the provided image file (from path) into the temp/current_save/assets/[object_id]/background directory, replacing
+/// any existing image.
+#[tauri::command]
+async fn change_object_background_image(app: AppHandle, path: String, id: String) -> Result<String, String> {
+    log::info!("Requested to change background image of object {} to file: {}", id, path);
+    
+    if !Path::new(&path).exists() {
+        let msg = format!("File does not exist: {}", path);
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+
+    let id_regex = Regex::new(r"^[a-zA-Z0-9-]+$").unwrap();
+    if !id_regex.is_match(&id) {
+        let msg = format!("Invalid object ID: {}. Only alphanumeric characters and dashes are allowed.", id);
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+    let temp_dir = get_temp_dir(&app);
+    let current_save_dir = temp_dir.join("current_save");
+    let background_dir = current_save_dir.join(format!("assets/{}/background", id));
+    if background_dir.exists() {
+        std::fs::remove_dir_all(&background_dir)
+            .map_err(|e| format!("Could not remove existing background directory: {}", e))?;
+    }
+
+    std::fs::create_dir_all(&background_dir)
+        .map_err(|e| format!("Could not create background directory: {}", e))?;
+
+    // copy image to location
+    let file_name = Path::new(&path)
+        .file_name()
+        .and_then(|name| name.to_str())
+        .ok_or_else(|| "Could not get file name from path")?;
+    let dest_path = background_dir.join(file_name);
+    std::fs::copy(&path, &dest_path)
+        .map_err(|e| format!("Could not copy background image file: {}", e))?;
+
+    Ok(file_name.to_string())
 }
 
 /// Returns the working directory's temp directory path.

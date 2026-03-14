@@ -84,3 +84,14 @@ export function filenameWithExtensionFromPath(path: string): string {
 	const parts = path.split(/[/\\]/);
 	return parts[parts.length - 1];
 }
+
+export const DEFAULT_ERROR_MESSAGE = 'An unknown error occurred';
+export function extractErrorMessage(error: unknown): string {
+	if (error instanceof Error) {
+		return error.message;
+	} else if (typeof error === 'string') {
+		return error;
+	} else {
+		return DEFAULT_ERROR_MESSAGE;
+	}
+}

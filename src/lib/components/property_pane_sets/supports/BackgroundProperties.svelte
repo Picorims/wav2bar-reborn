@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import Accordion from '$lib/components/atoms/Accordion.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
@@ -19,17 +17,34 @@
 	import type { Supports_Background, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { keysUnderscoreToDash } from '$lib/string';
+	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
+	import { Image } from 'lucide-svelte';
+	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
+	import { convertFileSrc, invoke } from '@tauri-apps/api/core';
+	import { join } from '@tauri-apps/api/path';
 
 	type ObjT = VisualObject & Supports_Background;
 
 	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
 
-	const DEFAULT_SIZE_TYPE = 'cover';
 	const DEFAULT_SIZE_X = 100;
 	const DEFAULT_SIZE_Y = 100;
-	let sizeType = $state(DEFAULT_SIZE_TYPE);
-	let sizeX = $state(DEFAULT_SIZE_X);
-	let sizeY = $state(DEFAULT_SIZE_Y);
+
+	interface Size {
+		type: string;
+		x: number;
+		y: number;
+	}
+	let size = $derived.by(() => {
+		const parsed = parseBackgroundSize(data?.background.size ?? '');
+		const size = {
+			type: parsed.size_type,
+			x: parseInt(parsed.size_x),
+			y: parseInt(parsed.size_y)
+		};
+		return size;
+	});
+	let backgroundImageSrc = $state('');
 
 	function updateBackgroundType(value: string) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
@@ -50,6 +65,32 @@
 			obj.background.last_gradient = value;
 			return obj;
 		});
+	}
+
+	async function changeBackgroundImage() {
+		if (saveManager.activeObject === null) {
+			return;
+		}
+		const fileName = await saveManager.changeActiveObjectBackgroundImage();
+		if (fileName === null) {
+			return;
+		}
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.background.last_image = fileName;
+			return obj;
+		});
+
+		const dataDir = await invoke<string>('get_current_data_dir');
+		const fullPath = await join(
+			dataDir,
+			'temp',
+			'current_save',
+			'assets',
+			saveManager.activeObject,
+			'background',
+			fileName
+		);
+		backgroundImageSrc = convertFileSrc(fullPath);
 	}
 
 	/**
@@ -118,22 +159,16 @@
 		}
 	}
 
-	function updateBackgroundSize(type: string, x: number, y: number) {
+	function updateBackgroundSize(size: Size) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size = stringifyBackgroundSize(type, x.toString(), y.toString());
+			obj.background.size = stringifyBackgroundSize(
+				size.type,
+				size.x.toString(),
+				size.y.toString()
+			);
 			return obj;
 		});
 	}
-
-	run(() => {
-		updateBackgroundSize(sizeType, sizeX, sizeY);
-	});
-	run(() => {
-		const parsed = parseBackgroundSize(data?.background.size ?? '');
-		sizeType = parsed.size_type;
-		sizeX = parseInt(parsed.size_x);
-		sizeY = parseInt(parsed.size_y);
-	});
 
 	function updateBackgroundRepeat(v: string) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
@@ -172,32 +207,50 @@
 		/>
 	{/if}
 	{#if data?.background.type === 'image'}
-		<span>TODO: choose and save img</span>
+		<ButtonsRow>
+			<Button title={$lang.properties.background.pick_image} onClick={changeBackgroundImage}>
+				<Image slot="icon-r" />
+			</Button>
+		</ButtonsRow>
+		<figure>
+			<img class="image-preview" src={backgroundImageSrc} alt="" />
+			<figcaption>
+				{data.background.last_image !== ''
+					? data.background.last_image
+					: $lang.properties.background.no_image}
+			</figcaption>
+		</figure>
 		<LabeledDropdown
 			optionsObj={$lang.properties.background.size_types}
 			title={$lang.properties.background.size}
-			value={sizeType}
-			onChange={(v) => (sizeType = v)}
+			value={size.type}
+			onChange={(v) => {
+				updateBackgroundSize({ type: v, x: size.x, y: size.y });
+			}}
 		/>
 		<div class="horizontal-flex">
-			{#if sizeType === 'scale_size_control' || sizeType === 'width_height_size_control'}
+			{#if size.type === 'scale_size_control' || size.type === 'width_height_size_control'}
 				<LabeledInputNumber
 					defaultValue={DEFAULT_SIZE_X}
 					min={1}
 					step={1}
 					unit={'%'}
-					onChange={(v) => (sizeX = v)}
-					value={sizeX}
+					onChange={(v) => {
+						updateBackgroundSize({ type: size.type, x: v, y: size.y });
+					}}
+					value={size.x}
 				/>
 			{/if}
-			{#if sizeType === 'width_height_size_control'}
+			{#if size.type === 'width_height_size_control'}
 				<LabeledInputNumber
 					defaultValue={DEFAULT_SIZE_Y}
 					min={1}
 					step={1}
 					unit={'%'}
-					onChange={(v) => (sizeY = v)}
-					value={sizeY}
+					onChange={(v) => {
+						updateBackgroundSize({ type: size.type, x: size.x, y: v });
+					}}
+					value={size.y}
 				/>
 			{/if}
 		</div>
@@ -221,5 +274,21 @@
 		& > :global(*) {
 			flex: 1;
 		}
+	}
+	img.image-preview {
+		margin-top: g.$spacing-m;
+		width: 100%;
+		min-width: 100%;
+		height: auto;
+		max-height: 200px;
+		min-height: 50px;
+		border: 1px solid g.$color-background-300;
+		border-radius: g.$border-radius-m;
+		background-color: black;
+		object-fit: contain;
+	}
+	figcaption {
+		@include g.text-small;
+		color: g.$color-text-700;
 	}
 </style>

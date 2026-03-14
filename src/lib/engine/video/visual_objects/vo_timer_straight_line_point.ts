@@ -10,7 +10,7 @@
 import type { SaveVO_TimerStraightLinePoint } from '$lib/store/save_structure/save_latest';
 import { Container, Graphics } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { getBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { TrackProgressTracker } from '../tick_units/track_progress_tracker';
 
@@ -37,21 +37,20 @@ export class VO_TimerStraightLinePoint
 			this.render(this.graphics);
 		});
 	}
-	update(obj: SaveVO_TimerStraightLinePoint): Container {
+	update(obj: SaveVO_TimerStraightLinePoint): void {
 		this.width = obj.size.width;
 		this.height = obj.size.height;
 		this.color = obj.color;
 		this.lineThickness = obj.border_thickness;
 
-		const container = getBaseVOContainer(obj);
+		this.container.removeChildren();
+		mutateBaseVOContainer(obj, this.container);
 
 		const graphics = new Graphics();
 		this.render(graphics);
-		container.addChild(graphics);
+		this.container.addChild(graphics);
 
-		this.container = container;
 		this.graphics = graphics;
-		return this.container;
 	}
 	private render(graphics: Graphics) {
 		graphics.clear();

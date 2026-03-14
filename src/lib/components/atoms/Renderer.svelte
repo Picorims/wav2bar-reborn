@@ -3,6 +3,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import { onZoomChanged } from '$lib/store/app_state.svelte';
+	import { convertFileSrc, invoke } from '@tauri-apps/api/core';
+	import { join } from '@tauri-apps/api/path';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -29,6 +31,20 @@
 			if (!canvas) return;
 			canvas.style.width = `${(saveManager.resolution.width * newZoom) / 100}px`;
 			canvas.style.height = `${(saveManager.resolution.height * newZoom) / 100}px`;
+		});
+		renderer.setImageURLResolutionMethod(async (imagePath, objectId) => {
+			const dataDir = await invoke<string>('get_current_data_dir');
+			const fullPath = await join(
+				dataDir,
+				'temp',
+				'current_save',
+				'assets',
+				objectId,
+				'background',
+				imagePath
+			);
+			const src = convertFileSrc(fullPath);
+			return src;
 		});
 	});
 	onDestroy(() => {
