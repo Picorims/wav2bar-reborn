@@ -18,8 +18,7 @@ import type { Atlas } from '../atlas';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
-	 * Updates the pixi container according to the current save state
-	 * and return the container
+	 * Updates the pixi container according to the current save state.
 	 */
 	update(obj: T, atlas: Atlas): void;
 	getContainer(): Container;
@@ -56,8 +55,12 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
 /**
  * Returns a base pixi Container for the given visual object.
  * Handles position, layer, rotation and size.
- * @param obj - The visual object configuration containing coordinates, size, layer, and rotation.
- * @returns A configured Container with centered rotation pivot, positioned and rotated according to the visual object.
+ * 
+ * The Container is configured with a centred rotation pivot,
+ * positioned and rotated according to the visual object.
+ * 
+ * @param obj - The visual object configuration containing
+ * coordinates, size, layer, and rotation.
  */
 export function mutateBaseVOContainer<T extends VisualObject_Type>(
 	obj: VisualObjectInterface<T>,
