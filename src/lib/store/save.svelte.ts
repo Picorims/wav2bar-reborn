@@ -310,7 +310,7 @@ class SaveManager {
 			multiple: false,
 			directory: false,
 			recursive: false,
-			filters: [{ extensions: ['jpg', "jpeg", "png", "avif", "webp", "svg"], name: 'Image' }]
+			filters: [{ extensions: ['jpg', 'jpeg', 'png', 'avif', 'webp', 'svg'], name: 'Image' }]
 		});
 
 		if (path === null) {
@@ -318,7 +318,7 @@ class SaveManager {
 			return null;
 		} else {
 			try {
-				const fileName = await invoke<string>('change_object_background_image', {path, id});
+				const fileName = await invoke<string>('change_object_background_image', { path, id });
 				Log.save.info('Object background image changed successfully');
 				return fileName;
 			} catch (e) {

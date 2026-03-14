@@ -328,7 +328,7 @@ export class Renderer {
 		if (tickUnit) {
 			this.tickEngine.addTickUnit(tickUnit);
 		}
-		
+
 		this.updateObject(id, obj, true);
 	}
 

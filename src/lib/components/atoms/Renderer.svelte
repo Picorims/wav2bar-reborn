@@ -34,10 +34,18 @@
 		});
 		renderer.setImageURLResolutionMethod(async (imagePath, objectId) => {
 			const dataDir = await invoke<string>('get_current_data_dir');
-			const fullPath = await join(dataDir, 'temp', 'current_save', 'assets', objectId, 'background', imagePath);
+			const fullPath = await join(
+				dataDir,
+				'temp',
+				'current_save',
+				'assets',
+				objectId,
+				'background',
+				imagePath
+			);
 			const src = convertFileSrc(fullPath);
 			return src;
-		})
+		});
 	});
 	onDestroy(() => {
 		// can't go in onMount's return because that one is async

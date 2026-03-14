@@ -50,12 +50,12 @@
 			return [];
 		}
 	});
-	
+
 	$effect(() => {
 		if (value === '') {
 			value = options[0].key;
 		}
-	})
+	});
 </script>
 
 <LabelWrapper {title}>

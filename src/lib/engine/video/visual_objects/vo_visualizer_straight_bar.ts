@@ -41,7 +41,7 @@ export class VO_VisualizerStraightBar
 			this.render(this.graphics);
 		});
 	}
-	
+
 	update(obj: SaveVO_VisualizerStraightBar) {
 		this.tickUnit.setMapping({
 			mappedLength: obj.visualizer_points_count,

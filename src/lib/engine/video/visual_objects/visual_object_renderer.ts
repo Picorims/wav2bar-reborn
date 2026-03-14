@@ -60,7 +60,8 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
  * @returns A configured Container with centered rotation pivot, positioned and rotated according to the visual object.
  */
 export function mutateBaseVOContainer<T extends VisualObject_Type>(
-	obj: VisualObjectInterface<T>, container: Container
+	obj: VisualObjectInterface<T>,
+	container: Container
 ): void {
 	// see: https://pixijs.com/8.x/examples?example=container_transform_origin
 	container.zIndex = obj.layer;

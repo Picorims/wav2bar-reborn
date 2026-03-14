@@ -41,7 +41,7 @@
 			type: parsed.size_type,
 			x: parseInt(parsed.size_x),
 			y: parseInt(parsed.size_y)
-		}
+		};
 		return size;
 	});
 	let backgroundImageSrc = $state('');
@@ -81,7 +81,15 @@
 		});
 
 		const dataDir = await invoke<string>('get_current_data_dir');
-		const fullPath = await join(dataDir, 'temp', 'current_save', 'assets', saveManager.activeObject, 'background', fileName);
+		const fullPath = await join(
+			dataDir,
+			'temp',
+			'current_save',
+			'assets',
+			saveManager.activeObject,
+			'background',
+			fileName
+		);
 		backgroundImageSrc = convertFileSrc(fullPath);
 	}
 
@@ -153,7 +161,11 @@
 
 	function updateBackgroundSize(size: Size) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size = stringifyBackgroundSize(size.type, size.x.toString(), size.y.toString());
+			obj.background.size = stringifyBackgroundSize(
+				size.type,
+				size.x.toString(),
+				size.y.toString()
+			);
 			return obj;
 		});
 	}
@@ -202,13 +214,19 @@
 		</ButtonsRow>
 		<figure>
 			<img class="image-preview" src={backgroundImageSrc} alt="" />
-			<figcaption>{data.background.last_image !== "" ? data.background.last_image : $lang.properties.background.no_image}</figcaption>
+			<figcaption>
+				{data.background.last_image !== ''
+					? data.background.last_image
+					: $lang.properties.background.no_image}
+			</figcaption>
 		</figure>
 		<LabeledDropdown
 			optionsObj={$lang.properties.background.size_types}
 			title={$lang.properties.background.size}
 			value={size.type}
-			onChange={(v) => {updateBackgroundSize({type: v, x: size.x, y: size.y});}}
+			onChange={(v) => {
+				updateBackgroundSize({ type: v, x: size.x, y: size.y });
+			}}
 		/>
 		<div class="horizontal-flex">
 			{#if size.type === 'scale_size_control' || size.type === 'width_height_size_control'}
@@ -217,7 +235,9 @@
 					min={1}
 					step={1}
 					unit={'%'}
-					onChange={(v) => {updateBackgroundSize({type: size.type, x: v, y: size.y});}}
+					onChange={(v) => {
+						updateBackgroundSize({ type: size.type, x: v, y: size.y });
+					}}
 					value={size.x}
 				/>
 			{/if}
@@ -227,7 +247,9 @@
 					min={1}
 					step={1}
 					unit={'%'}
-					onChange={(v) => {updateBackgroundSize({type: size.type, x: size.x, y: v});}}
+					onChange={(v) => {
+						updateBackgroundSize({ type: size.type, x: size.x, y: v });
+					}}
 					value={size.y}
 				/>
 			{/if}

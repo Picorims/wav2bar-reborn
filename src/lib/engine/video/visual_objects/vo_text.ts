@@ -87,7 +87,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 
 		this.text = text;
 	}
-	
+
 	getContainer(): Container {
 		return this.container;
 	}
