@@ -63,7 +63,7 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 		this.radiusMin = obj.particle_radius_range[0];
 		this.radiusMax = obj.particle_radius_range[1];
 		this.flowType = obj.flow_type;
-		this.flowCenter = new Vec2(obj.flow_center[0], obj.flow_center[1]);
+		this.flowCenter = new Vec2(obj.flow_center.x, obj.flow_center.y);
 		this.flowDirection = obj.flow_direction;
 		this.density = obj.particle_spawn_probability * obj.particle_spawn_tests;
 		this.color = obj.color;
