@@ -13,6 +13,7 @@ import { typedDeepClone } from '$lib/deep_clone';
 import { renderer, type Renderer } from '$lib/engine/video/renderer';
 import { Log } from '$lib/log/logger';
 import {
+	CURRENT_SAVE_VERSION,
 	validateSave,
 	validateSaveVisualObject,
 	type Save,
@@ -25,6 +26,7 @@ import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import { FileAudioCachedFFTProvider } from '$lib/engine/audio/file_audio_cached_fft_provider';
 import { join } from '@tauri-apps/api/path';
 import { setLoading, setLoadingInfo } from './app_state.svelte';
+import { SaveConverter } from '$lib/save_converter';
 
 class SaveManager {
 	private saveConfig = $state<Save>(this.getDefaultSave());
@@ -71,7 +73,7 @@ class SaveManager {
 
 	private getDefaultSave(): Save {
 		const baseObject = {
-			save_version: 4,
+			save_version: CURRENT_SAVE_VERSION,
 			software_version_used: version,
 			software_version_first_created: version
 		};
@@ -128,13 +130,14 @@ class SaveManager {
 				const jsonStr = await invoke<string>('read_save_json');
 				Log.save.info('Read JSON from save file, parsing it...');
 				const saveJSON = JSON.parse(jsonStr);
-				Log.save.info('Validating save file...');
-				setLoadingInfo('Validating save file...');
-				const valid = validateSave(saveJSON);
-				if (!valid) {
+				Log.save.info('Converting and validating save file...');
+				setLoadingInfo('Converting and validating save file...');
+				const result = SaveConverter.convert(saveJSON);
+				if (!result.success || result.convertedSave === null) {
 					throw new Error(
-						'Save file does not match the schema because:\n\n' +
-							validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join('\n')
+						'Save file does not match the schema because:\nERRORS:\n' +
+							result.errors.join('\n') + '\nWARNINGS:\n' +
+							result.warnings.join('\n')
 					);
 				} else {
 					Log.save.info('Save file is valid, loading it');

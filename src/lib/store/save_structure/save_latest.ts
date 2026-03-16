@@ -38,6 +38,8 @@ import {
 	visualObject_V4_types
 } from './save_v4';
 
+export const CURRENT_SAVE_VERSION = 4;
+export const MINIMUM_SAVE_VERSION = 4;
 export const EXTENSION = EXTENSION_V4;
 export const ARCHIVE_STRUCTURE = ARCHIVE_STRUCTURE_V4;
 
