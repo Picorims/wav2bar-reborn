@@ -17,10 +17,7 @@
 					"properties": {
 						"type": {
 							"type": "string",
-							"enum": [
-								"reponse_a",
-								"reponse_b"
-							],
+							"enum": ["reponse_a", "reponse_b"],
 							"default": "reponse_a"
 						}
 					}
@@ -35,10 +32,7 @@
 						"type": "integer"
 					},
 					"minItems": 2,
-					"default": [
-						0,
-						0
-					]
+					"default": [0, 0]
 				}
 			},
 			"required": ["une_ref", "tableau"]

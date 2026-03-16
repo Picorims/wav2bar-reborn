@@ -21,10 +21,7 @@
 					"default": 0
 				}
 			},
-			"required": [
-				"x",
-				"y"
-			]		
+			"required": ["x", "y"]
 		},
 		"color": {
 			"description": "hex, rgb, rgba, hsv color, CSS syntax.",
@@ -36,10 +33,7 @@
 			"properties": {
 				"type": {
 					"type": "string",
-					"enum": [
-						"linear",
-						"radial"
-					],
+					"enum": ["linear", "radial"],
 					"default": "linear"
 				},
 				"start_point": {
@@ -64,10 +58,7 @@
 								"$ref": "#/definitions/color"
 							}
 						},
-						"required": [
-							"position",
-							"color"
-						]
+						"required": ["position", "color"]
 					},
 					"minItems": 2,
 					"default": [
@@ -107,13 +98,7 @@
 					"$ref": "#/definitions/color"
 				}
 			},
-			"required": [
-				"inset",
-				"offset",
-				"blur_radius",
-				"spread_radius",
-				"color"
-			]
+			"required": ["inset", "offset", "blur_radius", "spread_radius", "color"]
 		},
 		"visual_object_interface": {
 			"type": "object",
@@ -146,10 +131,7 @@
 						"x": 0,
 						"y": 0
 					},
-					"required": [
-						"x",
-						"y"
-					]
+					"required": ["x", "y"]
 				},
 				"size": {
 					"type": "object",
@@ -169,10 +151,7 @@
 						"width": 0,
 						"height": 0
 					},
-					"required": [
-						"width",
-						"height"
-					]
+					"required": ["width", "height"]
 				},
 				"rotation": {
 					"$ref": "#/definitions/angle_degrees_int",
@@ -184,14 +163,7 @@
 					"default": ""
 				}
 			},
-			"required": [
-				"name",
-				"layer",
-				"coordinates",
-				"size",
-				"rotation",
-				"svg_filter"
-			]
+			"required": ["name", "layer", "coordinates", "size", "rotation", "svg_filter"]
 		},
 		"supports_border_radius": {
 			"type": "object",
@@ -209,17 +181,11 @@
 							},
 							"unit": {
 								"type": "string",
-								"enum": [
-									"px",
-									"percent"
-								],
+								"enum": ["px", "percent"],
 								"default": "px"
 							}
 						},
-						"required": [
-							"value",
-							"unit"
-						]
+						"required": ["value", "unit"]
 					},
 					"minItems": 8,
 					"maxItems": 8,
@@ -259,9 +225,7 @@
 					]
 				}
 			},
-			"required": [
-				"border_radius"
-			]
+			"required": ["border_radius"]
 		},
 		"supports_box_shadows": {
 			"type": "object",
@@ -275,9 +239,7 @@
 					"default": []
 				}
 			},
-			"required": [
-				"box_shadows"
-			]
+			"required": ["box_shadows"]
 		},
 		"supports_background": {
 			"type": "object",
@@ -287,11 +249,7 @@
 					"properties": {
 						"type": {
 							"type": "string",
-							"enum": [
-								"color",
-								"gradient",
-								"image"
-							],
+							"enum": ["color", "gradient", "image"],
 							"default": "color"
 						},
 						"last_color": {
@@ -312,11 +270,7 @@
 							"properties": {
 								"type": {
 									"type": "string",
-									"enum": [
-										"contain",
-										"cover",
-										"percentage"
-									],
+									"enum": ["contain", "cover", "percentage"],
 									"default": "contain"
 								},
 								"percentage": {
@@ -324,17 +278,10 @@
 									"$ref": "#/definitions/point"
 								}
 							},
-							"required": [
-								"type"
-							]
+							"required": ["type"]
 						},
 						"repeat": {
-							"enum": [
-								"no-repeat",
-								"repeat",
-								"repeat-x",
-								"repeat-y"
-							],
+							"enum": ["no-repeat", "repeat", "repeat-x", "repeat-y"],
 							"default": "no-repeat"
 						}
 					},
@@ -346,19 +293,10 @@
 						"size": "",
 						"repeat": "no-repeat"
 					},
-					"required": [
-						"type",
-						"last_color",
-						"last_gradient",
-						"last_image",
-						"size",
-						"repeat"
-					]
+					"required": ["type", "last_color", "last_gradient", "last_image", "size", "repeat"]
 				}
 			},
-			"required": [
-				"background"
-			]
+			"required": ["background"]
 		},
 		"supports_particle_props": {
 			"type": "object",
@@ -371,16 +309,10 @@
 					},
 					"minItems": 2,
 					"maxItems": 2,
-					"default": [
-						1,
-						1
-					]
+					"default": [1, 1]
 				},
 				"flow_type": {
-					"enum": [
-						"radial",
-						"directional"
-					],
+					"enum": ["radial", "directional"],
 					"default": "radial"
 				},
 				"flow_center": {
@@ -390,10 +322,7 @@
 					},
 					"minItems": 2,
 					"maxItems": 2,
-					"default": [
-						0,
-						0
-					]
+					"default": [0, 0]
 				},
 				"flow_direction": {
 					"$ref": "#/definitions/angle_degrees_int",
@@ -430,18 +359,13 @@
 					"default": "#ffffff"
 				}
 			},
-			"required": [
-				"color"
-			]
+			"required": ["color"]
 		},
 		"supports_text_props": {
 			"type": "object",
 			"properties": {
 				"text_type": {
-					"enum": [
-						"any",
-						"time"
-					],
+					"enum": ["any", "time"],
 					"default": "any"
 				},
 				"text_content": {
@@ -484,32 +408,20 @@
 						"overline": false,
 						"line_through": false
 					},
-					"required": [
-						"italic",
-						"bold",
-						"underline",
-						"overline",
-						"line_through"
-					]
+					"required": ["italic", "bold", "underline", "overline", "line_through"]
 				},
 				"text_align": {
 					"type": "object",
 					"properties": {
 						"horizontal": {
-							"enum": [
-								"left",
-								"center",
-								"right"
-							],
+							"enum": ["left", "center", "right"],
 							"default": "left"
 						}
 					},
 					"default": {
 						"horizontal": "left"
 					},
-					"required": [
-						"horizontal"
-					]
+					"required": ["horizontal"]
 				},
 				"text_shadow": {
 					"description": "CSS text-shadow",
@@ -535,9 +447,7 @@
 					"default": 0
 				}
 			},
-			"required": [
-				"border_thickness"
-			]
+			"required": ["border_thickness"]
 		},
 		"supports_timer_inner_spacing": {
 			"type": "object",
@@ -548,9 +458,7 @@
 					"default": 0
 				}
 			},
-			"required": [
-				"timer_inner_spacing"
-			]
+			"required": ["timer_inner_spacing"]
 		},
 		"supports_visualizer_props": {
 			"type": "object",
@@ -569,18 +477,11 @@
 					},
 					"minItems": 2,
 					"maxItems": 2,
-					"default": [
-						0,
-						1023
-					]
+					"default": [0, 1023]
 				},
 				"visualization_smoothing_type": {
 					"description": "Interpolation type of the frequency array between frames.",
-					"enum": [
-						"proportional_decrease",
-						"linear_decrease",
-						"average"
-					],
+					"enum": ["proportional_decrease", "linear_decrease", "average"],
 					"default": "proportional_decrease"
 				},
 				"visualization_smoothing_factor": {
@@ -606,9 +507,7 @@
 					"default": 0
 				}
 			},
-			"required": [
-				"visualizer_bar_thickness"
-			]
+			"required": ["visualizer_bar_thickness"]
 		},
 		"supports_visualizer_circular_props": {
 			"type": "object",
@@ -619,9 +518,7 @@
 					"default": 0
 				}
 			},
-			"required": [
-				"visualizer_radius"
-			]
+			"required": ["visualizer_radius"]
 		},
 		"shape": {
 			"allOf": [
@@ -632,9 +529,7 @@
 							"const": "shape"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -659,9 +554,7 @@
 							"const": "particle_flow"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -683,9 +576,7 @@
 							"const": "text"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -707,9 +598,7 @@
 							"const": "timer_straight_bar"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -740,9 +629,7 @@
 							"const": "timer_straight_line_point"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -770,9 +657,7 @@
 							"const": "visualizer_straight_bar"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -803,9 +688,7 @@
 							"const": "visualizer_straight_wave"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -827,9 +710,7 @@
 							"const": "visualizer_circular_bar"
 						}
 					},
-					"required": [
-						"visual_object_type"
-					]
+					"required": ["visual_object_type"]
 				},
 				{
 					"$ref": "#/definitions/visual_object_interface"
@@ -916,10 +797,7 @@
 				"width": 1920,
 				"height": 1080
 			},
-			"required": [
-				"width",
-				"height"
-			]
+			"required": ["width", "height"]
 		},
 		"fps": {
 			"type": "number",

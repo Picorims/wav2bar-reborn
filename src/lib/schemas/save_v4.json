@@ -174,7 +174,7 @@
 							"default": 0
 						}
 					},
-					"required": ["x","y"]
+					"required": ["x", "y"]
 				},
 				"flow_direction": {
 					"$ref": "#/definitions/angle_degrees_int",

@@ -19,8 +19,12 @@ export type Shape = {
 	[k: string]: unknown;
 } & VisualObjectInterface &
 	SupportsBorderRadius &
-	SupportsBoxShadow &
+	SupportsBoxShadows &
 	SupportsBackground;
+/**
+ * hex, rgb, rgba, hsv color, CSS syntax.
+ */
+export type Color = string;
 export type ParticleFlow = {
 	visual_object_type: 'particle_flow';
 	[k: string]: unknown;
@@ -40,7 +44,7 @@ export type TimerStraightBar = {
 	SupportsColor &
 	SupportsBorderThickness &
 	SupportsBorderRadius &
-	SupportsBoxShadow &
+	SupportsBoxShadows &
 	SupportsTimerInnerSpacing;
 export type TimerStraightLinePoint = {
 	visual_object_type: 'timer_straight_line_point';
@@ -49,7 +53,7 @@ export type TimerStraightLinePoint = {
 	SupportsColor &
 	SupportsBorderThickness &
 	SupportsBorderRadius &
-	SupportsBoxShadow;
+	SupportsBoxShadows;
 export type VisualizerStraightBar = {
 	visual_object_type: 'visualizer_straight_bar';
 	[k: string]: unknown;
@@ -58,7 +62,7 @@ export type VisualizerStraightBar = {
 	SupportsVisualizerBarProps &
 	SupportsColor &
 	SupportsBorderRadius &
-	SupportsBoxShadow;
+	SupportsBoxShadows;
 export type VisualizerStraightWave = {
 	visual_object_type: 'visualizer_straight_wave';
 	[k: string]: unknown;
@@ -72,12 +76,12 @@ export type VisualizerCircularBar = {
 	SupportsVisualizerProps &
 	SupportsColor &
 	SupportsBorderRadius &
-	SupportsBoxShadow &
+	SupportsBoxShadows &
 	SupportsVisualizerBarProps &
 	SupportsVisualizerCircularProps;
 
 /**
- * Schema for Wav2Bar save files, version 4. (For versions beta 0.3.0 indev to beta 0.3.4).
+ * Schema for Wav2Bar save files, version 5. (For versions 1.0.0-beta.1 and above).
  *
  *  Wav2Bar - Free software for creating audio visualization (motion design) videos.
  *  Copyright (C) 2025  Picorims <picorims.contact@gmail.com>
@@ -96,7 +100,7 @@ export type VisualizerCircularBar = {
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-export interface Wav2BarSaveV4 {
+export interface Wav2BarSaveV5 {
 	save_version: 4;
 	/**
 	 * last version modifying this save
@@ -150,16 +154,76 @@ export interface VisualObjectInterface {
 }
 export interface SupportsBorderRadius {
 	/**
-	 * CSS border-radius
+	 * order: top-left, top-right, bottom-right, bottom-left; before and after point clockwise.
+	 *
+	 * @minItems 8
+	 * @maxItems 8
 	 */
-	border_radius: string;
+	border_radius: [
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		}
+	];
 	[k: string]: unknown;
 }
-export interface SupportsBoxShadow {
+export interface SupportsBoxShadows {
 	/**
-	 * CSS box-shadow
+	 * list of box-shadows
 	 */
-	box_shadow: string;
+	box_shadows: Shadow[];
+	[k: string]: unknown;
+}
+/**
+ * Used for both box-shadow and text-shadow.
+ */
+export interface Shadow {
+	inset: boolean;
+	offset: Point;
+	blur_radius: number;
+	spread_radius: number;
+	color: Color;
+	[k: string]: unknown;
+}
+export interface Point {
+	x: number;
+	y: number;
 	[k: string]: unknown;
 }
 export interface SupportsBackground {
@@ -169,21 +233,63 @@ export interface SupportsBackground {
 		 * hex, rgb, rgba, hsv color, CSS syntax.
 		 */
 		last_color: string;
-		/**
-		 * CSS gradient syntax.
-		 */
-		last_gradient: string;
+		last_gradient: Gradient;
 		/**
 		 * Name of the image with the extension, stored in the background folder of the object.
 		 */
 		last_image: string;
-		/**
-		 * contain | cover | x% | x% y%
-		 */
-		size: string;
+		size: {
+			type: 'contain' | 'cover' | 'percentage';
+			percentage?: Point2;
+			[k: string]: unknown;
+		};
 		repeat: 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
 		[k: string]: unknown;
 	};
+	[k: string]: unknown;
+}
+export interface Gradient {
+	type?: 'linear' | 'radial';
+	start_point?: Point1;
+	end_point?: Point;
+	/**
+	 * List of color stops. The position is between 0 and 1.
+	 *
+	 * @minItems 2
+	 */
+	color_stops?: [
+		{
+			position: number;
+			color: Color;
+			[k: string]: unknown;
+		},
+		{
+			position: number;
+			color: Color;
+			[k: string]: unknown;
+		},
+		...{
+			position: number;
+			color: Color;
+			[k: string]: unknown;
+		}[]
+	];
+	[k: string]: unknown;
+}
+/**
+ * Also represents the center of the radial gradient
+ */
+export interface Point1 {
+	x: number;
+	y: number;
+	[k: string]: unknown;
+}
+/**
+ * Used only if the size type is percentage.
+ */
+export interface Point2 {
+	x: number;
+	y: number;
 	[k: string]: unknown;
 }
 export interface SupportsParticleProps {
@@ -193,11 +299,11 @@ export interface SupportsParticleProps {
 	 */
 	particle_radius_range: [number, number];
 	flow_type: 'radial' | 'directional';
-	flow_center: {
-		x: number;
-		y: number;
-		[k: string]: unknown;
-	};
+	/**
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	flow_center: [number, number];
 	/**
 	 * degrees, clockwise. 0 and 360 may have a different meaning.
 	 */
