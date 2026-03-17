@@ -136,7 +136,8 @@ class SaveManager {
 				if (!result.success || result.convertedSave === null) {
 					throw new Error(
 						'Save file does not match the schema because:\nERRORS:\n' +
-							result.errors.join('\n') + '\nWARNINGS:\n' +
+							result.errors.join('\n') +
+							'\nWARNINGS:\n' +
 							result.warnings.join('\n')
 					);
 				} else {

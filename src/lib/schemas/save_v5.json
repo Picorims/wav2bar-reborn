@@ -49,7 +49,7 @@
 					"items": {
 						"type": "object",
 						"properties": {
-							"position": {
+							"offset": {
 								"type": "number",
 								"minimum": 0,
 								"maximum": 1
@@ -58,7 +58,7 @@
 								"$ref": "#/definitions/color"
 							}
 						},
-						"required": ["position", "color"]
+						"required": ["offset", "color"]
 					},
 					"minItems": 2,
 					"default": [
@@ -72,7 +72,8 @@
 						}
 					]
 				}
-			}
+			},
+			"required": ["type", "color_stops"]
 		},
 		"shadow": {
 			"description": "Used for both box-shadow and text-shadow.",
@@ -423,10 +424,13 @@
 					},
 					"required": ["horizontal"]
 				},
-				"text_shadow": {
-					"description": "CSS text-shadow",
-					"type": "string",
-					"default": ""
+				"text_shadows": {
+					"description": "list of box-shadows",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/shadow"
+					},
+					"default": []
 				}
 			},
 			"required": [
@@ -768,7 +772,7 @@
 	"properties": {
 		"save_version": {
 			"type": "number",
-			"const": 4
+			"const": 5
 		},
 		"software_version_used": {
 			"description": "last version modifying this save",

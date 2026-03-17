@@ -101,7 +101,7 @@ export type VisualizerCircularBar = {
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export interface Wav2BarSaveV5 {
-	save_version: 4;
+	save_version: 5;
 	/**
 	 * last version modifying this save
 	 */
@@ -249,7 +249,7 @@ export interface SupportsBackground {
 	[k: string]: unknown;
 }
 export interface Gradient {
-	type?: 'linear' | 'radial';
+	type: 'linear' | 'radial';
 	start_point?: Point1;
 	end_point?: Point;
 	/**
@@ -257,19 +257,19 @@ export interface Gradient {
 	 *
 	 * @minItems 2
 	 */
-	color_stops?: [
+	color_stops: [
 		{
-			position: number;
+			offset: number;
 			color: Color;
 			[k: string]: unknown;
 		},
 		{
-			position: number;
+			offset: number;
 			color: Color;
 			[k: string]: unknown;
 		},
 		...{
-			position: number;
+			offset: number;
 			color: Color;
 			[k: string]: unknown;
 		}[]
@@ -339,9 +339,9 @@ export interface SupportsTextProps {
 		[k: string]: unknown;
 	};
 	/**
-	 * CSS text-shadow
+	 * list of box-shadows
 	 */
-	text_shadow: string;
+	text_shadows?: Shadow[];
 	[k: string]: unknown;
 }
 export interface SupportsBorderThickness {
