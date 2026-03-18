@@ -25,6 +25,7 @@
 		// =====
 		defaultValue?: number;
 		value?: number;
+		noMargin?: boolean;
 	}
 
 	let {
@@ -38,7 +39,8 @@
 		disabled = false,
 		required = true,
 		defaultValue = 0,
-		value = $bindable(defaultValue)
+		value = $bindable(defaultValue),
+		noMargin = false
 	}: Props = $props();
 	let lastValidValue: number = value;
 
@@ -64,7 +66,7 @@
 	});
 </script>
 
-<LabeledInputWrapper {title}>
+<LabeledInputWrapper {title} {noMargin}>
 	<input
 		bind:value
 		bind:this={input}

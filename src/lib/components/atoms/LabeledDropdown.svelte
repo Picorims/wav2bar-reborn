@@ -16,6 +16,7 @@
 		title?: string;
 		onChange?: (key: string) => void;
 		value?: string;
+		noMargin?: boolean;
 	}
 
 	let {
@@ -23,7 +24,8 @@
 		optionsObj = null,
 		title = '',
 		onChange = () => {},
-		value = $bindable('')
+		value = $bindable(''),
+		noMargin = false
 	}: Props = $props();
 
 	const handleOnChange = (e: Event) => {
@@ -58,18 +60,29 @@
 	});
 </script>
 
-<LabelWrapper {title}>
-	<select class="select" onchange={handleOnChange} bind:value>
+{#snippet select()}
+	<select class="select" class:noMargin onchange={handleOnChange} bind:value>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}
 	</select>
-</LabelWrapper>
+{/snippet}
+
+{#if title !== ''}
+	<LabelWrapper {title}>
+		{@render select()}
+	</LabelWrapper>
+{:else}
+	{@render select()}
+{/if}
 
 <style lang="scss">
 	@use '../../css/globals_forward.scss' as g;
 
 	select.select {
 		@include g.input;
+	}
+	select.select.noMargin {
+		margin: 0;
 	}
 </style>

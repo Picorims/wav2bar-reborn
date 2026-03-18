@@ -13,19 +13,20 @@
 	interface Props {
 		title?: string;
 		children?: import('svelte').Snippet;
+		noMargin?: boolean;
 	}
 
-	let { title = 'title', children }: Props = $props();
+	let { title = 'title', children, noMargin = false }: Props = $props();
 </script>
 
-{#if title != ''}
+{#if title !== ''}
 	<LabelWrapper {title}>
 		<div class="input">
 			{@render children?.()}
 		</div>
 	</LabelWrapper>
 {:else}
-	<div class="input alone">
+	<div class="input alone" class:noMargin>
 		{@render children?.()}
 	</div>
 {/if}
@@ -36,7 +37,7 @@
 	div.input {
 		@include g.div-input;
 	}
-	div.input.alone {
+	div.input.alone:not(.noMargin) {
 		margin: g.$spacing-m 0;
 	}
 </style>
