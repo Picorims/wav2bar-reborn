@@ -15,7 +15,11 @@
 	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
-	import type { Supports_BoxShadow, VisualObject } from '$lib/store/save_structure/save_latest';
+	import type {
+		Shadow,
+		Supports_BoxShadow,
+		VisualObject
+	} from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { PlusCircle, Trash2 } from 'lucide-svelte';
 
@@ -30,7 +34,7 @@
 				blur_radius: 5,
 				spread_radius: 0,
 				color: '#000000',
-				inset: false,
+				inset: false
 			});
 			return obj;
 		});
@@ -102,55 +106,58 @@
 		/>
 	</ButtonsRow>
 
-	{#each data?.box_shadows as shadow, index (index)}
-		<LabeledInputNumber
-			defaultValue={shadow.offset.x}
-			step={1}
-			title={$lang.properties.box_shadow.offset_x + ` (${index + 1})`}
-			value={shadow.offset.x}
-			onChange={(v) => updateBoxShadowOffsetX(index, v)}
-		/>
-		<LabeledInputNumber
-			defaultValue={shadow.offset.y}
-			step={1}
-			title={$lang.properties.box_shadow.offset_y + ` (${index + 1})`}
-			value={shadow.offset.y}
-			onChange={(v) => updateBoxShadowOffsetY(index, v)}
-		/>
-		<LabeledInputNumber
-			defaultValue={shadow.blur_radius}
-			step={1}
-			title={$lang.properties.box_shadow.blur_radius + ` (${index + 1})`}
-			value={shadow.blur_radius}
-			onChange={(v) => updateBoxShadowBlurRadius(index, v)}
-		/>
-		<LabeledInputNumber
-			defaultValue={shadow.spread_radius}
-			step={1}
-			title={$lang.properties.box_shadow.spread_radius + ` (${index + 1})`}
-			value={shadow.spread_radius}
-			onChange={(v) => updateBoxShadowSpreadRadius(index, v)}
-		/>
-		<LabeledInputColor
-			defaultValue={shadow.color}
-			title={$lang.properties.box_shadow.color + ` (${index + 1})`}
-			value={shadow.color}
-			onChange={(v) => updateBoxShadowColor(index, v)}
-		/>
-		<LabeledDropdown
-			optionsObj={$lang.properties.box_shadow.modes}
-			title={$lang.properties.box_shadow.mode + ` (${index + 1})`}
-			value={shadow.inset ? 'inset' : 'outset'}
-			onChange={(v) => updateBoxShadowInset(index, v === 'inset')}
-		/>
-		<ButtonsRow>
-			<Button
-				title={$lang.properties.box_shadow.remove + ` (${index + 1})`}
-				onClick={() => removeBoxShadow(index)}
-				iconRight={trash2}
+	{#if data?.box_shadows}
+		{#each data?.box_shadows as s, index (index)}
+			<!-- checker fails to infer the type and thinks it is unknown -->
+			{@const shadow: Shadow = s as Shadow}
+			<LabeledInputNumber
+				defaultValue={shadow.offset.x}
+				step={1}
+				title={$lang.properties.box_shadow.offset_x + ` (${index + 1})`}
+				value={shadow.offset.x}
+				onChange={(v) => updateBoxShadowOffsetX(index, v)}
 			/>
-		</ButtonsRow>
-		<hr />
-	{/each}
+			<LabeledInputNumber
+				defaultValue={shadow.offset.y}
+				step={1}
+				title={$lang.properties.box_shadow.offset_y + ` (${index + 1})`}
+				value={shadow.offset.y}
+				onChange={(v) => updateBoxShadowOffsetY(index, v)}
+			/>
+			<LabeledInputNumber
+				defaultValue={shadow.blur_radius}
+				step={1}
+				title={$lang.properties.box_shadow.blur_radius + ` (${index + 1})`}
+				value={shadow.blur_radius}
+				onChange={(v) => updateBoxShadowBlurRadius(index, v)}
+			/>
+			<LabeledInputNumber
+				defaultValue={shadow.spread_radius}
+				step={1}
+				title={$lang.properties.box_shadow.spread_radius + ` (${index + 1})`}
+				value={shadow.spread_radius}
+				onChange={(v) => updateBoxShadowSpreadRadius(index, v)}
+			/>
+			<LabeledInputColor
+				defaultValue={shadow.color}
+				title={$lang.properties.box_shadow.color + ` (${index + 1})`}
+				value={shadow.color}
+				onChange={(v) => updateBoxShadowColor(index, v)}
+			/>
+			<LabeledDropdown
+				optionsObj={$lang.properties.box_shadow.modes}
+				title={$lang.properties.box_shadow.mode + ` (${index + 1})`}
+				value={shadow.inset ? 'inset' : 'outset'}
+				onChange={(v) => updateBoxShadowInset(index, v === 'inset')}
+			/>
+			<ButtonsRow>
+				<Button
+					title={$lang.properties.box_shadow.remove + ` (${index + 1})`}
+					onClick={() => removeBoxShadow(index)}
+					iconRight={trash2}
+				/>
+			</ButtonsRow>
+			<hr />
+		{/each}
+	{/if}
 </Accordion>
-

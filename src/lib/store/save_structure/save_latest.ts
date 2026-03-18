@@ -26,7 +26,8 @@ import type {
 	TimerStraightLinePoint,
 	TimerStraightBar,
 	ParticleFlow,
-	Shape
+	Shape,
+	Shadow as ShadowV5,
 } from '$lib/types/schemas/save_v5';
 import type { Wav2BarSaveV5 } from '$lib/types/schemas/save_v5';
 import {
@@ -76,3 +77,9 @@ export type Supports_TimerInnerSpacing = SupportsTimerInnerSpacing;
 export type Supports_VisualizerProps = SupportsVisualizerProps;
 export type Supports_VisualizerBarProps = SupportsVisualizerBarProps;
 export type Supports_VisualizerCircularProps = SupportsVisualizerCircularProps;
+
+// =========================================================
+// PRIMITIVES ==============================================
+// =========================================================
+
+export type Shadow = ShadowV5;
