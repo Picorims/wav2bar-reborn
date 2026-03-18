@@ -110,7 +110,19 @@
 			"title": "Border Radius (CSS)"
 		},
 		"box_shadow": {
-			"title": "Box Shadow (CSS)"
+			"title": "Box Shadows",
+			"add": "Add Box Shadow",
+			"remove": "Remove Box Shadow",
+			"offset_x": "Offset X",
+			"offset_y": "Offset Y",
+			"blur_radius": "Blur Radius",
+			"spread_radius": "Spread Radius",
+			"color": "Color",
+			"mode": "Mode",
+			"modes": {
+				"outset": "Outset",
+				"inset": "Inset"
+			}
 		},
 		"background": {
 			"title": "Background",
