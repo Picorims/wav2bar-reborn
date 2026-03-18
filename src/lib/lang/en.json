@@ -199,7 +199,13 @@
 				"center": "Center",
 				"right": "Right"
 			},
-			"text_shadow": "Text Shadow"
+			"text_shadow": {
+				"title": "Text Shadow",
+				"offset_x": "Offset X",
+				"offset_y": "Offset Y",
+				"blur_radius": "Blur Radius",
+				"color": "Color"
+			}
 		},
 		"border_thickness": {
 			"title": "Border Thickness"
