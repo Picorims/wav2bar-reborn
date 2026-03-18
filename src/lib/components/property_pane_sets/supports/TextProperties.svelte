@@ -130,6 +130,22 @@
 	}
 </script>
 
+{#snippet italic()}
+	<Italic />
+{/snippet}
+{#snippet bold()}
+	<Bold />
+{/snippet}
+{#snippet underline()}
+	<Underline />
+{/snippet}
+{#snippet overline()}
+	<ArrowUpToLine />
+{/snippet}
+{#snippet lineThrough()}
+	<Strikethrough />
+{/snippet}
+
 <Accordion label={$lang.properties.text.title} open>
 	<LabeledDropdown
 		title={$lang.properties.text.type}
@@ -159,46 +175,36 @@
 				togglable
 				toggled={data?.text_decoration.italic}
 				onToggle={updateItalic}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Italic slot="icon-r" />
-			</Button>
+				iconRight={italic}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.bold}
 				togglable
 				toggled={data?.text_decoration.bold}
 				onToggle={updateBold}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Bold slot="icon-r" />
-			</Button>
+				iconRight={bold}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.underline}
 				togglable
 				toggled={data?.text_decoration.underline}
 				onToggle={updateUnderline}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Underline slot="icon-r" />
-			</Button>
+				iconRight={underline}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.overline}
 				togglable
 				toggled={data?.text_decoration.overline}
 				onToggle={updateOverline}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<ArrowUpToLine slot="icon-r" />
-			</Button>
+				iconRight={overline}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.line_through}
 				togglable
 				toggled={data?.text_decoration.line_through}
 				onToggle={updateLineThrough}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Strikethrough slot="icon-r" />
-			</Button>
+				iconRight={lineThrough}
+			/>
 		</ButtonsRow>
 	</ButtonsGroup>
 	<LabeledDropdown

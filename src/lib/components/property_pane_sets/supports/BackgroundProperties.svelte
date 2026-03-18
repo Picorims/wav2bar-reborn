@@ -206,6 +206,16 @@
 	}
 </script>
 
+{#snippet plusCircle()}
+	<PlusCircle />
+{/snippet}
+{#snippet trash2()}
+	<Trash2 />
+{/snippet}
+{#snippet image()}
+	<Image />
+{/snippet}
+
 <Accordion label={$lang.properties.background.title} open>
 	<LabeledDropdown
 		title={$lang.properties.background.type.title}
@@ -266,9 +276,8 @@
 				<Button
 					title={$lang.properties.background.gradient.add_color_stop}
 					onClick={() => addGradientColorStop()}
-				>
-					<PlusCircle slot="icon-r" />
-				</Button>
+					iconRight={plusCircle}
+				/>
 			</ButtonsRow>
 
 			{#each data?.background.last_gradient.color_stops as stop, index (index)}
@@ -290,9 +299,8 @@
 						title={$lang.properties.background.gradient.remove_color_stop + ` (${index + 1})`}
 						onClick={() => removeGradientColorStop(index)}
 						disabled={(data?.background.last_gradient.color_stops.length ?? 0) <= 2}
-					>
-						<Trash2 slot="icon-r" />
-					</Button>
+						iconRight={trash2}
+					/>
 				</ButtonsRow>
 				<hr />
 			{/each}
@@ -300,9 +308,7 @@
 	{/if}
 	{#if data?.background.type === 'image'}
 		<ButtonsRow>
-			<Button title={$lang.properties.background.pick_image} onClick={changeBackgroundImage}>
-				<Image slot="icon-r" />
-			</Button>
+			<Button title={$lang.properties.background.pick_image} onClick={changeBackgroundImage} iconRight={image} />
 		</ButtonsRow>
 		<figure>
 			<img class="image-preview" src={backgroundImageSrc} alt="" />

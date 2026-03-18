@@ -86,14 +86,20 @@
 	}
 </script>
 
+{#snippet plusCircle()}
+	<PlusCircle />
+{/snippet}
+{#snippet trash2()}
+	<Trash2 />
+{/snippet}
+
 <Accordion label={$lang.properties.box_shadow.title}>
 	<ButtonsRow>
 		<Button
 			title={$lang.properties.box_shadow.add}
 			onClick={() => addBoxShadow()}
-		>
-			<PlusCircle slot="icon-r" />
-		</Button>
+			iconRight={plusCircle}
+		/>
 	</ButtonsRow>
 
 	{#each data?.box_shadows as shadow, index (index)}
@@ -141,9 +147,8 @@
 			<Button
 				title={$lang.properties.box_shadow.remove + ` (${index + 1})`}
 				onClick={() => removeBoxShadow(index)}
-			>
-				<Trash2 slot="icon-r" />
-			</Button>
+				iconRight={trash2}
+			/>
 		</ButtonsRow>
 		<hr />
 	{/each}
