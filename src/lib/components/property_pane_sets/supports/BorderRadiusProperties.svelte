@@ -34,6 +34,13 @@
 	// }
 </script>
 
+{#snippet linkOn()}
+	<Link2 />
+{/snippet}
+{#snippet linkOff()}
+	<Link2Off />
+{/snippet}
+
 <Accordion label={$lang.properties.border_radius.title}>
 	<div class="grid">
 		<!--row 1-->
@@ -55,39 +62,25 @@
 		<!--row 3-->
 		<LabeledDropdown optionsObj={$lang.properties.border_radius.units} noMargin />
 		<LabeledInputNumber noMargin />
-		<Button togglable toggled={topLeftLinked} onToggle={value => topLeftLinked = value}>
-			<!-- {#if topLeftLinked} -->
-				<Link2 slot="icon-r" />
-			<!-- {:else}
-				<Link2Off slot="icon-r" />
-			{/if} -->
-		</Button>
+		<Button togglable toggled={topLeftLinked} onToggle={value => topLeftLinked = value} iconRight={topLeftLinked ? linkOn : linkOff} />
 		<span></span>
-		<Button togglable toggled={topRightLinked} onToggle={value => topRightLinked = value}>
-			<Link2 slot="icon-r" />
-		</Button>
+		<Button togglable toggled={topRightLinked} onToggle={value => topRightLinked = value} iconRight={topRightLinked ? linkOn : linkOff} />
 		<LabeledInputNumber noMargin />
 		<LabeledDropdown optionsObj={$lang.properties.border_radius.units} noMargin />
 		<!--row 4-->
 		<span></span>
 		<div class="border left-side"></div>
 		<span></span>
-		<Button togglable toggled={centerLinked} onToggle={value => centerLinked = value}>
-			<Link2 slot="icon-r" />
-		</Button>
+		<Button togglable toggled={centerLinked} onToggle={value => centerLinked = value} iconRight={centerLinked ? linkOn : linkOff} />
 		<span></span>
 		<div class="border right-side"></div>
 		<span></span>
 		<!--row 5-->
 		<LabeledDropdown optionsObj={$lang.properties.border_radius.units} noMargin />
 		<LabeledInputNumber noMargin />
-		<Button togglable toggled={bottomLeftLinked} onToggle={value => bottomLeftLinked = value}>
-			<Link2 slot="icon-r" />
-		</Button>
+		<Button togglable toggled={bottomLeftLinked} onToggle={value => bottomLeftLinked = value} iconRight={bottomLeftLinked ? linkOn : linkOff} />
 		<span></span>
-		<Button togglable toggled={bottomRightLinked} onToggle={value => bottomRightLinked = value}>
-			<Link2 slot="icon-r" />
-		</Button>
+		<Button togglable toggled={bottomRightLinked} onToggle={value => bottomRightLinked = value} iconRight={bottomRightLinked ? linkOn : linkOff} />
 		<LabeledInputNumber noMargin />
 		<LabeledDropdown optionsObj={$lang.properties.border_radius.units} noMargin />
 		<!--row 6-->
