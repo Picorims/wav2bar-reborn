@@ -97,7 +97,7 @@ class SaveManager {
 		const validWithDefaults = validateSaveVisualObject(baseObject);
 		if (!validWithDefaults) {
 			throw new Error(
-				'Failed to create a default visual object because:\n\n' +
+				`Failed to create a default visual object of type ${type} because:\n\n` +
 					validateSaveVisualObject.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join('\n')
 			);
 		}

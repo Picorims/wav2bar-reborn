@@ -58,16 +58,20 @@
 								"$ref": "#/definitions/color"
 							}
 						},
-						"required": ["offset", "color"]
+						"required": ["offset", "color"],
+						"default": {
+							"offset": 0,
+							"color": "#000000"
+						}
 					},
 					"minItems": 2,
 					"default": [
 						{
-							"position": 0,
+							"offset": 0,
 							"color": "#000000"
 						},
 						{
-							"position": 1,
+							"offset": 1,
 							"color": "#ffffff"
 						}
 					]
@@ -289,9 +293,9 @@
 					"default": {
 						"type": "color",
 						"last_color": "",
-						"last_gradient": "",
+						"last_gradient": {},
 						"last_image": "",
-						"size": "",
+						"size": {},
 						"repeat": "no-repeat"
 					},
 					"required": ["type", "last_color", "last_gradient", "last_image", "size", "repeat"]

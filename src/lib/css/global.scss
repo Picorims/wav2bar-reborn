@@ -224,3 +224,9 @@ progress {
 		border-radius: g.$border-radius-s;
 	}
 }
+
+hr {
+	border: none;
+	border-top: 1px solid g.$color-background-200;
+	margin: g.$spacing-m 0;
+}

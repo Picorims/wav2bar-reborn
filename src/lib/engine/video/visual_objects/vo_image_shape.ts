@@ -70,7 +70,33 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 				graphics.fill(0xffffff); // Fallback to white if texture is not ready
 			}
 		} else if (obj.background.type === 'gradient') {
-			const gradient = this.parseCSSGradient(obj.background.last_gradient);
+			let gradient: FillGradient | null = null;
+
+			if (obj.background.last_gradient.type === 'linear') {
+				gradient = new FillGradient({
+					type: 'linear',
+					start: {
+						x: (obj.background.last_gradient.start_point?.x ?? 0) * width,
+						y: (obj.background.last_gradient.start_point?.y ?? 0) * height,
+					},
+					end: {
+						x: (obj.background.last_gradient.end_point?.x ?? 0) * width,
+						y: (obj.background.last_gradient.end_point?.y ?? 1) * height,
+					},
+					colorStops: obj.background.last_gradient.color_stops,
+					textureSpace: "global", // local space broken
+				});
+			} else if (obj.background.last_gradient.type === 'radial') {
+				gradient = new FillGradient({
+					type: 'radial',
+					center: obj.background.last_gradient.start_point,
+					outerCenter: obj.background.last_gradient.end_point,
+					colorStops: obj.background.last_gradient.color_stops,
+				});
+			}
+			if (gradient === null) {
+				throw new Error('Invalid gradient type (image shape renderer - update)');
+			}
 			graphics.fill(gradient);
 		}
 
@@ -96,192 +122,6 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			console.error(`Failed to load texture for path "${path}": ${extractErrorMessage(error)}`);
 		} finally {
 			this.caching = false;
-		}
-	}
-
-	/**
-	 * Transforms a (basic) CSS gradient string into a Pixi.js FillGradient object.
-	 * This is a workaround until CSS syntax is deprecated.
-	 * @param gradient
-	 */
-	private parseCSSGradient(gradient: string): FillGradient {
-		const defaultGradient: FillGradient = new FillGradient({
-			type: 'linear',
-			colorStops: [
-				{ offset: 0, color: 'white' },
-				{ offset: 1, color: 'black' }
-			]
-		});
-
-		let type: FillGradient['type'] = 'linear';
-		const paramsStart = gradient.indexOf('(') + 1;
-		const paramsEnd = gradient.lastIndexOf(')');
-		let subString = gradient.substring(paramsStart, paramsEnd);
-		if (subString.includes('linear-gradient') || subString.includes('radial-gradient')) {
-			// multiple gradients defined, not supported
-			console.warn(
-				'CSS gradient: Multiple gradients defined in one string are not supported. Only the first gradient will be used.'
-			);
-			return defaultGradient;
-		}
-		if (subString.includes('rgb')) {
-			// convert all rgba colors to hex format
-			const rgbRegex = /rgba?\(\d+, ?\d+, ?\d+(, ?\d+(\.\d+)?)?\)/g;
-			const matches = subString.matchAll(rgbRegex);
-			for (const match of matches) {
-				const rgbString = match[0];
-				const rgbaMatch = rgbString.match(/rgba?\((\d+), ?(\d+), ?(\d+)(, ?(\d+(\.\d+)?))?\)/);
-				if (rgbaMatch) {
-					const r = parseInt(rgbaMatch[1]);
-					const g = parseInt(rgbaMatch[2]);
-					const b = parseInt(rgbaMatch[3]);
-					const a = rgbaMatch[5] ? parseFloat(rgbaMatch[5]) : 1;
-					const rgbHex: string = ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-					const alphaHex: string =
-						a < 1
-							? Math.round(a * 255)
-									.toString(16)
-									.padStart(2, '0')
-							: '';
-					const hexColor = `#${rgbHex}${alphaHex}`;
-					console.warn(
-						`CSS gradient: RGB/RGBA color "${rgbString}" converted to hex format "${hexColor}". Only hex colors are supported in gradients.`
-					);
-					subString = subString.replace(rgbString, hexColor);
-				}
-			}
-		}
-		if (subString.includes('px')) {
-			// color stops defined with position in px, not supported
-			console.warn('CSS gradient: Color stops defined with position in px are not supported.');
-			return defaultGradient;
-		}
-		const params = subString.split(',').map((param) => param.trim());
-
-		if (gradient.startsWith('linear-gradient(')) {
-			type = 'linear';
-			let start: { x: number; y: number } | undefined = undefined;
-			let end: { x: number; y: number } | undefined = undefined;
-			if (params[0].includes('to ')) {
-				const direction = params[0].replace('to ', '');
-				if (direction === 'right') {
-					start = { x: 0, y: 0 };
-					end = { x: 1, y: 0 };
-				} else if (direction === 'left') {
-					start = { x: 1, y: 0 };
-					end = { x: 0, y: 0 };
-				} else if (direction === 'bottom') {
-					start = { x: 0, y: 0 };
-					end = { x: 0, y: 1 };
-				} else if (direction === 'top') {
-					start = { x: 0, y: 1 };
-					end = { x: 0, y: 0 };
-				} else if (direction === 'top right') {
-					start = { x: 0, y: 1 };
-					end = { x: 1, y: 0 };
-				} else if (direction === 'top left') {
-					start = { x: 1, y: 1 };
-					end = { x: 0, y: 0 };
-				} else if (direction === 'bottom right') {
-					start = { x: 0, y: 0 };
-					end = { x: 1, y: 1 };
-				} else if (direction === 'bottom left') {
-					start = { x: 1, y: 0 };
-					end = { x: 0, y: 1 };
-				} else {
-					console.warn(`CSS gradient: Unsupported linear gradient direction "${direction}".`);
-					return defaultGradient; // unsupported direction
-				}
-			} else if (params[0].includes('deg')) {
-				const angle = parseFloat(params[0].replace('deg', '')) - 90; // adjust angle to match CSS gradient direction
-				const radians = (angle % 360) * (Math.PI / 180);
-				start = {
-					x: 0.5 - Math.cos(radians) / 2,
-					y: 0.5 - Math.sin(radians) / 2
-				};
-				end = {
-					x: 0.5 + Math.cos(radians) / 2,
-					y: 0.5 + Math.sin(radians) / 2
-				};
-			} else {
-				console.warn(
-					"CSS gradient: Unsupported linear gradient syntax. Only 'to direction' and 'angle in deg' are supported."
-				);
-				return defaultGradient; // unsupported linear gradient syntax
-			}
-
-			const colorStops = [];
-			for (let i = 1; i < params.length; i++) {
-				const [color, offset] = params[i].split(' ').map((part) => part.trim());
-				if (!color || !offset) {
-					console.warn(
-						`CSS gradient: Unsupported color stop syntax. Color stops should be defined as 'color offset%' (got: ${params[i]}).`
-					);
-					return defaultGradient; // unsupported color stop syntax
-				}
-				const offsetValue = parseFloat(offset.replace('%', '')) / 100;
-				colorStops.push({ offset: offsetValue, color });
-			}
-
-			return new FillGradient({
-				type,
-				start,
-				end,
-				colorStops
-			});
-		} else if (gradient.startsWith('radial-gradient(')) {
-			type = 'radial';
-			let center: { x: number; y: number } | undefined = undefined;
-			if (params[0].includes('ellipse') || params[0].includes('circle')) {
-				console.warn(
-					"CSS gradient: using 'ellipse' or 'circle' syntax in radial gradients is not supported. Only position-based syntax is supported."
-				);
-				// shape defined, not supported
-				return defaultGradient;
-			}
-			if (params[0].includes('at ')) {
-				const position = params[0].replace('at ', '');
-				if (position === 'center') {
-					center = { x: 0.5, y: 0.5 };
-				} else if (position.match(/^\d+% \d+%$/)) {
-					const [x, y] = position.split(' ').map((part) => parseFloat(part.replace('%', '')) / 100);
-					center = { x, y };
-				} else {
-					console.warn(
-						`CSS gradient: Unsupported radial gradient position "${position}". Only "center" and "x% y%" formats are supported.`
-					);
-					return defaultGradient; // unsupported position
-				}
-			} else {
-				console.warn(
-					'CSS gradient: Unsupported radial gradient syntax. Only position-based syntax is supported.'
-				);
-				return defaultGradient; // unsupported radial gradient syntax
-			}
-
-			const colorStops = [];
-			for (let i = 1; i < params.length; i++) {
-				const [color, offset] = params[i].split(' ').map((part) => part.trim());
-				if (!color || !offset) {
-					console.warn(
-						`CSS gradient: Unsupported color stop syntax. Color stops should be defined as 'color offset%' (got: ${params[i]}).`
-					);
-					return defaultGradient; // unsupported color stop syntax
-				}
-				const offsetValue = parseFloat(offset.replace('%', '')) / 100;
-				colorStops.push({ offset: offsetValue, color });
-			}
-
-			return new FillGradient({
-				type,
-				center,
-				colorStops
-			});
-		} else {
-			console.warn(
-				'CSS gradient: Unsupported gradient type. Only linear-gradient and radial-gradient are supported.'
-			);
-			return defaultGradient;
 		}
 	}
 }

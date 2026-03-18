@@ -121,14 +121,32 @@
 				"image": "Image"
 			},
 			"color": "Color",
-			"gradient": "Gradient",
+			"gradient": {
+				"type": "Gradient Type",
+				"types": {
+					"linear": "Linear",
+					"radial": "Radial"
+				},
+				"start_point": {
+					"x": "Gradient Start Point X",
+					"y": "Gradient Start Point Y"
+				},
+				"end_point": {
+					"x": "Gradient End Point X",
+					"y": "Gradient End Point Y"
+				},
+				"color_stop_offset": "Color Stop Offset",
+				"color_stop_color": "Color Stop Color",
+				"color_stops": "Color Stops",
+				"remove_color_stop": "Remove Color Stop",
+				"add_color_stop": "Add Color Stop"
+			},
 			"image": "Image",
 			"size": "Size",
 			"size_types": {
 				"contain": "Contain",
 				"cover": "Cover",
-				"scale_size_control": "Scale Size Control",
-				"width_height_size_control": "Width Height Size Control"
+				"percentage": "Percentage"
 			},
 			"pick_image": "Pick Image",
 			"no_image": "No image imported.",
