@@ -124,9 +124,11 @@
 	}
 	function removeGradientColorStop(index: number) {
 		if (index >= (data?.background.last_gradient.color_stops.length ?? 0)) {
-			Log.ui.error(`Tried to remove a gradient color stop but the index was out of bounds. Index: ${index}, Color stops length: ${
-				data?.background.last_gradient.color_stops.length ?? 0
-			}`);
+			Log.ui.error(
+				`Tried to remove a gradient color stop but the index was out of bounds. Index: ${index}, Color stops length: ${
+					data?.background.last_gradient.color_stops.length ?? 0
+				}`
+			);
 			return;
 		}
 		if (data?.background.last_gradient.color_stops.length ?? 0 <= 2) {

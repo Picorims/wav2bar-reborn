@@ -341,7 +341,7 @@ export interface SupportsTextProps {
 	/**
 	 * list of box-shadows
 	 */
-	text_shadows?: Shadow[];
+	text_shadows: Shadow[];
 	[k: string]: unknown;
 }
 export interface SupportsBorderThickness {

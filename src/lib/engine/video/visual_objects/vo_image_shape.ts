@@ -77,21 +77,21 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					type: 'linear',
 					start: {
 						x: (obj.background.last_gradient.start_point?.x ?? 0) * width,
-						y: (obj.background.last_gradient.start_point?.y ?? 0) * height,
+						y: (obj.background.last_gradient.start_point?.y ?? 0) * height
 					},
 					end: {
 						x: (obj.background.last_gradient.end_point?.x ?? 0) * width,
-						y: (obj.background.last_gradient.end_point?.y ?? 1) * height,
+						y: (obj.background.last_gradient.end_point?.y ?? 1) * height
 					},
 					colorStops: obj.background.last_gradient.color_stops,
-					textureSpace: "global", // local space broken
+					textureSpace: 'global' // local space broken
 				});
 			} else if (obj.background.last_gradient.type === 'radial') {
 				gradient = new FillGradient({
 					type: 'radial',
 					center: obj.background.last_gradient.start_point,
 					outerCenter: obj.background.last_gradient.end_point,
-					colorStops: obj.background.last_gradient.color_stops,
+					colorStops: obj.background.last_gradient.color_stops
 				});
 			}
 			if (gradient === null) {

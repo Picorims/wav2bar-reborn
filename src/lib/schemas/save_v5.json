@@ -443,7 +443,7 @@
 				"font_size",
 				"text_decoration",
 				"text_align",
-				"text_shadow"
+				"text_shadows"
 			]
 		},
 		"supports_border_thickness": {
