@@ -102,13 +102,13 @@
 		<LabeledInputNumber
 			title={$lang.properties.particle_flow_props.center_x}
 			unit={'px'}
-			value={data?.flow_center.x}
+			value={data?.flow_center[0]}
 			onChange={updateFlowCenterX}
 		/>
 		<LabeledInputNumber
 			title={$lang.properties.particle_flow_props.center_y}
 			unit={'px'}
-			value={data?.flow_center.y}
+			value={data?.flow_center[1]}
 			onChange={updateFlowCenterY}
 		/>
 	{/if}
