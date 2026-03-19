@@ -15,6 +15,7 @@
 		title?: string;
 		unit?: string;
 		onChange?: (value: number) => void;
+		onFocusChange?: (focused: boolean) => void;
 		// forwards =====
 		placeholder?: string;
 		min?: number;
@@ -32,6 +33,7 @@
 		title = '',
 		unit = '',
 		onChange = () => {},
+		onFocusChange = () => {},
 		placeholder = '',
 		min = -Infinity,
 		max = Infinity,
@@ -73,7 +75,11 @@
 		type="number"
 		onchange={handleOnChange}
 		oninput={checkValidity}
-		onfocusout={doNotLetInInvalidState}
+		onfocusin={() => onFocusChange(true)}
+		onfocusout={() => {
+			onFocusChange(false);
+			doNotLetInInvalidState();
+		}}
 		{placeholder}
 		{min}
 		{max}

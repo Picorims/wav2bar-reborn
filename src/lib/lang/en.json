@@ -107,14 +107,14 @@
 			"title": "SVG Filter (deprecated, no effect)"
 		},
 		"border_radius": {
-			"title": "Border Radius",
+			"title": "Border Radius (no effect, coming soon)",
 			"units": {
 				"px": "px",
 				"percent": "%"
 			}
 		},
 		"box_shadow": {
-			"title": "Box Shadows",
+			"title": "Box Shadows (no effect, coming soon)",
 			"add": "Add Box Shadow",
 			"remove": "Remove Box Shadow",
 			"offset_x": "Offset X",

@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="Options extends Record<string, string>">
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
@@ -12,9 +12,13 @@
 
 	interface Props {
 		optionsArr?: string[] | null;
-		optionsObj?: Record<string, string> | null;
+		// optionsObj?: Record<string, string> | null;
+		// eslint-disable-next-line no-undef
+		optionsObj?: Options | null;
 		title?: string;
-		onChange?: (key: string) => void;
+		// eslint-disable-next-line no-undef
+		onChange?: (key: keyof Options) => void;
+		onFocusChange?: (focused: boolean) => void;
 		value?: string;
 		noMargin?: boolean;
 	}
@@ -24,6 +28,7 @@
 		optionsObj = null,
 		title = '',
 		onChange = () => {},
+		onFocusChange = () => {},
 		value = $bindable(''),
 		noMargin = false
 	}: Props = $props();
@@ -61,7 +66,7 @@
 </script>
 
 {#snippet select()}
-	<select class="select" class:noMargin onchange={handleOnChange} bind:value>
+	<select class="select" class:noMargin onchange={handleOnChange} bind:value onfocusin={() => onFocusChange(true)} onfocusout={() => onFocusChange(false)}>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}
