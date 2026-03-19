@@ -33,12 +33,14 @@ function forwardConsole(
 	};
 }
 
-forwardConsole('log', debug);
-forwardConsole('trace', trace);
-forwardConsole('debug', debug);
-forwardConsole('info', info);
-forwardConsole('warn', warn);
-forwardConsole('error', error);
+if (typeof window !== 'undefined') {
+	forwardConsole('log', debug);
+	forwardConsole('trace', trace);
+	forwardConsole('debug', debug);
+	forwardConsole('info', info);
+	forwardConsole('warn', warn);
+	forwardConsole('error', error);
+}
 
 class Logger {
 	private namespace: string;
@@ -82,7 +84,7 @@ export const Log = {
 	ui: new Logger('ui')
 };
 
-if (window !== undefined) {
+if (typeof window !== 'undefined') {
 	window.addEventListener('error', (event) => {
 		Log.default.error(event.message);
 	});

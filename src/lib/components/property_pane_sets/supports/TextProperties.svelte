@@ -13,6 +13,7 @@
 	import ButtonsGroup from '$lib/components/atoms/buttons_group/ButtonsGroup.svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
+	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
@@ -84,13 +85,66 @@
 		});
 	}
 
-	function updateTextShadow(value: string) {
+	function ensureHasTextShadow(obj: ObjT) {
+		if (obj.text_shadows.length === 0) {
+			obj.text_shadows.push({
+				offset: {
+					x: 0,
+					y: 0
+				},
+				blur_radius: 0,
+				spread_radius: 0,
+				inset: false,
+				color: '#000000'
+			});
+		}
+	}
+
+	function updateTextShadowOffsetX(value: number) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.text_shadow = value as Supports_TextProps['text_shadow'];
+			ensureHasTextShadow(obj);
+			obj.text_shadows[0].offset.x = value;
+			return obj;
+		});
+	}
+	function updateTextShadowOffsetY(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			ensureHasTextShadow(obj);
+			obj.text_shadows[0].offset.y = value;
+			return obj;
+		});
+	}
+	function updateTextShadowBlurRadius(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			ensureHasTextShadow(obj);
+			obj.text_shadows[0].blur_radius = value;
+			return obj;
+		});
+	}
+	function updateTextShadowColor(value: string) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			ensureHasTextShadow(obj);
+			obj.text_shadows[0].color = value;
 			return obj;
 		});
 	}
 </script>
+
+{#snippet italic()}
+	<Italic />
+{/snippet}
+{#snippet bold()}
+	<Bold />
+{/snippet}
+{#snippet underline()}
+	<Underline />
+{/snippet}
+{#snippet overline()}
+	<ArrowUpToLine />
+{/snippet}
+{#snippet lineThrough()}
+	<Strikethrough />
+{/snippet}
 
 <Accordion label={$lang.properties.text.title} open>
 	<LabeledDropdown
@@ -121,46 +175,36 @@
 				togglable
 				toggled={data?.text_decoration.italic}
 				onToggle={updateItalic}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Italic slot="icon-r" />
-			</Button>
+				iconRight={italic}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.bold}
 				togglable
 				toggled={data?.text_decoration.bold}
 				onToggle={updateBold}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Bold slot="icon-r" />
-			</Button>
+				iconRight={bold}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.underline}
 				togglable
 				toggled={data?.text_decoration.underline}
 				onToggle={updateUnderline}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Underline slot="icon-r" />
-			</Button>
+				iconRight={underline}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.overline}
 				togglable
 				toggled={data?.text_decoration.overline}
 				onToggle={updateOverline}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<ArrowUpToLine slot="icon-r" />
-			</Button>
+				iconRight={overline}
+			/>
 			<Button
 				title={$lang.properties.text.text_decoration.line_through}
 				togglable
 				toggled={data?.text_decoration.line_through}
 				onToggle={updateLineThrough}
-			>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Strikethrough slot="icon-r" />
-			</Button>
+				iconRight={lineThrough}
+			/>
 		</ButtonsRow>
 	</ButtonsGroup>
 	<LabeledDropdown
@@ -169,10 +213,29 @@
 		value={data?.text_align.horizontal}
 		onChange={updateTextAlign}
 	/>
-	<LabeledInputText
-		title={$lang.properties.text.text_shadow}
-		value={data?.text_shadow}
-		onChange={updateTextShadow}
-		required={false}
-	/>
+	<Accordion label={$lang.properties.text.text_shadow.title} open={false}>
+		<LabeledInputNumber
+			title={$lang.properties.text.text_shadow.offset_x}
+			unit={'px'}
+			value={data?.text_shadows[0]?.offset.x}
+			onChange={updateTextShadowOffsetX}
+		/>
+		<LabeledInputNumber
+			title={$lang.properties.text.text_shadow.offset_y}
+			unit={'px'}
+			value={data?.text_shadows[0]?.offset.y}
+			onChange={updateTextShadowOffsetY}
+		/>
+		<LabeledInputNumber
+			title={$lang.properties.text.text_shadow.blur_radius}
+			unit={'px'}
+			value={data?.text_shadows[0]?.blur_radius}
+			onChange={updateTextShadowBlurRadius}
+		/>
+		<LabeledInputColor
+			title={$lang.properties.text.text_shadow.color}
+			value={data?.text_shadows[0]?.color}
+			onChange={updateTextShadowColor}
+		/>
+	</Accordion>
 </Accordion>

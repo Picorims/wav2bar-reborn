@@ -5,11 +5,18 @@ https://keepachangelog.com/en/1.0.0/
 
 ## 1.0.0-beta.1 (UNKNOWN_DATE)
 
+### Known issues
+
+- Border radius has no effect.
+- Box shadow has no effect.
+- Shadow spread is ignored in text shadow.
+- Only one shadow is taken into account in text shadow.
+
 ### Added
 
 - Added theming: now has dark and light themes.
 - Added localization support.
-- Added support for microphone input (for previewing only)
+- Internal: added support for microphone input (for previewing only)
 
 ### Changed
 
@@ -17,6 +24,8 @@ https://keepachangelog.com/en/1.0.0/
 - Reorganized and redesigned the GUI.
 - Replaced the visual objects accordion with a list of objects and a properties container.
 - Switched from GPL-3.0 license to MPL-2.0 license.
+- Replaced CSS attributes with structured ones: box and text shadow, border radius, gradient fill.
+  - Some complex values may fail to be converted.
 
 ### Deprecated
 

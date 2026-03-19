@@ -47,6 +47,17 @@
 	}
 </script>
 
+{#snippet moveHorizontal()}
+	<MoveHorizontal />
+{/snippet}
+{#snippet moveVertical()}
+	<MoveVertical />
+{/snippet}
+
+{#snippet move()}
+	<Move />
+{/snippet}
+
 <Accordion label={$lang.properties.size.title} open>
 	<LabeledInputNumber
 		title={$lang.properties.size.width}
@@ -64,18 +75,17 @@
 	/>
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
-			<Button title={$lang.properties.size.buttons.full_width} onClick={fullWidth}>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<MoveHorizontal slot="icon-r" />
-			</Button>
-			<Button title={$lang.properties.size.buttons.full_height} onClick={fullHeight}>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<MoveVertical slot="icon-r" />
-			</Button>
-			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize}>
-				<!-- @migration-task: migrate this slot by hand, `icon-r` is an invalid identifier -->
-				<Move slot="icon-r" />
-			</Button>
+			<Button
+				title={$lang.properties.size.buttons.full_width}
+				onClick={fullWidth}
+				iconRight={moveHorizontal}
+			/>
+			<Button
+				title={$lang.properties.size.buttons.full_height}
+				onClick={fullHeight}
+				iconRight={moveVertical}
+			/>
+			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize} iconRight={move} />
 		</ButtonsRow>
 	</ButtonsGroup>
 </Accordion>

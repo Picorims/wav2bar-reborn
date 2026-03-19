@@ -30,5 +30,48 @@
 		"tauri",
 		"togglable",
 		"walkdir"
-	]
+	],
+	"highlight.enabled": true,
+	"highlight.regexes": {
+		"\"\\$schema\"|\"title\"|\"default\"|\"properties\"|\"additionalProperties\"|\"definitions\"|\"items\"|\"allOf\"|\"anyOf\"|\"minItems\"|\"maxItems\"": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(255, 106, 106)" }]
+		},
+		"\"minimum\"|\"maximum\"": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(162, 94, 204)" }]
+		},
+		"(\"type\"):\\s*(\"array\"|\"object\"|\"integer\"|\"string\"|\"number\"|\"boolean\")": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(56, 245, 138)" }, { "color": "rgb(56, 245, 138)" }]
+		},
+		"(\"\\$ref\"):\\s*\"([^\"]+)\"": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(81, 203, 255)" }, { "color": "rgb(243, 224, 118)" }]
+		},
+		"(\"description\"):\\s*(\"[^\"]+\")": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(124, 124, 124)" }, { "color": "rgb(124, 124, 124)" }]
+		},
+		"(\"const\"):\\s*(\"([^\"]+)\"|\\d+)": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(81, 203, 255)" }, { "color": "rgb(248, 176, 255)" }]
+		},
+		"(\"enum\"):\\s*\\[([^\\]]+)\\]": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(81, 203, 255)" }, { "color": "rgb(248, 176, 255)" }]
+		},
+		"(\"required\"):\\s*\\[([^\\]]+)\\]": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(255, 106, 106)" }, { "color": "rgb(255, 255, 255)" }]
+		},
+		"(\"[a-zA-Z_-]+\"):": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(255, 255, 255)" }]
+		},
+		"(\"[a-zA-Z_-]+\"):\\s*(\"[#a-zA-Z_-]+\")": {
+			"filterFileRegex": ".*save_.*\\.json$",
+			"decorations": [{ "color": "rgb(255, 255, 255)" }, { "color": "rgb(252, 241, 179)" }]
+		}
+	}
 }

@@ -15,6 +15,7 @@
 		title?: string;
 		unit?: string;
 		onChange?: (value: number) => void;
+		onFocusChange?: (focused: boolean) => void;
 		// forwards =====
 		placeholder?: string;
 		min?: number;
@@ -25,12 +26,14 @@
 		// =====
 		defaultValue?: number;
 		value?: number;
+		noMargin?: boolean;
 	}
 
 	let {
 		title = '',
 		unit = '',
 		onChange = () => {},
+		onFocusChange = () => {},
 		placeholder = '',
 		min = -Infinity,
 		max = Infinity,
@@ -38,7 +41,8 @@
 		disabled = false,
 		required = true,
 		defaultValue = 0,
-		value = $bindable(defaultValue)
+		value = $bindable(defaultValue),
+		noMargin = false
 	}: Props = $props();
 	let lastValidValue: number = value;
 
@@ -64,14 +68,18 @@
 	});
 </script>
 
-<LabeledInputWrapper {title}>
+<LabeledInputWrapper {title} {noMargin}>
 	<input
 		bind:value
 		bind:this={input}
 		type="number"
 		onchange={handleOnChange}
 		oninput={checkValidity}
-		onfocusout={doNotLetInInvalidState}
+		onfocusin={() => onFocusChange(true)}
+		onfocusout={() => {
+			onFocusChange(false);
+			doNotLetInInvalidState();
+		}}
 		{placeholder}
 		{min}
 		{max}

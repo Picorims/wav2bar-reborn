@@ -1,8 +1,4 @@
 <script lang="ts">
-	import Accordion from '$lib/components/atoms/Accordion.svelte';
-	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
-	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
-	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
@@ -12,16 +8,20 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 
-	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
+	import Accordion from '$lib/components/atoms/Accordion.svelte';
+	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
+	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
+	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_Background, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
 	import { keysUnderscoreToDash } from '$lib/string';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
-	import { Image } from 'lucide-svelte';
+	import { Image, PlusCircle, Trash2 } from 'lucide-svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
 	import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 	import { join } from '@tauri-apps/api/path';
+	import { Log } from '$lib/log/logger';
 
 	type ObjT = VisualObject & Supports_Background;
 
@@ -30,20 +30,6 @@
 	const DEFAULT_SIZE_X = 100;
 	const DEFAULT_SIZE_Y = 100;
 
-	interface Size {
-		type: string;
-		x: number;
-		y: number;
-	}
-	let size = $derived.by(() => {
-		const parsed = parseBackgroundSize(data?.background.size ?? '');
-		const size = {
-			type: parsed.size_type,
-			x: parseInt(parsed.size_x),
-			y: parseInt(parsed.size_y)
-		};
-		return size;
-	});
 	let backgroundImageSrc = $state('');
 
 	function updateBackgroundType(value: string) {
@@ -60,9 +46,109 @@
 		});
 	}
 
-	function updateGradient(value: string) {
+	function updateGradientType(value: string) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.last_gradient = value;
+			obj.background.last_gradient.type =
+				value as Supports_Background['background']['last_gradient']['type'];
+			return obj;
+		});
+	}
+	function updateGradientStartPointX(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.last_gradient.start_point === 'undefined') {
+				obj.background.last_gradient.start_point = { x: value, y: 0 };
+			} else {
+				obj.background.last_gradient.start_point.x = value;
+			}
+			return obj;
+		});
+	}
+	function updateGradientStartPointY(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.last_gradient.start_point === 'undefined') {
+				obj.background.last_gradient.start_point = { x: 0, y: value };
+			} else {
+				obj.background.last_gradient.start_point.y = value;
+			}
+			return obj;
+		});
+	}
+	function updateGradientEndPointX(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.last_gradient.end_point === 'undefined') {
+				obj.background.last_gradient.end_point = { x: value, y: 0 };
+			} else {
+				obj.background.last_gradient.end_point.x = value;
+			}
+			return obj;
+		});
+	}
+	function updateGradientEndPointY(value: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.last_gradient.end_point === 'undefined') {
+				obj.background.last_gradient.end_point = { x: 0, y: value };
+			} else {
+				obj.background.last_gradient.end_point.y = value;
+			}
+			return obj;
+		});
+	}
+	function updateGradientColorStopOffset(index: number, value: number) {
+		if (index >= (data?.background.last_gradient.color_stops.length ?? 0)) {
+			Log.ui.error(
+				`Tried to update a gradient color stop's offset but the index was out of bounds. Index: ${index}, Color stops length: ${
+					data?.background.last_gradient.color_stops.length ?? 0
+				}`
+			);
+			return;
+		}
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.background.last_gradient.color_stops[index].offset = value;
+			obj.background.last_gradient.color_stops.sort((a, b) => a.offset - b.offset); // Keep color stops sorted by offset
+			return obj;
+		});
+	}
+	function updateGradientColorStopColor(index: number, value: string) {
+		if (index >= (data?.background.last_gradient.color_stops.length ?? 0)) {
+			Log.ui.error(
+				`Tried to update a gradient color stop's color but the index was out of bounds. Index: ${index}, Color stops length: ${
+					data?.background.last_gradient.color_stops.length ?? 0
+				}`
+			);
+			return;
+		}
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.background.last_gradient.color_stops[index].color = value;
+			return obj;
+		});
+	}
+	function removeGradientColorStop(index: number) {
+		if (index >= (data?.background.last_gradient.color_stops.length ?? 0)) {
+			Log.ui.error(
+				`Tried to remove a gradient color stop but the index was out of bounds. Index: ${index}, Color stops length: ${
+					data?.background.last_gradient.color_stops.length ?? 0
+				}`
+			);
+			return;
+		}
+		if (data?.background.last_gradient.color_stops.length ?? 0 <= 2) {
+			Log.ui.error(
+				'Tried to remove a gradient color stop but there are only 2 color stops left, which is the minimum.'
+			);
+			return;
+		}
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.background.last_gradient.color_stops.splice(index, 1);
+			return obj;
+		});
+	}
+	function addGradientColorStop() {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			obj.background.last_gradient.color_stops.push({
+				offset: 0.5,
+				color: '#888888'
+			});
+			obj.background.last_gradient.color_stops.sort((a, b) => a.offset - b.offset); // Keep color stops sorted by offset
 			return obj;
 		});
 	}
@@ -93,79 +179,29 @@
 		backgroundImageSrc = convertFileSrc(fullPath);
 	}
 
-	/**
-	 * IMPORTED FROM LEGACY
-	 *
-	 * Parse a background size CSS property into an object with separate values.
-	 *
-	 * @param {*} bgnd_size
-	 * @return {Object} An object resuming the properties.
-	 */
-	function parseBackgroundSize(bgnd_size: string) {
-		let bgnd_size_array = bgnd_size.split(' ');
-		let def_size_type, def_size_x, def_size_y;
-		let val_percent_regex = new RegExp(/[0-9]+%/); //no g flag so it doesn't keep track of last index
-		if (bgnd_size_array[0] === 'contain') {
-			def_size_type = 'contain';
-			def_size_x = def_size_y = '100';
-		} else if (bgnd_size_array[0] === 'cover') {
-			def_size_type = 'cover';
-			def_size_x = def_size_y = '100';
-		} else if (bgnd_size_array.length === 1 && val_percent_regex.test(bgnd_size_array[0])) {
-			def_size_type = 'scale_size_control';
-			def_size_x = bgnd_size_array[0].replace('%', '');
-			def_size_y = '100';
-		} else if (
-			bgnd_size_array.length === 2 &&
-			val_percent_regex.test(bgnd_size_array[0]) &&
-			val_percent_regex.test(bgnd_size_array[1])
-		) {
-			def_size_type = 'width_height_size_control';
-			def_size_x = bgnd_size_array[0].replace('%', '');
-			def_size_y = bgnd_size_array[1].replace('%', '');
-		} else {
-			def_size_type = 'cover';
-			def_size_x = def_size_y = '100';
-		}
-
-		return {
-			size_type: def_size_type,
-			size_x: def_size_x,
-			size_y: def_size_y
-		};
-	}
-
-	/**
-	 * IMPORTED FROM LEGACY
-	 *
-	 * craft a CSS background size property from given information.
-	 *
-	 * @param {String} size_type
-	 * @param {String} size_x
-	 * @param {String} size_y
-	 * @return {String} result
-	 */
-	function stringifyBackgroundSize(size_type: string, size_x: string, size_y: string) {
-		switch (size_type) {
-			case 'contain':
-			case 'cover':
-				return size_type;
-			case 'scale_size_control':
-				return size_x + '%';
-			case 'width_height_size_control':
-				return `${size_x}% ${size_y}%`;
-			default:
-				return '';
-		}
-	}
-
-	function updateBackgroundSize(size: Size) {
+	function updateBackgroundSizeType(type: Supports_Background['background']['size']['type']) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size = stringifyBackgroundSize(
-				size.type,
-				size.x.toString(),
-				size.y.toString()
-			);
+			obj.background.size.type = type;
+			return obj;
+		});
+	}
+	function updateBackgroundSizePercentageX(x: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.size.percentage === 'undefined') {
+				obj.background.size.percentage = { x, y: DEFAULT_SIZE_Y };
+			} else {
+				obj.background.size.percentage.x = x;
+			}
+			return obj;
+		});
+	}
+	function updateBackgroundSizePercentageY(y: number) {
+		saveManager.mutateActiveObject<ObjT>((obj) => {
+			if (typeof obj.background.size.percentage === 'undefined') {
+				obj.background.size.percentage = { x: DEFAULT_SIZE_X, y };
+			} else {
+				obj.background.size.percentage.y = y;
+			}
 			return obj;
 		});
 	}
@@ -177,6 +213,16 @@
 		});
 	}
 </script>
+
+{#snippet plusCircle()}
+	<PlusCircle />
+{/snippet}
+{#snippet trash2()}
+	<Trash2 />
+{/snippet}
+{#snippet image()}
+	<Image />
+{/snippet}
 
 <Accordion label={$lang.properties.background.title} open>
 	<LabeledDropdown
@@ -199,18 +245,82 @@
 		/>
 	{/if}
 	{#if data?.background.type === 'gradient'}
-		<LabeledInputText
-			defaultValue=""
-			title={$lang.properties.background.gradient}
-			value={data?.background.last_gradient}
-			onChange={updateGradient}
+		<LabeledDropdown
+			optionsObj={$lang.properties.background.gradient.types}
+			title={$lang.properties.background.gradient.type}
+			value={data?.background.last_gradient.type}
+			onChange={updateGradientType}
 		/>
+		<LabeledInputNumber
+			defaultValue={0}
+			step={0.01}
+			title={$lang.properties.background.gradient.start_point.x}
+			onChange={updateGradientStartPointX}
+			value={data?.background.last_gradient.start_point?.x}
+		/>
+		<LabeledInputNumber
+			defaultValue={0}
+			step={0.01}
+			title={$lang.properties.background.gradient.start_point.y}
+			onChange={updateGradientStartPointY}
+			value={data?.background.last_gradient.start_point?.y}
+		/>
+		<LabeledInputNumber
+			defaultValue={0}
+			step={0.01}
+			title={$lang.properties.background.gradient.end_point.x}
+			onChange={updateGradientEndPointX}
+			value={data?.background.last_gradient.end_point?.x}
+		/>
+		<LabeledInputNumber
+			defaultValue={0}
+			step={0.01}
+			title={$lang.properties.background.gradient.end_point.y}
+			onChange={updateGradientEndPointY}
+			value={data?.background.last_gradient.end_point?.y}
+		/>
+		<Accordion label={$lang.properties.background.gradient.color_stops} open>
+			<ButtonsRow>
+				<Button
+					title={$lang.properties.background.gradient.add_color_stop}
+					onClick={() => addGradientColorStop()}
+					iconRight={plusCircle}
+				/>
+			</ButtonsRow>
+
+			{#each data?.background.last_gradient.color_stops as stop, index (index)}
+				<LabeledInputNumber
+					defaultValue={stop.offset}
+					step={0.01}
+					title={$lang.properties.background.gradient.color_stop_offset + ` (${index + 1})`}
+					value={stop.offset}
+					onChange={(v) => updateGradientColorStopOffset(index, v)}
+				/>
+				<LabeledInputColor
+					defaultValue={stop.color}
+					title={$lang.properties.background.gradient.color_stop_color + ` (${index + 1})`}
+					value={stop.color}
+					onChange={(v) => updateGradientColorStopColor(index, v)}
+				/>
+				<ButtonsRow>
+					<Button
+						title={$lang.properties.background.gradient.remove_color_stop + ` (${index + 1})`}
+						onClick={() => removeGradientColorStop(index)}
+						disabled={(data?.background.last_gradient.color_stops.length ?? 0) <= 2}
+						iconRight={trash2}
+					/>
+				</ButtonsRow>
+				<hr />
+			{/each}
+		</Accordion>
 	{/if}
 	{#if data?.background.type === 'image'}
 		<ButtonsRow>
-			<Button title={$lang.properties.background.pick_image} onClick={changeBackgroundImage}>
-				<Image slot="icon-r" />
-			</Button>
+			<Button
+				title={$lang.properties.background.pick_image}
+				onClick={changeBackgroundImage}
+				iconRight={image}
+			/>
 		</ButtonsRow>
 		<figure>
 			<img class="image-preview" src={backgroundImageSrc} alt="" />
@@ -223,34 +333,32 @@
 		<LabeledDropdown
 			optionsObj={$lang.properties.background.size_types}
 			title={$lang.properties.background.size}
-			value={size.type}
+			value={data?.background.size.type}
 			onChange={(v) => {
-				updateBackgroundSize({ type: v, x: size.x, y: size.y });
+				updateBackgroundSizeType(v as Supports_Background['background']['size']['type']);
 			}}
 		/>
 		<div class="horizontal-flex">
-			{#if size.type === 'scale_size_control' || size.type === 'width_height_size_control'}
+			{#if data?.background.size.type === 'percentage'}
 				<LabeledInputNumber
 					defaultValue={DEFAULT_SIZE_X}
 					min={1}
 					step={1}
 					unit={'%'}
 					onChange={(v) => {
-						updateBackgroundSize({ type: size.type, x: v, y: size.y });
+						updateBackgroundSizePercentageX(v);
 					}}
-					value={size.x}
+					value={data?.background.size.percentage?.x}
 				/>
-			{/if}
-			{#if size.type === 'width_height_size_control'}
 				<LabeledInputNumber
 					defaultValue={DEFAULT_SIZE_Y}
 					min={1}
 					step={1}
 					unit={'%'}
 					onChange={(v) => {
-						updateBackgroundSize({ type: size.type, x: size.x, y: v });
+						updateBackgroundSizePercentageY(v);
 					}}
-					value={size.y}
+					value={data?.background.size.percentage?.y}
 				/>
 			{/if}
 		</div>

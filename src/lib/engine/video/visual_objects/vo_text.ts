@@ -11,7 +11,6 @@ import type { UUIDv4 } from '$lib/types/common_types';
 import { Container, Text, TextStyle } from 'pixi.js';
 import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_Text } from '$lib/store/save_structure/save_latest';
-import { parseCSSTextShadow } from '$lib/string';
 import { TextTimeStringFormatter } from '../tick_units/text_time_string_formatter';
 import type { TickUnit } from '../tick_units/tick_unit';
 import { Log } from '$lib/log/logger';
@@ -41,12 +40,29 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	}
 
 	update(obj: SaveVO_Text) {
-		const textShadow = parseCSSTextShadow(obj.text_shadow);
-
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
-		const shadowDistance = Math.sqrt(textShadow.offsetX ** 2 + textShadow.offsetY ** 2);
-		const shadowAngle = Math.atan2(textShadow.offsetY, textShadow.offsetX);
+
+		let shadow:
+			| {
+					color: string;
+					blur: number;
+					angle: number;
+					distance: number;
+			  }
+			| undefined = undefined;
+
+		if (typeof obj.text_shadows !== 'undefined' && obj.text_shadows.length > 0) {
+			const textShadow = obj.text_shadows[0];
+			const shadowDistance = Math.sqrt(textShadow.offset.x ** 2 + textShadow.offset.y ** 2);
+			const shadowAngle = Math.atan2(textShadow.offset.y, textShadow.offset.x);
+			shadow = {
+				color: textShadow.color,
+				blur: textShadow.blur_radius,
+				angle: shadowAngle,
+				distance: shadowDistance
+			};
+		}
 
 		this.type = obj.text_type;
 		Log.default.debug(this.type, 'this._type');
@@ -68,12 +84,7 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 				fontStyle: obj.text_decoration.italic ? 'italic' : 'normal',
 				fontWeight: obj.text_decoration.bold ? 'bold' : 'normal',
 				align: obj.text_align.horizontal,
-				dropShadow: {
-					color: textShadow.color,
-					blur: textShadow.blurRadius,
-					angle: shadowAngle,
-					distance: shadowDistance
-				}
+				dropShadow: shadow
 			})
 		});
 

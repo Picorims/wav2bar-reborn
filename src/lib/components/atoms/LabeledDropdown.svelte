@@ -1,4 +1,4 @@
-<script lang="ts">
+<script lang="ts" generics="Options extends Record<string, string>">
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
 	Copyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors
@@ -12,10 +12,15 @@
 
 	interface Props {
 		optionsArr?: string[] | null;
-		optionsObj?: Record<string, string> | null;
+		// optionsObj?: Record<string, string> | null;
+		// eslint-disable-next-line no-undef
+		optionsObj?: Options | null;
 		title?: string;
-		onChange?: (key: string) => void;
+		// eslint-disable-next-line no-undef
+		onChange?: (key: keyof Options) => void;
+		onFocusChange?: (focused: boolean) => void;
 		value?: string;
+		noMargin?: boolean;
 	}
 
 	let {
@@ -23,7 +28,9 @@
 		optionsObj = null,
 		title = '',
 		onChange = () => {},
-		value = $bindable('')
+		onFocusChange = () => {},
+		value = $bindable(''),
+		noMargin = false
 	}: Props = $props();
 
 	const handleOnChange = (e: Event) => {
@@ -58,18 +65,36 @@
 	});
 </script>
 
-<LabelWrapper {title}>
-	<select class="select" onchange={handleOnChange} bind:value>
+{#snippet select()}
+	<select
+		class="select"
+		class:noMargin
+		onchange={handleOnChange}
+		bind:value
+		onfocusin={() => onFocusChange(true)}
+		onfocusout={() => onFocusChange(false)}
+	>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}
 	</select>
-</LabelWrapper>
+{/snippet}
+
+{#if title !== ''}
+	<LabelWrapper {title}>
+		{@render select()}
+	</LabelWrapper>
+{:else}
+	{@render select()}
+{/if}
 
 <style lang="scss">
 	@use '../../css/globals_forward.scss' as g;
 
 	select.select {
 		@include g.input;
+	}
+	select.select.noMargin {
+		margin: 0;
 	}
 </style>

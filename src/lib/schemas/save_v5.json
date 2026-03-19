@@ -1,13 +1,109 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"title": "Wav2Bar save v4",
-	"description": "Schema for Wav2Bar save files, version 4. (For versions beta 0.3.0 indev to beta 0.3.4).\n\n Wav2Bar - Free software for creating audio visualization (motion design) videos.\n Copyright (C) 2025  Picorims <picorims.contact@gmail.com>\n\n \n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n any later version.\n \n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU General Public License for more details.\n \n You should have received a copy of the GNU General Public License\n along with this program.  If not, see <https://www.gnu.org/licenses/>.",
+	"title": "Wav2Bar save v5",
+	"description": "Schema for Wav2Bar save files, version 5. (For versions 1.0.0-beta.1 and above).\n\n Wav2Bar - Free software for creating audio visualization (motion design) videos.\n Copyright (C) 2025  Picorims <picorims.contact@gmail.com>\n\n \n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n any later version.\n \n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU General Public License for more details.\n \n You should have received a copy of the GNU General Public License\n along with this program.  If not, see <https://www.gnu.org/licenses/>.",
 	"definitions": {
 		"angle_degrees_int": {
 			"description": "degrees, clockwise. 0 and 360 may have a different meaning.",
 			"type": "integer",
 			"minimum": 0,
 			"maximum": 360
+		},
+		"point": {
+			"type": "object",
+			"properties": {
+				"x": {
+					"type": "number",
+					"default": 0
+				},
+				"y": {
+					"type": "number",
+					"default": 0
+				}
+			},
+			"required": ["x", "y"]
+		},
+		"color": {
+			"description": "hex, rgb, rgba, hsv color, CSS syntax.",
+			"type": "string",
+			"default": "#ffffff"
+		},
+		"gradient": {
+			"type": "object",
+			"properties": {
+				"type": {
+					"type": "string",
+					"enum": ["linear", "radial"],
+					"default": "linear"
+				},
+				"start_point": {
+					"description": "Also represents the center of the radial gradient",
+					"$ref": "#/definitions/point"
+				},
+				"end_point": {
+					"$ref": "#/definitions/point"
+				},
+				"color_stops": {
+					"description": "List of color stops. The position is between 0 and 1.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"offset": {
+								"type": "number",
+								"minimum": 0,
+								"maximum": 1
+							},
+							"color": {
+								"$ref": "#/definitions/color"
+							}
+						},
+						"required": ["offset", "color"],
+						"default": {
+							"offset": 0,
+							"color": "#000000"
+						}
+					},
+					"minItems": 2,
+					"default": [
+						{
+							"offset": 0,
+							"color": "#000000"
+						},
+						{
+							"offset": 1,
+							"color": "#ffffff"
+						}
+					]
+				}
+			},
+			"required": ["type", "color_stops"]
+		},
+		"shadow": {
+			"description": "Used for both box-shadow and text-shadow.",
+			"type": "object",
+			"properties": {
+				"inset": {
+					"type": "boolean",
+					"default": false
+				},
+				"offset": {
+					"$ref": "#/definitions/point"
+				},
+				"blur_radius": {
+					"type": "number",
+					"minimum": 0,
+					"default": 0
+				},
+				"spread_radius": {
+					"type": "number",
+					"default": 0
+				},
+				"color": {
+					"$ref": "#/definitions/color"
+				}
+			},
+			"required": ["inset", "offset", "blur_radius", "spread_radius", "color"]
 		},
 		"visual_object_interface": {
 			"type": "object",
@@ -78,23 +174,77 @@
 			"type": "object",
 			"properties": {
 				"border_radius": {
-					"description": "CSS border-radius",
-					"type": "string",
-					"default": ""
+					"description": "order: top-left, top-right, bottom-right, bottom-left; before and after point clockwise.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"value": {
+								"type": "integer",
+								"minimum": 0,
+								"default": 0
+							},
+							"unit": {
+								"type": "string",
+								"enum": ["px", "percent"],
+								"default": "px"
+							}
+						},
+						"required": ["value", "unit"]
+					},
+					"minItems": 8,
+					"maxItems": 8,
+					"default": [
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						},
+						{
+							"value": 0,
+							"unit": "px"
+						}
+					]
 				}
 			},
 			"required": ["border_radius"]
 		},
-		"supports_box_shadow": {
+		"supports_box_shadows": {
 			"type": "object",
 			"properties": {
-				"box_shadow": {
-					"description": "CSS box-shadow",
-					"type": "string",
-					"default": ""
+				"box_shadows": {
+					"description": "list of box-shadows",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/shadow"
+					},
+					"default": []
 				}
 			},
-			"required": ["box_shadow"]
+			"required": ["box_shadows"]
 		},
 		"supports_background": {
 			"type": "object",
@@ -113,9 +263,7 @@
 							"default": ""
 						},
 						"last_gradient": {
-							"description": "CSS gradient syntax.",
-							"type": "string",
-							"default": ""
+							"$ref": "#/definitions/gradient"
 						},
 						"last_image": {
 							"description": "Name of the image with the extension, stored in the background folder of the object.",
@@ -123,9 +271,19 @@
 							"default": ""
 						},
 						"size": {
-							"description": "contain | cover | x% | x% y%",
-							"type": "string",
-							"default": ""
+							"type": "object",
+							"properties": {
+								"type": {
+									"type": "string",
+									"enum": ["contain", "cover", "percentage"],
+									"default": "contain"
+								},
+								"percentage": {
+									"description": "Used only if the size type is percentage.",
+									"$ref": "#/definitions/point"
+								}
+							},
+							"required": ["type"]
 						},
 						"repeat": {
 							"enum": ["no-repeat", "repeat", "repeat-x", "repeat-y"],
@@ -135,9 +293,9 @@
 					"default": {
 						"type": "color",
 						"last_color": "",
-						"last_gradient": "",
+						"last_gradient": {},
 						"last_image": "",
-						"size": "",
+						"size": {},
 						"repeat": "no-repeat"
 					},
 					"required": ["type", "last_color", "last_gradient", "last_image", "size", "repeat"]
@@ -163,18 +321,13 @@
 					"default": "radial"
 				},
 				"flow_center": {
-					"type": "object",
-					"properties": {
-						"x": {
-							"type": "integer",
-							"default": 0
-						},
-						"y": {
-							"type": "integer",
-							"default": 0
-						}
+					"type": "array",
+					"items": {
+						"type": "integer"
 					},
-					"required": ["x", "y"]
+					"minItems": 2,
+					"maxItems": 2,
+					"default": [0, 0]
 				},
 				"flow_direction": {
 					"$ref": "#/definitions/angle_degrees_int",
@@ -275,10 +428,13 @@
 					},
 					"required": ["horizontal"]
 				},
-				"text_shadow": {
-					"description": "CSS text-shadow",
-					"type": "string",
-					"default": ""
+				"text_shadows": {
+					"description": "list of box-shadows",
+					"type": "array",
+					"items": {
+						"$ref": "#/definitions/shadow"
+					},
+					"default": []
 				}
 			},
 			"required": [
@@ -287,7 +443,7 @@
 				"font_size",
 				"text_decoration",
 				"text_align",
-				"text_shadow"
+				"text_shadows"
 			]
 		},
 		"supports_border_thickness": {
@@ -390,7 +546,7 @@
 					"$ref": "#/definitions/supports_border_radius"
 				},
 				{
-					"$ref": "#/definitions/supports_box_shadow"
+					"$ref": "#/definitions/supports_box_shadows"
 				},
 				{
 					"$ref": "#/definitions/supports_background"
@@ -465,7 +621,7 @@
 					"$ref": "#/definitions/supports_border_radius"
 				},
 				{
-					"$ref": "#/definitions/supports_box_shadow"
+					"$ref": "#/definitions/supports_box_shadows"
 				},
 				{
 					"$ref": "#/definitions/supports_timer_inner_spacing"
@@ -496,7 +652,7 @@
 					"$ref": "#/definitions/supports_border_radius"
 				},
 				{
-					"$ref": "#/definitions/supports_box_shadow"
+					"$ref": "#/definitions/supports_box_shadows"
 				}
 			]
 		},
@@ -527,7 +683,7 @@
 					"$ref": "#/definitions/supports_border_radius"
 				},
 				{
-					"$ref": "#/definitions/supports_box_shadow"
+					"$ref": "#/definitions/supports_box_shadows"
 				}
 			]
 		},
@@ -577,7 +733,7 @@
 					"$ref": "#/definitions/supports_border_radius"
 				},
 				{
-					"$ref": "#/definitions/supports_box_shadow"
+					"$ref": "#/definitions/supports_box_shadows"
 				},
 				{
 					"$ref": "#/definitions/supports_visualizer_bar_props"
@@ -620,7 +776,7 @@
 	"properties": {
 		"save_version": {
 			"type": "number",
-			"const": 4
+			"const": 5
 		},
 		"software_version_used": {
 			"description": "last version modifying this save",
