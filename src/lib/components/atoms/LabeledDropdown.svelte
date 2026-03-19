@@ -66,7 +66,14 @@
 </script>
 
 {#snippet select()}
-	<select class="select" class:noMargin onchange={handleOnChange} bind:value onfocusin={() => onFocusChange(true)} onfocusout={() => onFocusChange(false)}>
+	<select
+		class="select"
+		class:noMargin
+		onchange={handleOnChange}
+		bind:value
+		onfocusin={() => onFocusChange(true)}
+		onfocusout={() => onFocusChange(false)}
+	>
 		{#each options as option}
 			<option value={option.key}>{option.value}</option>
 		{/each}

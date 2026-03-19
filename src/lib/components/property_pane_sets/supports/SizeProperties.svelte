@@ -75,8 +75,16 @@
 	/>
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
-			<Button title={$lang.properties.size.buttons.full_width} onClick={fullWidth} iconRight={moveHorizontal} />
-			<Button title={$lang.properties.size.buttons.full_height} onClick={fullHeight} iconRight={moveVertical} />
+			<Button
+				title={$lang.properties.size.buttons.full_width}
+				onClick={fullWidth}
+				iconRight={moveHorizontal}
+			/>
+			<Button
+				title={$lang.properties.size.buttons.full_height}
+				onClick={fullHeight}
+				iconRight={moveVertical}
+			/>
 			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize} iconRight={move} />
 		</ButtonsRow>
 	</ButtonsGroup>

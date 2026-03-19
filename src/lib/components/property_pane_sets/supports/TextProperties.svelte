@@ -90,12 +90,12 @@
 			obj.text_shadows.push({
 				offset: {
 					x: 0,
-					y: 0,
+					y: 0
 				},
 				blur_radius: 0,
 				spread_radius: 0,
 				inset: false,
-				color: '#000000',
+				color: '#000000'
 			});
 		}
 	}

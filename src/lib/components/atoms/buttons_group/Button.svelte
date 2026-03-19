@@ -1,6 +1,6 @@
 <!-- @migration-task Error while migrating Svelte code: This migration would change the name of a slot making the component unusable -->
 <script lang="ts">
-	import type { Snippet } from "svelte";
+	import type { Snippet } from 'svelte';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos

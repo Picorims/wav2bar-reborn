@@ -308,7 +308,11 @@
 	{/if}
 	{#if data?.background.type === 'image'}
 		<ButtonsRow>
-			<Button title={$lang.properties.background.pick_image} onClick={changeBackgroundImage} iconRight={image} />
+			<Button
+				title={$lang.properties.background.pick_image}
+				onClick={changeBackgroundImage}
+				iconRight={image}
+			/>
 		</ButtonsRow>
 		<figure>
 			<img class="image-preview" src={backgroundImageSrc} alt="" />

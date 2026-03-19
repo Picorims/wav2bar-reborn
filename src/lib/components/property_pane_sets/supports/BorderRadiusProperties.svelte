@@ -420,7 +420,8 @@
 				verticalFocus = focused;
 				focusedIndex = focused ? 4 : -1;
 			}}
-			onChange={(unit) => handleBottomRightBefore({ value: data?.border_radius[4].value ?? 0, unit })}
+			onChange={(unit) =>
+				handleBottomRightBefore({ value: data?.border_radius[4].value ?? 0, unit })}
 		/>
 
 		<!--row 6-->
@@ -464,7 +465,8 @@
 				horizontalFocus = focused;
 				focusedIndex = focused ? 6 : -1;
 			}}
-			onChange={(unit) => handleBottomLeftBefore({ value: data?.border_radius[6].value ?? 0, unit })}
+			onChange={(unit) =>
+				handleBottomLeftBefore({ value: data?.border_radius[6].value ?? 0, unit })}
 		/>
 		<span></span>
 		<LabeledDropdown
@@ -475,7 +477,8 @@
 				horizontalFocus = focused;
 				focusedIndex = focused ? 5 : -1;
 			}}
-			onChange={(unit) => handleBottomRightAfter({ value: data?.border_radius[5].value ?? 0, unit })}
+			onChange={(unit) =>
+				handleBottomRightAfter({ value: data?.border_radius[5].value ?? 0, unit })}
 		/>
 		<span></span>
 		<span></span>

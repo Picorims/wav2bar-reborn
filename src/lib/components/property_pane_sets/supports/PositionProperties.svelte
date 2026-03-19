@@ -113,18 +113,38 @@
 
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
-			<Button title={$lang.properties.position.buttons.left} onClick={toLeft} iconRight={arrowLeftToLine} />
+			<Button
+				title={$lang.properties.position.buttons.left}
+				onClick={toLeft}
+				iconRight={arrowLeftToLine}
+			/>
 			<Button
 				title={$lang.properties.position.buttons.horizontal_center}
 				onClick={horizontalCenter}
 				iconRight={alignHorizontalSpaceAround}
 			/>
-			<Button title={$lang.properties.position.buttons.right} onClick={toRight} iconRight={arrowRightToLine} />
+			<Button
+				title={$lang.properties.position.buttons.right}
+				onClick={toRight}
+				iconRight={arrowRightToLine}
+			/>
 		</ButtonsRow>
 		<ButtonsRow columns={3}>
-			<Button title={$lang.properties.position.buttons.top} onClick={toTop} iconRight={arrowUpToLine} />
-			<Button title={$lang.properties.position.buttons.vertical_center} onClick={verticalCenter} iconRight={alignVerticalSpaceAround} />
-			<Button title={$lang.properties.position.buttons.bottom} onClick={toBottom} iconRight={arrowDownToLine} />
+			<Button
+				title={$lang.properties.position.buttons.top}
+				onClick={toTop}
+				iconRight={arrowUpToLine}
+			/>
+			<Button
+				title={$lang.properties.position.buttons.vertical_center}
+				onClick={verticalCenter}
+				iconRight={alignVerticalSpaceAround}
+			/>
+			<Button
+				title={$lang.properties.position.buttons.bottom}
+				onClick={toBottom}
+				iconRight={arrowDownToLine}
+			/>
 		</ButtonsRow>
 	</ButtonsGroup>
 </Accordion>

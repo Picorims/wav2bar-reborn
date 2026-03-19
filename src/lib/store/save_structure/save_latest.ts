@@ -27,7 +27,7 @@ import type {
 	TimerStraightBar,
 	ParticleFlow,
 	Shape,
-	Shadow as ShadowV5,
+	Shadow as ShadowV5
 } from '$lib/types/schemas/save_v5';
 import type { Wav2BarSaveV5 } from '$lib/types/schemas/save_v5';
 import {
