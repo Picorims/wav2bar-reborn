@@ -33,7 +33,7 @@ interface ConversionResult<T extends Record<string, unknown> = Record<string, un
 }
 
 /**
- * Note: save is muted in-place. Post-validation against schema is required
+ * Note: save is mutated in-place. Post-validation against schema is required
  * after each conversion step, but is not performed by the conversion.
  */
 const convertTo: Record<number, (save: Record<string, unknown>) => ConversionResult> = {
@@ -86,8 +86,10 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 							repeat: obj.background.repeat,
 							size: {
 								type: parsedBackgroundSize.sizeType,
-								x: parsedBackgroundSize.sizeX,
-								y: parsedBackgroundSize.sizeY
+								percentage: {
+									x: parsedBackgroundSize.sizeX,
+									y: parsedBackgroundSize.sizeY
+								}
 							}
 						},
 						border_radius: parsedBorderRadiusResult.border_radius,
@@ -142,6 +144,9 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 					convertedSave.objects[objectId] = obj as unknown as VisualObjectV5;
 				}
 			}
+
+			result.success = true;
+			result.convertedSave = convertedSave;
 		}
 		return result;
 	}
@@ -241,8 +246,6 @@ export class SaveConverter {
 				currentVersion = targetVersion;
 			}
 
-			conversionResult.success = true;
-			conversionResult.convertedSave = currentSave as Save;
 			return conversionResult;
 		}
 	}
@@ -693,7 +696,7 @@ export function parseCSSBorderRadiusV4(borderRadius: string): {
 	}
 	return {
 		border_radius: returnedBorderRadius,
-		warnings: []
+		warnings
 	};
 }
 
@@ -710,7 +713,6 @@ export function convertRGBAToHexV4(str: string, warnings: string[]): string {
 			/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(,\s*(\d+(\.\d+)?)?\s*)?\)/
 		);
 		if (rgbaMatch) {
-			console.log(rgbaMatch);
 			const r = parseInt(rgbaMatch[1]);
 			const g = parseInt(rgbaMatch[2]);
 			const b = parseInt(rgbaMatch[3]);

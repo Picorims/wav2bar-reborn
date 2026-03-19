@@ -187,13 +187,21 @@
 	}
 	function updateBackgroundSizePercentageX(x: number) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size.x = x;
+			if (typeof obj.background.size.percentage === 'undefined') {
+				obj.background.size.percentage = { x, y: DEFAULT_SIZE_Y };
+			} else {
+				obj.background.size.percentage.x = x;
+			}
 			return obj;
 		});
 	}
 	function updateBackgroundSizePercentageY(y: number) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.size.y = y;
+			if (typeof obj.background.size.percentage === 'undefined') {
+				obj.background.size.percentage = { x: DEFAULT_SIZE_X, y };
+			} else {
+				obj.background.size.percentage.y = y;
+			}
 			return obj;
 		});
 	}
@@ -331,7 +339,7 @@
 			}}
 		/>
 		<div class="horizontal-flex">
-			{#if data?.size.type === 'percentage'}
+			{#if data?.background.size.type === 'percentage'}
 				<LabeledInputNumber
 					defaultValue={DEFAULT_SIZE_X}
 					min={1}
