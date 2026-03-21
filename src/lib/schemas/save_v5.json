@@ -286,8 +286,8 @@
 							"required": ["type"]
 						},
 						"repeat": {
-							"enum": ["no-repeat", "repeat", "repeat-x", "repeat-y"],
-							"default": "no-repeat"
+							"enum": ["no_repeat", "repeat", "repeat_x", "repeat_y"],
+							"default": "no_repeat"
 						}
 					},
 					"default": {
@@ -295,8 +295,7 @@
 						"last_color": "",
 						"last_gradient": {},
 						"last_image": "",
-						"size": {},
-						"repeat": "no-repeat"
+						"size": {}
 					},
 					"required": ["type", "last_color", "last_gradient", "last_image", "size", "repeat"]
 				}

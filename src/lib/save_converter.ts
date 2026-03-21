@@ -83,7 +83,7 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 							last_color: obj.background.last_color,
 							last_image: obj.background.last_image,
 							last_gradient: parsedGradientResult.gradient,
-							repeat: obj.background.repeat,
+							repeat: obj.background.repeat.replaceAll('-', '_') as ShapeV5['background']['repeat'],
 							size: {
 								type: parsedBackgroundSize.sizeType,
 								percentage: {
