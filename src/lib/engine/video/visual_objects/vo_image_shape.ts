@@ -8,15 +8,7 @@
 */
 
 import type { UUIDv4 } from '$lib/types/common_types';
-import {
-	Assets,
-	Container,
-	FillGradient,
-	FillPattern,
-	Graphics,
-	Matrix,
-	Texture,
-} from 'pixi.js';
+import { Assets, Container, FillGradient, FillPattern, Graphics, Matrix, Texture } from 'pixi.js';
 import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
