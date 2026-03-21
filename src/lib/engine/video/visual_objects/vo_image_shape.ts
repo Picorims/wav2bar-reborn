@@ -15,12 +15,6 @@ import type { Atlas } from '../atlas';
 import { extractErrorMessage } from '$lib/string';
 import type { SupportsBackground } from '$lib/types/schemas/save_v5';
 
-const REPEAT_MAP: Record<SupportsBackground['background']['repeat'], PatternRepetition> = {
-	'no_repeat': 'no-repeat',
-	'repeat': 'repeat',
-	'repeat_x': 'repeat-x',
-	'repeat_y': 'repeat-y'
-};
 
 export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 	private saveId: UUIDv4;
@@ -80,16 +74,23 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 				const matrix = new Matrix();
 				this.texture.source.style.update();
 				if (obj.background.size.type === "percentage") {
-					// const pattern = new FillPattern(this.texture, REPEAT_MAP[obj.background.repeat]);
-					// const percentageX = obj.background.size.percentage?.x ?? 100;
-					// const percentageY = obj.background.size.percentage?.y ?? 100;
-					// const scaleX = percentageX / 100;
-					// const scaleY = percentageY / 100;
-					// matrix.scale(scaleX, scaleY);
-					// pattern.transform = matrix;
-					// console.log(this.texture.source.style.addressModeU + " " + this.texture.source.style.addressModeV);
-					// this.texture.source.update();
-					// this.texture.update();
+					const pattern = new FillPattern(this.texture);
+					const percentageX = obj.background.size.percentage?.x ?? 100;
+					const percentageY = obj.background.size.percentage?.y ?? 100;
+					const scaleX = percentageX / 100;
+					const scaleY = percentageY / 100;
+					matrix.scale(scaleX, scaleY);
+					pattern.transform = matrix;
+					graphics.rect(0, 0, width, height);
+					graphics.fill(pattern);
+
+					const mask = new Graphics();
+					const maskWidth = obj.background.repeat === "repeat" || obj.background.repeat === "repeat_x" ? width : width * scaleX;
+					const maskHeight = obj.background.repeat === "repeat" || obj.background.repeat === "repeat_y" ? height : height * scaleY;
+					mask.rect(0, 0, maskWidth, maskHeight);
+					mask.fill(0xffffff);
+					graphics.addChild(mask);
+					graphics.setMask({mask});
 				} else if (obj.background.size.type === "cover") {
 					if (widthScale > heightScale) {
 						graphics.rect(
