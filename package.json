@@ -62,7 +62,7 @@
 		"ajv": "^8.17.1",
 		"lucide-svelte": "^0.428.0",
 		"pixi-filters": "^6.1.5",
-		"pixi.js": "^8.16.0",
+		"pixi.js": "^8.17.1",
 		"svelte-splitpanes": "^8.0.9",
 		"wav2bar-reborn": "file:"
 	}
