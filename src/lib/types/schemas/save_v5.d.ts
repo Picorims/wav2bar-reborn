@@ -243,7 +243,7 @@ export interface SupportsBackground {
 			percentage?: Point2;
 			[k: string]: unknown;
 		};
-		repeat: 'no-repeat' | 'repeat' | 'repeat-x' | 'repeat-y';
+		repeat: 'no_repeat' | 'repeat' | 'repeat_x' | 'repeat_y';
 		[k: string]: unknown;
 	};
 	[k: string]: unknown;

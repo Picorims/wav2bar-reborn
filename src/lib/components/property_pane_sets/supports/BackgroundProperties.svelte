@@ -15,7 +15,6 @@
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_Background, VisualObject } from '$lib/store/save_structure/save_latest';
 	import { lang } from '$lib/store/settings';
-	import { keysUnderscoreToDash } from '$lib/string';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import { Image, PlusCircle, Trash2 } from 'lucide-svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
@@ -206,9 +205,9 @@
 		});
 	}
 
-	function updateBackgroundRepeat(v: string) {
+	function updateBackgroundRepeat(v: Supports_Background['background']['repeat']) {
 		saveManager.mutateActiveObject<ObjT>((obj) => {
-			obj.background.repeat = v.replaceAll('-', '_') as Supports_Background['background']['repeat'];
+			obj.background.repeat = v;
 			return obj;
 		});
 	}
@@ -363,9 +362,9 @@
 			{/if}
 		</div>
 		<LabeledDropdown
-			optionsObj={keysUnderscoreToDash($lang.properties.background.repeat_types)}
+			optionsObj={$lang.properties.background.repeat_types}
 			title={$lang.properties.background.repeat}
-			value={data?.background.repeat.replaceAll('_', '-')}
+			value={data?.background.repeat}
 			onChange={updateBackgroundRepeat}
 		/>
 	{/if}
