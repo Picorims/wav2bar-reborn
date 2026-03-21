@@ -348,6 +348,10 @@ export class Renderer {
 		this.app.stage.removeChildren();
 		this.tickEngine.clearAllTickUnits();
 	}
+
+	generateTexture(container: PIXI.Container): PIXI.Texture {
+		return this.app.renderer.generateTexture(container);
+	}
 }
 
 /**

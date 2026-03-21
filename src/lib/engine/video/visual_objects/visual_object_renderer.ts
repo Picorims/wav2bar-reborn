@@ -8,13 +8,16 @@
 */
 
 import type {
+	Supports_BoxShadow,
 	VisualObject,
 	VisualObject_Type,
 	VisualObjectInterface
 } from '$lib/store/save_structure/save_latest';
-import { Container } from 'pixi.js';
+import { BlurFilter, Container, Graphics, Rectangle } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
+import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
+import { renderer } from '../renderer';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
@@ -75,4 +78,45 @@ export function mutateBaseVOContainer<T extends VisualObject_Type>(
 	container.height = obj.size.height;
 	container.pivot.set(obj.size.width / 2, obj.size.height / 2);
 	container.angle = obj.rotation;
+}
+
+
+
+export function applyBoxShadows<T extends Supports_BoxShadow>(container: Container, boxShadows: T["box_shadows"]): void {
+	if (boxShadows.length === 0) {
+		return;
+	}
+
+	const containerSnapshot = renderer.generateTexture(container);
+
+	for (const shadow of boxShadows) {
+		const baseGraphics = new Graphics({
+			zIndex: container.zIndex - 1, // Ensure shadows are rendered behind the main container
+		});
+		baseGraphics.rect(0, 0, container.width, container.height);
+		baseGraphics.fill({texture: containerSnapshot});
+		baseGraphics.filterArea = new Rectangle(
+			-shadow.blur_radius - shadow.spread_radius,
+			-shadow.blur_radius - shadow.spread_radius,
+			container.width + (shadow.blur_radius + shadow.spread_radius) * 2,
+			container.height + (shadow.blur_radius + shadow.spread_radius) * 2
+		);
+		baseGraphics.filters = [
+			new ColorOverlayFilter({
+				color: shadow.color,
+			}),
+			new OutlineFilter({
+				color: shadow.color,
+				thickness: shadow.spread_radius,
+			}),
+			new BlurFilter({
+				strength: shadow.blur_radius,
+				quality: 5,
+				padding: shadow.blur_radius * 2 + shadow.spread_radius * 2,
+			}),
+		];
+		container.addChild(baseGraphics);
+		baseGraphics.x = shadow.offset.x;
+		baseGraphics.y = shadow.offset.y;
+	}
 }
