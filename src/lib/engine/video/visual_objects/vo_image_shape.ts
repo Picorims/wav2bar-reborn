@@ -8,13 +8,19 @@
 */
 
 import type { UUIDv4 } from '$lib/types/common_types';
-import { Assets, Container, FillGradient, FillPattern, Graphics, Matrix, Texture, type PatternRepetition } from 'pixi.js';
+import {
+	Assets,
+	Container,
+	FillGradient,
+	FillPattern,
+	Graphics,
+	Matrix,
+	Texture,
+} from 'pixi.js';
 import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
 import { extractErrorMessage } from '$lib/string';
-import type { SupportsBackground } from '$lib/types/schemas/save_v5';
-
 
 export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 	private saveId: UUIDv4;
@@ -55,9 +61,9 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 
 		const graphics = new Graphics({
 			width,
-			height,
+			height
 		});
-		
+
 		if (obj.background.type === 'color') {
 			graphics.rect(0, 0, width, height);
 			if (obj.background.last_color === '') {
@@ -73,7 +79,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 				const heightScale = height / imageHeight;
 				const matrix = new Matrix();
 				this.texture.source.style.update();
-				if (obj.background.size.type === "percentage") {
+				if (obj.background.size.type === 'percentage') {
 					const pattern = new FillPattern(this.texture);
 					const percentageX = obj.background.size.percentage?.x ?? 100;
 					const percentageY = obj.background.size.percentage?.y ?? 100;
@@ -85,13 +91,19 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					graphics.fill(pattern);
 
 					const mask = new Graphics();
-					const maskWidth = obj.background.repeat === "repeat" || obj.background.repeat === "repeat_x" ? width : width * scaleX;
-					const maskHeight = obj.background.repeat === "repeat" || obj.background.repeat === "repeat_y" ? height : height * scaleY;
+					const maskWidth =
+						obj.background.repeat === 'repeat' || obj.background.repeat === 'repeat_x'
+							? width
+							: width * scaleX;
+					const maskHeight =
+						obj.background.repeat === 'repeat' || obj.background.repeat === 'repeat_y'
+							? height
+							: height * scaleY;
 					mask.rect(0, 0, maskWidth, maskHeight);
 					mask.fill(0xffffff);
 					graphics.addChild(mask);
-					graphics.setMask({mask});
-				} else if (obj.background.size.type === "cover") {
+					graphics.setMask({ mask });
+				} else if (obj.background.size.type === 'cover') {
 					if (widthScale > heightScale) {
 						graphics.rect(
 							0,
@@ -112,9 +124,8 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					mask.rect(0, 0, width, height);
 					mask.fill(0xffffff);
 					graphics.addChild(mask);
-					graphics.setMask({mask});
-					
-				} else if (obj.background.size.type === "contain") {
+					graphics.setMask({ mask });
+				} else if (obj.background.size.type === 'contain') {
 					if (widthScale < heightScale) {
 						graphics.rect(
 							0,
@@ -140,7 +151,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 		} else if (obj.background.type === 'gradient') {
 			graphics.rect(0, 0, width, height);
 			let gradient: FillGradient | null = null;
-			
+
 			if (obj.background.last_gradient.type === 'linear') {
 				gradient = new FillGradient({
 					type: 'linear',

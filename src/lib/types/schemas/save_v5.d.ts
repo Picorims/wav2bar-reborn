@@ -6,79 +6,79 @@
  */
 
 export type VisualObject =
-  | Shape
-  | ParticleFlow
-  | Text
-  | TimerStraightBar
-  | TimerStraightLinePoint
-  | VisualizerStraightBar
-  | VisualizerStraightWave
-  | VisualizerCircularBar;
+	| Shape
+	| ParticleFlow
+	| Text
+	| TimerStraightBar
+	| TimerStraightLinePoint
+	| VisualizerStraightBar
+	| VisualizerStraightWave
+	| VisualizerCircularBar;
 export type Shape = {
-  visual_object_type: "shape";
-  [k: string]: unknown;
+	visual_object_type: 'shape';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsBorderRadius &
-  SupportsBoxShadows &
-  SupportsBackground;
+	SupportsBorderRadius &
+	SupportsBoxShadows &
+	SupportsBackground;
 /**
  * hex, rgb, rgba, hsv color, CSS syntax.
  */
 export type Color = string;
 export type ParticleFlow = {
-  visual_object_type: "particle_flow";
-  [k: string]: unknown;
+	visual_object_type: 'particle_flow';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsParticleProps &
-  SupportsColor;
+	SupportsParticleProps &
+	SupportsColor;
 export type Text = {
-  visual_object_type: "text";
-  [k: string]: unknown;
+	visual_object_type: 'text';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsTextProps &
-  SupportsColor;
+	SupportsTextProps &
+	SupportsColor;
 export type TimerStraightBar = {
-  visual_object_type: "timer_straight_bar";
-  [k: string]: unknown;
+	visual_object_type: 'timer_straight_bar';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsColor &
-  SupportsBorderThickness &
-  SupportsBorderRadius &
-  SupportsBoxShadows &
-  SupportsTimerInnerSpacing;
+	SupportsColor &
+	SupportsBorderThickness &
+	SupportsBorderRadius &
+	SupportsBoxShadows &
+	SupportsTimerInnerSpacing;
 export type TimerStraightLinePoint = {
-  visual_object_type: "timer_straight_line_point";
-  [k: string]: unknown;
+	visual_object_type: 'timer_straight_line_point';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsColor &
-  SupportsBorderThickness &
-  SupportsBorderRadius &
-  SupportsBoxShadows;
+	SupportsColor &
+	SupportsBorderThickness &
+	SupportsBorderRadius &
+	SupportsBoxShadows;
 export type VisualizerStraightBar = {
-  visual_object_type: "visualizer_straight_bar";
-  [k: string]: unknown;
+	visual_object_type: 'visualizer_straight_bar';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsVisualizerProps &
-  SupportsVisualizerBarProps &
-  SupportsColor &
-  SupportsBorderRadius &
-  SupportsBoxShadows;
+	SupportsVisualizerProps &
+	SupportsVisualizerBarProps &
+	SupportsColor &
+	SupportsBorderRadius &
+	SupportsBoxShadows;
 export type VisualizerStraightWave = {
-  visual_object_type: "visualizer_straight_wave";
-  [k: string]: unknown;
+	visual_object_type: 'visualizer_straight_wave';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsVisualizerProps &
-  SupportsColor;
+	SupportsVisualizerProps &
+	SupportsColor;
 export type VisualizerCircularBar = {
-  visual_object_type: "visualizer_circular_bar";
-  [k: string]: unknown;
+	visual_object_type: 'visualizer_circular_bar';
+	[k: string]: unknown;
 } & VisualObjectInterface &
-  SupportsVisualizerProps &
-  SupportsColor &
-  SupportsBorderRadius &
-  SupportsBoxShadows &
-  SupportsVisualizerBarProps &
-  SupportsVisualizerCircularProps;
+	SupportsVisualizerProps &
+	SupportsColor &
+	SupportsBorderRadius &
+	SupportsBoxShadows &
+	SupportsVisualizerBarProps &
+	SupportsVisualizerCircularProps;
 
 /**
  * Schema for Wav2Bar save files, version 5. (For versions 1.0.0-beta.1 and above).
@@ -101,281 +101,281 @@ export type VisualizerCircularBar = {
  *  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 export interface Wav2BarSaveV5 {
-  save_version: 5;
-  /**
-   * last version modifying this save
-   */
-  software_version_used: string;
-  /**
-   * first version creating this save
-   */
-  software_version_first_created: string;
-  /**
-   * video frame resolution
-   */
-  screen: {
-    width: number;
-    height: number;
-    [k: string]: unknown;
-  };
-  fps: number;
-  audio_filename: string;
-  /**
-   * Record of visual objects, indexed by a unique ID.
-   */
-  objects: {
-    [k: string]: VisualObject;
-  };
-  [k: string]: unknown;
+	save_version: 5;
+	/**
+	 * last version modifying this save
+	 */
+	software_version_used: string;
+	/**
+	 * first version creating this save
+	 */
+	software_version_first_created: string;
+	/**
+	 * video frame resolution
+	 */
+	screen: {
+		width: number;
+		height: number;
+		[k: string]: unknown;
+	};
+	fps: number;
+	audio_filename: string;
+	/**
+	 * Record of visual objects, indexed by a unique ID.
+	 */
+	objects: {
+		[k: string]: VisualObject;
+	};
+	[k: string]: unknown;
 }
 export interface VisualObjectInterface {
-  visual_object_type?: string;
-  name: string;
-  layer: number;
-  coordinates: {
-    x: number;
-    y: number;
-    [k: string]: unknown;
-  };
-  size: {
-    width: number;
-    height: number;
-    [k: string]: unknown;
-  };
-  /**
-   * degrees, clockwise. 0 and 360 may have a different meaning.
-   */
-  rotation: number;
-  /**
-   * List of `<filter>` tags separated by `[#]` with no `<script>` tag.
-   */
-  svg_filter: string;
-  [k: string]: unknown;
+	visual_object_type?: string;
+	name: string;
+	layer: number;
+	coordinates: {
+		x: number;
+		y: number;
+		[k: string]: unknown;
+	};
+	size: {
+		width: number;
+		height: number;
+		[k: string]: unknown;
+	};
+	/**
+	 * degrees, clockwise. 0 and 360 may have a different meaning.
+	 */
+	rotation: number;
+	/**
+	 * List of `<filter>` tags separated by `[#]` with no `<script>` tag.
+	 */
+	svg_filter: string;
+	[k: string]: unknown;
 }
 export interface SupportsBorderRadius {
-  /**
-   * order: top-left, top-right, bottom-right, bottom-left; before and after point clockwise.
-   *
-   * @minItems 8
-   * @maxItems 8
-   */
-  border_radius: [
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    },
-    {
-      value: number;
-      unit: "px" | "percent";
-      [k: string]: unknown;
-    }
-  ];
-  [k: string]: unknown;
+	/**
+	 * order: top-left, top-right, bottom-right, bottom-left; before and after point clockwise.
+	 *
+	 * @minItems 8
+	 * @maxItems 8
+	 */
+	border_radius: [
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		},
+		{
+			value: number;
+			unit: 'px' | 'percent';
+			[k: string]: unknown;
+		}
+	];
+	[k: string]: unknown;
 }
 export interface SupportsBoxShadows {
-  /**
-   * list of box-shadows
-   */
-  box_shadows: Shadow[];
-  [k: string]: unknown;
+	/**
+	 * list of box-shadows
+	 */
+	box_shadows: Shadow[];
+	[k: string]: unknown;
 }
 /**
  * Used for both box-shadow and text-shadow.
  */
 export interface Shadow {
-  inset: boolean;
-  offset: Point;
-  blur_radius: number;
-  spread_radius: number;
-  color: Color;
-  [k: string]: unknown;
+	inset: boolean;
+	offset: Point;
+	blur_radius: number;
+	spread_radius: number;
+	color: Color;
+	[k: string]: unknown;
 }
 export interface Point {
-  x: number;
-  y: number;
-  [k: string]: unknown;
+	x: number;
+	y: number;
+	[k: string]: unknown;
 }
 export interface SupportsBackground {
-  background: {
-    type: "color" | "gradient" | "image";
-    /**
-     * hex, rgb, rgba, hsv color, CSS syntax.
-     */
-    last_color: string;
-    last_gradient: Gradient;
-    /**
-     * Name of the image with the extension, stored in the background folder of the object.
-     */
-    last_image: string;
-    size: {
-      type: "contain" | "cover" | "percentage";
-      percentage?: Point2;
-      [k: string]: unknown;
-    };
-    repeat: "no_repeat" | "repeat" | "repeat_x" | "repeat_y";
-    [k: string]: unknown;
-  };
-  [k: string]: unknown;
+	background: {
+		type: 'color' | 'gradient' | 'image';
+		/**
+		 * hex, rgb, rgba, hsv color, CSS syntax.
+		 */
+		last_color: string;
+		last_gradient: Gradient;
+		/**
+		 * Name of the image with the extension, stored in the background folder of the object.
+		 */
+		last_image: string;
+		size: {
+			type: 'contain' | 'cover' | 'percentage';
+			percentage?: Point2;
+			[k: string]: unknown;
+		};
+		repeat: 'no_repeat' | 'repeat' | 'repeat_x' | 'repeat_y';
+		[k: string]: unknown;
+	};
+	[k: string]: unknown;
 }
 export interface Gradient {
-  type: "linear" | "radial";
-  start_point?: Point1;
-  end_point?: Point;
-  /**
-   * List of color stops. The position is between 0 and 1.
-   *
-   * @minItems 2
-   */
-  color_stops: [
-    {
-      offset: number;
-      color: Color;
-      [k: string]: unknown;
-    },
-    {
-      offset: number;
-      color: Color;
-      [k: string]: unknown;
-    },
-    ...{
-      offset: number;
-      color: Color;
-      [k: string]: unknown;
-    }[]
-  ];
-  [k: string]: unknown;
+	type: 'linear' | 'radial';
+	start_point?: Point1;
+	end_point?: Point;
+	/**
+	 * List of color stops. The position is between 0 and 1.
+	 *
+	 * @minItems 2
+	 */
+	color_stops: [
+		{
+			offset: number;
+			color: Color;
+			[k: string]: unknown;
+		},
+		{
+			offset: number;
+			color: Color;
+			[k: string]: unknown;
+		},
+		...{
+			offset: number;
+			color: Color;
+			[k: string]: unknown;
+		}[]
+	];
+	[k: string]: unknown;
 }
 /**
  * Also represents the center of the radial gradient
  */
 export interface Point1 {
-  x: number;
-  y: number;
-  [k: string]: unknown;
+	x: number;
+	y: number;
+	[k: string]: unknown;
 }
 /**
  * Used only if the size type is percentage.
  */
 export interface Point2 {
-  x: number;
-  y: number;
-  [k: string]: unknown;
+	x: number;
+	y: number;
+	[k: string]: unknown;
 }
 export interface SupportsParticleProps {
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  particle_radius_range: [number, number];
-  flow_type: "radial" | "directional";
-  /**
-   * @minItems 2
-   * @maxItems 2
-   */
-  flow_center: [number, number];
-  /**
-   * degrees, clockwise. 0 and 360 may have a different meaning.
-   */
-  flow_direction: number;
-  particle_spawn_probability: number;
-  /**
-   * How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame
-   */
-  particle_spawn_tests: number;
-  [k: string]: unknown;
+	/**
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	particle_radius_range: [number, number];
+	flow_type: 'radial' | 'directional';
+	/**
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	flow_center: [number, number];
+	/**
+	 * degrees, clockwise. 0 and 360 may have a different meaning.
+	 */
+	flow_direction: number;
+	particle_spawn_probability: number;
+	/**
+	 * How many times per frame an attempt to spawn a particle is done. Thus, it also defines the maximum of spawned particles per frame
+	 */
+	particle_spawn_tests: number;
+	[k: string]: unknown;
 }
 export interface SupportsColor {
-  /**
-   * hex, rgb, rgba
-   */
-  color: string;
-  [k: string]: unknown;
+	/**
+	 * hex, rgb, rgba
+	 */
+	color: string;
+	[k: string]: unknown;
 }
 export interface SupportsTextProps {
-  text_type: "any" | "time";
-  text_content: string;
-  font_size: number;
-  text_decoration: {
-    italic: boolean;
-    bold: boolean;
-    underline: boolean;
-    overline: boolean;
-    line_through: boolean;
-    [k: string]: unknown;
-  };
-  text_align: {
-    horizontal: "left" | "center" | "right";
-    [k: string]: unknown;
-  };
-  /**
-   * list of box-shadows
-   */
-  text_shadows: Shadow[];
-  [k: string]: unknown;
+	text_type: 'any' | 'time';
+	text_content: string;
+	font_size: number;
+	text_decoration: {
+		italic: boolean;
+		bold: boolean;
+		underline: boolean;
+		overline: boolean;
+		line_through: boolean;
+		[k: string]: unknown;
+	};
+	text_align: {
+		horizontal: 'left' | 'center' | 'right';
+		[k: string]: unknown;
+	};
+	/**
+	 * list of box-shadows
+	 */
+	text_shadows: Shadow[];
+	[k: string]: unknown;
 }
 export interface SupportsBorderThickness {
-  border_thickness: number;
-  [k: string]: unknown;
+	border_thickness: number;
+	[k: string]: unknown;
 }
 export interface SupportsTimerInnerSpacing {
-  timer_inner_spacing: number;
-  [k: string]: unknown;
+	timer_inner_spacing: number;
+	[k: string]: unknown;
 }
 export interface SupportsVisualizerProps {
-  visualizer_points_count: number;
-  /**
-   * Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.
-   *
-   * @minItems 2
-   * @maxItems 2
-   */
-  visualizer_analyzer_range: [number, number];
-  /**
-   * Interpolation type of the frequency array between frames.
-   */
-  visualization_smoothing_type: "proportional_decrease" | "linear_decrease" | "average";
-  /**
-   * Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.
-   */
-  visualization_smoothing_factor: number;
-  [k: string]: unknown;
+	visualizer_points_count: number;
+	/**
+	 * Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.
+	 *
+	 * @minItems 2
+	 * @maxItems 2
+	 */
+	visualizer_analyzer_range: [number, number];
+	/**
+	 * Interpolation type of the frequency array between frames.
+	 */
+	visualization_smoothing_type: 'proportional_decrease' | 'linear_decrease' | 'average';
+	/**
+	 * Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.
+	 */
+	visualization_smoothing_factor: number;
+	[k: string]: unknown;
 }
 export interface SupportsVisualizerBarProps {
-  visualizer_bar_thickness: number;
-  [k: string]: unknown;
+	visualizer_bar_thickness: number;
+	[k: string]: unknown;
 }
 export interface SupportsVisualizerCircularProps {
-  visualizer_radius: number;
-  [k: string]: unknown;
+	visualizer_radius: number;
+	[k: string]: unknown;
 }
