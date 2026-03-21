@@ -61,11 +61,11 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 
 		const graphics = new Graphics({
 			width,
-			height
+			height,
 		});
-		graphics.rect(0, 0, width, height);
-
+		
 		if (obj.background.type === 'color') {
+			graphics.rect(0, 0, width, height);
 			if (obj.background.last_color === '') {
 				graphics.fill(0xffffff); // Fallback to white if no color is defined
 			} else {
@@ -75,33 +75,71 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			if (this.texture) {
 				const imageWidth = this.texture.width;
 				const imageHeight = this.texture.height;
-				console.log("applying repeat " + REPEAT_MAP[obj.background.repeat]);
-				const pattern = new FillPattern(this.texture, REPEAT_MAP[obj.background.repeat]);
+				const widthScale = width / imageWidth;
+				const heightScale = height / imageHeight;
 				const matrix = new Matrix();
 				this.texture.source.style.update();
 				if (obj.background.size.type === "percentage") {
-					const percentageX = obj.background.size.percentage?.x ?? 100;
-					const percentageY = obj.background.size.percentage?.y ?? 100;
-					const scaleX = percentageX / 100;
-					const scaleY = percentageY / 100;
-					matrix.scale(scaleX, scaleY);
-					pattern.transform = matrix;
-					console.log(this.texture.source.style.addressModeU + " " + this.texture.source.style.addressModeV);
-					this.texture.source.update();
-					this.texture.update();
+					// const pattern = new FillPattern(this.texture, REPEAT_MAP[obj.background.repeat]);
+					// const percentageX = obj.background.size.percentage?.x ?? 100;
+					// const percentageY = obj.background.size.percentage?.y ?? 100;
+					// const scaleX = percentageX / 100;
+					// const scaleY = percentageY / 100;
+					// matrix.scale(scaleX, scaleY);
+					// pattern.transform = matrix;
+					// console.log(this.texture.source.style.addressModeU + " " + this.texture.source.style.addressModeV);
+					// this.texture.source.update();
+					// this.texture.update();
 				} else if (obj.background.size.type === "cover") {
-					// TODO
+					if (widthScale > heightScale) {
+						graphics.rect(
+							0,
+							(height - imageHeight * widthScale) / 2,
+							width,
+							imageHeight * widthScale
+						);
+					} else {
+						graphics.rect(
+							(width - imageWidth * heightScale) / 2,
+							0,
+							imageWidth * heightScale,
+							height
+						);
+					}
+					graphics.fill(this.texture);
+					const mask = new Graphics();
+					mask.rect(0, 0, width, height);
+					mask.fill(0xffffff);
+					graphics.addChild(mask);
+					graphics.setMask({mask});
+					
 				} else if (obj.background.size.type === "contain") {
-					// TODO
+					if (widthScale < heightScale) {
+						graphics.rect(
+							0,
+							(height - imageHeight * widthScale) / 2,
+							width,
+							imageHeight * widthScale
+						);
+					} else {
+						graphics.rect(
+							(width - imageWidth * heightScale) / 2,
+							0,
+							imageWidth * heightScale,
+							height
+						);
+					}
+					graphics.fill(this.texture);
+				} else {
+					throw new Error('Invalid background size type (image shape renderer - update)');
 				}
-				
-				graphics.fill(pattern);
 			} else {
 				graphics.fill(0xffffff); // Fallback to white if texture is not ready
 			}
 		} else if (obj.background.type === 'gradient') {
+			graphics.rect(0, 0, width, height);
 			let gradient: FillGradient | null = null;
-
+			
 			if (obj.background.last_gradient.type === 'linear') {
 				gradient = new FillGradient({
 					type: 'linear',
