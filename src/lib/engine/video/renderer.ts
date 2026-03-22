@@ -349,8 +349,11 @@ export class Renderer {
 		this.tickEngine.clearAllTickUnits();
 	}
 
-	generateTexture(container: PIXI.Container): PIXI.Texture {
-		return this.app.renderer.generateTexture(container);
+	generateTexture(container: PIXI.Container, frame?: PIXI.Rectangle): PIXI.Texture {
+		return this.app.renderer.generateTexture({
+			target: container,
+			frame
+		});
 	}
 }
 

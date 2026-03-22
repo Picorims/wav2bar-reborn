@@ -13,7 +13,7 @@ import type {
 	VisualObject_Type,
 	VisualObjectInterface
 } from '$lib/store/save_structure/save_latest';
-import { BlurFilter, Container, Graphics, Rectangle } from 'pixi.js';
+import { BlurFilter, Container, Graphics, GraphicsContext, Rectangle, Texture } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
@@ -81,25 +81,46 @@ export function mutateBaseVOContainer<T extends VisualObject_Type>(
 }
 
 
-
-export function applyBoxShadows<T extends Supports_BoxShadow>(container: Container, boxShadows: T["box_shadows"]): void {
+/**
+ * Apply box shadows to the given container based on the provided box shadow configurations.
+ * A filtered Graphics object is created for each box shadow, which is rendered behind the main container,
+ * and amended as a child to the container.
+ * Those are returned to be updated as needed in a rendering loop.
+ * @param container 
+ * @param boxShadows 
+ * @returns 
+ */
+export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(container: Container, obj: T, graphicsContext?: GraphicsContext): Graphics[] {
+	const boxShadows = obj.box_shadows;
 	if (boxShadows.length === 0) {
-		return;
+		return [];
 	}
 
-	const containerSnapshot = renderer.generateTexture(container);
+	const width = obj.size.width;
+	const height = obj.size.height;
+
+	let containerSnapshot: Texture | null = null
+	if (typeof graphicsContext === "undefined") {
+		containerSnapshot = renderer.generateTexture(container, new Rectangle(0, 0, width, height));
+	}
+	const graphicsArray: Graphics[] = [];
 
 	for (const shadow of boxShadows) {
 		const baseGraphics = new Graphics({
 			zIndex: container.zIndex - 1, // Ensure shadows are rendered behind the main container
+			width: width + shadow.blur_radius * 2 + shadow.spread_radius * 2,
+			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
+			context: graphicsContext
 		});
-		baseGraphics.rect(0, 0, container.width, container.height);
-		baseGraphics.fill({texture: containerSnapshot});
+		if (typeof graphicsContext === "undefined") {
+			baseGraphics.rect(0, 0, width, height);
+			baseGraphics.fill({texture: containerSnapshot});
+		}
 		baseGraphics.filterArea = new Rectangle(
 			-shadow.blur_radius - shadow.spread_radius,
 			-shadow.blur_radius - shadow.spread_radius,
-			container.width + (shadow.blur_radius + shadow.spread_radius) * 2,
-			container.height + (shadow.blur_radius + shadow.spread_radius) * 2
+			width + (shadow.blur_radius + shadow.spread_radius) * 2,
+			height + (shadow.blur_radius + shadow.spread_radius) * 2
 		);
 		baseGraphics.filters = [
 			new ColorOverlayFilter({
@@ -118,5 +139,8 @@ export function applyBoxShadows<T extends Supports_BoxShadow>(container: Contain
 		container.addChild(baseGraphics);
 		baseGraphics.x = shadow.offset.x;
 		baseGraphics.y = shadow.offset.y;
+		graphicsArray.push(baseGraphics);
 	}
+
+	return graphicsArray;
 }

@@ -173,7 +173,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 		}
 
 		this.container.addChild(graphics);
-		applyBoxShadows(this.container, obj.box_shadows);
+		applyBoxShadows(this.container, obj);
 
 		return this.container;
 	}
