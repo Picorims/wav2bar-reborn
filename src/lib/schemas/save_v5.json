@@ -260,7 +260,7 @@
 						"last_color": {
 							"description": "hex, rgb, rgba, hsv color, CSS syntax.",
 							"type": "string",
-							"default": ""
+							"default": "#ffffff"
 						},
 						"last_gradient": {
 							"$ref": "#/definitions/gradient"
@@ -473,7 +473,7 @@
 				"visualizer_points_count": {
 					"type": "integer",
 					"minimum": 1,
-					"default": 1
+					"default": 100
 				},
 				"visualizer_analyzer_range": {
 					"description": "Drawn range for the visualizer. 0 maps to 20Hz and 1023 maps to 20000Hz. The scale is logarithmic.",
@@ -495,7 +495,7 @@
 					"description": "Parameter for the visualization smoothing type. Its behaviour differs depending of the mode.",
 					"type": "number",
 					"minimum": 0,
-					"default": 0
+					"default": 0.8
 				}
 			},
 			"required": [
@@ -511,7 +511,7 @@
 				"visualizer_bar_thickness": {
 					"type": "integer",
 					"minimum": 0,
-					"default": 0
+					"default": 2
 				}
 			},
 			"required": ["visualizer_bar_thickness"]
@@ -522,7 +522,7 @@
 				"visualizer_radius": {
 					"type": "integer",
 					"minimum": 0,
-					"default": 0
+					"default": 50
 				}
 			},
 			"required": ["visualizer_radius"]
