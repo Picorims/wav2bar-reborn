@@ -451,7 +451,7 @@
 				"border_thickness": {
 					"type": "integer",
 					"minimum": 0,
-					"default": 0
+					"default": 1
 				}
 			},
 			"required": ["border_thickness"]
@@ -462,7 +462,7 @@
 				"timer_inner_spacing": {
 					"type": "integer",
 					"minimum": 0,
-					"default": 0
+					"default": 1
 				}
 			},
 			"required": ["timer_inner_spacing"]

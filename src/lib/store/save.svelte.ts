@@ -119,8 +119,17 @@ class SaveManager {
 				width: 400,
 				height: 400
 			}
+		} else if (typedObject.visual_object_type === "visualizer_straight_bar" || typedObject.visual_object_type === "visualizer_straight_wave") {
+			typedObject.size = {
+				width: 700,
+				height: 200
+			}
+		} else if (typedObject.visual_object_type === "timer_straight_bar" || typedObject.visual_object_type === "timer_straight_line_point") {
+			typedObject.size = {
+				width: 700,
+				height: 16
+			}
 		}
-
 		return typedObject;
 	}
 
