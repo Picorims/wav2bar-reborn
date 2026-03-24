@@ -8,9 +8,9 @@
 */
 
 import type { SaveVO_VisualizerStraightBar } from '$lib/store/save_structure/save_latest';
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import { applyBoxShadows, mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { AudioSpectrumProcessor } from '../tick_units/audio_spectrum_processor';
 
@@ -21,7 +21,8 @@ export class VO_VisualizerStraightBar
 {
 	private saveId: UUIDv4;
 	private container: Container;
-	private graphics: Graphics;
+	private graphicsContext: GraphicsContext;
+	private shadowGraphics: Graphics[] = [];
 	private tickUnit: AudioSpectrumProcessor;
 	private spectrum: Uint16Array;
 	private barsCount: number = 1;
@@ -33,12 +34,12 @@ export class VO_VisualizerStraightBar
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
 		this.container = new Container();
-		this.graphics = new Graphics();
+		this.graphicsContext = new GraphicsContext();
 		this.tickUnit = new AudioSpectrumProcessor();
 		this.spectrum = new Uint16Array(0);
 		this.tickUnit.subscribe(([spectrum]) => {
 			this.spectrum = spectrum;
-			this.render(this.graphics);
+			this.render(this.graphicsContext);
 		});
 	}
 
@@ -59,17 +60,23 @@ export class VO_VisualizerStraightBar
 		this.height = obj.size.height;
 		this.color = obj.color;
 
+		for (const child of this.container.children) {
+			child.destroy();
+		}
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 
-		const graphics = new Graphics();
-		this.render(graphics);
+		const graphics = new Graphics(this.graphicsContext);
 		this.container.addChild(graphics);
-
-		this.graphics = graphics;
+		
+		for (const sGraphics of this.shadowGraphics) {
+			sGraphics.destroy();
+		}
+		this.shadowGraphics = applyBoxShadows(this.container, obj, this.graphicsContext);
+		this.render(this.graphicsContext);
 	}
 
-	private render(graphics: Graphics) {
+	private render(graphics: GraphicsContext) {
 		graphics.clear();
 		const barsCount = this.barsCount;
 		const barWidth = this.barWidth;

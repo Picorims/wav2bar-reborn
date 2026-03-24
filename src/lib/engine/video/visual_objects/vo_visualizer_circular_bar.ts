@@ -69,7 +69,6 @@ export class VO_VisualizerCircularBar
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 
-		this.graphicsContext = new GraphicsContext();
 		const graphics = new Graphics(this.graphicsContext);
 		this.container.addChild(graphics);
 
