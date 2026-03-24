@@ -129,6 +129,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 			new OutlineFilter({
 				color: shadow.color,
 				thickness: shadow.spread_radius,
+				quality: 1,
 			}),
 			new BlurFilter({
 				strength: shadow.blur_radius,
