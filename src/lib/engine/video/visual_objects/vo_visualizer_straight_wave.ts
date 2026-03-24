@@ -61,6 +61,9 @@ export class VO_VisualizerStraightWave
 		this.height = obj.size.height;
 		this.color = obj.color;
 
+		for (const child of this.container.children) {
+			child.destroy();
+		}
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 
