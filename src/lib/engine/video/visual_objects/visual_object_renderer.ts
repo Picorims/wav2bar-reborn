@@ -13,11 +13,12 @@ import type {
 	VisualObject_Type,
 	VisualObjectInterface
 } from '$lib/store/save_structure/save_latest';
-import { BlurFilter, Container, Graphics, GraphicsContext, Rectangle, Texture } from 'pixi.js';
+import { BlurFilter, Color, Container, Filter, Graphics, GraphicsContext, Rectangle, Texture } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
 import { renderer } from '../renderer';
+import { createInvertFillFilter } from '../invert_fill_filter';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
@@ -107,7 +108,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 
 	for (const shadow of boxShadows) {
 		const baseGraphics = new Graphics({
-			zIndex: container.zIndex - 1, // Ensure shadows are rendered behind the main container
+			zIndex: shadow.inset ? container.zIndex + 1 : container.zIndex - 1, // Ensure shadows are rendered behind the main container
 			width: width + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext
@@ -122,7 +123,8 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 			width + (shadow.blur_radius + shadow.spread_radius) * 2,
 			height + (shadow.blur_radius + shadow.spread_radius) * 2
 		);
-		baseGraphics.filters = [
+
+		const filters: Filter[] = [
 			new ColorOverlayFilter({
 				color: shadow.color,
 			}),
@@ -137,10 +139,26 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 				padding: shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			}),
 		];
+
+		if (shadow.inset) {
+			filters.unshift(createInvertFillFilter(new Color(shadow.color)));
+		}
+
+		baseGraphics.filters = filters;
 		container.addChild(baseGraphics);
 		baseGraphics.x = shadow.offset.x;
 		baseGraphics.y = shadow.offset.y;
 		graphicsArray.push(baseGraphics);
+
+		if (shadow.inset) {
+			const maskGraphics = new Graphics(graphicsContext);
+			if (typeof graphicsContext === "undefined") {
+				maskGraphics.rect(0, 0, width, height);
+				maskGraphics.fill({texture: containerSnapshot});
+			}
+			baseGraphics.mask = maskGraphics;
+			container.addChild(maskGraphics);
+		}
 	}
 
 	return graphicsArray;

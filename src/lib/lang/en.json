@@ -114,7 +114,7 @@
 			}
 		},
 		"box_shadow": {
-			"title": "Box Shadows (no effect, coming soon)",
+			"title": "Box Shadows",
 			"add": "Add Box Shadow",
 			"remove": "Remove Box Shadow",
 			"offset_x": "Offset X",
