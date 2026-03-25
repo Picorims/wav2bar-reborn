@@ -102,33 +102,38 @@ class SaveManager {
 			);
 		}
 
-		
 		// type is generated with the schema defaults,
 		// and the TypeScript type originates from the same schema.
 		// But TypeScript is not able to infer that here.
 		const typedObject = baseObject as unknown as VisualObject;
 
 		// overrides not doable through the schema:
-		if (typedObject.visual_object_type === "shape") {
+		if (typedObject.visual_object_type === 'shape') {
 			typedObject.size = {
 				width: 400,
 				height: 300
-			}
-		} else if (typedObject.visual_object_type === "visualizer_circular_bar") {
+			};
+		} else if (typedObject.visual_object_type === 'visualizer_circular_bar') {
 			typedObject.size = {
 				width: 400,
 				height: 400
-			}
-		} else if (typedObject.visual_object_type === "visualizer_straight_bar" || typedObject.visual_object_type === "visualizer_straight_wave") {
+			};
+		} else if (
+			typedObject.visual_object_type === 'visualizer_straight_bar' ||
+			typedObject.visual_object_type === 'visualizer_straight_wave'
+		) {
 			typedObject.size = {
 				width: 700,
 				height: 200
-			}
-		} else if (typedObject.visual_object_type === "timer_straight_bar" || typedObject.visual_object_type === "timer_straight_line_point") {
+			};
+		} else if (
+			typedObject.visual_object_type === 'timer_straight_bar' ||
+			typedObject.visual_object_type === 'timer_straight_line_point'
+		) {
 			typedObject.size = {
 				width: 700,
 				height: 16
-			}
+			};
 		}
 		return typedObject;
 	}

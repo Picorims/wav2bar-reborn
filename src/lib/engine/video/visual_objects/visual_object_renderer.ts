@@ -13,7 +13,16 @@ import type {
 	VisualObject_Type,
 	VisualObjectInterface
 } from '$lib/store/save_structure/save_latest';
-import { BlurFilter, Color, Container, Filter, Graphics, GraphicsContext, Rectangle, Texture } from 'pixi.js';
+import {
+	BlurFilter,
+	Color,
+	Container,
+	Filter,
+	Graphics,
+	GraphicsContext,
+	Rectangle,
+	Texture
+} from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
@@ -81,17 +90,20 @@ export function mutateBaseVOContainer<T extends VisualObject_Type>(
 	container.angle = obj.rotation;
 }
 
-
 /**
  * Apply box shadows to the given container based on the provided box shadow configurations.
  * A filtered Graphics object is created for each box shadow, which is rendered behind the main container,
  * and amended as a child to the container.
  * Those are returned to be updated as needed in a rendering loop.
- * @param container 
- * @param boxShadows 
- * @returns 
+ * @param container
+ * @param boxShadows
+ * @returns
  */
-export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(container: Container, obj: T, graphicsContext?: GraphicsContext): Graphics[] {
+export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
+	container: Container,
+	obj: T,
+	graphicsContext?: GraphicsContext
+): Graphics[] {
 	const boxShadows = obj.box_shadows;
 	if (boxShadows.length === 0) {
 		return [];
@@ -100,8 +112,8 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 	const width = obj.size.width;
 	const height = obj.size.height;
 
-	let containerSnapshot: Texture | null = null
-	if (typeof graphicsContext === "undefined") {
+	let containerSnapshot: Texture | null = null;
+	if (typeof graphicsContext === 'undefined') {
 		containerSnapshot = renderer.generateTexture(container, new Rectangle(0, 0, width, height));
 	}
 	const graphicsArray: Graphics[] = [];
@@ -113,9 +125,9 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext
 		});
-		if (typeof graphicsContext === "undefined") {
+		if (typeof graphicsContext === 'undefined') {
 			baseGraphics.rect(0, 0, width, height);
-			baseGraphics.fill({texture: containerSnapshot});
+			baseGraphics.fill({ texture: containerSnapshot });
 		}
 		baseGraphics.filterArea = new Rectangle(
 			-shadow.blur_radius - shadow.spread_radius,
@@ -126,18 +138,18 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 
 		const filters: Filter[] = [
 			new ColorOverlayFilter({
-				color: shadow.color,
+				color: shadow.color
 			}),
 			new OutlineFilter({
 				color: shadow.color,
 				thickness: shadow.spread_radius,
-				quality: 1,
+				quality: 1
 			}),
 			new BlurFilter({
 				strength: shadow.blur_radius,
 				quality: 5,
-				padding: shadow.blur_radius * 2 + shadow.spread_radius * 2,
-			}),
+				padding: shadow.blur_radius * 2 + shadow.spread_radius * 2
+			})
 		];
 
 		if (shadow.inset) {
@@ -152,9 +164,9 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 
 		if (shadow.inset) {
 			const maskGraphics = new Graphics(graphicsContext);
-			if (typeof graphicsContext === "undefined") {
+			if (typeof graphicsContext === 'undefined') {
 				maskGraphics.rect(0, 0, width, height);
-				maskGraphics.fill({texture: containerSnapshot});
+				maskGraphics.fill({ texture: containerSnapshot });
 			}
 			baseGraphics.mask = maskGraphics;
 			container.addChild(maskGraphics);

@@ -10,7 +10,11 @@
 import type { SaveVO_VisualizerStraightBar } from '$lib/store/save_structure/save_latest';
 import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { applyBoxShadows, mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import {
+	applyBoxShadows,
+	mutateBaseVOContainer,
+	type VisualObjectRenderer
+} from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { AudioSpectrumProcessor } from '../tick_units/audio_spectrum_processor';
 
@@ -68,7 +72,7 @@ export class VO_VisualizerStraightBar
 
 		const graphics = new Graphics(this.graphicsContext);
 		this.container.addChild(graphics);
-		
+
 		for (const sGraphics of this.shadowGraphics) {
 			sGraphics.destroy();
 		}
