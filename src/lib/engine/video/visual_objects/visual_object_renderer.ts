@@ -108,7 +108,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(con
 
 	for (const shadow of boxShadows) {
 		const baseGraphics = new Graphics({
-			zIndex: shadow.inset ? container.zIndex + 1 : container.zIndex - 1, // Ensure shadows are rendered behind the main container
+			zIndex: shadow.inset ? 2 : 0, // in front of : behind
 			width: width + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext

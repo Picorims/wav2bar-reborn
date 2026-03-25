@@ -52,8 +52,9 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 		mutateBaseVOContainer(obj, this.container);
 
 		const graphics = new Graphics(this.graphicsContext);
+		graphics.zIndex = 1;
 		this.container.addChild(graphics);
-
+		
 		for (const sGraphics of this.shadowGraphics) {
 			sGraphics.destroy();
 		}
