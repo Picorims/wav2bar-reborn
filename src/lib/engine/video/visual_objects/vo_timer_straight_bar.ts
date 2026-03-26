@@ -8,16 +8,21 @@
 */
 
 import type { SaveVO_TimerStraightBar } from '$lib/store/save_structure/save_latest';
-import { Container, Graphics } from 'pixi.js';
+import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
-import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import {
+	applyBoxShadows,
+	mutateBaseVOContainer,
+	type VisualObjectRenderer
+} from './visual_object_renderer';
 import type { UUIDv4 } from '$lib/types/common_types';
 import { TrackProgressTracker } from '../tick_units/track_progress_tracker';
 
 export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStraightBar> {
 	private saveId: UUIDv4;
 	private container: Container;
-	private graphics: Graphics;
+	private graphicsContext: GraphicsContext;
+	private shadowGraphics: Graphics[] = [];
 	private tickUnit: TrackProgressTracker;
 	private width: number = 1;
 	private height: number = 1;
@@ -29,11 +34,11 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
 		this.container = new Container();
-		this.graphics = new Graphics();
+		this.graphicsContext = new GraphicsContext();
 		this.tickUnit = new TrackProgressTracker();
 		this.tickUnit.subscribe((ratio) => {
 			this.progressRatio = ratio;
-			this.render(this.graphics);
+			this.render(this.graphicsContext);
 		});
 	}
 
@@ -44,17 +49,24 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 		this.lineThickness = obj.border_thickness;
 		this.innerSpacing = obj.timer_inner_spacing;
 
+		for (const child of this.container.children) {
+			child.destroy();
+		}
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 
-		const graphics = new Graphics();
-		this.render(graphics);
+		const graphics = new Graphics(this.graphicsContext);
+		graphics.zIndex = 1;
 		this.container.addChild(graphics);
 
-		this.graphics = graphics;
+		for (const sGraphics of this.shadowGraphics) {
+			sGraphics.destroy();
+		}
+		this.shadowGraphics = applyBoxShadows(this.container, obj, this.graphicsContext);
+		this.render(this.graphicsContext);
 	}
 
-	private render(graphics: Graphics) {
+	private render(graphics: GraphicsContext) {
 		graphics.clear();
 
 		// outer stroke bar (inset)

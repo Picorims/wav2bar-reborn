@@ -8,7 +8,7 @@ https://keepachangelog.com/en/1.0.0/
 ### Known issues
 
 - Border radius has no effect.
-- Box shadow has no effect.
+- Box shadow may have rendering artifacts.
 - Shadow spread is ignored in text shadow.
 - Only one shadow is taken into account in text shadow.
 

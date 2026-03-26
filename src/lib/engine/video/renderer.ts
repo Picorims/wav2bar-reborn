@@ -348,6 +348,16 @@ export class Renderer {
 		this.app.stage.removeChildren();
 		this.tickEngine.clearAllTickUnits();
 	}
+
+	generateTexture(container: PIXI.Container, frame?: PIXI.Rectangle): PIXI.Texture {
+		if (!this.hasInit()) {
+			throw new Error('Cannot generate texture, renderer not initialized');
+		}
+		return this.app.renderer.generateTexture({
+			target: container,
+			frame
+		});
+	}
 }
 
 /**

@@ -9,7 +9,11 @@
 
 import type { UUIDv4 } from '$lib/types/common_types';
 import { Assets, Container, FillGradient, FillPattern, Graphics, Matrix, Texture } from 'pixi.js';
-import { mutateBaseVOContainer, type VisualObjectRenderer } from './visual_object_renderer';
+import {
+	applyBoxShadows,
+	mutateBaseVOContainer,
+	type VisualObjectRenderer
+} from './visual_object_renderer';
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
 import { extractErrorMessage } from '$lib/string';
@@ -46,6 +50,9 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			this.backgroundContent = obj.background.last_image;
 		}
 
+		for (const child of this.container.children) {
+			child.destroy();
+		}
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 		const width = obj.size.width;
@@ -173,6 +180,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 		}
 
 		this.container.addChild(graphics);
+		applyBoxShadows(this.container, obj);
 
 		return this.container;
 	}
