@@ -63,6 +63,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			width,
 			height
 		});
+		graphics.zIndex = 1;
 
 		if (obj.background.type === 'color') {
 			borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
