@@ -50,6 +50,9 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			this.backgroundContent = obj.background.last_image;
 		}
 
+		for (const child of this.container.children) {
+			child.destroy();
+		}
 		this.container.removeChildren();
 		mutateBaseVOContainer(obj, this.container);
 		const width = obj.size.width;
