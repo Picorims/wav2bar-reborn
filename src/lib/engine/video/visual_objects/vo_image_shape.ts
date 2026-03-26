@@ -11,6 +11,7 @@ import type { UUIDv4 } from '$lib/types/common_types';
 import { Assets, Container, FillGradient, FillPattern, Graphics, Matrix, Texture } from 'pixi.js';
 import {
 	applyBoxShadows,
+	borderRadiusRect,
 	mutateBaseVOContainer,
 	type VisualObjectRenderer
 } from './visual_object_renderer';
@@ -64,7 +65,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 		});
 
 		if (obj.background.type === 'color') {
-			graphics.rect(0, 0, width, height);
+			borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
 			if (obj.background.last_color === '') {
 				graphics.fill(0xffffff); // Fallback to white if no color is defined
 			} else {
@@ -86,7 +87,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					const scaleY = percentageY / 100;
 					matrix.scale(scaleX, scaleY);
 					pattern.transform = matrix;
-					graphics.rect(0, 0, width, height);
+					borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
 					graphics.fill(pattern);
 
 					const mask = new Graphics();
@@ -120,7 +121,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					}
 					graphics.fill(this.texture);
 					const mask = new Graphics();
-					mask.rect(0, 0, width, height);
+					borderRadiusRect(mask, 0, 0, width, height, obj.border_radius);
 					mask.fill(0xffffff);
 					graphics.addChild(mask);
 					graphics.setMask({ mask });
@@ -141,14 +142,20 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 						);
 					}
 					graphics.fill(this.texture);
+					const mask = new Graphics();
+					borderRadiusRect(mask, 0, 0, width, height, obj.border_radius);
+					mask.fill(0xffffff);
+					graphics.addChild(mask);
+					graphics.setMask({ mask });
 				} else {
 					throw new Error('Invalid background size type (image shape renderer - update)');
 				}
 			} else {
+				borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
 				graphics.fill(0xffffff); // Fallback to white if texture is not ready
 			}
 		} else if (obj.background.type === 'gradient') {
-			graphics.rect(0, 0, width, height);
+			borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
 			let gradient: FillGradient | null = null;
 
 			if (obj.background.last_gradient.type === 'linear') {

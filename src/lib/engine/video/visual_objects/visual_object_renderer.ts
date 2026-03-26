@@ -28,6 +28,7 @@ import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
 import { renderer } from '../renderer';
 import { createInvertFillFilter } from '../invert_fill_filter';
+import { clamp } from '$lib/math';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
@@ -178,4 +179,56 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	}
 
 	return graphicsArray;
+}
+
+
+// https://spencermortensen.com/articles/bezier-circle/
+const ARC_APPROX_BEZIER_DIST = 0.55342925736;
+
+export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number, y: number, w: number, h: number, radiuses: { unit: 'px' | 'percent'; value: number }[]) {
+	const factors = [h, w, w, h, h, w, w, h];
+	const d = ARC_APPROX_BEZIER_DIST;
+	const id = 1 - d;
+	const radiusesPx = radiuses.map(({ unit, value }, i) =>
+		unit === 'px' ? value : (value / 100) * factors[i]
+	);
+	const r = radiusesPx;
+
+	// clamp between 0 and width/height
+	for (let i = 0; i < 8; i++) {
+		r[i] = clamp(r[i], 0, factors[i]);
+	}
+
+	// avoid overlaps
+	if (r[0] + r[7] > h) {
+		const gap = r[0] + r[7] - h;
+		r[0] -= Math.ceil(gap / 2);
+		r[7] -= Math.floor(gap / 2);
+	}
+	if (r[1] + r[2] > w) {
+		const gap = r[1] + r[2] - w;
+		r[1] -= Math.ceil(gap / 2);
+		r[2] -= Math.floor(gap / 2);
+	}
+	if (r[3] + r[4] > h) {
+		const gap = r[3] + r[4] - h;
+		r[3] -= Math.ceil(gap / 2);
+		r[4] -= Math.floor(gap / 2);
+	}
+	if (r[5] + r[6] > w) {
+		const gap = r[5] + r[6] - w;
+		r[5] -= Math.ceil(gap / 2);
+		r[6] -= Math.floor(gap / 2);
+	}
+
+	graphics
+		.moveTo(x, y + radiusesPx[0])
+		.bezierCurveTo(x, y + id * r[0], x + id * r[1], y, x + r[1], y)
+		.lineTo(x + w - r[2], y)
+		.bezierCurveTo(x + w - id * r[2], y, x + w, y + id * r[3], x + w, y + r[3])
+		.lineTo(x + w, y + h - r[4])
+		.bezierCurveTo(x + w, y + h - id * r[4], x + w - id * r[5], y + h, x + w - r[5], y + h)
+		.lineTo(x + r[6], y + h)
+		.bezierCurveTo(x + id * r[6], y + h, x, y + h - id * r[7], x, y + h - r[7])
+		.closePath();
 }
