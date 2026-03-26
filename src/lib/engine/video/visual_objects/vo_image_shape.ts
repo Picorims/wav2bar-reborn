@@ -8,7 +8,18 @@
 */
 
 import type { UUIDv4 } from '$lib/types/common_types';
-import { Assets, Container, FillGradient, FillPattern, Graphics, Matrix, Texture } from 'pixi.js';
+import {
+	Assets,
+	Container,
+	FillGradient,
+	FillPattern,
+	Graphics,
+	GraphicsContext,
+	MaskFilter,
+	Matrix,
+	Sprite,
+	Texture
+} from 'pixi.js';
 import {
 	applyBoxShadows,
 	borderRadiusRect,
@@ -18,10 +29,13 @@ import {
 import type { SaveVO_ImageShape } from '$lib/store/save_structure/save_latest';
 import type { Atlas } from '../atlas';
 import { extractErrorMessage } from '$lib/string';
+import { renderer } from '../renderer';
 
 export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 	private saveId: UUIDv4;
 	private container: Container;
+	private graphicsContext: GraphicsContext;
+	private shadowGraphics: Graphics[] = [];
 	private texture: Texture | null = null;
 	private caching: boolean = false;
 	private currentType: SaveVO_ImageShape['background']['type'] | null = null;
@@ -30,6 +44,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
 		this.container = new Container();
+		this.graphicsContext = new GraphicsContext();
 	}
 
 	getTickUnit() {
@@ -61,16 +76,22 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 
 		const graphics = new Graphics({
 			width,
-			height
+			height,
+			context: this.graphicsContext
 		});
 		graphics.zIndex = 1;
 
+		this.graphicsContext.clear();
+		const globalMask = new Graphics();
+		borderRadiusRect(globalMask, 0, 0, width, height, obj.border_radius);
+		globalMask.fill(0xffffff);
+
 		if (obj.background.type === 'color') {
-			borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
+			borderRadiusRect(this.graphicsContext, 0, 0, width, height, obj.border_radius);
 			if (obj.background.last_color === '') {
-				graphics.fill(0xffffff); // Fallback to white if no color is defined
+				this.graphicsContext.fill(0xffffff); // Fallback to white if no color is defined
 			} else {
-				graphics.fill(obj.background.last_color);
+				this.graphicsContext.fill(obj.background.last_color);
 			}
 		} else if (obj.background.type === 'image') {
 			if (this.texture) {
@@ -88,8 +109,8 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					const scaleY = percentageY / 100;
 					matrix.scale(scaleX, scaleY);
 					pattern.transform = matrix;
-					borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
-					graphics.fill(pattern);
+					borderRadiusRect(this.graphicsContext, 0, 0, width, height, obj.border_radius);
+					this.graphicsContext.fill(pattern);
 
 					const mask = new Graphics();
 					const maskWidth =
@@ -106,57 +127,51 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					graphics.setMask({ mask });
 				} else if (obj.background.size.type === 'cover') {
 					if (widthScale > heightScale) {
-						graphics.rect(
+						this.graphicsContext.rect(
 							0,
 							(height - imageHeight * widthScale) / 2,
 							width,
 							imageHeight * widthScale
 						);
 					} else {
-						graphics.rect(
+						this.graphicsContext.rect(
 							(width - imageWidth * heightScale) / 2,
 							0,
 							imageWidth * heightScale,
 							height
 						);
 					}
-					graphics.fill(this.texture);
-					const mask = new Graphics();
-					borderRadiusRect(mask, 0, 0, width, height, obj.border_radius);
-					mask.fill(0xffffff);
-					graphics.addChild(mask);
-					graphics.setMask({ mask });
+					this.graphicsContext.fill(this.texture);
+					graphics.addChild(globalMask);
+					graphics.setMask({ mask: globalMask });
 				} else if (obj.background.size.type === 'contain') {
 					if (widthScale < heightScale) {
-						graphics.rect(
+						this.graphicsContext.rect(
 							0,
 							(height - imageHeight * widthScale) / 2,
 							width,
 							imageHeight * widthScale
 						);
 					} else {
-						graphics.rect(
+						this.graphicsContext.rect(
 							(width - imageWidth * heightScale) / 2,
 							0,
 							imageWidth * heightScale,
 							height
 						);
 					}
-					graphics.fill(this.texture);
-					const mask = new Graphics();
-					borderRadiusRect(mask, 0, 0, width, height, obj.border_radius);
-					mask.fill(0xffffff);
-					graphics.addChild(mask);
-					graphics.setMask({ mask });
+					this.graphicsContext.fill(this.texture);
+					graphics.addChild(globalMask);
+					graphics.setMask({ mask: globalMask });
 				} else {
 					throw new Error('Invalid background size type (image shape renderer - update)');
 				}
 			} else {
 				borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
-				graphics.fill(0xffffff); // Fallback to white if texture is not ready
+				this.graphicsContext.fill(0xffffff); // Fallback to white if texture is not ready
 			}
 		} else if (obj.background.type === 'gradient') {
-			borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
+			borderRadiusRect(this.graphicsContext, 0, 0, width, height, obj.border_radius);
 			let gradient: FillGradient | null = null;
 
 			if (obj.background.last_gradient.type === 'linear') {
@@ -184,11 +199,18 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			if (gradient === null) {
 				throw new Error('Invalid gradient type (image shape renderer - update)');
 			}
-			graphics.fill(gradient);
+			this.graphicsContext.fill(gradient);
 		}
 
 		this.container.addChild(graphics);
-		applyBoxShadows(this.container, obj);
+		applyBoxShadows(
+			this.container,
+			obj,
+			this.graphicsContext,
+			new MaskFilter({
+				sprite: new Sprite(renderer.generateTexture(globalMask)),
+			})
+		);
 
 		return this.container;
 	}

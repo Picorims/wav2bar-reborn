@@ -20,13 +20,12 @@ import {
 	Filter,
 	Graphics,
 	GraphicsContext,
+	MaskFilter,
 	Rectangle,
-	Texture
 } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
-import { renderer } from '../renderer';
 import { createInvertFillFilter } from '../invert_fill_filter';
 import { clamp } from '$lib/math';
 
@@ -103,7 +102,8 @@ export function mutateBaseVOContainer<T extends VisualObject_Type>(
 export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	container: Container,
 	obj: T,
-	graphicsContext?: GraphicsContext
+	graphicsContext: GraphicsContext,
+	filterMask?: MaskFilter
 ): Graphics[] {
 	const boxShadows = obj.box_shadows;
 	if (boxShadows.length === 0) {
@@ -113,10 +113,6 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	const width = obj.size.width;
 	const height = obj.size.height;
 
-	let containerSnapshot: Texture | null = null;
-	if (typeof graphicsContext === 'undefined') {
-		containerSnapshot = renderer.generateTexture(container, new Rectangle(0, 0, width, height));
-	}
 	const graphicsArray: Graphics[] = [];
 
 	for (const shadow of boxShadows) {
@@ -126,10 +122,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext
 		});
-		if (typeof graphicsContext === 'undefined') {
-			baseGraphics.rect(0, 0, width, height);
-			baseGraphics.fill({ texture: containerSnapshot });
-		}
+		
 		baseGraphics.filterArea = new Rectangle(
 			-shadow.blur_radius - shadow.spread_radius,
 			-shadow.blur_radius - shadow.spread_radius,
@@ -157,6 +150,13 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 			filters.unshift(createInvertFillFilter(new Color(shadow.color)));
 		}
 
+		if (typeof filterMask !== 'undefined') {
+			filters.unshift(filterMask);
+			if (shadow.inset) {
+				filters.push(filterMask);
+			}
+		}
+
 		baseGraphics.filters = filters;
 		container.addChild(baseGraphics);
 		baseGraphics.x = shadow.offset.x;
@@ -165,17 +165,9 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 
 		if (shadow.inset) {
 			const maskGraphics = new Graphics(graphicsContext);
-			if (typeof graphicsContext === 'undefined') {
-				maskGraphics.rect(0, 0, width, height);
-				maskGraphics.fill({ texture: containerSnapshot });
-			}
 			baseGraphics.mask = maskGraphics;
 			container.addChild(maskGraphics);
 		}
-	}
-
-	if (containerSnapshot !== null) {
-		containerSnapshot.destroy();
 	}
 
 	return graphicsArray;
