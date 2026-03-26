@@ -173,5 +173,9 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 		}
 	}
 
+	if (containerSnapshot !== null) {
+		containerSnapshot.destroy();
+	}
+
 	return graphicsArray;
 }
