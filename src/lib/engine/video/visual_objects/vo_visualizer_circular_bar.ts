@@ -8,10 +8,11 @@
 */
 
 import type { SaveVO_VisualizerCircularBar } from '$lib/store/save_structure/save_latest';
-import { Container, Graphics, GraphicsContext } from 'pixi.js';
+import { Container, Graphics, GraphicsContext, Transform } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import {
 	applyBoxShadows,
+	borderRadiusRect,
 	mutateBaseVOContainer,
 	type VisualObjectRenderer
 } from './visual_object_renderer';
@@ -36,6 +37,7 @@ export class VO_VisualizerCircularBar
 	private height: number = 1;
 	private color: string = '#FFFFFF';
 	private radius: number = 1;
+	private borderRadius: SaveVO_VisualizerCircularBar["border_radius"] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
@@ -66,6 +68,7 @@ export class VO_VisualizerCircularBar
 		this.height = obj.size.height;
 		this.color = obj.color;
 		this.radius = obj.visualizer_radius;
+		this.borderRadius = obj.border_radius;
 
 		for (const child of this.container.children) {
 			child.destroy();
@@ -99,19 +102,17 @@ export class VO_VisualizerCircularBar
 		for (let i = 0; i < barsCount; i++) {
 			const magnitude = this.spectrum[i] / SPECTRUM_VALUE_RESOLUTION; // Normalize to [0, 1]
 			const barHeight = magnitude * maxBarLength;
-			const direction = new Vec2(Math.cos(i * angleStep), Math.sin(i * angleStep)); // normalized
-			// rotation is 90 degrees offset clockwise
-			const directionTangent = new Vec2(-direction.y, direction.x); // normalized
-			const p1 = center.add(direction.scale(radiusMin)).add(directionTangent.scale(-barWidth / 2));
-			const p2 = p1.add(direction.scale(barHeight));
-			const p3 = p2.add(directionTangent.scale(barWidth));
-			const p4 = p3.add(direction.scale(-barHeight));
 
-			graphics.moveTo(p1.x, p1.y);
-			graphics.lineTo(p2.x, p2.y);
-			graphics.lineTo(p3.x, p3.y);
-			graphics.lineTo(p4.x, p4.y);
-			graphics.closePath();
+			const transform = new Transform();
+			transform.position.set(center.x, center.y);
+			transform.rotation = i * angleStep - Math.PI / 2; // start from 3 o'clock and rotate clockwise
+			graphics.setTransform(transform.matrix);
+
+			if (this.borderRadius !== null) {
+				borderRadiusRect(graphics, barWidth / 2, radiusMin, barWidth, barHeight, this.borderRadius);
+			} else {
+				graphics.rect(barWidth / 2, radiusMin, barWidth, barHeight);
+			}
 		}
 		graphics.fill(this.color);
 	}

@@ -107,7 +107,6 @@ export class VO_VisualizerStraightBar
 			} else {
 				graphics.rect(x, y, width, height);
 			}
-			// graphics.rect(x, y, width, height);
 		}
 		graphics.fill(this.color);
 	}
