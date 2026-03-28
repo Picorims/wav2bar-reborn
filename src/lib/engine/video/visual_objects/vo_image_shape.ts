@@ -167,7 +167,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 					throw new Error('Invalid background size type (image shape renderer - update)');
 				}
 			} else {
-				borderRadiusRect(graphics, 0, 0, width, height, obj.border_radius);
+				borderRadiusRect(this.graphicsContext, 0, 0, width, height, obj.border_radius);
 				this.graphicsContext.fill(0xffffff); // Fallback to white if texture is not ready
 			}
 		} else if (obj.background.type === 'gradient') {
