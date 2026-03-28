@@ -31,7 +31,7 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 	private innerSpacing: number = 0;
 	private color: string = '#FFFFFF';
 	private progressRatio: number = 0;
-	private borderRadius: SaveVO_TimerStraightBar["border_radius"] | null = null;
+	private borderRadius: SaveVO_TimerStraightBar['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;

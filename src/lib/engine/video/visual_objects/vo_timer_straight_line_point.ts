@@ -32,7 +32,7 @@ export class VO_TimerStraightLinePoint
 	private lineThickness: number = 1;
 	private color: string = '#FFFFFF';
 	private progressRatio: number = 0;
-	private borderRadius: SaveVO_TimerStraightLinePoint["border_radius"] | null = null;
+	private borderRadius: SaveVO_TimerStraightLinePoint['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;

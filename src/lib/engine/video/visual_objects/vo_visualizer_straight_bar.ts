@@ -35,7 +35,7 @@ export class VO_VisualizerStraightBar
 	private width: number = 1;
 	private height: number = 1;
 	private color: string = '#FFFFFF';
-	private borderRadius: SaveVO_VisualizerStraightBar["border_radius"] | null = null;
+	private borderRadius: SaveVO_VisualizerStraightBar['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;

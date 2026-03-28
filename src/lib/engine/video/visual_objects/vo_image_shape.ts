@@ -209,7 +209,7 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			this.graphicsContext,
 			new MaskFilter({
 				// TODO fix potential GPU memory leak
-				sprite: new Sprite(renderer.generateTexture(globalMask)),
+				sprite: new Sprite(renderer.generateTexture(globalMask))
 			})
 		);
 

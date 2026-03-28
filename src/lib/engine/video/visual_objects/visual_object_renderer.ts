@@ -21,7 +21,7 @@ import {
 	Graphics,
 	GraphicsContext,
 	MaskFilter,
-	Rectangle,
+	Rectangle
 } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
@@ -122,7 +122,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext
 		});
-		
+
 		baseGraphics.filterArea = new Rectangle(
 			-shadow.blur_radius - shadow.spread_radius,
 			-shadow.blur_radius - shadow.spread_radius,
@@ -173,7 +173,6 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	return graphicsArray;
 }
 
-
 // https://spencermortensen.com/articles/bezier-circle/
 const ARC_APPROX_BEZIER_DIST = 0.55342925736;
 
@@ -181,15 +180,22 @@ const ARC_APPROX_BEZIER_DIST = 0.55342925736;
  * Creates a CSS-like border-radius. Contrary to CSS, if the radiuses length outweight the dimensions,
  * Both will be evenly reduced, without accounting for unit or the other corner radius value.
  * Thus, 50px everywhere on a 100x20 rectangle will produce an ellipse instead of a capsule shape.
- * @param graphics 
- * @param x 
- * @param y 
- * @param w 
- * @param h 
+ * @param graphics
+ * @param x
+ * @param y
+ * @param w
+ * @param h
  * @param radiuses exactly 8 entries are expected. Use 0 to disable a value.
- * Starts from top-left before, then goes clockwise in before/after order. 
+ * Starts from top-left before, then goes clockwise in before/after order.
  */
-export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number, y: number, w: number, h: number, radiuses: { unit: 'px' | 'percent'; value: number }[]) {
+export function borderRadiusRect(
+	graphics: GraphicsContext | Graphics,
+	x: number,
+	y: number,
+	w: number,
+	h: number,
+	radiuses: { unit: 'px' | 'percent'; value: number }[]
+) {
 	if (radiuses.length !== 8) {
 		throw new Error('borderRadiusRect requires an array of 8 radius values');
 	}
@@ -233,7 +239,6 @@ export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number
 	for (let i = 0; i < 8; i++) {
 		r[i] = clamp(r[i], 0, factors[i]);
 	}
-
 
 	graphics
 		.moveTo(x, y + radiusesPx[0])
