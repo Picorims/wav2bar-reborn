@@ -228,6 +228,13 @@ export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number
 		r[6] -= Math.floor(gap / 2);
 	}
 
+	// re-clamp between 0 and width/height to avoid
+	// negative values after the overlap reduction.
+	for (let i = 0; i < 8; i++) {
+		r[i] = clamp(r[i], 0, factors[i]);
+	}
+
+
 	graphics
 		.moveTo(x, y + radiusesPx[0])
 		.bezierCurveTo(x, y + id * r[0], x + id * r[1], y, x + r[1], y)
