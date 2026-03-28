@@ -12,6 +12,7 @@ import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import {
 	applyBoxShadows,
+	borderRadiusRect,
 	mutateBaseVOContainer,
 	type VisualObjectRenderer
 } from './visual_object_renderer';
@@ -34,6 +35,7 @@ export class VO_VisualizerStraightBar
 	private width: number = 1;
 	private height: number = 1;
 	private color: string = '#FFFFFF';
+	private borderRadius: SaveVO_VisualizerStraightBar['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
@@ -63,6 +65,7 @@ export class VO_VisualizerStraightBar
 		this.width = obj.size.width;
 		this.height = obj.size.height;
 		this.color = obj.color;
+		this.borderRadius = obj.border_radius;
 
 		for (const child of this.container.children) {
 			child.destroy();
@@ -99,7 +102,11 @@ export class VO_VisualizerStraightBar
 			const y = containerHeight - barHeight;
 			const width = barWidth;
 			const height = barHeight;
-			graphics.rect(x, y, width, height);
+			if (this.borderRadius !== null) {
+				borderRadiusRect(graphics, x, y, width, height, this.borderRadius);
+			} else {
+				graphics.rect(x, y, width, height);
+			}
 		}
 		graphics.fill(this.color);
 	}

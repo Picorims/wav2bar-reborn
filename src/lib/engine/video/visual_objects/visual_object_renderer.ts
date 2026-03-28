@@ -20,14 +20,14 @@ import {
 	Filter,
 	Graphics,
 	GraphicsContext,
-	Rectangle,
-	Texture
+	MaskFilter,
+	Rectangle
 } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import type { Atlas } from '../atlas';
 import { ColorOverlayFilter, OutlineFilter } from 'pixi-filters';
-import { renderer } from '../renderer';
 import { createInvertFillFilter } from '../invert_fill_filter';
+import { clamp } from '$lib/math';
 
 export interface VisualObjectRenderer<T extends VisualObject> {
 	/**
@@ -102,7 +102,8 @@ export function mutateBaseVOContainer<T extends VisualObject_Type>(
 export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	container: Container,
 	obj: T,
-	graphicsContext?: GraphicsContext
+	graphicsContext: GraphicsContext,
+	filterMask?: MaskFilter
 ): Graphics[] {
 	const boxShadows = obj.box_shadows;
 	if (boxShadows.length === 0) {
@@ -112,10 +113,6 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 	const width = obj.size.width;
 	const height = obj.size.height;
 
-	let containerSnapshot: Texture | null = null;
-	if (typeof graphicsContext === 'undefined') {
-		containerSnapshot = renderer.generateTexture(container, new Rectangle(0, 0, width, height));
-	}
 	const graphicsArray: Graphics[] = [];
 
 	for (const shadow of boxShadows) {
@@ -125,10 +122,7 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 			height: height + shadow.blur_radius * 2 + shadow.spread_radius * 2,
 			context: graphicsContext
 		});
-		if (typeof graphicsContext === 'undefined') {
-			baseGraphics.rect(0, 0, width, height);
-			baseGraphics.fill({ texture: containerSnapshot });
-		}
+
 		baseGraphics.filterArea = new Rectangle(
 			-shadow.blur_radius - shadow.spread_radius,
 			-shadow.blur_radius - shadow.spread_radius,
@@ -156,6 +150,13 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 			filters.unshift(createInvertFillFilter(new Color(shadow.color)));
 		}
 
+		if (typeof filterMask !== 'undefined') {
+			filters.unshift(filterMask);
+			if (shadow.inset) {
+				filters.push(filterMask);
+			}
+		}
+
 		baseGraphics.filters = filters;
 		container.addChild(baseGraphics);
 		baseGraphics.x = shadow.offset.x;
@@ -164,18 +165,89 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 
 		if (shadow.inset) {
 			const maskGraphics = new Graphics(graphicsContext);
-			if (typeof graphicsContext === 'undefined') {
-				maskGraphics.rect(0, 0, width, height);
-				maskGraphics.fill({ texture: containerSnapshot });
-			}
 			baseGraphics.mask = maskGraphics;
 			container.addChild(maskGraphics);
 		}
 	}
 
-	if (containerSnapshot !== null) {
-		containerSnapshot.destroy();
+	return graphicsArray;
+}
+
+// https://spencermortensen.com/articles/bezier-circle/
+const ARC_APPROX_BEZIER_DIST = 0.55342925736;
+
+/**
+ * Creates a CSS-like border-radius. Contrary to CSS, if the radiuses length outweight the dimensions,
+ * Both will be evenly reduced, without accounting for unit or the other corner radius value.
+ * Thus, 50px everywhere on a 100x20 rectangle will produce an ellipse instead of a capsule shape.
+ * @param graphics
+ * @param x
+ * @param y
+ * @param w
+ * @param h
+ * @param radiuses exactly 8 entries are expected. Use 0 to disable a value.
+ * Starts from top-left before, then goes clockwise in before/after order.
+ */
+export function borderRadiusRect(
+	graphics: GraphicsContext | Graphics,
+	x: number,
+	y: number,
+	w: number,
+	h: number,
+	radiuses: { unit: 'px' | 'percent'; value: number }[]
+) {
+	if (radiuses.length !== 8) {
+		throw new Error('borderRadiusRect requires an array of 8 radius values');
+	}
+	const factors = [h, w, w, h, h, w, w, h];
+	const d = ARC_APPROX_BEZIER_DIST;
+	const id = 1 - d;
+	const radiusesPx = radiuses.map(({ unit, value }, i) =>
+		unit === 'px' ? value : (value / 100) * factors[i]
+	);
+	const r = radiusesPx;
+
+	// clamp between 0 and width/height
+	for (let i = 0; i < 8; i++) {
+		r[i] = clamp(r[i], 0, factors[i]);
 	}
 
-	return graphicsArray;
+	// avoid overlaps
+	if (r[0] + r[7] > h) {
+		const gap = r[0] + r[7] - h;
+		r[0] -= Math.ceil(gap / 2);
+		r[7] -= Math.floor(gap / 2);
+	}
+	if (r[1] + r[2] > w) {
+		const gap = r[1] + r[2] - w;
+		r[1] -= Math.ceil(gap / 2);
+		r[2] -= Math.floor(gap / 2);
+	}
+	if (r[3] + r[4] > h) {
+		const gap = r[3] + r[4] - h;
+		r[3] -= Math.ceil(gap / 2);
+		r[4] -= Math.floor(gap / 2);
+	}
+	if (r[5] + r[6] > w) {
+		const gap = r[5] + r[6] - w;
+		r[5] -= Math.ceil(gap / 2);
+		r[6] -= Math.floor(gap / 2);
+	}
+
+	// re-clamp between 0 and width/height to avoid
+	// negative values after the overlap reduction.
+	for (let i = 0; i < 8; i++) {
+		r[i] = clamp(r[i], 0, factors[i]);
+	}
+
+	graphics
+		.moveTo(x, y + radiusesPx[0])
+		.bezierCurveTo(x, y + id * r[0], x + id * r[1], y, x + r[1], y)
+		.lineTo(x + w - r[2], y)
+		.bezierCurveTo(x + w - id * r[2], y, x + w, y + id * r[3], x + w, y + r[3])
+		.lineTo(x + w, y + h - r[4])
+		.bezierCurveTo(x + w, y + h - id * r[4], x + w - id * r[5], y + h, x + w - r[5], y + h)
+		.lineTo(x + r[6], y + h)
+		.bezierCurveTo(x + id * r[6], y + h, x, y + h - id * r[7], x, y + h - r[7])
+		.closePath();
 }

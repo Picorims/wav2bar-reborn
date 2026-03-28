@@ -107,7 +107,7 @@
 			"title": "SVG Filter (deprecated, no effect)"
 		},
 		"border_radius": {
-			"title": "Border Radius (no effect, coming soon)",
+			"title": "Border Radius",
 			"units": {
 				"px": "px",
 				"percent": "%"

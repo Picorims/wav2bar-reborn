@@ -12,6 +12,7 @@ import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import {
 	applyBoxShadows,
+	borderRadiusRect,
 	mutateBaseVOContainer,
 	type VisualObjectRenderer
 } from './visual_object_renderer';
@@ -31,6 +32,7 @@ export class VO_TimerStraightLinePoint
 	private lineThickness: number = 1;
 	private color: string = '#FFFFFF';
 	private progressRatio: number = 0;
+	private borderRadius: SaveVO_TimerStraightLinePoint['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
@@ -48,6 +50,7 @@ export class VO_TimerStraightLinePoint
 		this.height = obj.size.height;
 		this.color = obj.color;
 		this.lineThickness = obj.border_thickness;
+		this.borderRadius = obj.border_radius;
 
 		for (const child of this.container.children) {
 			child.destroy();
@@ -74,7 +77,11 @@ export class VO_TimerStraightLinePoint
 		const lineY = this.height / 2 - this.lineThickness / 2;
 		const lineWidth = this.width;
 		const lineHeight = this.lineThickness;
-		graphics.rect(lineX, lineY, lineWidth, lineHeight);
+		if (this.borderRadius !== null) {
+			borderRadiusRect(graphics, lineX, lineY, lineWidth, lineHeight, this.borderRadius);
+		} else {
+			graphics.rect(lineX, lineY, lineWidth, lineHeight);
+		}
 
 		// point (cannot go outside the container / graphics)
 		const pointDiameter = this.height;

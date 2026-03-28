@@ -12,6 +12,7 @@ import { Container, Graphics, GraphicsContext } from 'pixi.js';
 import type { TickUnit } from '../tick_units/tick_unit';
 import {
 	applyBoxShadows,
+	borderRadiusRect,
 	mutateBaseVOContainer,
 	type VisualObjectRenderer
 } from './visual_object_renderer';
@@ -30,6 +31,7 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 	private innerSpacing: number = 0;
 	private color: string = '#FFFFFF';
 	private progressRatio: number = 0;
+	private borderRadius: SaveVO_TimerStraightBar['border_radius'] | null = null;
 
 	constructor(saveId: UUIDv4) {
 		this.saveId = saveId;
@@ -48,6 +50,7 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 		this.color = obj.color;
 		this.lineThickness = obj.border_thickness;
 		this.innerSpacing = obj.timer_inner_spacing;
+		this.borderRadius = obj.border_radius;
 
 		for (const child of this.container.children) {
 			child.destroy();
@@ -74,7 +77,11 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 		const outerY = 0;
 		const outerWidth = this.width;
 		const outerHeight = this.height;
-		graphics.rect(outerX, outerY, outerWidth, outerHeight);
+		if (this.borderRadius !== null) {
+			borderRadiusRect(graphics, outerX, outerY, outerWidth, outerHeight, this.borderRadius);
+		} else {
+			graphics.rect(outerX, outerY, outerWidth, outerHeight);
+		}
 		graphics.stroke({
 			alignment: 1,
 			cap: 'square',
@@ -89,7 +96,11 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 		const innerWidth =
 			(this.width - 2 * this.lineThickness - 2 * this.innerSpacing) * this.progressRatio;
 		const innerHeight = this.height - 2 * this.lineThickness - 2 * this.innerSpacing;
-		graphics.rect(innerX, innerY, innerWidth, innerHeight);
+		if (this.borderRadius !== null) {
+			borderRadiusRect(graphics, innerX, innerY, innerWidth, innerHeight, this.borderRadius);
+		} else {
+			graphics.rect(innerX, innerY, innerWidth, innerHeight);
+		}
 		graphics.fill(this.color);
 	}
 	getContainer(): Container {
