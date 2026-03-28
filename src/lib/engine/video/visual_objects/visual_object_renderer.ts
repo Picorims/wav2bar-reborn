@@ -186,7 +186,8 @@ const ARC_APPROX_BEZIER_DIST = 0.55342925736;
  * @param y 
  * @param w 
  * @param h 
- * @param radiuses 
+ * @param radiuses exactly 8 entries are expected. Use 0 to disable a value.
+ * Starts from top-left before, then goes clockwise in before/after order. 
  */
 export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number, y: number, w: number, h: number, radiuses: { unit: 'px' | 'percent'; value: number }[]) {
 	if (radiuses.length !== 8) {
