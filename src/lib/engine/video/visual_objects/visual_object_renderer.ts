@@ -177,7 +177,21 @@ export function applyBoxShadows<T extends VisualObject & Supports_BoxShadow>(
 // https://spencermortensen.com/articles/bezier-circle/
 const ARC_APPROX_BEZIER_DIST = 0.55342925736;
 
+/**
+ * Creates a CSS-like border-radius. Contrary to CSS, if the radiuses length outweight the dimensions,
+ * Both will be evenly reduced, without accounting for unit or the other corner radius value.
+ * Thus, 50px everywhere on a 100x20 rectangle will produce an ellipse instead of a capsule shape.
+ * @param graphics 
+ * @param x 
+ * @param y 
+ * @param w 
+ * @param h 
+ * @param radiuses 
+ */
 export function borderRadiusRect(graphics: GraphicsContext | Graphics, x: number, y: number, w: number, h: number, radiuses: { unit: 'px' | 'percent'; value: number }[]) {
+	if (radiuses.length !== 8) {
+		throw new Error('borderRadiusRect requires an array of 8 radius values');
+	}
 	const factors = [h, w, w, h, h, w, w, h];
 	const d = ARC_APPROX_BEZIER_DIST;
 	const id = 1 - d;
