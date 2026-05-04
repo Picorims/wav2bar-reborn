@@ -1,0 +1,40 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"title": "Wav2Bar settings v2",
+	"description": "Schema for Wav2Bar settings, version 2. (For versions 1.0.0-beta.1 and above).\n\n Wav2Bar - Free software for creating audio visualization (motion design) videos.\n Copyright (C) 2025-2026  Picorims <picorims.contact@gmail.com>\n\n \n This program is free software: you can redistribute it and/or modify\n it under the terms of the GNU General Public License as published by\n the Free Software Foundation, either version 3 of the License, or\n any later version.\n \n This program is distributed in the hope that it will be useful,\n but WITHOUT ANY WARRANTY; without even the implied warranty of\n MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\n GNU General Public License for more details.\n \n You should have received a copy of the GNU General Public License\n along with this program.  If not, see <https://www.gnu.org/licenses/>.",
+	"type": "object",
+	"properties": {
+		"save_version": {
+			"type": "number",
+			"const": 2
+		},
+		"software_version_used": {
+			"description": "last version modifying this settings file",
+			"type": "string"
+		},
+		"software_version_first_created": {
+			"description": "first version creating this settings file",
+			"type": "string"
+		},
+		"ffmpeg_path": {
+			"type": "string",
+			"default": ""
+		},
+		"theme": {
+			"enum": ["DEFAULT", "DARK", "LIGHT"],
+			"default": "DARK"
+		},
+		"language": {
+			"enum": ["EN"],
+			"default": "EN"
+		}
+	},
+	"required": [
+		"save_version",
+		"software_version_used",
+		"software_version_first_created",
+		"ffmpeg_path",
+		"theme",
+		"language"
+	]
+}
