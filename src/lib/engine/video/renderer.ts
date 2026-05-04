@@ -34,7 +34,11 @@ interface RendererEvent<T extends RendererEventName> {
 	payload: RendererEventPayload<T>;
 }
 
-type RendererEventName = 'object_register' | 'object_update' | 'clear_all_objects';
+type RendererEventName =
+	| 'object_register'
+	| 'object_update'
+	| 'clear_all_objects'
+	| 'clear_single_object';
 
 type IdPayload = {
 	id: UUIDv4;
@@ -46,7 +50,9 @@ type RendererEventPayload<T extends RendererEventName> = T extends 'object_regis
 		? IdPayload
 		: T extends 'clear_all_objects'
 			? null
-			: never;
+			: T extends 'clear_single_object'
+				? IdPayload
+				: never;
 
 const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
 /**
@@ -102,6 +108,11 @@ export class Renderer {
 					this.updateObject(payload.id, saveManager.save.objects[payload.id]);
 				} else if (e.name === 'clear_all_objects') {
 					this.clearAllObjects();
+				} else if (e.name === 'clear_single_object') {
+					const payload = e.payload as RendererEvent<'clear_single_object'>['payload'];
+					this.clearSingleObject(payload.id);
+				} else {
+					throw new Error(`Unknown renderer event: ${e.name}`);
 				}
 			}
 			this.events = [];
@@ -347,6 +358,17 @@ export class Renderer {
 		this.visualObjects.clear();
 		this.app.stage.removeChildren();
 		this.tickEngine.clearAllTickUnits();
+	}
+
+	private clearSingleObject(id: UUIDv4) {
+		Log.renderer.info(`Clearing object ${id} from renderer`);
+		if (!this.visualObjects.has(id)) {
+			throw new Error('Object not found in renderer');
+		}
+		const obj = this.visualObjects.get(id);
+		this.tickEngine.removeTickUnit(obj?.getTickUnit() ?? null);
+		obj?.destroy();
+		this.visualObjects.delete(id);
 	}
 
 	generateTexture(container: PIXI.Container, frame?: PIXI.Rectangle): PIXI.Texture {

@@ -274,6 +274,27 @@ class SaveManager {
 	}
 
 	/**
+	 * Remove the object from the save data, and its assets from the save package.
+	 * @param id id of the object to remove.
+	 */
+	public removeObject(id: UUIDv4) {
+		if (this.activeObject === id) {
+			this.activeObject = null;
+		}
+		delete this.saveConfig.objects[id];
+		renderer.scheduleRendererEvent({
+			name: 'clear_single_object',
+			payload: {
+				id
+			}
+		});
+
+		// TODO clear assets
+
+		this.dispatchMutationUpdate();
+	}
+
+	/**
 	 * Clears all visual objects from the renderer and re-registers every object currently in the save.
 	 *
 	 * This should be used after loading a save file or when the set of objects needs to be fully synchronized

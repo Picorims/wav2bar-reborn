@@ -109,4 +109,10 @@ export class VO_TimerStraightBar implements VisualObjectRenderer<SaveVO_TimerStr
 	getTickUnit() {
 		return this.tickUnit as TickUnit<unknown>;
 	}
+
+	destroy(): void {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+		this.graphicsContext.destroy();
+	}
 }

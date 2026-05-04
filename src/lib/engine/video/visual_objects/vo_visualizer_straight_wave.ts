@@ -202,4 +202,11 @@ export class VO_VisualizerStraightWave
 	getTickUnit() {
 		return this.tickUnit as TickUnit<unknown>;
 	}
+
+	destroy(): void {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+		this.graphics.destroy();
+		this.debugGraphics.destroy();
+	}
 }

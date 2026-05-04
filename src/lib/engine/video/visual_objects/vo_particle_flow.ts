@@ -206,6 +206,13 @@ export class VO_ParticleFlow implements VisualObjectRenderer<SaveVO_ParticleFlow
 		}
 		return 0;
 	}
+
+	destroy(): void {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+		this.graphics.destroy();
+		this.particles = [];
+	}
 }
 
 /**
