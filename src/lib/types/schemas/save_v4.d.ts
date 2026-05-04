@@ -80,7 +80,7 @@ export type VisualizerCircularBar = {
  * Schema for Wav2Bar save files, version 4. (For versions beta 0.3.0 indev to beta 0.3.4).
  *
  *  Wav2Bar - Free software for creating audio visualization (motion design) videos.
- *  Copyright (C) 2025  Picorims <picorims.contact@gmail.com>
+ *  Copyright (C) 2025-2026  Picorims <picorims.contact@gmail.com>
  *
  *
  *  This program is free software: you can redistribute it and/or modify
