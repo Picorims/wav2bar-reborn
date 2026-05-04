@@ -10,6 +10,7 @@
 	import Modal from '../Modal.svelte';
 	import { lang } from '$lib/store/settings';
 	import { Info, MessageCircleWarning, OctagonX, TriangleAlert } from 'lucide-svelte';
+	const ICON_SIZE = 64;
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -37,15 +38,15 @@
 </script>
 
 <Modal bind:dialog {title}>
-	<div class="content">
+	<div class="content {kind}">
 		{#if kind === 'danger'}
-			<MessageCircleWarning />
+			<MessageCircleWarning size={ICON_SIZE} />
 		{:else if kind === 'warning'}
-			<TriangleAlert />
+			<TriangleAlert size={ICON_SIZE} />
 		{:else if kind === 'info'}
-			<Info />
+			<Info size={ICON_SIZE} />
 		{:else if kind === 'error'}
-			<OctagonX />
+			<OctagonX size={ICON_SIZE} />
 		{/if}
 		<p>
 			{description}
@@ -62,8 +63,7 @@
 				}}>{cancelText ?? $lang.modal.text_icon.cancel}</button
 			>
 			<button
-				class="buttons confirm"
-				class:kind
+				class="buttons confirm {kind}"
 				onclick={() => {
 					onConfirm();
 					dialog?.close();
@@ -81,6 +81,27 @@
 	button.buttons {
 		@include g.button-secondary;
         margin-right: g.$spacing-s;
+		&.danger {
+			@include g.button-danger;
+		}
+	}
+	div.content {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: g.$spacing-m;
+	}
+	div.content.danger > :global(svg) {
+		stroke: g.$color-status-error;
+	}
+	div.content.error > :global(svg) {
+		stroke: g.$color-status-error;
+	}
+	div.content.warning > :global(svg) {
+		stroke: g.$color-status-warning;
+	}
+	div.content.info > :global(svg) {
+		stroke: g.$color-status-info;
 	}
 	p {
 		@include g.text;
