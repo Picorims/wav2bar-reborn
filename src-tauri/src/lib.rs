@@ -102,6 +102,7 @@ pub fn run() {
             write_save_json,
             save_to_file,
             change_object_background_image,
+            remove_assets_by_id,
             audio::bake_fft,
             audio::get_audio_dir,
             audio::get_fft_dir,
@@ -375,6 +376,24 @@ async fn change_object_background_image(app: AppHandle, path: String, id: String
         .map_err(|e| format!("Could not copy background image file: {}", e))?;
 
     Ok(file_name.to_string())
+}
+
+/// Copy the provided image file (from path) into the temp/current_save/assets/[object_id]/background directory, replacing
+/// any existing image.
+#[tauri::command]
+async fn remove_assets_by_id(app: AppHandle, id: String) -> Result<i32, String> {
+    let save_dir = get_temp_dir(&app).join("current_save");
+    let assets_dir = save_dir.join("assets").join(id);
+    if assets_dir.exists() {
+        let remove_result = std::fs::remove_dir_all(assets_dir);
+        match remove_result {
+            Ok(()) => Ok(0),
+            Err(_) => Ok(2),
+        }
+    } else {
+        Ok(1)
+    }
+    // std::fs::remove_dir_all(path)
 }
 
 /// Returns the working directory's temp directory path.

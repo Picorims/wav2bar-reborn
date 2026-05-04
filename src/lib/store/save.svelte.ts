@@ -277,7 +277,7 @@ class SaveManager {
 	 * Remove the object from the save data, and its assets from the save package.
 	 * @param id id of the object to remove.
 	 */
-	public removeObject(id: UUIDv4) {
+	public async removeObject(id: UUIDv4) {
 		if (this.activeObject === id) {
 			this.activeObject = null;
 		}
@@ -289,7 +289,15 @@ class SaveManager {
 			}
 		});
 
-		// TODO clear assets
+		const assetsDelStatus = await invoke<number>("remove_assets_by_id", {id});
+		switch (assetsDelStatus) {
+			case 1:
+				Log.save.warn("Assets dir doesn't exist, nothing to delete.");
+				break;
+			case 2:
+				Log.save.error("Failed to properly delete assets of object " + id);
+				break;
+		}
 
 		this.dispatchMutationUpdate();
 	}
