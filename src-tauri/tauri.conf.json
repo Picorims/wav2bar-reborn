@@ -31,7 +31,7 @@
     "active": true,
     "targets": "all",
     "category": "Video",
-    "copyright": "Wav2Bar - Free software for creating audio visualization (motion design) videos\nCopyright (c) 2025 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors.\n\nThis Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this\nfile, You can obtain one at https://mozilla.org/MPL/2.0/.",
+    "copyright": "Wav2Bar - Free software for creating audio visualization (motion design) videos\nCopyright (c) 2025-2026 Charly Schmidt aka Picorims<picorims.contact@gmail.com> and Wav2Bar contributors.\n\nThis Source Code Form is subject to the terms of the Mozilla Public\nLicense, v. 2.0. If a copy of the MPL was not distributed with this\nfile, You can obtain one at https://mozilla.org/MPL/2.0/.",
     "fileAssociations": [
       {
         "ext": [".w2bzip"],
