@@ -39,6 +39,7 @@ export interface VisualObjectRenderer<T extends VisualObject> {
 	 * returns null if there is no tick unit
 	 */
 	getTickUnit(): TickUnit<unknown> | null;
+	destroy(): void;
 }
 
 export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<VisualObject> {
@@ -62,6 +63,14 @@ export class PlaceHolderVisualObjectRenderer implements VisualObjectRenderer<Vis
 
 	getTickUnit(): null {
 		return null;
+	}
+
+	/**
+	 * Free resources, remove Pixi objects from their parents, and destroy them.
+	 */
+	destroy() {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy();
 	}
 }
 

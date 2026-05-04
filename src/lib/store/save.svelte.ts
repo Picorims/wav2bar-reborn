@@ -274,6 +274,35 @@ class SaveManager {
 	}
 
 	/**
+	 * Remove the object from the save data, and its assets from the save package.
+	 * @param id id of the object to remove.
+	 */
+	public async removeObject(id: UUIDv4) {
+		if (this.activeObject === id) {
+			this.activeObject = null;
+		}
+		delete this.saveConfig.objects[id];
+		renderer.scheduleRendererEvent({
+			name: 'clear_single_object',
+			payload: {
+				id
+			}
+		});
+
+		const assetsDelStatus = await invoke<number>('remove_assets_by_id', { id });
+		switch (assetsDelStatus) {
+			case 1:
+				Log.save.warn("Assets dir doesn't exist, nothing to delete.");
+				break;
+			case 2:
+				Log.save.error('Failed to properly delete assets of object ' + id);
+				break;
+		}
+
+		this.dispatchMutationUpdate();
+	}
+
+	/**
 	 * Clears all visual objects from the renderer and re-registers every object currently in the save.
 	 *
 	 * This should be used after loading a save file or when the set of objects needs to be fully synchronized

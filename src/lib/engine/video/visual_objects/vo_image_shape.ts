@@ -235,4 +235,11 @@ export class VO_ImageShape implements VisualObjectRenderer<SaveVO_ImageShape> {
 			this.caching = false;
 		}
 	}
+
+	destroy(): void {
+		this.texture?.destroy();
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+		this.graphicsContext.destroy();
+	}
 }

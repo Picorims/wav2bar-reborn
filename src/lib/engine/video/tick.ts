@@ -67,7 +67,8 @@ export class TickEngine {
 		this.tickUnits.push(tickUnit);
 	}
 
-	public removeTickUnit(tickUnit: TickUnit<unknown>) {
+	public removeTickUnit(tickUnit: TickUnit<unknown> | null) {
+		if (tickUnit === null) return;
 		this.tickUnits = this.tickUnits.filter((unit) => unit !== tickUnit);
 	}
 

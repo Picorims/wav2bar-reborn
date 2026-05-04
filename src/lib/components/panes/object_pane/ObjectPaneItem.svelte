@@ -16,6 +16,10 @@
 	} from '$lib/store/save_structure/save_latest';
 	import type { UUIDv4 } from '$lib/types/common_types';
 	import { saveManager } from '$lib/store/save.svelte';
+	import IconButton from '$lib/components/atoms/IconButton.svelte';
+	import { Trash2 } from 'lucide-svelte';
+	import TextIconModal from '$lib/components/window/modals/TextIconModal.svelte';
+	import { lang } from '$lib/store/settings';
 
 	const handleClick = () => {
 		saveManager.activeObject = uuid;
@@ -29,6 +33,8 @@
 	let data: VisualObjectInterface<VisualObject_Type> | null = $derived(
 		saveManager.save.objects[uuid]
 	);
+
+	let confirmRemoveDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
@@ -49,8 +55,28 @@
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />
 		<span class="name">{data.name}</span>
+		<IconButton
+			onClick={() => {
+				confirmRemoveDialog?.showModal();
+			}}
+		>
+			<Trash2 />
+		</IconButton>
 	{/if}
 </div>
+
+<TextIconModal
+	bind:dialog={confirmRemoveDialog}
+	mode="confirm"
+	kind="danger"
+	title={$lang.modal.confirm_remove_object.title}
+	description={$lang.modal.confirm_remove_object.description}
+	confirmText={$lang.modal.confirm_remove_object.confirm}
+	cancelText={$lang.modal.confirm_remove_object.cancel}
+	onConfirm={() => {
+		saveManager.removeObject(uuid);
+	}}
+/>
 
 <style lang="scss">
 	@use '../../../css/globals_forward.scss' as g;

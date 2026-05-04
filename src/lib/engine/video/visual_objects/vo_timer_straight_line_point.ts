@@ -96,4 +96,10 @@ export class VO_TimerStraightLinePoint
 	getTickUnit() {
 		return this.tickUnit as TickUnit<unknown>;
 	}
+
+	destroy(): void {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+		this.graphicsContext.destroy();
+	}
 }

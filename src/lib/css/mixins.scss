@@ -197,6 +197,28 @@
 	}
 }
 
+@mixin button-danger {
+	@include button;
+	@include text-strong;
+	background-color: vr.$color-status-error;
+	color: vr.$color-text;
+
+	&:hover,
+	&:focus {
+		background-color: oklch(from vr.$color-status-error calc(l + 0.1) c h);
+		@include button-shadow(oklch(from vr.$color-status-error calc(l - 0.3) c h));
+	}
+
+	&:disabled {
+		background-color: oklch(from vr.$color-status-error calc(l + 0.3) c h);
+		color: oklch(from vr.$color-status-error calc(l - 0.3) c h);
+	}
+
+	&:active {
+		@include button-shadow-accent(oklch(from vr.$color-status-error calc(l - 0.3) c h));
+	}
+}
+
 @mixin text {
 	font-family: 'Poppins', sans-serif;
 	font-weight: 400;

@@ -102,4 +102,9 @@ export class VO_Text implements VisualObjectRenderer<SaveVO_Text> {
 	getContainer(): Container {
 		return this.container;
 	}
+
+	destroy(): void {
+		this.container.parent?.removeChild(this.container);
+		this.container.destroy({ children: true });
+	}
 }
