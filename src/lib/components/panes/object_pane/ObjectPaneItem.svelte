@@ -55,9 +55,11 @@
 	{#if data}
 		<VisualObjectIcon type={data.visual_object_type} />
 		<span class="name">{data.name}</span>
-		<IconButton onClick={() => {
-			confirmRemoveDialog?.showModal();
-		}}>
+		<IconButton
+			onClick={() => {
+				confirmRemoveDialog?.showModal();
+			}}
+		>
 			<Trash2 />
 		</IconButton>
 	{/if}

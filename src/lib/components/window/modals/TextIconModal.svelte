@@ -80,7 +80,7 @@
 	}
 	button.buttons {
 		@include g.button-secondary;
-        margin-right: g.$spacing-s;
+		margin-right: g.$spacing-s;
 		&.danger {
 			@include g.button-danger;
 		}

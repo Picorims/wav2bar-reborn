@@ -289,13 +289,13 @@ class SaveManager {
 			}
 		});
 
-		const assetsDelStatus = await invoke<number>("remove_assets_by_id", {id});
+		const assetsDelStatus = await invoke<number>('remove_assets_by_id', { id });
 		switch (assetsDelStatus) {
 			case 1:
 				Log.save.warn("Assets dir doesn't exist, nothing to delete.");
 				break;
 			case 2:
-				Log.save.error("Failed to properly delete assets of object " + id);
+				Log.save.error('Failed to properly delete assets of object ' + id);
 				break;
 		}
 
