@@ -102,7 +102,11 @@
 		onChange={onLanguageChange}
 	></LabeledDropdown>
 
-	<LabeledDropdown title={lang().settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}
+	<LabeledDropdown
+		title={lang().settings.theme}
+		optionsObj={ThemeOptions}
+		onChange={onThemeChange}
+		value={settings().theme}
 	></LabeledDropdown>
 	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}>
 		{lang().settings.show_logs_dir}
