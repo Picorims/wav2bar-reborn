@@ -21,7 +21,6 @@
 	import Callout from '$lib/components/atoms/Callout.svelte';
 	import { lstat, readDir } from '@tauri-apps/plugin-fs';
 	import { join } from '@tauri-apps/api/path';
-	import { Log } from '$lib/log/logger';
 
 	interface Props {
 		dialog: HTMLDialogElement;
