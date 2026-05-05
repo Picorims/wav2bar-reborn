@@ -7,7 +7,6 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-
 import saveV4Schema from '$lib/schemas/save_v4.json';
 import type { Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
 import Ajv from 'ajv';
