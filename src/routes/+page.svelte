@@ -8,13 +8,18 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import App from '$lib/components/window/App.svelte';
-	import { settings } from '$lib/store/settings.svelte';
+	import { appState } from '$lib/store/app_state.svelte';
+	import { loadSettings, settings } from '$lib/store/settings.svelte';
 	import { onMount } from 'svelte';
 
+	$effect(() => {
+		document.body.className = `theme-${settings().theme.toLowerCase()}`;
+	})
+
 	onMount(() => {
-		settings.subscribe((value) => {
-			document.body.className = `theme-${value.theme.toLowerCase()}`;
-		});
+		loadSettings().finally(() => {
+			appState.loading = false;
+		})
 	});
 </script>
 

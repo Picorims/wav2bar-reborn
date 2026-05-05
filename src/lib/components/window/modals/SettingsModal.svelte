@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import Modal from '../Modal.svelte';
-	import { lang, settings } from '$lib/store/settings.svelte';
+	import { lang, persistSettings, settings } from '$lib/store/settings.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import {
 		LanguageOptions,
@@ -30,13 +30,13 @@
 
 	const onLanguageChange = (key: string) => {
 		// note: only works because both enum keys and values are all caps!
-		$settings.language = key as LanguagesType;
-		$settings = $settings;
+		settings().language = key as LanguagesType;
+		persistSettings();
 	};
 	const onThemeChange = (key: string) => {
 		// note: only works because both enum keys and values are all caps!
-		$settings.theme = key as ThemesType;
-		$settings = $settings;
+		settings().theme = key as ThemesType;
+		persistSettings();
 	};
 
 	async function changeDataDir() {

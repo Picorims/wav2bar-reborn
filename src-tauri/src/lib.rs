@@ -99,7 +99,10 @@ pub fn run() {
             request_new_data_dir_on_restart,
             open_save,
             read_save_json,
+            read_settings_json,
             write_save_json,
+            write_settings_json,
+            settings_json_exists,
             save_to_file,
             change_object_background_image,
             remove_assets_by_id,
@@ -319,6 +322,23 @@ async fn read_save_json(app: AppHandle) -> Result<String, String> {
     Ok(json_content)
 }
 
+/// Reads and returns the content of the settings JSON file as a string.
+#[tauri::command]
+async fn read_settings_json(app: AppHandle) -> Result<String, String> {
+    log::info!("Requested to read settings JSON file.");
+    let working_dir = get_current_working_dir(&app)?;
+    let settings_json_path = working_dir.join("user").join("settings.json");
+    if !settings_json_path.exists() {
+        let msg = "Settings JSON file does not exist.".to_string();
+        log::error!("{}", &msg);
+        return Err(msg);
+    }
+    let json_content = std::fs::read_to_string(&settings_json_path)
+        .map_err(|e| format!("Could not read settings JSON file: {}", e))?;
+    log::info!("Read settings JSON file successfully.");
+    Ok(json_content)
+}
+
 /// Writes the given JSON content string into the save JSON file.
 #[tauri::command]
 async fn write_save_json(json_content: String, app: AppHandle) -> Result<(), String> {
@@ -335,6 +355,27 @@ async fn write_save_json(json_content: String, app: AppHandle) -> Result<(), Str
         .map_err(|e| format!("Could not write save JSON file: {}", e))?;
     log::info!("Wrote save JSON file successfully.");
     Ok(())
+}
+
+/// Writes the given JSON content string into the settings JSON file.
+#[tauri::command]
+async fn write_settings_json(json_content: String, app: AppHandle) -> Result<(), String> {
+    log::info!("Requested to write settings JSON file.");
+    let working_dir = get_current_working_dir(&app)?;
+    let settings_json_dir = working_dir.join("user");
+    let settings_json_path = settings_json_dir.join("settings.json");
+    std::fs::create_dir_all(settings_json_dir);
+    std::fs::write(&settings_json_path, json_content)
+        .map_err(|e| format!("Could not write settings JSON file: {}", e))?;
+    log::info!("Wrote settings JSON file successfully.");
+    Ok(())
+}
+
+#[tauri::command]
+async fn settings_json_exists(app: AppHandle) -> Result<bool, String> {
+    let working_dir = get_current_working_dir(&app)?;
+    let settings_json_path = working_dir.join("user").join("settings.json");
+    std::fs::exists(settings_json_path).map_err(|_| format!("Failed to check for settings json file existence."))
 }
 
 /// Copy the provided image file (from path) into the temp/current_save/assets/[object_id]/background directory, replacing

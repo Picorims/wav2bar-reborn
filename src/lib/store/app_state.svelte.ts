@@ -16,7 +16,7 @@ interface AppState {
 }
 
 export const appState = $state<AppState>({
-	loading: false,
+	loading: true,
 	loadingInfo: '',
 	loadingInfoDetail: '',
 	loadingProgress: null,
