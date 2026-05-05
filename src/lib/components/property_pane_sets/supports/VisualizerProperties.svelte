@@ -14,7 +14,7 @@
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
 	import type { Supports_VisualizerProps } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import VisualizerBarProperties from './VisualizerBarProperties.svelte';
 	import VisualizerCircularProperties from './VisualizerCircularProperties.svelte';
 
@@ -69,16 +69,16 @@
 	}
 </script>
 
-<Accordion label={$lang.properties.visualizer_props.title} open>
+<Accordion label={lang().properties.visualizer_props.title} open>
 	<LabeledInputNumber
-		title={$lang.properties.visualizer_props.points_count}
+		title={lang().properties.visualizer_props.points_count}
 		min={1}
 		step={1}
 		value={data?.visualizer_points_count}
 		onChange={updateVisualizerPointsCount}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.visualizer_props.analyzer_range_min}
+		title={lang().properties.visualizer_props.analyzer_range_min}
 		min={0}
 		step={1}
 		max={1023}
@@ -86,7 +86,7 @@
 		onChange={updateAnalyzerRangeMin}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.visualizer_props.analyzer_range_max}
+		title={lang().properties.visualizer_props.analyzer_range_max}
 		min={0}
 		step={1}
 		max={1023}
@@ -94,13 +94,13 @@
 		onChange={updateAnalyzerRangeMax}
 	/>
 	<LabeledDropdown
-		title={$lang.properties.visualizer_props.smoothing_type}
-		optionsObj={$lang.properties.visualizer_props.smoothing_types}
+		title={lang().properties.visualizer_props.smoothing_type}
+		optionsObj={lang().properties.visualizer_props.smoothing_types}
 		value={data?.visualization_smoothing_type}
 		onChange={updateSmoothingType}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.visualizer_props.smoothing_factor}
+		title={lang().properties.visualizer_props.smoothing_factor}
 		min={0}
 		step={0.0001}
 		value={data?.visualization_smoothing_factor}

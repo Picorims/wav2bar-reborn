@@ -11,7 +11,7 @@
 	import LabeledInputColor from '$lib/components/atoms/LabeledInputColor.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_Color, VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	type ObjT = VisualObject & Supports_Color;
 
@@ -26,7 +26,7 @@
 </script>
 
 <LabeledInputColor
-	title={$lang.properties.color.title}
+	title={lang().properties.color.title}
 	value={data?.color}
 	defaultValue="#ffffff"
 	required

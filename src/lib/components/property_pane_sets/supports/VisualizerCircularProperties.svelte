@@ -14,7 +14,7 @@
 		Supports_VisualizerCircularProps,
 		VisualObject
 	} from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	type ObjT = VisualObject & Supports_VisualizerCircularProps;
 	let data: ObjT | null = $derived(saveManager.activeObjectData as ObjT | null);
@@ -28,7 +28,7 @@
 </script>
 
 <LabeledInputNumber
-	title={$lang.properties.visualizer_circular_props.radius}
+	title={lang().properties.visualizer_circular_props.radius}
 	min={0}
 	step={1}
 	unit="px"

@@ -11,7 +11,7 @@
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import type { PositiveInt } from '$lib/types/common_types';
 
 	function updateLayer(value: number) {
@@ -23,7 +23,7 @@
 </script>
 
 <LabeledInputNumber
-	title={$lang.properties.layer.title}
+	title={lang().properties.layer.title}
 	value={saveManager.activeObjectData?.layer}
 	onChange={updateLayer}
 />

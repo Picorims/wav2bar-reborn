@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 	import Modal from '../Modal.svelte';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import type { VisualObject_Type } from '$lib/store/save_structure/save_latest';
 
 	import shapeIcon from '$lib/icons/visual_objects/shape.svg?raw';
@@ -35,42 +35,42 @@
 
 	const entries: Record<VisualObject_Type, Entry> = {
 		shape: {
-			label: $lang.modal.add_object.visual_object_types.shape,
+			label: lang().modal.add_object.visual_object_types.shape,
 			category: 'general',
 			iconSvg: shapeIcon
 		},
 		text: {
-			label: $lang.modal.add_object.visual_object_types.text,
+			label: lang().modal.add_object.visual_object_types.text,
 			category: 'general',
 			iconSvg: textIcon
 		},
 		particle_flow: {
-			label: $lang.modal.add_object.visual_object_types.particle_flow,
+			label: lang().modal.add_object.visual_object_types.particle_flow,
 			category: 'general',
 			iconSvg: particleFlowIcon
 		},
 		timer_straight_bar: {
-			label: $lang.modal.add_object.visual_object_types.timer_straight_bar,
+			label: lang().modal.add_object.visual_object_types.timer_straight_bar,
 			category: 'timer',
 			iconSvg: timerStraightBarIcon
 		},
 		timer_straight_line_point: {
-			label: $lang.modal.add_object.visual_object_types.timer_straight_line_point,
+			label: lang().modal.add_object.visual_object_types.timer_straight_line_point,
 			category: 'timer',
 			iconSvg: timerStraightLinePointIcon
 		},
 		visualizer_straight_bar: {
-			label: $lang.modal.add_object.visual_object_types.visualizer_straight_bar,
+			label: lang().modal.add_object.visual_object_types.visualizer_straight_bar,
 			category: 'visualizer',
 			iconSvg: visualizerStraightBarIcon
 		},
 		visualizer_circular_bar: {
-			label: $lang.modal.add_object.visual_object_types.visualizer_circular_bar,
+			label: lang().modal.add_object.visual_object_types.visualizer_circular_bar,
 			category: 'visualizer',
 			iconSvg: visualizerCircularBarIcon
 		},
 		visualizer_straight_wave: {
-			label: $lang.modal.add_object.visual_object_types.visualizer_straight_wave,
+			label: lang().modal.add_object.visual_object_types.visualizer_straight_wave,
 			category: 'visualizer',
 			iconSvg: visualizerStraightWaveIcon
 		}
@@ -79,10 +79,10 @@
 	let { dialog = $bindable(), onTypeChosen }: Props = $props();
 </script>
 
-<Modal bind:dialog title={$lang.modal.add_object.title}>
+<Modal bind:dialog title={lang().modal.add_object.title}>
 	<div class="scrollable-picker">
 		{#each categories as category}
-			<h3>{$lang.modal.add_object.categories[category]}</h3>
+			<h3>{lang().modal.add_object.categories[category]}</h3>
 			{@render typeButtons(category)}
 		{/each}
 	</div>
@@ -91,7 +91,7 @@
 			class="close"
 			onclick={() => {
 				dialog?.close();
-			}}>{$lang.modal.add_object.close}</button
+			}}>{lang().modal.add_object.close}</button
 		>
 	{/snippet}
 </Modal>
@@ -100,7 +100,7 @@
 	{#each Object.entries(entries).filter(([_, e]) => e.category === category) as [type, entry]}
 		<button
 			class="type-button"
-			aria-label={$lang.modal.add_object.categories[category] + ': ' + entry.label}
+			aria-label={lang().modal.add_object.categories[category] + ': ' + entry.label}
 			onclick={() => {
 				dialog?.close();
 				onTypeChosen(type as VisualObject_Type /*type is lost after calling entries()*/);

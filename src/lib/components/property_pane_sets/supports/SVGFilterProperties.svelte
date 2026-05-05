@@ -11,7 +11,7 @@
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	// see regex negative lookahead for an explanation of script tag exclusion
 	const ONE_FILTER_REGEX = new RegExp(/^<filter>((?!<script>).)*<\/filter>$/g);
@@ -28,7 +28,7 @@
 </script>
 
 <LabeledInputText
-	title={$lang.properties.svg_filter.title}
+	title={lang().properties.svg_filter.title}
 	value={saveManager.activeObjectData?.svg_filter}
 	onChange={updateSVGFilters}
 	pattern={SVG_FILTER_LIST_REGEX}

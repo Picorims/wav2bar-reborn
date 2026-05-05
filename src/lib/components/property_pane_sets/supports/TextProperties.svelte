@@ -18,7 +18,7 @@
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_TextProps, VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { ArrowUpToLine, Bold, Italic, Strikethrough, Underline } from 'lucide-svelte';
 
 	type ObjT = VisualObject & Supports_TextProps;
@@ -146,23 +146,23 @@
 	<Strikethrough />
 {/snippet}
 
-<Accordion label={$lang.properties.text.title} open>
+<Accordion label={lang().properties.text.title} open>
 	<LabeledDropdown
-		title={$lang.properties.text.type}
-		optionsObj={$lang.properties.text.text_types}
+		title={lang().properties.text.type}
+		optionsObj={lang().properties.text.text_types}
 		value={data?.text_type}
 		onChange={updateTextType}
 	/>
 	<LabeledInputText
-		title={$lang.properties.text.content}
+		title={lang().properties.text.content}
 		value={data?.text_content}
 		defaultValue=""
-		placeholder={$lang.properties.text.content_placeholder}
+		placeholder={lang().properties.text.content_placeholder}
 		onChange={updateTextContent}
 		required={false}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.text.font_size}
+		title={lang().properties.text.font_size}
 		unit={'px'}
 		min={1}
 		value={data?.font_size}
@@ -171,35 +171,35 @@
 	<ButtonsGroup>
 		<ButtonsRow columns={5}>
 			<Button
-				title={$lang.properties.text.text_decoration.italic}
+				title={lang().properties.text.text_decoration.italic}
 				togglable
 				toggled={data?.text_decoration.italic}
 				onToggle={updateItalic}
 				iconRight={italic}
 			/>
 			<Button
-				title={$lang.properties.text.text_decoration.bold}
+				title={lang().properties.text.text_decoration.bold}
 				togglable
 				toggled={data?.text_decoration.bold}
 				onToggle={updateBold}
 				iconRight={bold}
 			/>
 			<Button
-				title={$lang.properties.text.text_decoration.underline}
+				title={lang().properties.text.text_decoration.underline}
 				togglable
 				toggled={data?.text_decoration.underline}
 				onToggle={updateUnderline}
 				iconRight={underline}
 			/>
 			<Button
-				title={$lang.properties.text.text_decoration.overline}
+				title={lang().properties.text.text_decoration.overline}
 				togglable
 				toggled={data?.text_decoration.overline}
 				onToggle={updateOverline}
 				iconRight={overline}
 			/>
 			<Button
-				title={$lang.properties.text.text_decoration.line_through}
+				title={lang().properties.text.text_decoration.line_through}
 				togglable
 				toggled={data?.text_decoration.line_through}
 				onToggle={updateLineThrough}
@@ -208,32 +208,32 @@
 		</ButtonsRow>
 	</ButtonsGroup>
 	<LabeledDropdown
-		title={$lang.properties.text.text_align}
-		optionsObj={$lang.properties.text.text_align_types}
+		title={lang().properties.text.text_align}
+		optionsObj={lang().properties.text.text_align_types}
 		value={data?.text_align.horizontal}
 		onChange={updateTextAlign}
 	/>
-	<Accordion label={$lang.properties.text.text_shadow.title} open={false}>
+	<Accordion label={lang().properties.text.text_shadow.title} open={false}>
 		<LabeledInputNumber
-			title={$lang.properties.text.text_shadow.offset_x}
+			title={lang().properties.text.text_shadow.offset_x}
 			unit={'px'}
 			value={data?.text_shadows[0]?.offset.x}
 			onChange={updateTextShadowOffsetX}
 		/>
 		<LabeledInputNumber
-			title={$lang.properties.text.text_shadow.offset_y}
+			title={lang().properties.text.text_shadow.offset_y}
 			unit={'px'}
 			value={data?.text_shadows[0]?.offset.y}
 			onChange={updateTextShadowOffsetY}
 		/>
 		<LabeledInputNumber
-			title={$lang.properties.text.text_shadow.blur_radius}
+			title={lang().properties.text.text_shadow.blur_radius}
 			unit={'px'}
 			value={data?.text_shadows[0]?.blur_radius}
 			onChange={updateTextShadowBlurRadius}
 		/>
 		<LabeledInputColor
-			title={$lang.properties.text.text_shadow.color}
+			title={lang().properties.text.text_shadow.color}
 			value={data?.text_shadows[0]?.color}
 			onChange={updateTextShadowColor}
 		/>

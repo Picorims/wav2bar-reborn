@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import Modal from '../Modal.svelte';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { Info, MessageCircleWarning, OctagonX, TriangleAlert } from 'lucide-svelte';
 	const ICON_SIZE = 64;
 
@@ -60,14 +60,14 @@
 				onclick={() => {
 					onCancel();
 					dialog?.close();
-				}}>{cancelText ?? $lang.modal.text_icon.cancel}</button
+				}}>{cancelText ?? lang().modal.text_icon.cancel}</button
 			>
 			<button
 				class="buttons confirm {kind}"
 				onclick={() => {
 					onConfirm();
 					dialog?.close();
-				}}>{confirmText ?? $lang.modal.text_icon.confirm}</button
+				}}>{confirmText ?? lang().modal.text_icon.confirm}</button
 			>
 		{/if}
 	{/snippet}

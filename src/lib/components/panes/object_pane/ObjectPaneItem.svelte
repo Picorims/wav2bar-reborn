@@ -19,7 +19,7 @@
 	import IconButton from '$lib/components/atoms/IconButton.svelte';
 	import { Trash2 } from 'lucide-svelte';
 	import TextIconModal from '$lib/components/window/modals/TextIconModal.svelte';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	const handleClick = () => {
 		saveManager.activeObject = uuid;
@@ -69,10 +69,10 @@
 	bind:dialog={confirmRemoveDialog}
 	mode="confirm"
 	kind="danger"
-	title={$lang.modal.confirm_remove_object.title}
-	description={$lang.modal.confirm_remove_object.description}
-	confirmText={$lang.modal.confirm_remove_object.confirm}
-	cancelText={$lang.modal.confirm_remove_object.cancel}
+	title={lang().modal.confirm_remove_object.title}
+	description={lang().modal.confirm_remove_object.description}
+	confirmText={lang().modal.confirm_remove_object.confirm}
+	cancelText={lang().modal.confirm_remove_object.cancel}
 	onConfirm={() => {
 		saveManager.removeObject(uuid);
 	}}
