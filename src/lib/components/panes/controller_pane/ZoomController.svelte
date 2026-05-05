@@ -2,7 +2,7 @@
 	import IconButton from '$lib/components/atoms/IconButton.svelte';
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { appState, setZoomLevelPercent } from '$lib/store/app_state.svelte';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { ScanSearch, ZoomIn, ZoomOut } from 'lucide-svelte';
 
 	/*
@@ -31,17 +31,17 @@
 		min={1}
 		max={10000}
 		step={1}
-		title={$lang.controls_pane.zoom.input_title}
+		title={lang().controls_pane.zoom.input_title}
 		value={appState.zoomLevelPercent}
 		onChange={(value) => setZoomLevelPercent(value)}
 	/>
-	<IconButton onClick={zoomOut} alt={$lang.controls_pane.zoom.zoom_out}>
+	<IconButton onClick={zoomOut} alt={lang().controls_pane.zoom.zoom_out}>
 		<ZoomOut />
 	</IconButton>
-	<IconButton onClick={zoomIn} alt={$lang.controls_pane.zoom.zoom_in}>
+	<IconButton onClick={zoomIn} alt={lang().controls_pane.zoom.zoom_in}>
 		<ZoomIn />
 	</IconButton>
-	<IconButton onClick={resetZoom} alt={$lang.controls_pane.zoom.reset_zoom}>
+	<IconButton onClick={resetZoom} alt={lang().controls_pane.zoom.reset_zoom}>
 		<ScanSearch />
 	</IconButton>
 </div>

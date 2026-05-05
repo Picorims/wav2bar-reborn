@@ -15,7 +15,7 @@
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import type { PositiveInt } from '$lib/types/common_types';
 	import { Move, MoveHorizontal, MoveVertical } from 'lucide-svelte';
 
@@ -58,16 +58,16 @@
 	<Move />
 {/snippet}
 
-<Accordion label={$lang.properties.size.title} open>
+<Accordion label={lang().properties.size.title} open>
 	<LabeledInputNumber
-		title={$lang.properties.size.width}
+		title={lang().properties.size.width}
 		unit={'px'}
 		min={0}
 		value={saveManager.activeObjectData?.size.width}
 		onChange={updateWidth}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.size.height}
+		title={lang().properties.size.height}
 		unit={'px'}
 		min={0}
 		value={saveManager.activeObjectData?.size.height}
@@ -76,16 +76,16 @@
 	<ButtonsGroup>
 		<ButtonsRow columns={3}>
 			<Button
-				title={$lang.properties.size.buttons.full_width}
+				title={lang().properties.size.buttons.full_width}
 				onClick={fullWidth}
 				iconRight={moveHorizontal}
 			/>
 			<Button
-				title={$lang.properties.size.buttons.full_height}
+				title={lang().properties.size.buttons.full_height}
 				onClick={fullHeight}
 				iconRight={moveVertical}
 			/>
-			<Button title={$lang.properties.size.buttons.full_size} onClick={fullSize} iconRight={move} />
+			<Button title={lang().properties.size.buttons.full_size} onClick={fullSize} iconRight={move} />
 		</ButtonsRow>
 	</ButtonsGroup>
 </Accordion>

@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import App from '$lib/components/window/App.svelte';
-	import { settings } from '$lib/store/settings';
+	import { settings } from '$lib/store/settings.svelte';
 	import { onMount } from 'svelte';
 
 	onMount(() => {

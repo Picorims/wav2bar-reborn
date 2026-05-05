@@ -20,7 +20,7 @@
 		Supports_BoxShadow,
 		VisualObject
 	} from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { PlusCircle, Trash2 } from 'lucide-svelte';
 
 	type ObjT = VisualObject & Supports_BoxShadow;
@@ -97,10 +97,10 @@
 	<Trash2 />
 {/snippet}
 
-<Accordion label={$lang.properties.box_shadow.title}>
+<Accordion label={lang().properties.box_shadow.title}>
 	<ButtonsRow>
 		<Button
-			title={$lang.properties.box_shadow.add}
+			title={lang().properties.box_shadow.add}
 			onClick={() => addBoxShadow()}
 			iconRight={plusCircle}
 		/>
@@ -113,46 +113,46 @@
 			<LabeledInputNumber
 				defaultValue={shadow.offset.x}
 				step={1}
-				title={$lang.properties.box_shadow.offset_x + ` (${index + 1})`}
+				title={lang().properties.box_shadow.offset_x + ` (${index + 1})`}
 				value={shadow.offset.x}
 				onChange={(v) => updateBoxShadowOffsetX(index, v)}
 			/>
 			<LabeledInputNumber
 				defaultValue={shadow.offset.y}
 				step={1}
-				title={$lang.properties.box_shadow.offset_y + ` (${index + 1})`}
+				title={lang().properties.box_shadow.offset_y + ` (${index + 1})`}
 				value={shadow.offset.y}
 				onChange={(v) => updateBoxShadowOffsetY(index, v)}
 			/>
 			<LabeledInputNumber
 				defaultValue={shadow.blur_radius}
 				step={1}
-				title={$lang.properties.box_shadow.blur_radius + ` (${index + 1})`}
+				title={lang().properties.box_shadow.blur_radius + ` (${index + 1})`}
 				value={shadow.blur_radius}
 				onChange={(v) => updateBoxShadowBlurRadius(index, v)}
 			/>
 			<LabeledInputNumber
 				defaultValue={shadow.spread_radius}
 				step={1}
-				title={$lang.properties.box_shadow.spread_radius + ` (${index + 1})`}
+				title={lang().properties.box_shadow.spread_radius + ` (${index + 1})`}
 				value={shadow.spread_radius}
 				onChange={(v) => updateBoxShadowSpreadRadius(index, v)}
 			/>
 			<LabeledInputColor
 				defaultValue={shadow.color}
-				title={$lang.properties.box_shadow.color + ` (${index + 1})`}
+				title={lang().properties.box_shadow.color + ` (${index + 1})`}
 				value={shadow.color}
 				onChange={(v) => updateBoxShadowColor(index, v)}
 			/>
 			<LabeledDropdown
-				optionsObj={$lang.properties.box_shadow.modes}
-				title={$lang.properties.box_shadow.mode + ` (${index + 1})`}
+				optionsObj={lang().properties.box_shadow.modes}
+				title={lang().properties.box_shadow.mode + ` (${index + 1})`}
 				value={shadow.inset ? 'inset' : 'outset'}
 				onChange={(v) => updateBoxShadowInset(index, v === 'inset')}
 			/>
 			<ButtonsRow>
 				<Button
-					title={$lang.properties.box_shadow.remove + ` (${index + 1})`}
+					title={lang().properties.box_shadow.remove + ` (${index + 1})`}
 					onClick={() => removeBoxShadow(index)}
 					iconRight={trash2}
 				/>

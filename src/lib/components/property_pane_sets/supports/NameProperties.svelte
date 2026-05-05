@@ -2,7 +2,7 @@
 	import LabeledInputText from '$lib/components/atoms/LabeledInputText.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	/*
 	Wav2Bar - Free software for creating audio visualization (motion design) videos
@@ -22,7 +22,7 @@
 </script>
 
 <LabeledInputText
-	title={$lang.properties.name.title}
+	title={lang().properties.name.title}
 	value={saveManager.activeObjectData?.name}
 	onChange={updateName}
 />

@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import Modal from '../Modal.svelte';
-	import { lang, settings } from '$lib/store/settings';
+	import { lang, settings } from '$lib/store/settings.svelte';
 	import LabeledDropdown from '$lib/components/atoms/LabeledDropdown.svelte';
 	import {
 		LanguageOptions,
@@ -42,7 +42,7 @@
 	async function changeDataDir() {
 		try {
 			const path = await open({
-				title: $lang.settings.change_data_dir,
+				title: lang().settings.change_data_dir,
 				multiple: false,
 				directory: true,
 				recursive: false
@@ -54,12 +54,12 @@
 
 			const stat = await lstat(path);
 			if (stat.isSymlink) {
-				alert($lang.settings.data_dir_symlink_error);
+				alert(lang().settings.data_dir_symlink_error);
 				return;
 			}
 			const entries = await readDir(path);
 			if (entries.length > 0) {
-				alert($lang.settings.data_dir_not_empty_error);
+				alert(lang().settings.data_dir_not_empty_error);
 				return;
 			}
 
@@ -68,7 +68,7 @@
 		} catch (error) {
 			console.error('Error changing data directory:', error);
 			alert(
-				`${$lang.settings.change_data_dir_error}\n\n${error instanceof Error ? error.message : String(error)}`
+				`${lang().settings.change_data_dir_error}\n\n${error instanceof Error ? error.message : String(error)}`
 			);
 		}
 	}
@@ -76,36 +76,36 @@
 	let currentDataDir = $state<Promise<string> | null>(invoke('get_current_data_dir'));
 </script>
 
-<Modal bind:dialog title={$lang.settings.title}>
-	<p class="label">{$lang.settings.current_data_dir}</p>
+<Modal bind:dialog title={lang().settings.title}>
+	<p class="label">{lang().settings.current_data_dir}</p>
 	<p>
 		{#await currentDataDir}
-			{$lang.settings.current_data_dir_loading}
+			{lang().settings.current_data_dir_loading}
 		{:then dir}
 			{dir}
 		{:catch}
-			{$lang.settings.current_data_dir_error}
+			{lang().settings.current_data_dir_error}
 		{/await}
 	</p>
 
 	<button class="change-data-dir-btn" onclick={changeDataDir}>
-		{$lang.settings.change_data_dir}
+		{lang().settings.change_data_dir}
 	</button>
 
 	<Callout type="warning">
-		{$lang.settings.data_dir_change_info}
+		{lang().settings.data_dir_change_info}
 	</Callout>
 
 	<LabeledDropdown
-		title={$lang.settings.language}
+		title={lang().settings.language}
 		optionsObj={LanguageOptions}
 		onChange={onLanguageChange}
 	></LabeledDropdown>
 
-	<LabeledDropdown title={$lang.settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}
+	<LabeledDropdown title={lang().settings.theme} optionsObj={ThemeOptions} onChange={onThemeChange}
 	></LabeledDropdown>
 	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}>
-		{$lang.settings.show_logs_dir}
+		{lang().settings.show_logs_dir}
 	</button>
 	<p>
 		{#await logsDir}
@@ -122,7 +122,7 @@
 			class="close"
 			onclick={() => {
 				dialog?.close();
-			}}>{$lang.settings.close}</button
+			}}>{lang().settings.close}</button
 		>
 	{/snippet}
 </Modal>

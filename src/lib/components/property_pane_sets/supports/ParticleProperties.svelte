@@ -13,7 +13,7 @@
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_ParticleProps, VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 
 	type ObjT = VisualObject & Supports_ParticleProps;
 
@@ -77,36 +77,36 @@
 	}
 </script>
 
-<Accordion label={$lang.properties.particle_flow_props.title} open>
+<Accordion label={lang().properties.particle_flow_props.title} open>
 	<LabeledInputNumber
-		title={$lang.properties.particle_flow_props.radius_min}
+		title={lang().properties.particle_flow_props.radius_min}
 		unit={'px'}
 		min={1}
 		value={data?.particle_radius_range[0]}
 		onChange={updateRadiusMin}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.particle_flow_props.radius_max}
+		title={lang().properties.particle_flow_props.radius_max}
 		unit={'px'}
 		min={1}
 		value={data?.particle_radius_range[1]}
 		onChange={updateRadiusMax}
 	/>
 	<LabeledDropdown
-		title={$lang.properties.particle_flow_props.flow_type}
-		optionsObj={$lang.properties.particle_flow_props.flow_types}
+		title={lang().properties.particle_flow_props.flow_type}
+		optionsObj={lang().properties.particle_flow_props.flow_types}
 		value={data?.flow_type}
 		onChange={updateFlowType}
 	/>
 	{#if data?.flow_type === 'radial'}
 		<LabeledInputNumber
-			title={$lang.properties.particle_flow_props.center_x}
+			title={lang().properties.particle_flow_props.center_x}
 			unit={'px'}
 			value={data?.flow_center[0]}
 			onChange={updateFlowCenterX}
 		/>
 		<LabeledInputNumber
-			title={$lang.properties.particle_flow_props.center_y}
+			title={lang().properties.particle_flow_props.center_y}
 			unit={'px'}
 			value={data?.flow_center[1]}
 			onChange={updateFlowCenterY}
@@ -114,7 +114,7 @@
 	{/if}
 	{#if data?.flow_type === 'directional'}
 		<LabeledInputNumber
-			title={$lang.properties.particle_flow_props.direction}
+			title={lang().properties.particle_flow_props.direction}
 			unit={'deg'}
 			value={data?.flow_direction}
 			min={0}
@@ -123,7 +123,7 @@
 		/>
 	{/if}
 	<LabeledInputNumber
-		title={$lang.properties.particle_flow_props.spawn_probability}
+		title={lang().properties.particle_flow_props.spawn_probability}
 		value={data?.particle_spawn_probability}
 		min={0}
 		max={1}
@@ -131,7 +131,7 @@
 		onChange={updateSpawnProbability}
 	/>
 	<LabeledInputNumber
-		title={$lang.properties.particle_flow_props.spawn_tests}
+		title={lang().properties.particle_flow_props.spawn_tests}
 		value={data?.particle_spawn_tests}
 		min={1}
 		onChange={updateSpawnTests}

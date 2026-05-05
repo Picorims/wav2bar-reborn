@@ -7,7 +7,6 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { writable } from 'svelte/store';
 import lang_EN from '$lib/lang/en.json';
 import { defaultSettingsV2 } from './settings_structure/settings_v2';
 import { LanguageOptions } from './settings_structure/settings_enums';
@@ -19,10 +18,17 @@ export const languages = {
 	[LanguageOptions.ENGLISH]: lang_EN
 };
 
-export const lang = writable<Language>(languages[LanguageOptions.ENGLISH]);
 
-export const settings = writable<Wav2BarSettingsV2>({ ...defaultSettingsV2 });
+export const settings = $state<Wav2BarSettingsV2>({ ...defaultSettingsV2 });
+const langDerived = $derived<Language>(languages[settings.language]);
 
-settings.subscribe((value) => {
-	lang.set(languages[value.language]);
-});
+export function lang() {
+	return langDerived;
+}
+
+/**
+ * 
+ */
+export function persistSettings() {
+	// TODO
+}

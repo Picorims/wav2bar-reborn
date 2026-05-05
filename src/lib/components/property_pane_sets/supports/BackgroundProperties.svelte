@@ -14,7 +14,7 @@
 	import LabeledInputNumber from '$lib/components/atoms/LabeledInputNumber.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_Background, VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import { Image, PlusCircle, Trash2 } from 'lucide-svelte';
 	import ButtonsRow from '$lib/components/atoms/buttons_group/ButtonsRow.svelte';
@@ -223,21 +223,21 @@
 	<Image />
 {/snippet}
 
-<Accordion label={$lang.properties.background.title} open>
+<Accordion label={lang().properties.background.title} open>
 	<LabeledDropdown
-		title={$lang.properties.background.type.title}
+		title={lang().properties.background.type.title}
 		value={data?.background.type}
 		onChange={updateBackgroundType}
 		optionsObj={{
-			color: $lang.properties.background.type.color,
-			gradient: $lang.properties.background.type.gradient,
-			image: $lang.properties.background.type.image
+			color: lang().properties.background.type.color,
+			gradient: lang().properties.background.type.gradient,
+			image: lang().properties.background.type.image
 		}}
 	/>
 	{#if data?.background.type === 'color'}
 		<LabeledInputColor
 			defaultValue={'#ffffff'}
-			title={$lang.properties.background.color}
+			title={lang().properties.background.color}
 			value={data?.background.last_color}
 			onChange={updateColor}
 			required
@@ -245,43 +245,43 @@
 	{/if}
 	{#if data?.background.type === 'gradient'}
 		<LabeledDropdown
-			optionsObj={$lang.properties.background.gradient.types}
-			title={$lang.properties.background.gradient.type}
+			optionsObj={lang().properties.background.gradient.types}
+			title={lang().properties.background.gradient.type}
 			value={data?.background.last_gradient.type}
 			onChange={updateGradientType}
 		/>
 		<LabeledInputNumber
 			defaultValue={0}
 			step={0.01}
-			title={$lang.properties.background.gradient.start_point.x}
+			title={lang().properties.background.gradient.start_point.x}
 			onChange={updateGradientStartPointX}
 			value={data?.background.last_gradient.start_point?.x}
 		/>
 		<LabeledInputNumber
 			defaultValue={0}
 			step={0.01}
-			title={$lang.properties.background.gradient.start_point.y}
+			title={lang().properties.background.gradient.start_point.y}
 			onChange={updateGradientStartPointY}
 			value={data?.background.last_gradient.start_point?.y}
 		/>
 		<LabeledInputNumber
 			defaultValue={0}
 			step={0.01}
-			title={$lang.properties.background.gradient.end_point.x}
+			title={lang().properties.background.gradient.end_point.x}
 			onChange={updateGradientEndPointX}
 			value={data?.background.last_gradient.end_point?.x}
 		/>
 		<LabeledInputNumber
 			defaultValue={0}
 			step={0.01}
-			title={$lang.properties.background.gradient.end_point.y}
+			title={lang().properties.background.gradient.end_point.y}
 			onChange={updateGradientEndPointY}
 			value={data?.background.last_gradient.end_point?.y}
 		/>
-		<Accordion label={$lang.properties.background.gradient.color_stops} open>
+		<Accordion label={lang().properties.background.gradient.color_stops} open>
 			<ButtonsRow>
 				<Button
-					title={$lang.properties.background.gradient.add_color_stop}
+					title={lang().properties.background.gradient.add_color_stop}
 					onClick={() => addGradientColorStop()}
 					iconRight={plusCircle}
 				/>
@@ -291,19 +291,19 @@
 				<LabeledInputNumber
 					defaultValue={stop.offset}
 					step={0.01}
-					title={$lang.properties.background.gradient.color_stop_offset + ` (${index + 1})`}
+					title={lang().properties.background.gradient.color_stop_offset + ` (${index + 1})`}
 					value={stop.offset}
 					onChange={(v) => updateGradientColorStopOffset(index, v)}
 				/>
 				<LabeledInputColor
 					defaultValue={stop.color}
-					title={$lang.properties.background.gradient.color_stop_color + ` (${index + 1})`}
+					title={lang().properties.background.gradient.color_stop_color + ` (${index + 1})`}
 					value={stop.color}
 					onChange={(v) => updateGradientColorStopColor(index, v)}
 				/>
 				<ButtonsRow>
 					<Button
-						title={$lang.properties.background.gradient.remove_color_stop + ` (${index + 1})`}
+						title={lang().properties.background.gradient.remove_color_stop + ` (${index + 1})`}
 						onClick={() => removeGradientColorStop(index)}
 						disabled={(data?.background.last_gradient.color_stops.length ?? 0) <= 2}
 						iconRight={trash2}
@@ -316,7 +316,7 @@
 	{#if data?.background.type === 'image'}
 		<ButtonsRow>
 			<Button
-				title={$lang.properties.background.pick_image}
+				title={lang().properties.background.pick_image}
 				onClick={changeBackgroundImage}
 				iconRight={image}
 			/>
@@ -326,12 +326,12 @@
 			<figcaption>
 				{data.background.last_image !== ''
 					? data.background.last_image
-					: $lang.properties.background.no_image}
+					: lang().properties.background.no_image}
 			</figcaption>
 		</figure>
 		<LabeledDropdown
-			optionsObj={$lang.properties.background.size_types}
-			title={$lang.properties.background.size}
+			optionsObj={lang().properties.background.size_types}
+			title={lang().properties.background.size}
 			value={data?.background.size.type}
 			onChange={(v) => {
 				updateBackgroundSizeType(v as Supports_Background['background']['size']['type']);
@@ -362,8 +362,8 @@
 			{/if}
 		</div>
 		<LabeledDropdown
-			optionsObj={$lang.properties.background.repeat_types}
-			title={$lang.properties.background.repeat}
+			optionsObj={lang().properties.background.repeat_types}
+			title={lang().properties.background.repeat}
 			value={data?.background.repeat}
 			onChange={updateBackgroundRepeat}
 		/>

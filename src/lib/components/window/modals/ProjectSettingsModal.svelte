@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import Modal from '../Modal.svelte';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { listen } from '@tauri-apps/api/event';
@@ -35,7 +35,7 @@
 	let audioFile = $state<string>(getAudioFileDisplay(saveManager.save.audio_filename));
 
 	function getAudioFileDisplay(name: string) {
-		return name.length === 0 ? $lang.modal.project_settings.no_audio_selected : name;
+		return name.length === 0 ? lang().modal.project_settings.no_audio_selected : name;
 	}
 
 	function onOpen() {
@@ -54,26 +54,26 @@
 
 	async function pickAudio() {
 		const path = await open({
-			title: $lang.modal.project_settings.audio_picker.title,
+			title: lang().modal.project_settings.audio_picker.title,
 			multiple: false,
 			directory: false,
 			recursive: false,
 			filters: [
 				{
 					extensions: ['mp3', 'wav', 'ogg'],
-					name: $lang.modal.project_settings.audio_picker.filters.all_supported_audio_files
+					name: lang().modal.project_settings.audio_picker.filters.all_supported_audio_files
 				},
 				{
 					extensions: ['mp3'],
-					name: $lang.modal.project_settings.audio_picker.filters.mp3_audio_file
+					name: lang().modal.project_settings.audio_picker.filters.mp3_audio_file
 				},
 				{
 					extensions: ['wav'],
-					name: $lang.modal.project_settings.audio_picker.filters.wav_audio_file
+					name: lang().modal.project_settings.audio_picker.filters.wav_audio_file
 				},
 				{
 					extensions: ['ogg'],
-					name: $lang.modal.project_settings.audio_picker.filters.ogg_vorbis_audio_file
+					name: lang().modal.project_settings.audio_picker.filters.ogg_vorbis_audio_file
 				}
 			]
 		});
@@ -111,7 +111,7 @@
 					);
 					saveManager.save.audio_filename = '';
 					audioFile = getAudioFileDisplay('');
-					alert($lang.modal.project_settings.audio_restore_failed);
+					alert(lang().modal.project_settings.audio_restore_failed);
 				}
 			}
 		}
@@ -141,10 +141,10 @@
 	});
 </script>
 
-<Modal bind:dialog title={$lang.modal.project_settings.title} {onOpen}>
+<Modal bind:dialog title={lang().modal.project_settings.title} {onOpen}>
 	<LabelInputNumber
 		defaultValue={saveManager.fps}
-		title={$lang.modal.project_settings.fps}
+		title={lang().modal.project_settings.fps}
 		value={fps}
 		onChange={(val: number) => {
 			fps = val;
@@ -155,7 +155,7 @@
 	/>
 	<LabelInputNumber
 		defaultValue={saveManager.resolution.width}
-		title={$lang.modal.project_settings.width}
+		title={lang().modal.project_settings.width}
 		value={width}
 		onChange={(val: number) => {
 			width = val;
@@ -167,7 +167,7 @@
 	/>
 	<LabelInputNumber
 		defaultValue={saveManager.resolution.height}
-		title={$lang.modal.project_settings.height}
+		title={lang().modal.project_settings.height}
 		value={height}
 		onChange={(val: number) => {
 			height = val;
@@ -177,9 +177,9 @@
 		step={1}
 		unit={'px'}
 	/>
-	<button class="audio-btn" onclick={pickAudio}>{$lang.modal.project_settings.pick_audio}</button>
+	<button class="audio-btn" onclick={pickAudio}>{lang().modal.project_settings.pick_audio}</button>
 	<p>{audioFile}</p>
-	<button class="fft-btn" onclick={bakeFFT}>{$lang.modal.project_settings.bake_fft}</button>
+	<button class="fft-btn" onclick={bakeFFT}>{lang().modal.project_settings.bake_fft}</button>
 	<p>{progressText}</p>
 
 	{#snippet buttons()}
@@ -187,7 +187,7 @@
 			class="close"
 			onclick={() => {
 				dialog?.close();
-			}}>{$lang.modal.project_settings.close}</button
+			}}>{lang().modal.project_settings.close}</button
 		>
 	{/snippet}
 </Modal>

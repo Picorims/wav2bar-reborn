@@ -8,7 +8,7 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
 	import IconButton from '../atoms/IconButton.svelte';
 	import { type VisualObject_Type } from '$lib/store/save_structure/save_latest';
@@ -36,7 +36,7 @@
 
 <div class="card">
 	<div class="header">
-		<span class="title">{$lang.object_pane.title}</span>
+		<span class="title">{lang().object_pane.title}</span>
 		<div class="header-buttons">
 			<IconButton onClick={() => alert('coming soon!')}>
 				<Undo />

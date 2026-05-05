@@ -14,7 +14,7 @@
 
 	import { saveManager } from '$lib/store/save.svelte';
 	import type { Supports_BorderRadius, VisualObject } from '$lib/store/save_structure/save_latest';
-	import { lang } from '$lib/store/settings';
+	import { lang } from '$lib/store/settings.svelte';
 	import { Link2, Link2Off } from 'lucide-svelte';
 
 	type ObjT = VisualObject & Supports_BorderRadius;
@@ -238,13 +238,13 @@
 	<Link2Off />
 {/snippet}
 
-<Accordion label={$lang.properties.border_radius.title}>
+<Accordion label={lang().properties.border_radius.title}>
 	<div class="grid">
 		<!--row 1-->
 		<span></span>
 		<span></span>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[1].unit}
 			onFocusChange={(focused) => {
@@ -255,7 +255,7 @@
 		/>
 		<span></span>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[2].unit}
 			onFocusChange={(focused) => {
@@ -298,7 +298,7 @@
 
 		<!--row 3-->
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[0].unit}
 			onFocusChange={(focused) => {
@@ -341,7 +341,7 @@
 			}}
 		/>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[3].unit}
 			onFocusChange={(focused) => {
@@ -370,7 +370,7 @@
 
 		<!--row 5-->
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[7].unit}
 			onFocusChange={(focused) => {
@@ -413,7 +413,7 @@
 			}}
 		/>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[4].unit}
 			onFocusChange={(focused) => {
@@ -458,7 +458,7 @@
 		<span></span>
 		<span></span>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[6].unit}
 			onFocusChange={(focused) => {
@@ -470,7 +470,7 @@
 		/>
 		<span></span>
 		<LabeledDropdown
-			optionsObj={$lang.properties.border_radius.units}
+			optionsObj={lang().properties.border_radius.units}
 			noMargin
 			value={data?.border_radius[5].unit}
 			onFocusChange={(focused) => {
