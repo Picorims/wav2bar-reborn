@@ -35,30 +35,34 @@ export function settings() {
  * in the user data directory.
  */
 export async function persistSettings() {
-	Log.default.info("Persisting settings to file.");
+	Log.default.info('Persisting settings to file.');
 	const jsonStr = JSON.stringify(settingsState);
 	await invoke<void>('write_settings_json', { jsonContent: jsonStr });
 }
 
 export async function loadSettings() {
-	if (!await invoke("settings_json_exists")) {
+	if (!(await invoke('settings_json_exists'))) {
 		// save default settings
-		Log.default.info("No settings file found, writing default settings to disk.");
+		Log.default.info('No settings file found, writing default settings to disk.');
 		persistSettings();
 	} else {
 		try {
-			Log.default.info("Loading settings...");
-			const json = await invoke<string>("read_settings_json");
+			Log.default.info('Loading settings...');
+			const json = await invoke<string>('read_settings_json');
 			const parsedJson = JSON.parse(json);
 			const valid = validateSettingsV2(parsedJson);
 			if (!valid) {
-				throw new Error("Invalid settings JSON:\n" + validateSettingsV2.errors?.map(v => `${v}\n`));
+				throw new Error(
+					'Invalid settings JSON:\n' + validateSettingsV2.errors?.map((v) => `${v}\n`)
+				);
 			} else {
 				settingsState = parsedJson as Wav2BarSettingsV2;
-				Log.default.info("Settings loaded.");
+				Log.default.info('Settings loaded.');
 			}
 		} catch (e) {
-			Log.default.error(`Failed to load settings (default settings will apply instead): ${typeof e === "string" ? e : (e as Error).message}`);
+			Log.default.error(
+				`Failed to load settings (default settings will apply instead): ${typeof e === 'string' ? e : (e as Error).message}`
+			);
 		}
 	}
 }

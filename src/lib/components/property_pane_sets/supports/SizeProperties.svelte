@@ -85,7 +85,11 @@
 				onClick={fullHeight}
 				iconRight={moveVertical}
 			/>
-			<Button title={lang().properties.size.buttons.full_size} onClick={fullSize} iconRight={move} />
+			<Button
+				title={lang().properties.size.buttons.full_size}
+				onClick={fullSize}
+				iconRight={move}
+			/>
 		</ButtonsRow>
 	</ButtonsGroup>
 </Accordion>

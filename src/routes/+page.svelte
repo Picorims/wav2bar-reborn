@@ -14,12 +14,12 @@
 
 	$effect(() => {
 		document.body.className = `theme-${settings().theme.toLowerCase()}`;
-	})
+	});
 
 	onMount(() => {
 		loadSettings().finally(() => {
 			appState.loading = false;
-		})
+		});
 	});
 </script>
 
