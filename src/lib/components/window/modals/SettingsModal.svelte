@@ -16,11 +16,11 @@
 		type LanguagesType,
 		type ThemesType
 	} from '$lib/store/settings_structure/settings_enums';
-	import { appLogDir } from '@tauri-apps/api/path';
 	import { invoke } from '@tauri-apps/api/core';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import Callout from '$lib/components/atoms/Callout.svelte';
 	import { lstat, readDir } from '@tauri-apps/plugin-fs';
+	import { join } from '@tauri-apps/api/path';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -72,8 +72,11 @@
 			);
 		}
 	}
-	let logsDir = $state<Promise<string> | null>(null);
 	let currentDataDir = $state<Promise<string> | null>(invoke('get_current_data_dir'));
+	let logsDir = $derived<Promise<string> | null>(
+		currentDataDir?.then((v) => join(v, 'logs')) ?? null
+	);
+	let showLogsPath = $state(false);
 </script>
 
 <Modal bind:dialog title={lang().settings.title}>
@@ -108,14 +111,20 @@
 		onChange={onThemeChange}
 		value={settings().theme}
 	></LabeledDropdown>
-	<button class="logs-btn" onclick={() => (logsDir = appLogDir())}>
+	<button class="logs-btn" onclick={() => (showLogsPath = true)}>
 		{lang().settings.show_logs_dir}
 	</button>
 	<p>
 		{#await logsDir}
 			Loading...
 		{:then dir}
-			{dir}
+			{#if dir !== null && dir !== ''}
+				{#if showLogsPath}
+					{dir}
+				{/if}
+			{:else}
+				System logs dir could not be retrieved.
+			{/if}
 		{:catch}
 			System logs dir could not be retrieved.
 		{/await}
