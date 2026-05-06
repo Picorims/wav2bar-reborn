@@ -2,6 +2,7 @@
 	"lang": "en",
 	"settings": {
 		"title": "Settings",
+		"subtitle_generic": "General",
 		"language": "Language",
 		"theme": "Theme",
 		"theme_options": {
@@ -9,6 +10,20 @@
 			"light": "Light",
 			"dark": "Dark"
 		},
+		"subtitle_ffmpeg": "FFmpeg",
+		"ffmpeg": {
+			"ffmpeg_autodetected": "FFmpeg install detected on the OS:",
+			"ffprobe_autodetected": "FFprobe install detected on the OS:",
+			"detected": "Yes",
+			"not_detected": "No",
+			"loading": "Loading...",
+			"override": "Override FFmpeg path (directory):",
+			"change_path": "Change path override",
+			"clear_override": "Clear override",
+			"dir_symlink_error": "The selected directory is a symbolic link, which is not allowed. Please select another directory that is not a symbolic link.",
+			"missing_exe_error": "The selected directory is missing ffmpeg and/or ffprobe executables ('ffmpeg.exe' and 'ffprobe.exe' on Windows, 'ffmpeg' and 'ffprobe' on Linux). Aborting."
+		},
+		"subtitle_data_storage": "Data Storage",
 		"current_data_dir": "Current data directory:",
 		"current_data_dir_loading": "Loading...",
 		"current_data_dir_error": "System data directory could not be retrieved.",

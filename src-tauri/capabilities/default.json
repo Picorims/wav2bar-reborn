@@ -16,7 +16,10 @@
     "fs:allow-lstat",
     {
       "identifier": "fs:allow-read-file",
-      "allow": ["**"]
-    }
+      "allow": [
+        "**"
+      ]
+    },
+    "os:default"
   ]
 }

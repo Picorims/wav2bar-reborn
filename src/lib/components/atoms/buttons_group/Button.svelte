@@ -21,6 +21,7 @@
 		title?: string | null;
 		iconLeft?: Snippet;
 		iconRight?: Snippet;
+		margin?: boolean;
 	}
 
 	let {
@@ -32,7 +33,8 @@
 		label = null,
 		title = label,
 		iconLeft,
-		iconRight
+		iconRight,
+		margin = false
 	}: Props = $props();
 
 	let clientWidth = $state(0);
@@ -58,6 +60,7 @@
 	aria-label={label ?? title}
 	{title}
 	class:toggled
+	class:margin
 >
 	{#if iconLeft}
 		{@render iconLeft()}
@@ -91,6 +94,9 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 			text-wrap: nowrap;
+		}
+		&.margin {
+			margin-top: g.$spacing-m;
 		}
 	}
 </style>

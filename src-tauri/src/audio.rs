@@ -391,7 +391,11 @@ pub async fn bake_fft(
     Ok(())
 }
 
-fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32, app: &AppHandle) -> Result<(), String> {
+fn flush_fft_cache_to_file(
+    fft_cache: &Vec<u16>,
+    file_index: u32,
+    app: &AppHandle,
+) -> Result<(), String> {
     use std::io::{BufWriter, Write};
     info!("Flushing FFT cache to file index {}", file_index);
 
@@ -420,7 +424,10 @@ fn flush_fft_cache_to_file(fft_cache: &Vec<u16>, file_index: u32, app: &AppHandl
     Ok(())
 }
 
-fn flush_frequencies_cache_to_file(frequencies_cache: &Vec<u16>, app: &AppHandle) -> Result<(), String> {
+fn flush_frequencies_cache_to_file(
+    frequencies_cache: &Vec<u16>,
+    app: &AppHandle,
+) -> Result<(), String> {
     use std::io::{BufWriter, Write};
     info!(
         "Flushing frequencies cache to file, length: {}",
@@ -481,7 +488,7 @@ pub async fn get_fft_dir(app: AppHandle) -> Result<String, String> {
 #[tauri::command]
 pub async fn copy_audio_file_to_save(
     audio_file_path: String,
-    app: AppHandle
+    app: AppHandle,
 ) -> Result<(), String> {
     info!("Copying audio file to save directory...");
     let working_dir = crate::get_current_working_dir(&app)?;
@@ -510,7 +517,10 @@ pub async fn copy_audio_file_to_save(
 
     let source_path = std::path::Path::new(&audio_file_path);
     if !source_path.exists() {
-        return Err(format!("Source audio file does not exist: {}", audio_file_path));
+        return Err(format!(
+            "Source audio file does not exist: {}",
+            audio_file_path
+        ));
     }
 
     let file_name = source_path
@@ -555,7 +565,7 @@ pub async fn restore_last_audio_file_from_backup(app: AppHandle) -> Result<(), S
 // Retrieved 2025-12-02, License - CC BY-SA 4.0
 
 use std::path::Path;
-use std::{io, fs};
+use std::{fs, io};
 
 /// Recursively copy a directory and its contents
 /// https://stackoverflow.com/a/65192210
