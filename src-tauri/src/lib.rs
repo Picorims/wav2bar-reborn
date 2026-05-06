@@ -391,7 +391,8 @@ async fn write_settings_json(json_content: String, app: AppHandle) -> Result<(),
     let working_dir = get_current_working_dir(&app)?;
     let settings_json_dir = working_dir.join("user");
     let settings_json_path = settings_json_dir.join("settings.json");
-    std::fs::create_dir_all(settings_json_dir).map_err(|_| format!("Could not create the directory storing user settings."))?;
+    std::fs::create_dir_all(settings_json_dir)
+        .map_err(|_| format!("Could not create the directory storing user settings."))?;
     std::fs::write(&settings_json_path, json_content)
         .map_err(|e| format!("Could not write settings JSON file: {}", e))?;
     log::info!("Wrote settings JSON file successfully.");
