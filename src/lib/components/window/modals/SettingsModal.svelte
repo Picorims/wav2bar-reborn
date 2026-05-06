@@ -101,10 +101,16 @@
 			const os = platform();
 			for (const entry of entries) {
 				if (entry.isFile) {
-					if ((os === "windows" && entry.name === "ffmpeg.exe") || (os === "linux" && entry.name === "ffmpeg")) {
+					if (
+						(os === 'windows' && entry.name === 'ffmpeg.exe') ||
+						(os === 'linux' && entry.name === 'ffmpeg')
+					) {
 						hasFFmpeg = true;
 					}
-					if ((os === "windows" && entry.name === "ffprobe.exe") || (os === "linux" && entry.name === "ffprobe")) {
+					if (
+						(os === 'windows' && entry.name === 'ffprobe.exe') ||
+						(os === 'linux' && entry.name === 'ffprobe')
+					) {
 						hasFFprobe = true;
 					}
 				}
@@ -126,7 +132,7 @@
 	}
 
 	function clearFFmpegPath() {
-		settings().ffmpeg_path = "";
+		settings().ffmpeg_path = '';
 		persistSettings();
 	}
 
@@ -198,10 +204,9 @@
 	<hr />
 	<h3>{lang().settings.subtitle_ffmpeg}</h3>
 
-
 	<p class="label">
 		{lang().settings.ffmpeg.ffmpeg_autodetected}
-		{#await invoke<boolean>("is_ffmpeg_available")}
+		{#await invoke<boolean>('is_ffmpeg_available')}
 			{lang().settings.ffmpeg.loading}
 		{:then detected}
 			{@render status(detected)}
@@ -210,19 +215,29 @@
 
 	<p class="label">
 		{lang().settings.ffmpeg.ffprobe_autodetected}
-		{#await invoke<boolean>("is_ffprobe_available")}
+		{#await invoke<boolean>('is_ffprobe_available')}
 			{lang().settings.ffmpeg.loading}
-		{:then detected} 
+		{:then detected}
 			{@render status(detected)}
 		{/await}
 	</p>
 
 	<p class="label">{lang().settings.ffmpeg.override}</p>
 	<div class="flex">
-		<Button margin iconRight={folder} label={lang().settings.ffmpeg.change_path} onClick={changeFFmpegPath} />
+		<Button
+			margin
+			iconRight={folder}
+			label={lang().settings.ffmpeg.change_path}
+			onClick={changeFFmpegPath}
+		/>
 		<p class="path">{settings().ffmpeg_path}</p>
 	</div>
-	<Button margin iconRight={trash2} label={lang().settings.ffmpeg.clear_override} onClick={clearFFmpegPath} />
+	<Button
+		margin
+		iconRight={trash2}
+		label={lang().settings.ffmpeg.clear_override}
+		onClick={clearFFmpegPath}
+	/>
 
 	<hr />
 	<h3>{lang().settings.subtitle_data_storage}</h3>

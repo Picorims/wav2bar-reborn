@@ -21,7 +21,7 @@
 		title?: string | null;
 		iconLeft?: Snippet;
 		iconRight?: Snippet;
-		margin ?: boolean;
+		margin?: boolean;
 	}
 
 	let {
