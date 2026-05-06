@@ -21,6 +21,9 @@
 	import Callout from '$lib/components/atoms/Callout.svelte';
 	import { lstat, readDir } from '@tauri-apps/plugin-fs';
 	import { join } from '@tauri-apps/api/path';
+	import { Check, Folder, Trash2, X } from 'lucide-svelte';
+	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
+	import { platform } from '@tauri-apps/plugin-os';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -72,6 +75,61 @@
 			);
 		}
 	}
+
+	async function changeFFmpegPath() {
+		try {
+			const path = await open({
+				title: lang().settings.change_data_dir,
+				multiple: false,
+				directory: true,
+				recursive: false
+			});
+
+			if (path === null || path === '') {
+				return;
+			}
+
+			const stat = await lstat(path);
+			if (stat.isSymlink) {
+				alert(lang().settings.ffmpeg.dir_symlink_error);
+				return;
+			}
+
+			// const entries = await readDir(path);
+			// let hasFFmpeg = false;
+			// let hasFFprobe = false;
+			// const os = platform();
+			// for (const entry of entries) {
+			// 	if (entry.isFile) {
+			// 		if ((os === "windows" && entry.name === "ffmpeg.exe") || (os === "linux" && entry.name === "ffmpeg")) {
+			// 			hasFFmpeg = true;
+			// 		}
+			// 		if ((os === "windows" && entry.name === "ffprobe.exe") || (os === "linux" && entry.name === "ffprobe")) {
+			// 			hasFFprobe = true;
+			// 		}
+			// 	}
+			// }
+
+			// if (!hasFFmpeg || !hasFFprobe) {
+			// 	alert(lang().settings.ffmpeg.missing_exe_error);
+			// 	return;
+			// }
+
+			settings().ffmpeg_path = path;
+			persistSettings();
+		} catch (error) {
+			console.error('Error changing data directory:', error);
+			alert(
+				`${lang().settings.change_data_dir_error}\n\n${error instanceof Error ? error.message : String(error)}`
+			);
+		}
+	}
+
+	function clearFFmpegPath() {
+		settings().ffmpeg_path = "";
+		persistSettings();
+	}
+
 	let currentDataDir = $state<Promise<string> | null>(invoke('get_current_data_dir'));
 	let logsDir = $derived<Promise<string> | null>(
 		currentDataDir?.then((v) => join(v, 'logs')) ?? null
@@ -79,25 +137,29 @@
 	let showLogsPath = $state(false);
 </script>
 
+{#snippet status(detected: boolean)}
+	{#if detected}
+		<span class="text-and-icon yes">
+			{lang().settings.ffmpeg.detected}
+			<Check></Check>
+		</span>
+	{:else}
+		<span class="text-and-icon no">
+			{lang().settings.ffmpeg.not_detected}
+			<X></X>
+		</span>
+	{/if}
+{/snippet}
+
+{#snippet trash2()}
+	<Trash2 />
+{/snippet}
+{#snippet folder()}
+	<Folder />
+{/snippet}
+
 <Modal bind:dialog title={lang().settings.title}>
-	<p class="label">{lang().settings.current_data_dir}</p>
-	<p>
-		{#await currentDataDir}
-			{lang().settings.current_data_dir_loading}
-		{:then dir}
-			{dir}
-		{:catch}
-			{lang().settings.current_data_dir_error}
-		{/await}
-	</p>
-
-	<button class="change-data-dir-btn" onclick={changeDataDir}>
-		{lang().settings.change_data_dir}
-	</button>
-
-	<Callout type="warning">
-		{lang().settings.data_dir_change_info}
-	</Callout>
+	<h3>{lang().settings.subtitle_generic}</h3>
 
 	<LabeledDropdown
 		title={lang().settings.language}
@@ -111,24 +173,80 @@
 		onChange={onThemeChange}
 		value={settings().theme}
 	></LabeledDropdown>
-	<button class="logs-btn" onclick={() => (showLogsPath = true)}>
-		{lang().settings.show_logs_dir}
-	</button>
-	<p>
-		{#await logsDir}
-			Loading...
-		{:then dir}
-			{#if dir !== null && dir !== ''}
-				{#if showLogsPath}
-					{dir}
+
+	<div class="flex">
+		<button class="logs-btn" onclick={() => (showLogsPath = true)}>
+			{lang().settings.show_logs_dir}
+		</button>
+		<p class="path">
+			{#await logsDir}
+				Loading...
+			{:then dir}
+				{#if dir !== null && dir !== ''}
+					{#if showLogsPath}
+						{dir}
+					{/if}
+				{:else}
+					System logs dir could not be retrieved.
 				{/if}
-			{:else}
+			{:catch}
 				System logs dir could not be retrieved.
-			{/if}
-		{:catch}
-			System logs dir could not be retrieved.
+			{/await}
+		</p>
+	</div>
+
+	<hr />
+	<h3>{lang().settings.subtitle_ffmpeg}</h3>
+
+
+	<p class="label">
+		{lang().settings.ffmpeg.ffmpeg_autodetected}
+		{#await invoke<boolean>("is_ffmpeg_available")}
+			{lang().settings.ffmpeg.loading}
+		{:then detected}
+			{@render status(detected)}
 		{/await}
 	</p>
+
+	<p class="label">
+		{lang().settings.ffmpeg.ffprobe_autodetected}
+		{#await invoke<boolean>("is_ffprobe_available")}
+			{lang().settings.ffmpeg.loading}
+		{:then detected} 
+			{@render status(detected)}
+		{/await}
+	</p>
+
+	<p class="label">{lang().settings.ffmpeg.override}</p>
+	<div class="flex">
+		<Button margin iconRight={folder} label={lang().settings.ffmpeg.change_path} onClick={changeFFmpegPath} />
+		<p class="path">{settings().ffmpeg_path}</p>
+	</div>
+	<Button margin iconRight={trash2} label={lang().settings.ffmpeg.clear_override} onClick={clearFFmpegPath} />
+
+	<hr />
+	<h3>{lang().settings.subtitle_data_storage}</h3>
+
+	<div class="flex">
+		<p class="label">{lang().settings.current_data_dir}</p>
+		<p class="path">
+			{#await currentDataDir}
+				{lang().settings.current_data_dir_loading}
+			{:then dir}
+				{dir}
+			{:catch}
+				{lang().settings.current_data_dir_error}
+			{/await}
+		</p>
+	</div>
+
+	<button class="change-data-dir-btn" onclick={changeDataDir}>
+		{lang().settings.change_data_dir}
+	</button>
+
+	<Callout type="warning">
+		{lang().settings.data_dir_change_info}
+	</Callout>
 
 	{#snippet buttons()}
 		<button
@@ -159,5 +277,32 @@
 		&.label {
 			@include g.text-small;
 		}
+		&.path {
+			margin-left: g.$spacing-l;
+		}
+	}
+	hr {
+		border-color: g.$color-background-800;
+		border-width: g.$size-5xs;
+	}
+	h3 {
+		@include g.heading-3;
+	}
+	div.flex {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: g.$spacing-l;
+	}
+	span.text-and-icon {
+		display: inline-flex;
+		align-items: center;
+		gap: g.$spacing-m;
+	}
+	span.yes :global(svg) {
+		stroke: g.$color-status-success;
+	}
+	span.no :global(svg) {
+		stroke: g.$color-status-error;
 	}
 </style>

@@ -8,9 +8,8 @@
 */
 
 use anyhow::Context;
-use tauri::AppHandle;
-use tauri::Emitter;
-use tauri::Manager;
+use regex::Regex;
+use serde::Serialize;
 use std::fs;
 use std::fs::File;
 use std::io;
@@ -18,9 +17,11 @@ use std::io::Read;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
+use std::process::Command;
+use tauri::AppHandle;
+use tauri::Emitter;
+use tauri::Manager;
 use zip::write::SimpleFileOptions;
-use serde::Serialize;
-use regex::Regex;
 
 use log4rs::{
     append::{console::ConsoleAppender, file::FileAppender},
@@ -37,8 +38,8 @@ const WORKING_DIR_RESTART_CACHE_FILE: &str = "wav2bar_data_dir_after_restart.txt
 #[derive(Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 struct LoadingInfo<'a> {
-  message: &'a str,
-  progress_percent: Option<usize>,
+    message: &'a str,
+    progress_percent: Option<usize>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -77,7 +78,6 @@ pub fn run() {
 
             // log::... has no effect before this point.
 
-            
             log::info!("Setting up Tauri application.");
             log::info!("cache path: {}", cache_dir.display());
             log::info!("Current data directory: {}", current_data_dir.display());
@@ -107,6 +107,8 @@ pub fn run() {
             save_to_file,
             change_object_background_image,
             remove_assets_by_id,
+            is_ffmpeg_available,
+            is_ffprobe_available,
             audio::bake_fft,
             audio::get_audio_dir,
             audio::get_fft_dir,
@@ -157,9 +159,13 @@ pub fn run() {
 /// Can be seen as a workspace.
 pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
     // TODO caching to reduce I/O.
-    let cache_dir = app.path().app_cache_dir()
+    let cache_dir = app
+        .path()
+        .app_cache_dir()
         .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
-    let default_data_dir = app.path().app_data_dir()
+    let default_data_dir = app
+        .path()
+        .app_data_dir()
         .map_err(|_| "Cannot return working dir, couldn't resolve default data dir")?;
     let data_dir_file = cache_dir.join(WORKING_DIR_CACHE_FILE);
     if !cache_dir.exists() {
@@ -170,14 +176,19 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
     if !data_dir_file.exists() {
         let mut output = File::create(&data_dir_file)
             .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
-        write!(output, "{}", default_data_dir.to_str().unwrap_or_default())
-            .map_err(|e| format!("Cannot return current working dir, failed to cache default dir: {}", e))?;
+        write!(output, "{}", default_data_dir.to_str().unwrap_or_default()).map_err(|e| {
+            format!(
+                "Cannot return current working dir, failed to cache default dir: {}",
+                e
+            )
+        })?;
     }
 
     let mut input = File::open(&data_dir_file)
         .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
     let mut data_dir_str = String::new();
-    input.read_to_string(&mut data_dir_str)
+    input
+        .read_to_string(&mut data_dir_str)
         .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
     let data_dir_str_trimmed = data_dir_str.trim();
     if !data_dir_str_trimmed.is_empty() {
@@ -188,18 +199,27 @@ pub fn get_current_working_dir(app: &AppHandle) -> Result<PathBuf, String> {
 }
 
 pub fn set_future_working_dir_for_restart(app: &AppHandle, new_dir: &String) -> Result<(), String> {
-    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let cache_dir = app
+        .path()
+        .app_cache_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
     let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
     if !cache_dir.exists() {
-        fs::create_dir_all(&cache_dir).map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
+        fs::create_dir_all(&cache_dir)
+            .map_err(|_| "Cannot return working dir, couldn't create missing cache dir")?;
     }
-    let mut output = File::create(&data_dir_restart_file).map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
-    write!(output, "{}", new_dir).map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
+    let mut output = File::create(&data_dir_restart_file)
+        .map_err(|_| "Cannot return working dir, couldn't create file caching it.")?;
+    write!(output, "{}", new_dir)
+        .map_err(|_| "Cannot return current working dir, failed to cache default dir")?;
     Ok(())
 }
 
 fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), String> {
-    let cache_dir = app.path().app_cache_dir().map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
+    let cache_dir = app
+        .path()
+        .app_cache_dir()
+        .map_err(|_| "Cannot return working dir, couldn't resolve cache dir")?;
     let data_dir_restart_file = cache_dir.join(WORKING_DIR_RESTART_CACHE_FILE);
 
     if !data_dir_restart_file.exists() {
@@ -210,7 +230,8 @@ fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), Str
     let mut input = File::open(&data_dir_restart_file)
         .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
     let mut new_dir_str = String::new();
-    input.read_to_string(&mut new_dir_str)
+    input
+        .read_to_string(&mut new_dir_str)
         .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
     let new_dir_str_trimmed = new_dir_str.trim();
 
@@ -225,7 +246,8 @@ fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), Str
     let mut existing_input = File::open(cache_dir.join(WORKING_DIR_CACHE_FILE))
         .map_err(|_| "Cannot return working dir, couldn't open file caching it.")?;
     let mut existing_location_str = String::new();
-    existing_input.read_to_string(&mut existing_location_str)
+    existing_input
+        .read_to_string(&mut existing_location_str)
         .map_err(|_| "Cannot return current working dir, failed to read cache default dir")?;
     let existing_location_str_trimmed = existing_location_str.trim();
 
@@ -236,7 +258,11 @@ fn change_working_dir_if_requested_on_restart(app: &AppHandle) -> Result<(), Str
         return Ok(()); // already the current dir, do nothing.
     }
 
-    log::info!("Changing working directory from {} to {} as requested on restart.", existing_location_str_trimmed, new_dir_str_trimmed);
+    log::info!(
+        "Changing working directory from {} to {} as requested on restart.",
+        existing_location_str_trimmed,
+        new_dir_str_trimmed
+    );
     // TODO copy settings json file.
 
     // set new path as current
@@ -262,7 +288,8 @@ async fn get_current_data_dir(app: AppHandle) -> Result<String, String> {
 async fn request_new_data_dir_on_restart(app: AppHandle, new_dir: String) -> Result<(), String> {
     let new_dir_path = PathBuf::from(new_dir.clone());
     if !new_dir_path.exists() {
-        fs::create_dir_all(&new_dir_path).map_err(|e| format!("Could not create new data directory: {}", e))?;
+        fs::create_dir_all(&new_dir_path)
+            .map_err(|e| format!("Could not create new data directory: {}", e))?;
     }
     // if it is the same location, do nothing.
     let current_dir = get_current_working_dir(&app)?;
@@ -272,7 +299,6 @@ async fn request_new_data_dir_on_restart(app: AppHandle, new_dir: String) -> Res
     set_future_working_dir_for_restart(&app, &new_dir)?;
     Ok(())
 }
-
 
 /// Extracts the given save file (zip) into the temp/current_save directory.
 #[tauri::command]
@@ -376,15 +402,24 @@ async fn write_settings_json(json_content: String, app: AppHandle) -> Result<(),
 async fn settings_json_exists(app: AppHandle) -> Result<bool, String> {
     let working_dir = get_current_working_dir(&app)?;
     let settings_json_path = working_dir.join("user").join("settings.json");
-    std::fs::exists(settings_json_path).map_err(|_| format!("Failed to check for settings json file existence."))
+    std::fs::exists(settings_json_path)
+        .map_err(|_| format!("Failed to check for settings json file existence."))
 }
 
 /// Copy the provided image file (from path) into the temp/current_save/assets/[object_id]/background directory, replacing
 /// any existing image.
 #[tauri::command]
-async fn change_object_background_image(app: AppHandle, path: String, id: String) -> Result<String, String> {
-    log::info!("Requested to change background image of object {} to file: {}", id, path);
-    
+async fn change_object_background_image(
+    app: AppHandle,
+    path: String,
+    id: String,
+) -> Result<String, String> {
+    log::info!(
+        "Requested to change background image of object {} to file: {}",
+        id,
+        path
+    );
+
     if !Path::new(&path).exists() {
         let msg = format!("File does not exist: {}", path);
         log::error!("{}", &msg);
@@ -393,7 +428,10 @@ async fn change_object_background_image(app: AppHandle, path: String, id: String
 
     let id_regex = Regex::new(r"^[a-zA-Z0-9-]+$").unwrap();
     if !id_regex.is_match(&id) {
-        let msg = format!("Invalid object ID: {}. Only alphanumeric characters and dashes are allowed.", id);
+        let msg = format!(
+            "Invalid object ID: {}. Only alphanumeric characters and dashes are allowed.",
+            id
+        );
         log::error!("{}", &msg);
         return Err(msg);
     }
@@ -475,10 +513,19 @@ fn extract_zip(file: File, dest: PathBuf, app: AppHandle) -> Result<(), String> 
             Some(path) => path,
             None => continue,
         };
-        app.emit("set_loading_info_detail_progress", LoadingInfo {
-            message: &format!("Extracting file {}/{}: {}", i + 1, length, out_path.display()),
-            progress_percent: Some(((i + 1) * 100 / length) as usize),
-        }).map_err(|e| format!("Could not emit loading info event: {}", e))?;
+        app.emit(
+            "set_loading_info_detail_progress",
+            LoadingInfo {
+                message: &format!(
+                    "Extracting file {}/{}: {}",
+                    i + 1,
+                    length,
+                    out_path.display()
+                ),
+                progress_percent: Some(((i + 1) * 100 / length) as usize),
+            },
+        )
+        .map_err(|e| format!("Could not emit loading info event: {}", e))?;
         let out_path = dest.join(out_path);
 
         {
@@ -570,10 +617,19 @@ fn zip_dir(dest_path: &Path, src_path: &Path, app: AppHandle) -> anyhow::Result<
             .map(str::to_owned)
             .with_context(|| format!("{name:?} Is a Non UTF-8 Path"))?;
 
-        app.emit("set_loading_info_detail_progress", LoadingInfo {
-            message: &format!("Adding file to zip {}/{}: {}", index + 1, length, path_as_string),
-            progress_percent: Some(((index + 1) * 100 / length) as usize),
-        }).map_err(|e| anyhow::anyhow!("Could not emit loading info event: {}", e))?;
+        app.emit(
+            "set_loading_info_detail_progress",
+            LoadingInfo {
+                message: &format!(
+                    "Adding file to zip {}/{}: {}",
+                    index + 1,
+                    length,
+                    path_as_string
+                ),
+                progress_percent: Some(((index + 1) * 100 / length) as usize),
+            },
+        )
+        .map_err(|e| anyhow::anyhow!("Could not emit loading info event: {}", e))?;
 
         // Write file or directory explicitly
         // Some unzip tools unzip files with directory paths correctly, some do not!
@@ -596,4 +652,20 @@ fn zip_dir(dest_path: &Path, src_path: &Path, app: AppHandle) -> anyhow::Result<
     }
     zip.finish()?;
     Ok(())
+}
+
+#[tauri::command]
+async fn is_ffmpeg_available() -> Result<bool, String> {
+    match Command::new("ffmpeg").spawn() {
+        Ok(_) => Ok(true),
+        Err(e) => Ok(false),
+    }
+}
+
+#[tauri::command]
+async fn is_ffprobe_available() -> Result<bool, String> {
+    match Command::new("ffprobe").spawn() {
+        Ok(_) => Ok(true),
+        Err(e) => Ok(false),
+    }
 }
