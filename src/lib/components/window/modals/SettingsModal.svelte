@@ -95,25 +95,25 @@
 				return;
 			}
 
-			// const entries = await readDir(path);
-			// let hasFFmpeg = false;
-			// let hasFFprobe = false;
-			// const os = platform();
-			// for (const entry of entries) {
-			// 	if (entry.isFile) {
-			// 		if ((os === "windows" && entry.name === "ffmpeg.exe") || (os === "linux" && entry.name === "ffmpeg")) {
-			// 			hasFFmpeg = true;
-			// 		}
-			// 		if ((os === "windows" && entry.name === "ffprobe.exe") || (os === "linux" && entry.name === "ffprobe")) {
-			// 			hasFFprobe = true;
-			// 		}
-			// 	}
-			// }
+			const entries = await readDir(path);
+			let hasFFmpeg = false;
+			let hasFFprobe = false;
+			const os = platform();
+			for (const entry of entries) {
+				if (entry.isFile) {
+					if ((os === "windows" && entry.name === "ffmpeg.exe") || (os === "linux" && entry.name === "ffmpeg")) {
+						hasFFmpeg = true;
+					}
+					if ((os === "windows" && entry.name === "ffprobe.exe") || (os === "linux" && entry.name === "ffprobe")) {
+						hasFFprobe = true;
+					}
+				}
+			}
 
-			// if (!hasFFmpeg || !hasFFprobe) {
-			// 	alert(lang().settings.ffmpeg.missing_exe_error);
-			// 	return;
-			// }
+			if (!hasFFmpeg || !hasFFprobe) {
+				alert(lang().settings.ffmpeg.missing_exe_error);
+				return;
+			}
 
 			settings().ffmpeg_path = path;
 			persistSettings();
