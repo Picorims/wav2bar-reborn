@@ -44,6 +44,7 @@ struct LoadingInfo<'a> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_os::init())
         .setup(|app| {
             let cache_dir = app.path().app_cache_dir()?;
             change_working_dir_if_requested_on_restart(app.app_handle())?;
