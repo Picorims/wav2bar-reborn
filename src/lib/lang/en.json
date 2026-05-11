@@ -35,6 +35,19 @@
 		"show_logs_dir": "Show logs path",
 		"close": "OK"
 	},
+	"export_video": {
+		"title": "Export video",
+		"cancel": "Cancel",
+		"export": "Export",
+		"set_video_path": "Set video path",
+		"no_video_path_error": "Please specify a video path for the exported video.",
+		"video_picker": {
+			"filters": {
+				"all_supported_video_files": "All supported video formats",
+				"av1_video_file": "AV1 video format"
+			}
+		}
+	},
 	"object_pane": {
 		"title": "Objects",
 		"add_object": "Add object"

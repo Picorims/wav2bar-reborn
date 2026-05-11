@@ -22,6 +22,7 @@
 		iconLeft?: Snippet;
 		iconRight?: Snippet;
 		margin?: boolean;
+		variant?: "primary" | "secondary" | "accent";
 	}
 
 	let {
@@ -34,7 +35,8 @@
 		title = label,
 		iconLeft,
 		iconRight,
-		margin = false
+		margin = false,
+		variant = "secondary"
 	}: Props = $props();
 
 	let clientWidth = $state(0);
@@ -61,6 +63,9 @@
 	{title}
 	class:toggled
 	class:margin
+	class:secondary={variant === "secondary"}
+	class:primary={variant === "primary"}
+	class:accent={variant === "accent"}
 >
 	{#if iconLeft}
 		{@render iconLeft()}
@@ -80,7 +85,6 @@
 	@use '../../../css/globals_forward.scss' as g;
 
 	button {
-		@include g.button-secondary;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -98,5 +102,14 @@
 		&.margin {
 			margin-top: g.$spacing-m;
 		}
+	}
+	button.primary {
+		@include g.button-primary;
+	}
+	button.secondary {
+		@include g.button-secondary;
+	}
+	button.accent {
+		@include g.button-accent;
 	}
 </style>
