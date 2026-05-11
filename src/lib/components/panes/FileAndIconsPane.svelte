@@ -13,6 +13,7 @@
 	import { renderer } from '$lib/engine/video/renderer';
 	import SettingsModal from '../window/modals/SettingsModal.svelte';
 	import ProjectSettingsModal from '../window/modals/ProjectSettingsModal.svelte';
+	import { lang } from '$lib/store/settings.svelte';
 
 	interface Props {
 		title?: string;
@@ -37,19 +38,20 @@
 		onClick={() => {
 			projectSettingsModalDialog?.showModal();
 		}}
+		alt={lang().files_and_icons_pane.project_settings}
 	>
 		<FileCog />
 	</IconButton>
-
-	<IconButton>
+	
+	<IconButton alt={lang().files_and_icons_pane.new_project}>
 		<FilePlus />
 	</IconButton>
 
-	<IconButton onClick={openAndLoadSave}>
+	<IconButton onClick={openAndLoadSave} alt={lang().files_and_icons_pane.open_project}>
 		<FolderOpen />
 	</IconButton>
 
-	<IconButton onClick={writeSave}>
+	<IconButton onClick={writeSave} alt={lang().files_and_icons_pane.save_project}>
 		<Save />
 	</IconButton>
 
@@ -57,11 +59,12 @@
 		onClick={() => {
 			settingsModalDialog?.showModal();
 		}}
+		alt={lang().files_and_icons_pane.settings}
 	>
 		<Settings />
 	</IconButton>
 
-	<IconButton>
+	<IconButton alt={lang().files_and_icons_pane.help} disabled>
 		<HelpCircle />
 	</IconButton>
 

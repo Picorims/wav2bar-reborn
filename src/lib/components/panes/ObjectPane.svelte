@@ -38,13 +38,13 @@
 	<div class="header">
 		<span class="title">{lang().object_pane.title}</span>
 		<div class="header-buttons">
-			<IconButton onClick={() => alert('coming soon!')}>
+			<IconButton onClick={() => alert('coming soon!')} disabled>
 				<Undo />
 			</IconButton>
-			<IconButton onClick={() => alert('coming soon!')}>
+			<IconButton onClick={() => alert('coming soon!')} disabled>
 				<Redo />
 			</IconButton>
-			<IconButton variant="accent" onClick={newObj}>
+			<IconButton variant="accent" onClick={newObj} alt={lang().object_pane.add_object}>
 				<PlusCircle />
 			</IconButton>
 		</div>

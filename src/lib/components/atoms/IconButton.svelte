@@ -18,6 +18,7 @@
 		toggled?: boolean;
 		onToggle?: (value: boolean) => void;
 		alt?: string;
+		disabled ?: boolean;
 	}
 
 	let {
@@ -27,7 +28,8 @@
 		togglable = false,
 		toggled = false,
 		onToggle = () => {},
-		alt = ''
+		alt = '',
+		disabled = false
 	}: Props = $props();
 
 	function handleClick() {
@@ -48,6 +50,7 @@
 	title={alt}
 	class={`icon-button ${variant}`}
 	class:toggled={togglable && toggled}
+	{disabled}
 >
 	{@render children?.()}
 </button>
@@ -108,5 +111,8 @@
 		width: 24px;
 		height: 24px;
 		stroke: g.$color-background-950;
+	}
+	button.icon-button:disabled {
+		opacity: 0.5;
 	}
 </style>

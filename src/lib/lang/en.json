@@ -36,7 +36,8 @@
 		"close": "OK"
 	},
 	"object_pane": {
-		"title": "Objects"
+		"title": "Objects",
+		"add_object": "Add object"
 	},
 	"controls_pane": {
 		"zoom": {
@@ -45,6 +46,15 @@
 			"zoom_out": "Zoom Out",
 			"reset_zoom": "Reset Zoom"
 		}
+	},
+	"files_and_icons_pane": {
+		"project_settings": "Project Settings",
+		"new_project": "New project",
+		"open_project": "Open project",
+		"save_project": "Save project",
+		"export": "Export",
+		"settings": "Settings",
+		"help": "Help"
 	},
 	"modal": {
 		"add_object": {
