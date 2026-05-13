@@ -12,7 +12,13 @@
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import { Folder } from 'lucide-svelte';
 	import { save } from '@tauri-apps/plugin-dialog';
-	import { invoke } from '@tauri-apps/api/core';
+	import { Channel, invoke } from '@tauri-apps/api/core';
+	import { platform } from '@tauri-apps/plugin-os';
+	import { join } from '@tauri-apps/api/path';
+	import { Log } from '$lib/log/logger';
+	import { renderer } from '$lib/engine/video/renderer';
+	import { setLoading, setLoadingInfo, setLoadingInfoDetail, setLoadingProgress } from '$lib/store/app_state.svelte';
+	import { saveManager } from '$lib/store/save.svelte';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -54,7 +60,61 @@
 			alert(lang().export_video.ffmpeg_not_configured_error);
 		}
 
-		await invoke("setup_export", {videoPath: exportPath, ffmpegPath: settings().ffmpeg_path});
+		Log.export.info("Setting up export.");
+		dialog.close();
+		setLoading(true);
+		setLoadingInfo("Setting up export...");
+		let ffmpegPath = settings().ffmpeg_path;
+		ffmpegPath = await join(ffmpegPath, "ffmpeg");
+		if (platform() === "windows") {
+			ffmpegPath += ".exe";
+		}
+
+		const onWsReady = new Channel<number>();
+		onWsReady.onmessage = (port) => {
+			const socket = new WebSocket("ws://localhost:" + port);
+			socket.binaryType = "arraybuffer";
+
+			socket.addEventListener("open", async () => {
+				Log.export.info("WebSocket opened on front-end.");
+
+				renderer.pauseTick();
+				renderer.seekToStart();
+				renderer.shallLoop(false);
+				setLoadingInfo("Exporting frames...");
+				setLoadingInfoDetail("0%");
+				setLoadingProgress(0);
+				let lastLog = 0;
+				const fps = saveManager.fps;
+				const durationSeconds = renderer.getDuration() / 1000;
+				const totalFrames = Math.ceil(fps * durationSeconds);
+
+				for (let i = 0; i < totalFrames; i++) {
+					const percent = i / totalFrames * 100;
+					renderer.seekToPercent(percent);
+					renderer.updateOnce();
+					setLoadingProgress(percent);
+					const snapshot = await renderer.getSnapshot();
+					// typed arrays are supported, in case it shows as an error:
+					// https://developer.mozilla.org/fr/docs/Web/API/WebSocket/send
+					socket.send(snapshot.pixels);
+					if (performance.now() - lastLog > 1000) {
+						Log.export.info(`Export frames progress: ${percent}`);
+						lastLog = performance.now();
+					}
+				}
+				socket.send("done");
+			});
+
+			socket.addEventListener("error", () => {
+				Log.export.error("An unknown WebSocket error has occured.");
+			});
+
+			socket.addEventListener("close", (e) => {
+				Log.export.info(`WebSocket connection closed: ${e.code} - ${e.reason}`);
+			});
+		}
+		invoke("setup_export", {videoPath: exportPath, ffmpegPath, onWsReady });
 	}
 </script>
 

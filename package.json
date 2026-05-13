@@ -9,7 +9,7 @@
 	},
 	"license": "MPL-2.0",
 	"scripts": {
-		"tauri:dev": "npx tauri dev",
+		"tauri:dev": "env RUST_BACKTRACE=1 npx tauri dev",
 		"dev": "vite dev",
 		"devo": "vite dev --open",
 		"build": "vite build",

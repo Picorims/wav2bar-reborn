@@ -7,60 +7,70 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use std::io::Write;
 use std::net::TcpListener;
-use std::process::{Command, Stdio};
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 
 use tauri::AppHandle;
-use tungstenite::accept;
+use tauri_plugin_shell::ShellExt;
+use tungstenite::protocol::CloseFrame;
+use tungstenite::protocol::frame::coding::CloseCode;
+use tungstenite::{Utf8Bytes, accept};
 
 #[tauri::command]
 pub async fn setup_export(
-    _app: AppHandle,
-    video_path: &str,
-    ffmpeg_path: &str,
+    app: AppHandle,
+    video_path: String,
+    ffmpeg_path: String,
+    on_ws_ready: tauri::ipc::Channel<u16>
 ) -> Result<(), String> {
-    let mut base_command = match ffmpeg_path {
-        "" => Command::new("ffmpeg"),
-        _ => Command::new(ffmpeg_path),
+    let base_command = if ffmpeg_path.is_empty() {
+        String::from("ffmpeg")
+    } else {
+        ffmpeg_path
     };
     let video_path_copy = String::from(video_path);
 
     let (sender, receiver): (Sender<u8>, Receiver<u8>) = mpsc::channel();
 
     // ffmpeg
-    thread::spawn(move || {
-        let process = match base_command
-            .arg("-i")
-            .arg("pipe:0")
-            .arg(video_path_copy)
-            .stdin(Stdio::piped())
+    tauri::async_runtime::spawn(async move {
+        let shell = app.shell();
+        let args = vec!("-v", "error", "-i", "pipe:0", &video_path_copy);
+
+        log::info!("Running: {base_command} {args:?}");
+        shell.command("cmd.exe").arg("echo").arg("blablabla").spawn().expect("Failed to log command.");
+        let mut process = match shell.command(base_command)
+            .args(args)
             .spawn()
         {
             Err(why) => panic!("couldn't spawn ffmpeg: {}", why),
             Ok(process) => process,
         };
+        log::info!("{process:?}");
 
-        match process.stdin {
-            Some(mut stdin) => {
-                for data in receiver.iter() {
-                    match stdin.write(&[data]) {
-                        Ok(_) => (),
-                        Err(e) => panic!("Failed to pipe byte to ffmpeg: {e}"),
-                    }
-                }
+        for data in receiver {
+            match process.1.write(&[data]) {
+                Ok(_) => (),
+                Err(e) => panic!("Failed to pipe byte to ffmpeg: {e}"),
             }
-            None => panic!("Couldn't pipe to ffmpeg, stdin is None."),
         }
+        log::info!("ffmpeg process terminated.");
     });
 
     // websocket
-    thread::spawn(move || {
-        let server = match TcpListener::bind("127.0.0.1:9001") {
+    tauri::async_runtime::spawn(async move {
+        let server = match TcpListener::bind("127.0.0.1:0") {
             Ok(server) => server,
             Err(e) => panic!("Failed to spawn websocket server, {e}"),
+        };
+        let local_addr = match server.local_addr() {
+            Ok(addr) => addr,
+            Err(why) => panic!("Failed to get websocket server address: {why}")
+        };
+        match on_ws_ready.send(local_addr.port()) {
+            Ok(_) => (),
+            Err(why) => panic!("Failed to read websocket port: {why}"),
         };
         for stream in server.incoming() {
             let sender_clone = sender.clone();
@@ -68,7 +78,10 @@ pub async fn setup_export(
                 let mut websocket = accept(stream.unwrap()).unwrap();
                 loop {
                     let msg = websocket.read().unwrap();
-                    if msg.is_binary() && !msg.is_empty() {
+                    if msg.is_empty() || msg.is_ping() || msg.is_pong() || msg.is_close() {
+                        continue;
+                    }
+                    if msg.is_binary() {
                         let data = msg.into_data();
                         let iter = data.iter();
                         for v in iter {
@@ -77,9 +90,27 @@ pub async fn setup_export(
                                 Ok(v) => v,
                             }
                         }
+                    } else if msg.is_text() {
+                        let text = match msg.to_text() {
+                            Ok(v) => v,
+                            Err(why) => {
+                                log::error!("Failed to read websocket text message: {why}");
+                                continue;
+                            },
+                        };
+                        if text.to_ascii_lowercase() == "done" {
+                            let close_frame = CloseFrame{code: CloseCode::Normal, reason: Utf8Bytes::from("Acknowledged done.")};
+                            match websocket.close(Some(close_frame)) {
+                                Ok(_) => (),
+                                Err(why) => log::error!("Failed to properly close websocket session: {why}"),
+                            }
+                            break;
+                        }
+                        
                     }
                 }
             });
+            break; // allow a single connection.
         }
     });
     Ok(())

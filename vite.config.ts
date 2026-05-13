@@ -5,11 +5,11 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	plugins: [
 		sveltekit(),
-		// !process.env.VITEST
-		// 	? checker({
-		// 			typescript: true
-		// 		})
-		// 	: undefined
+		!process.env.VITEST
+			? checker({
+					typescript: true
+				})
+			: undefined
 	],
 	test: {
 		include: ['src/**/*.{test,spec}.{js,ts}']
