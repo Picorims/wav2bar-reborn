@@ -59,6 +59,7 @@
 		"@tauri-apps/plugin-log": "^2.3.1",
 		"@tauri-apps/plugin-opener": "^2.2.6",
 		"@tauri-apps/plugin-os": "^2.3.2",
+		"@tauri-apps/plugin-shell": "^2.3.5",
 		"@zip.js/zip.js": "^2.7.45",
 		"ajv": "^8.17.1",
 		"lucide-svelte": "^0.428.0",

@@ -31,6 +31,7 @@ use log4rs::{
 
 use walkdir::WalkDir;
 mod audio;
+mod export;
 
 const WORKING_DIR_CACHE_FILE: &str = "wav2bar_data_dir.txt";
 const WORKING_DIR_RESTART_CACHE_FILE: &str = "wav2bar_data_dir_after_restart.txt";
@@ -45,6 +46,7 @@ struct LoadingInfo<'a> {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_os::init())
         .setup(|app| {
             let cache_dir = app.path().app_cache_dir()?;
@@ -114,6 +116,7 @@ pub fn run() {
             audio::get_fft_dir,
             audio::copy_audio_file_to_save,
             audio::restore_last_audio_file_from_backup,
+            export::setup_export
         ])
         .plugin(tauri_plugin_dialog::init())
         .plugin(

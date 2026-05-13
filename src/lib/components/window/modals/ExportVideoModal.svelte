@@ -8,10 +8,11 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
     */
 	import Modal from '../Modal.svelte';
-	import { lang } from '$lib/store/settings.svelte';
+	import { lang, settings } from '$lib/store/settings.svelte';
 	import Button from '$lib/components/atoms/buttons_group/Button.svelte';
 	import { Folder } from 'lucide-svelte';
 	import { save } from '@tauri-apps/plugin-dialog';
+	import { invoke } from '@tauri-apps/api/core';
 
 	interface Props {
 		dialog: HTMLDialogElement;
@@ -42,10 +43,18 @@
 		exportPath = path;
 	}
 
-	function exportVideo() {
+	async function exportVideo() {
 		if (exportPath === "") {
-			alert(lang().export_video.no_video_path_error)
+			alert(lang().export_video.no_video_path_error);
+			return;
 		}
+
+		const ffmpeg_available = await invoke<boolean>('is_ffmpeg_available');
+		if (!ffmpeg_available && settings().ffmpeg_path === "") {
+			alert(lang().export_video.ffmpeg_not_configured_error);
+		}
+
+		await invoke("setup_export", {videoPath: exportPath, ffmpegPath: settings().ffmpeg_path});
 	}
 </script>
 

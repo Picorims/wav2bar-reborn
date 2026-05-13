@@ -20,6 +20,7 @@
         "**"
       ]
     },
-    "os:default"
+    "os:default",
+    "shell:default"
   ]
 }
