@@ -114,7 +114,13 @@
 				Log.export.info(`WebSocket connection closed: ${e.code} - ${e.reason}`);
 			});
 		}
-		invoke("setup_export", {videoPath: exportPath, ffmpegPath, onWsReady });
+		invoke("setup_export", {
+			videoPath: exportPath,
+			ffmpegPath,
+			screenWidth: saveManager.save.screen.width,
+			screenHeight: saveManager.save.screen.height,
+			fps: saveManager.save.fps,
+			onWsReady });
 	}
 </script>
 
