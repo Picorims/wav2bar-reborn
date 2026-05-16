@@ -45,14 +45,17 @@ pub fn setup_export(
         // let args = vec!["-v", "error", "-follow", "1", "-i", "pipe:0", &video_path_copy];
         // see: https://ffmpeg.org/ffmpeg-formats.html#rawvideo
         // see: ffmpeg -pix_fmts
+        // see: https://trac.ffmpeg.org/wiki/Encode/AV1
         let screen_size = format!("{screen_width}x{screen_height}");
         let fps_str = format!("{fps}");
         let args = vec![
-            "-v",
-            "error",
+            "-loglevel",
+            "debug",
+            "-y",
+            "-re",
             "-f",
             "rawvideo",
-            "vcodec",
+            "-vcodec",
             "rawvideo",
             "-video_size",
             screen_size.as_str(),
@@ -60,10 +63,14 @@ pub fn setup_export(
             fps_str.as_str(),
             "-pixel_format",
             "rgba",
-            "-follow",
-            "1",
+            // "-follow",
+            // "1",
             "-i",
             "pipe:0",
+            "-c:v",
+            "libaom-av1",
+            "-crf",
+            "30",
             &video_path_copy,
         ];
         // let args = vec!["-h"];
@@ -79,12 +86,16 @@ pub fn setup_export(
             while let Some(event) = ffmpeg_receiver.recv().await {
                 match event {
                     CommandEvent::Stdout(ref out) => {
+                        // avoid double newline by triming the end.
                         let str = String::from_utf8_lossy(&out);
-                        log::debug!("FFMPEG stdout: {str}");
+                        let str_inline = str.trim_end();
+                        log::debug!("FFMPEG stdout: {str_inline}");
                     }
                     CommandEvent::Stderr(ref out) => {
+                        // avoid double newline by triming the end.
                         let str = String::from_utf8_lossy(&out);
-                        log::error!("FFMPEG stderr: {str}");
+                        let str_inline = str.trim_end();
+                        log::error!("FFMPEG stderr: {str_inline}");
                     }
                     CommandEvent::Error(ref why) => {
                         log::error!("FFMPEG ERROR: {why}");

@@ -32,12 +32,12 @@
 			title: lang().export_video.set_video_path,
 			filters: [
 				{
-					extensions: ['av1'],
+					extensions: ['mkv'],
 					name: lang().export_video.video_picker.filters.all_supported_video_files
 				},
 				{
-					extensions: ['av1'],
-					name: lang().export_video.video_picker.filters.av1_video_file
+					extensions: ['mkv'],
+					name: lang().export_video.video_picker.filters.mkv_video_file
 				},
 			]
 		});
@@ -129,7 +129,9 @@
 {/snippet}
 
 <Modal bind:dialog title={lang().export_video.title} withButtonGap>
-
+	<p>
+		MKV format, AV1 codec.
+	</p>
 	<div class="flex">
 		<Button
 			margin

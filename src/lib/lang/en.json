@@ -45,7 +45,7 @@
 		"video_picker": {
 			"filters": {
 				"all_supported_video_files": "All supported video formats",
-				"av1_video_file": "AV1 video format"
+				"mkv_video_file": "MKV video format"
 			}
 		}
 	},
