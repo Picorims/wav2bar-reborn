@@ -8,7 +8,7 @@
 */
 
 use std::io::Stdout;
-use std::net::TcpListener;
+use std::net::{TcpListener, TcpStream};
 use std::sync::mpsc::{self, Receiver, Sender};
 use std::thread;
 
@@ -17,7 +17,7 @@ use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
 use tungstenite::protocol::frame::coding::CloseCode;
 use tungstenite::protocol::CloseFrame;
-use tungstenite::{accept, Utf8Bytes};
+use tungstenite::{Utf8Bytes, WebSocket, accept};
 
 #[tauri::command]
 pub fn setup_export(
@@ -27,6 +27,7 @@ pub fn setup_export(
     screen_width: u16,
     screen_height: u16,
     fps: u16,
+    totalFrames: u64,
     on_ws_ready: tauri::ipc::Channel<u16>,
 ) -> Result<(), String> {
     let base_command = if ffmpeg_path.is_empty() {
@@ -40,94 +41,92 @@ pub fn setup_export(
 
     // ffmpeg
     log::info!("Spawning ffmpeg process.");
+    let shell = app.shell();
+    // let args = vec!["-v", "error", "-follow", "1", "-i", "pipe:0", &video_path_copy];
+    // see: https://ffmpeg.org/ffmpeg-formats.html#rawvideo
+    // see: ffmpeg -pix_fmts
+    // see: https://trac.ffmpeg.org/wiki/Encode/AV1
+    let screen_size = format!("{screen_width}x{screen_height}");
+    let fps_str = format!("{fps}");
+    let frames_str = format!("{totalFrames}");
+    let args = vec![
+        "-loglevel",
+        "debug",
+        "-progress",
+        "pipe:1",
+        "-y",
+        "-re",
+        "-f",
+        "rawvideo",
+        "-vcodec",
+        "rawvideo",
+        "-video_size",
+        screen_size.as_str(),
+        "-framerate",
+        fps_str.as_str(),
+        "-pixel_format",
+        "rgba",
+        // "-follow",
+        // "1",
+        "-i",
+        "pipe:0",
+        "-frames:v",
+        frames_str.as_str(),
+        "-c:v",
+        "libaom-av1",
+        "-crf",
+        "30",
+        &video_path_copy,
+    ];
+    // let args = vec!["-h"];
+
+    log::info!("Running: {base_command} {args:?}");
+    let (mut ffmpeg_receiver, mut child) = match shell.command(base_command).args(args).spawn() {
+        Err(why) => panic!("couldn't spawn ffmpeg: {}", why),
+        Ok(process) => process,
+    };
+
     tauri::async_runtime::spawn(async move {
-        let shell = app.shell();
-        // let args = vec!["-v", "error", "-follow", "1", "-i", "pipe:0", &video_path_copy];
-        // see: https://ffmpeg.org/ffmpeg-formats.html#rawvideo
-        // see: ffmpeg -pix_fmts
-        // see: https://trac.ffmpeg.org/wiki/Encode/AV1
-        let screen_size = format!("{screen_width}x{screen_height}");
-        let fps_str = format!("{fps}");
-        let args = vec![
-            "-loglevel",
-            "debug",
-            "-y",
-            "-re",
-            "-f",
-            "rawvideo",
-            "-vcodec",
-            "rawvideo",
-            "-video_size",
-            screen_size.as_str(),
-            "-framerate",
-            fps_str.as_str(),
-            "-pixel_format",
-            "rgba",
-            // "-follow",
-            // "1",
-            "-i",
-            "pipe:0",
-            "-c:v",
-            "libaom-av1",
-            "-crf",
-            "30",
-            &video_path_copy,
-        ];
-        // let args = vec!["-h"];
-
-        log::info!("Running: {base_command} {args:?}");
-        let (mut ffmpeg_receiver, mut child) = match shell.command(base_command).args(args).spawn()
-        {
-            Err(why) => panic!("couldn't spawn ffmpeg: {}", why),
-            Ok(process) => process,
-        };
-
-        tauri::async_runtime::spawn(async move {
-            while let Some(event) = ffmpeg_receiver.recv().await {
-                match event {
-                    CommandEvent::Stdout(ref out) => {
-                        // avoid double newline by triming the end.
-                        let str = String::from_utf8_lossy(&out);
-                        let str_inline = str.trim_end();
-                        log::debug!("FFMPEG stdout: {str_inline}");
-                    }
-                    CommandEvent::Stderr(ref out) => {
-                        // avoid double newline by triming the end.
-                        let str = String::from_utf8_lossy(&out);
-                        let str_inline = str.trim_end();
-                        log::error!("FFMPEG stderr: {str_inline}");
-                    }
-                    CommandEvent::Error(ref why) => {
-                        log::error!("FFMPEG ERROR: {why}");
-                    }
-                    CommandEvent::Terminated(ref payload) => {
-                        let code = payload.code;
-                        if let Some(code_v) = code {
-                            if code_v > 0 {
-                                log::error!(
-                                    "ffmpeg Terminated with error code {code_v}: {payload:?}"
-                                );
-                            } else {
-                                log::info!(
-                                    "ffmpeg Terminated with error code {code_v}: {payload:?}"
-                                );
-                            }
+        while let Some(event) = ffmpeg_receiver.recv().await {
+            match event {
+                CommandEvent::Stdout(ref out) => {
+                    // avoid double newline by triming the end.
+                    let str = String::from_utf8_lossy(&out);
+                    let str_inline = str.trim_end();
+                    log::debug!("FFMPEG stdout: {str_inline}");
+                }
+                CommandEvent::Stderr(ref out) => {
+                    // avoid double newline by triming the end.
+                    let str = String::from_utf8_lossy(&out);
+                    let str_inline = str.trim_end();
+                    log::error!("FFMPEG stderr: {str_inline}");
+                }
+                CommandEvent::Error(ref why) => {
+                    log::error!("FFMPEG ERROR: {why}");
+                }
+                CommandEvent::Terminated(ref payload) => {
+                    let code = payload.code;
+                    if let Some(code_v) = code {
+                        if code_v > 0 {
+                            log::error!("ffmpeg Terminated with error code {code_v}: {payload:?}");
+                        } else {
+                            log::info!("ffmpeg Terminated with error code {code_v}: {payload:?}");
                         }
                     }
-                    _ => (),
                 }
-                // log::debug!("{event:?}");
+                _ => (),
             }
-        });
-
-        for data in receiver {
-            match child.write(&[data]) {
-                Ok(_) => (),
-                Err(e) => panic!("Failed to pipe byte to ffmpeg: {e}"),
-            }
+            // log::debug!("{event:?}");
         }
-        log::info!("ffmpeg process terminated.");
     });
+
+    // for data in receiver {
+    //     match child.write(&[data]) {
+    //         Ok(_) => (),
+    //         Err(e) => panic!("Failed to pipe byte to ffmpeg: {e}"),
+    //     }
+    // }
+    // log::info!("ffmpeg process terminated.");
 
     // websocket
     log::info!("Spawning websocket process.");
@@ -144,10 +143,17 @@ pub fn setup_export(
             Ok(_) => (),
             Err(why) => panic!("Failed to read websocket port: {why}"),
         };
+
+        // listen for connections
         for stream in server.incoming() {
             let sender_clone = sender.clone();
+            
+            // spawn one bilateral connection
             thread::spawn(move || {
                 let mut websocket = accept(stream.unwrap()).unwrap();
+                send_next(& mut websocket);
+
+                // listen for messages
                 loop {
                     let msg = websocket.read().unwrap();
                     if msg.is_empty() || msg.is_ping() || msg.is_pong() || msg.is_close() {
@@ -157,10 +163,15 @@ pub fn setup_export(
                         let data = msg.into_data();
                         let iter = data.iter();
                         for v in iter {
-                            // match sender_clone.send(*v) {
-                            //     Err(e) => log::error!("Failed to send byte, {e}"),
-                            //     Ok(v) => v,
-                            // }
+                            match child.write(&[*v]) {
+                                Err(why) => log::error!("Failed to send byte, {why}"),
+                                _ => (),
+                            }
+                            send_next(& mut websocket);
+                        //     match sender_clone.send(*v) {
+                        //         Err(e) => log::error!("Failed to send byte, {e}"),
+                        //         Ok(v) => v,
+                        //     }
                         }
                     } else if msg.is_text() {
                         let text = match msg.to_text() {
@@ -190,4 +201,11 @@ pub fn setup_export(
         }
     });
     Ok(())
+}
+
+fn send_next(websocket: & mut WebSocket<TcpStream> ) {
+    match websocket.send(tungstenite::Message::Text(Utf8Bytes::from("next"))) {
+        Err(why) => log::error!("Failed to send next frame request, {why}"),
+        _ => (),
+    }
 }

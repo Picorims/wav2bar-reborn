@@ -17,7 +17,12 @@
 	import { join } from '@tauri-apps/api/path';
 	import { Log } from '$lib/log/logger';
 	import { renderer } from '$lib/engine/video/renderer';
-	import { setLoading, setLoadingInfo, setLoadingInfoDetail, setLoadingProgress } from '$lib/store/app_state.svelte';
+	import {
+		setLoading,
+		setLoadingInfo,
+		setLoadingInfoDetail,
+		setLoadingProgress
+	} from '$lib/store/app_state.svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 
 	interface Props {
@@ -25,7 +30,7 @@
 	}
 
 	let { dialog = $bindable() }: Props = $props();
-	let exportPath = $state("");
+	let exportPath = $state('');
 
 	async function changeExportPath() {
 		const path = await save({
@@ -38,7 +43,7 @@
 				{
 					extensions: ['mkv'],
 					name: lang().export_video.video_picker.filters.mkv_video_file
-				},
+				}
 			]
 		});
 
@@ -50,77 +55,93 @@
 	}
 
 	async function exportVideo() {
-		if (exportPath === "") {
+		if (exportPath === '') {
 			alert(lang().export_video.no_video_path_error);
 			return;
 		}
 
 		const ffmpeg_available = await invoke<boolean>('is_ffmpeg_available');
-		if (!ffmpeg_available && settings().ffmpeg_path === "") {
+		if (!ffmpeg_available && settings().ffmpeg_path === '') {
 			alert(lang().export_video.ffmpeg_not_configured_error);
 		}
 
-		Log.export.info("Setting up export.");
+		Log.export.info('Setting up export.');
 		dialog.close();
 		setLoading(true);
-		setLoadingInfo("Setting up export...");
+		setLoadingInfo('Setting up export...');
 		let ffmpegPath = settings().ffmpeg_path;
-		ffmpegPath = await join(ffmpegPath, "ffmpeg");
-		if (platform() === "windows") {
-			ffmpegPath += ".exe";
+		ffmpegPath = await join(ffmpegPath, 'ffmpeg');
+		if (platform() === 'windows') {
+			ffmpegPath += '.exe';
 		}
+
+		renderer.pauseTick();
+		renderer.seekToStart();
+		renderer.shallLoop(false);
+		setLoadingInfo('Exporting frames...');
+		setLoadingProgress(0);
+		let lastLog = 0;
+		const fps = saveManager.fps;
+		const durationSeconds = renderer.getDuration() / 1000;
+		const totalFrames = Math.ceil(fps * durationSeconds);
+		let frame = 0;
+		setLoadingInfoDetail(`${frame} / ${totalFrames}`);
 
 		const onWsReady = new Channel<number>();
 		onWsReady.onmessage = (port) => {
-			const socket = new WebSocket("ws://localhost:" + port);
-			socket.binaryType = "arraybuffer";
+			const socket = new WebSocket('ws://localhost:' + port);
+			socket.binaryType = 'arraybuffer';
 
-			socket.addEventListener("open", async () => {
-				Log.export.info("WebSocket opened on front-end.");
+			socket.addEventListener('open', async () => {
+				Log.export.info('WebSocket opened on front-end.');
+			});
 
-				renderer.pauseTick();
-				renderer.seekToStart();
-				renderer.shallLoop(false);
-				setLoadingInfo("Exporting frames...");
-				setLoadingInfoDetail("0%");
-				setLoadingProgress(0);
-				let lastLog = 0;
-				const fps = saveManager.fps;
-				const durationSeconds = renderer.getDuration() / 1000;
-				const totalFrames = Math.ceil(fps * durationSeconds);
-
-				for (let i = 0; i < totalFrames; i++) {
-					const percent = i / totalFrames * 100;
+			socket.addEventListener('message', async () => {
+				if (frame >= totalFrames) {
+					socket.send('done');
+				} else {
+					const percent = (frame / totalFrames) * 100;
 					renderer.seekToPercent(percent);
 					renderer.updateOnce();
 					setLoadingProgress(percent);
 					const snapshot = await renderer.getSnapshot();
+					const px = snapshot.pixels;
+					if (frame === 0) {
+						Log.export.debug(`frame size: ${px.BYTES_PER_ELEMENT * px.length}`);
+						Log.export.debug(`frame resolution: ${snapshot.width}x${snapshot.height}`);
+						Log.export.debug(`expected frame size: ${4 * saveManager.save.screen.width * saveManager.save.screen.height}`);
+						Log.export.debug(`expected frame resolution: ${saveManager.save.screen.width}x${saveManager.save.screen.height}`);
+					}
 					// typed arrays are supported, in case it shows as an error:
 					// https://developer.mozilla.org/fr/docs/Web/API/WebSocket/send
-					socket.send(snapshot.pixels);
-					if (performance.now() - lastLog > 1000) {
-						Log.export.info(`Export frames progress: ${percent}`);
+					socket.send(px);
+					if (performance.now() - lastLog > 300) {
+						Log.export.info(`Export frames progress: ${frame}`);
 						lastLog = performance.now();
 					}
+					
+					frame++;
+					setLoadingInfoDetail(`${frame} / ${totalFrames}`);
 				}
-				socket.send("done");
 			});
 
-			socket.addEventListener("error", () => {
-				Log.export.error("An unknown WebSocket error has occured.");
+			socket.addEventListener('error', () => {
+				Log.export.error('An unknown WebSocket error has occured.');
 			});
 
-			socket.addEventListener("close", (e) => {
+			socket.addEventListener('close', (e) => {
 				Log.export.info(`WebSocket connection closed: ${e.code} - ${e.reason}`);
 			});
-		}
-		invoke("setup_export", {
+		};
+		invoke('setup_export', {
 			videoPath: exportPath,
 			ffmpegPath,
 			screenWidth: saveManager.save.screen.width,
 			screenHeight: saveManager.save.screen.height,
 			fps: saveManager.save.fps,
-			onWsReady });
+			totalFrames,
+			onWsReady
+		});
 	}
 </script>
 
@@ -129,9 +150,7 @@
 {/snippet}
 
 <Modal bind:dialog title={lang().export_video.title} withButtonGap>
-	<p>
-		MKV format, AV1 codec.
-	</p>
+	<p>MKV format, AV1 codec.</p>
 	<div class="flex">
 		<Button
 			margin
@@ -149,11 +168,7 @@
 				dialog?.close();
 			}}
 		></Button>
-		<Button
-			label={lang().export_video.export}
-			onClick={exportVideo}
-			variant={"accent"}
-		></Button>
+		<Button label={lang().export_video.export} onClick={exportVideo} variant={'accent'}></Button>
 	{/snippet}
 </Modal>
 

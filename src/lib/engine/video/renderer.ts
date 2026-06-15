@@ -389,7 +389,10 @@ export class Renderer {
 	 * Returns the current frame as raw pixels
 	 */
 	async getSnapshot() {
-		return this.app.renderer.extract.pixels(this.app.stage);
+		return this.app.renderer.extract.pixels({
+			target: this.app.stage,
+			frame: this.app.screen,
+		});
 	}
 }
 
