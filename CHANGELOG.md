@@ -7,15 +7,18 @@ https://keepachangelog.com/en/1.0.0/
 
 ### Known issues
 
-- Border radius has no effect.
 - Box shadow may have rendering artifacts.
 - Shadow spread is ignored in text shadow.
 - Only one shadow is taken into account in text shadow.
+- The colour picker may be missing the alpha channel.
 
 ### Added
 
 - Added theming: now has dark and light themes.
-- Added localization support.
+- Added localization support (only English is available for now).
+- Added auto-detection of pre-installed ffmpeg binaries, when in PATH.
+  - It is still possible to manually point to an alternate binary to overwrite the default install, or to compensate a missing one.
+- Added a warning upon object deletion.
 - Internal: added support for microphone input (for previewing only)
 
 ### Changed
