@@ -37,12 +37,12 @@
 			title: lang().export_video.set_video_path,
 			filters: [
 				{
-					extensions: ['mkv'],
+					extensions: ['webm'],
 					name: lang().export_video.video_picker.filters.all_supported_video_files
 				},
 				{
-					extensions: ['mkv'],
-					name: lang().export_video.video_picker.filters.mkv_video_file
+					extensions: ['webm'],
+					name: lang().export_video.video_picker.filters.webm_video_file
 				}
 			]
 		});
@@ -150,7 +150,7 @@
 {/snippet}
 
 <Modal bind:dialog title={lang().export_video.title} withButtonGap>
-	<p>MKV format, AV1 codec.</p>
+	<p>WEBM format, VP9 codec.</p>
 	<div class="flex">
 		<Button
 			margin

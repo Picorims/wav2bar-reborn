@@ -175,7 +175,7 @@ fn commit_frames_to_video_slice(app: &AppHandle, base_command: String, screen_wi
     let shell = app.shell();
     let frames_path = get_temp_dir(&app).join("frames");
     let one_frame_path = frames_path.join("frame_%d.rgba");
-    let video_path = frames_path.join("video.mkv");
+    let video_path = frames_path.join("video.webm");
     let frame_path_display = one_frame_path.as_os_str().display();
     let video_path_display = video_path.as_os_str().display();
 
@@ -217,9 +217,10 @@ fn commit_frames_to_video_slice(app: &AppHandle, base_command: String, screen_wi
         "-frames:v",
         frames_str.as_str(),
         "-c:v",
-        "libaom-av1",
-        "-crf",
-        "30",
+        "libvpx-vp9",
+        // "libaom-av1",
+        // "-crf",
+        // "30",
         video_path.as_str(),
     ];
     // let args = vec!["-h"];

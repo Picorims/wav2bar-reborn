@@ -45,7 +45,7 @@
 		"video_picker": {
 			"filters": {
 				"all_supported_video_files": "All supported video formats",
-				"mkv_video_file": "MKV video format"
+				"webm_video_file": "WEBM video format"
 			}
 		}
 	},
