@@ -7,12 +7,10 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use std::ffi::os_str::Display;
 use std::fs::{File, create_dir_all, exists};
-use std::io::{Stdout, Write};
+use std::io::{Write};
 use std::net::{TcpListener, TcpStream};
-use std::sync::mpsc::{self, Receiver, Sender};
-use std::thread;
+// use std::thread::{self};
 
 use tauri::AppHandle;
 use tauri_plugin_shell::process::CommandEvent;
@@ -22,6 +20,8 @@ use tungstenite::protocol::CloseFrame;
 use tungstenite::{Utf8Bytes, WebSocket, accept};
 
 use crate::get_temp_dir;
+
+const SLICE_SIZE_FRAMES: u64 = 100;
 
 #[tauri::command]
 pub fn setup_export(
@@ -61,11 +61,12 @@ pub fn setup_export(
             // let sender_clone = sender.clone();
             
             // spawn one bilateral connection
-            thread::spawn(move || {
+            // no thread spawned because be only want a single connection possible.
+            // thread::spawn(move || {
                 let mut websocket = accept(stream.unwrap()).unwrap();
-                let mut frame_id = 0;
+                let mut frame_id: u64 = 0;
+                let mut slice_id: u64 = 0;
                 send_next(& mut websocket);
-
                 // listen for messages
                 loop {
                     let msg = websocket.read().unwrap();
@@ -80,16 +81,18 @@ pub fn setup_export(
                             Err(why) => {
                                 log::error!("Failed to check for frames path existance: {why}");
                                 frame_id += 1;
+                                // TODO add black frame instead
                                 send_next(& mut websocket);
                                 continue;
                             }
                         };
-                        if (!frames_path_exists) {
+                        if !frames_path_exists {
                             match create_dir_all(&frames_path) {
                                 Ok(_) => {},
                                 Err(why) => {
                                     log::error!("Failed to create frames cache directory: {why}");
                                     frame_id += 1;
+                                    // TODO add black frame instead
                                     send_next(& mut websocket);
                                     continue;
                                 }
@@ -102,6 +105,7 @@ pub fn setup_export(
                             Err(why) => {
                                 log::error!("Failed to open file for writing frame {frame_id}: {why}");
                                 frame_id += 1;
+                                // TODO add black frame instead
                                 send_next(& mut websocket);
                                 continue;
                             }
@@ -111,6 +115,7 @@ pub fn setup_export(
                             Err(why) => {
                                 log::error!("Failed to write frame: {why}");
                                 frame_id += 1;
+                                // TODO add black frame instead
                                 send_next(& mut websocket);
                                 continue;
                             }
@@ -127,7 +132,13 @@ pub fn setup_export(
                         // //         Ok(v) => v,
                         // //     }
                         // }
-                        frame_id += 1;
+                        frame_id += 1; // this being before the if size is intentional.
+                        if frame_id >= SLICE_SIZE_FRAMES {
+                            commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
+                            // future.as_mut();
+                            frame_id = 0;
+                            slice_id += 1;
+                        }
                         send_next(& mut websocket);
                     } else if msg.is_text() {
                         let text = match msg.to_text() {
@@ -148,12 +159,13 @@ pub fn setup_export(
                                     log::error!("Failed to properly close websocket session: {why}")
                                 }
                             }
-                            commit_frames_to_video_slice(&app, base_command, screen_width, screen_height, fps, total_frames);
+                            commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
+                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path).await;
                             break;
                         }
                     }
                 }
-            });
+            // });
             break; // allow a single connection.
         }
     });
@@ -168,14 +180,14 @@ fn send_next(websocket: & mut WebSocket<TcpStream> ) {
     }
 }
 
+
 /// Commit current frames to video slice.
 /// Does NOT clear cache afterwards.
-fn commit_frames_to_video_slice(app: &AppHandle, base_command: String, screen_width: u16, screen_height: u16, fps: u16, total_frames: u64) {
+async fn commit_frames_to_video_slice(app: &AppHandle, base_command: &String, screen_width: u16, screen_height: u16, fps: u16, total_frames: u64, video_name: String) {
     log::info!("Committing frames to video slice.");
-    let shell = app.shell();
     let frames_path = get_temp_dir(&app).join("frames");
     let one_frame_path = frames_path.join("frame_%d.rgba");
-    let video_path = frames_path.join("video.webm");
+    let video_path = frames_path.join(video_name);
     let frame_path_display = one_frame_path.as_os_str().display();
     let video_path_display = video_path.as_os_str().display();
 
@@ -224,14 +236,53 @@ fn commit_frames_to_video_slice(app: &AppHandle, base_command: String, screen_wi
         video_path.as_str(),
     ];
     // let args = vec!["-h"];
+    spawn_ffmpeg(app, base_command, &args).await;
+}
+
+async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, total_frames: u64, video_path: String) {
+    log::info!("Committing frames to video slice.");
+
+    let frames_path = get_temp_dir(&app).join("frames");
+    let video_slice_path = frames_path.join("video_%d.webm");
+    let video_slice_path_display = video_slice_path.as_os_str().display();
+
+    // let args = vec!["-v", "error", "-follow", "1", "-i", "pipe:0", &video_path_copy];
+    // see: https://ffmpeg.org/ffmpeg-formats.html#rawvideo
+    // see: ffmpeg -pix_fmts
+    // see: https://trac.ffmpeg.org/wiki/Encode/AV1
+    let frames_str = format!("{total_frames}");
+    let video_slice_path_arg = format!("{video_slice_path_display}");
+    let args = vec![
+        "-loglevel",
+        "debug",
+        "-progress",
+        "pipe:1",
+        "-y",
+        "-start_number",
+        "0",
+        "-i",
+        video_slice_path_arg.as_str(),
+        "-frames:v",
+        frames_str.as_str(),
+        "-c:v",
+        "libvpx-vp9",
+        video_path.as_str(),
+    ];
+    // let args = vec!["-h"];
+    spawn_ffmpeg(app, base_command, &args).await;
+}
+
+
+async fn spawn_ffmpeg(app: &AppHandle, base_command: &String, args: &Vec<&str>) {
+    let shell = app.shell();
 
     log::info!("Running: {base_command} {args:?}");
-    let (mut ffmpeg_receiver, mut child) = match shell.command(base_command).args(args).spawn() {
+    let (mut ffmpeg_receiver, mut _child) = match shell.command(base_command).args(args).spawn() {
         Err(why) => panic!("couldn't spawn ffmpeg: {}", why),
         Ok(process) => process,
     };
 
-    tauri::async_runtime::spawn(async move {
+    match tauri::async_runtime::spawn(async move {
         while let Some(event) = ffmpeg_receiver.recv().await {
             match event {
                 CommandEvent::Stdout(ref out) => {
@@ -258,10 +309,19 @@ fn commit_frames_to_video_slice(app: &AppHandle, base_command: String, screen_wi
                             log::info!("ffmpeg Terminated with error code {code_v}: {payload:?}");
                         }
                     }
+                    return 0
                 }
                 _ => (),
             }
             // log::debug!("{event:?}");
         }
-    });
+        return 1
+    }).await {
+        Err(why) => {
+            log::error!("Something went wrong with ffmpeg process: {why}");
+        },
+        Ok(v) => {
+            log::info!("ffmpeg task finished with exit code {v}");
+        }
+    };
 }
