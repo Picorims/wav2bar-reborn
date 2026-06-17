@@ -63,6 +63,11 @@
 		const ffmpeg_available = await invoke<boolean>('is_ffmpeg_available');
 		if (!ffmpeg_available && settings().ffmpeg_path === '') {
 			alert(lang().export_video.ffmpeg_not_configured_error);
+			return;
+		}
+		if (saveManager.save.audio_filename === "") {
+			alert(lang().export_video.missing_audio_error);
+			return;
 		}
 
 		Log.export.info('Setting up export.');

@@ -42,6 +42,7 @@
 		"set_video_path": "Set video path",
 		"no_video_path_error": "Please specify a video path for the exported video.",
 		"ffmpeg_not_configured_error": "FFmpeg isn't in the PATH and is not configured in the settings! Please, either install FFmpeg on your os, or configure the binaries path within the app settings. This component is necessary for export!",
+		"missing_audio_error": "Please configure an audio file in project settings first. Currently unset!",
 		"video_picker": {
 			"filters": {
 				"all_supported_video_files": "All supported video formats",
