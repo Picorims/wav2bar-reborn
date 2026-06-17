@@ -63,7 +63,12 @@
 >
 	{@render children?.()}
 	{#if showTooltip && alt}
-		<div class="tooltip" class:bottom={tooltipDir.includes("bottom")} class:bottom-left={tooltipDir === "bottom-left"} class:top={tooltipDir === 'top'}>
+		<div
+			class="tooltip"
+			class:bottom={tooltipDir.includes('bottom')}
+			class:bottom-left={tooltipDir === 'bottom-left'}
+			class:top={tooltipDir === 'top'}
+		>
 			<span>
 				{alt}
 			</span>

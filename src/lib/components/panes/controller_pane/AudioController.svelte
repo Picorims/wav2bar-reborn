@@ -77,7 +77,10 @@
 		<IconButton onClick={seekToStart} alt={lang().controls_pane.playback.seek_to_start}>
 			<SkipBack />
 		</IconButton>
-		<IconButton onClick={togglePause} alt={paused ? lang().controls_pane.playback.play : lang().controls_pane.playback.pause}>
+		<IconButton
+			onClick={togglePause}
+			alt={paused ? lang().controls_pane.playback.play : lang().controls_pane.playback.pause}
+		>
 			{#if paused}
 				<CirclePlay />
 			{:else}
@@ -94,10 +97,16 @@
 	</div>
 	<div class="group">
 		<SeparatorVertical />
-		<IconButton onClick={() => renderer.seekToRelative(-5000)} alt={lang().controls_pane.playback.seek_backwards}>
+		<IconButton
+			onClick={() => renderer.seekToRelative(-5000)}
+			alt={lang().controls_pane.playback.seek_backwards}
+		>
 			<IterationCw />
 		</IconButton>
-		<IconButton onClick={() => renderer.seekToRelative(5000)} alt={lang().controls_pane.playback.seek_forward}>
+		<IconButton
+			onClick={() => renderer.seekToRelative(5000)}
+			alt={lang().controls_pane.playback.seek_forward}
+		>
 			<IterationCcw />
 		</IconButton>
 		<IconButton

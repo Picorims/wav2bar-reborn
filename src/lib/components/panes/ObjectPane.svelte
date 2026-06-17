@@ -9,7 +9,7 @@
 	*/
 
 	import { lang } from '$lib/store/settings.svelte';
-	import { PlusCircle, Redo, Undo } from 'lucide-svelte';
+	import { PlusCircle } from 'lucide-svelte';
 	import IconButton from '../atoms/IconButton.svelte';
 	import { type VisualObject_Type } from '$lib/store/save_structure/save_latest';
 	import { saveManager } from '$lib/store/save.svelte';
@@ -44,7 +44,12 @@
 			<IconButton onClick={() => alert('coming soon!')} disabled>
 				<Redo />
 			</IconButton> -->
-			<IconButton variant="accent" onClick={newObj} alt={lang().object_pane.add_object} tooltipDir="bottom-left">
+			<IconButton
+				variant="accent"
+				onClick={newObj}
+				alt={lang().object_pane.add_object}
+				tooltipDir="bottom-left"
+			>
 				<PlusCircle />
 			</IconButton>
 		</div>
