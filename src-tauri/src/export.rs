@@ -21,7 +21,16 @@ use tungstenite::{Utf8Bytes, WebSocket, accept};
 
 use crate::get_temp_dir;
 
-const SLICE_SIZE_FRAMES: u64 = 100;
+const SLICE_SIZE_FRAMES: u64 = 300;
+
+enum Message {
+    NextFromSuccess,
+    NextFromFailure,
+    Concatenating,
+    Done,
+    CreatingSlice,
+    FailedConcat,
+}
 
 #[tauri::command]
 pub fn setup_export(
@@ -68,7 +77,7 @@ pub fn setup_export(
                 let mut frame_id: u64 = 0;
                 let mut slice_id: u64 = 0;
                 let mut video_slices_paths: Vec<String> = vec![];
-                send_next(& mut websocket);
+                send_message(& mut websocket, Message::NextFromSuccess);
                 // listen for messages
                 loop {
                     let msg = websocket.read().unwrap();
@@ -84,7 +93,7 @@ pub fn setup_export(
                                 log::error!("Failed to check for frames path existance: {why}");
                                 frame_id += 1;
                                 // TODO add black frame instead
-                                send_next(& mut websocket);
+                                send_message(& mut websocket, Message::NextFromFailure);
                                 continue;
                             }
                         };
@@ -95,7 +104,7 @@ pub fn setup_export(
                                     log::error!("Failed to create frames cache directory: {why}");
                                     frame_id += 1;
                                     // TODO add black frame instead
-                                    send_next(& mut websocket);
+                                    send_message(& mut websocket, Message::NextFromFailure);
                                     continue;
                                 }
                             };
@@ -108,7 +117,7 @@ pub fn setup_export(
                                 log::error!("Failed to open file for writing frame {frame_id}: {why}");
                                 frame_id += 1;
                                 // TODO add black frame instead
-                                send_next(& mut websocket);
+                                send_message(& mut websocket, Message::NextFromFailure);
                                 continue;
                             }
                         };
@@ -118,7 +127,7 @@ pub fn setup_export(
                                 log::error!("Failed to write frame: {why}");
                                 frame_id += 1;
                                 // TODO add black frame instead
-                                send_next(& mut websocket);
+                                send_message(& mut websocket, Message::NextFromFailure);
                                 continue;
                             }
                         }
@@ -136,12 +145,13 @@ pub fn setup_export(
                         // }
                         frame_id += 1; // this being before the if size is intentional.
                         if frame_id >= SLICE_SIZE_FRAMES {
+                            send_message(&mut websocket, Message::CreatingSlice);
                             let video_path = commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
                             video_slices_paths.push(video_path);
                             frame_id = 0;
                             slice_id += 1;
                         }
-                        send_next(& mut websocket);
+                        send_message(& mut websocket, Message::NextFromSuccess);
                     } else if msg.is_text() {
                         let text = match msg.to_text() {
                             Ok(v) => v,
@@ -151,6 +161,14 @@ pub fn setup_export(
                             }
                         };
                         if text.to_ascii_lowercase() == "done" {
+                            send_message(&mut websocket, Message::Concatenating);
+                            commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
+                            let success = commit_video_slices_to_video(&app, &base_command, total_frames, video_path, video_slices_paths, audio_path).await;
+                            if success {
+                                send_message(&mut websocket, Message::Done);
+                            } else {
+                                send_message(&mut websocket, Message::FailedConcat);
+                            }
                             let close_frame = CloseFrame {
                                 code: CloseCode::Normal,
                                 reason: Utf8Bytes::from("Acknowledged done."),
@@ -161,8 +179,6 @@ pub fn setup_export(
                                     log::error!("Failed to properly close websocket session: {why}")
                                 }
                             }
-                            commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
-                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path, video_slices_paths, audio_path).await;
                             break;
                         }
                     }
@@ -175,9 +191,17 @@ pub fn setup_export(
 }
 
 /// Requests the next frame to the front-end.
-fn send_next(websocket: & mut WebSocket<TcpStream> ) {
-    match websocket.send(tungstenite::Message::Text(Utf8Bytes::from("next"))) {
-        Err(why) => log::error!("Failed to send next frame request, {why}"),
+fn send_message(websocket: & mut WebSocket<TcpStream>, message: Message) {
+    let str = match message {
+        Message::Concatenating => "concatenating",
+        Message::Done => "done",
+        Message::NextFromFailure => "next_from_failure",
+        Message::NextFromSuccess => "next_from_success",
+        Message::CreatingSlice => "creating_slice",
+        Message::FailedConcat => "failed_concat",
+    };
+    match websocket.send(tungstenite::Message::Text(Utf8Bytes::from(str))) {
+        Err(why) => log::error!("Failed to send message {str} frame request, {why}"),
         _ => (),
     }
 }
