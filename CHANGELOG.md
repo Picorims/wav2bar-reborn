@@ -11,6 +11,7 @@ https://keepachangelog.com/en/1.0.0/
 - Shadow spread is ignored in text shadow.
 - Only one shadow is taken into account in text shadow.
 - The colour picker may be missing the alpha channel.
+- Frequency visualization is perfectible.
 
 ### Added
 
@@ -29,12 +30,11 @@ https://keepachangelog.com/en/1.0.0/
 - Switched from GPL-3.0 license to MPL-2.0 license.
 - Replaced CSS attributes with structured ones: box and text shadow, border radius, gradient fill.
   - Some complex values may fail to be converted.
+- Disk usage at export should be reduced by doing intermediate encoding of frames.
 
 ### Deprecated
 
 - SVG filters, while not removed from saves, are no longer rendered due to technical incompatibility with the new stack.
-
-### Fixed
 
 ### Security
 
