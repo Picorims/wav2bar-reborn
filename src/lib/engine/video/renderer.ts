@@ -286,6 +286,10 @@ export class Renderer {
 		return this.audioProvider.getDuration();
 	}
 
+	reachedEnd() {
+		return this.getProgress() >= this.getDuration();
+	}
+
 	shallLoop(loop: boolean) {
 		this.looped = loop;
 		this.audioProvider?.shallLoop(loop);
@@ -378,6 +382,16 @@ export class Renderer {
 		return this.app.renderer.generateTexture({
 			target: container,
 			frame
+		});
+	}
+
+	/**
+	 * Returns the current frame as raw pixels
+	 */
+	async getSnapshot() {
+		return this.app.renderer.extract.pixels({
+			target: this.app.stage,
+			frame: this.app.screen
 		});
 	}
 }

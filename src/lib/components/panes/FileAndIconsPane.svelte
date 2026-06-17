@@ -8,11 +8,13 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 	*/
 	import IconButton from '../atoms/IconButton.svelte';
-	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle } from 'lucide-svelte';
+	import { FileCog, FilePlus, FolderOpen, Save, Settings, HelpCircle, Rocket } from 'lucide-svelte';
 	import { saveManager } from '$lib/store/save.svelte';
 	import { renderer } from '$lib/engine/video/renderer';
 	import SettingsModal from '../window/modals/SettingsModal.svelte';
 	import ProjectSettingsModal from '../window/modals/ProjectSettingsModal.svelte';
+	import { lang } from '$lib/store/settings.svelte';
+	import ExportVideoModal from '../window/modals/ExportVideoModal.svelte';
 
 	interface Props {
 		title?: string;
@@ -22,6 +24,7 @@
 	let { title = '', saved = false }: Props = $props();
 	let settingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
+	let exportVideoModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 
 	function openAndLoadSave() {
 		saveManager.openSave(renderer);
@@ -37,36 +40,48 @@
 		onClick={() => {
 			projectSettingsModalDialog?.showModal();
 		}}
+		alt={lang().files_and_icons_pane.project_settings}
 	>
 		<FileCog />
 	</IconButton>
 
-	<IconButton>
+	<IconButton alt={lang().files_and_icons_pane.new_project}>
 		<FilePlus />
 	</IconButton>
 
-	<IconButton onClick={openAndLoadSave}>
+	<IconButton onClick={openAndLoadSave} alt={lang().files_and_icons_pane.open_project}>
 		<FolderOpen />
 	</IconButton>
 
-	<IconButton onClick={writeSave}>
+	<IconButton onClick={writeSave} alt={lang().files_and_icons_pane.save_project}>
 		<Save />
+	</IconButton>
+
+	<IconButton
+		onClick={() => {
+			exportVideoModalDialog?.showModal();
+		}}
+		alt={lang().files_and_icons_pane.export}
+	>
+		<Rocket />
 	</IconButton>
 
 	<IconButton
 		onClick={() => {
 			settingsModalDialog?.showModal();
 		}}
+		alt={lang().files_and_icons_pane.settings}
 	>
 		<Settings />
 	</IconButton>
 
-	<IconButton>
+	<IconButton alt={lang().files_and_icons_pane.help} disabled>
 		<HelpCircle />
 	</IconButton>
 
 	<SettingsModal bind:dialog={settingsModalDialog} />
 	<ProjectSettingsModal bind:dialog={projectSettingsModalDialog} />
+	<ExportVideoModal bind:dialog={exportVideoModalDialog} />
 </div>
 
 <style lang="scss">

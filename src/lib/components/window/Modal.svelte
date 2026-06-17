@@ -18,6 +18,7 @@
 		 */
 		dialog: HTMLDialogElement;
 		onOpen?: () => void;
+		withButtonGap?: boolean;
 	}
 
 	let {
@@ -25,7 +26,8 @@
 		children,
 		buttons,
 		dialog = $bindable(),
-		onOpen = () => {}
+		onOpen = () => {},
+		withButtonGap = false
 	}: Props = $props();
 
 	function onToggle() {
@@ -47,7 +49,7 @@
 
 	{@render children?.()}
 
-	<div class="buttons-container">
+	<div class="buttons-container" class:gap={withButtonGap}>
 		{@render buttons?.()}
 	</div>
 </dialog>
@@ -89,5 +91,8 @@
 		display: flex;
 		justify-content: center;
 		margin-top: g.$spacing-m;
+		&.gap {
+			gap: g.$spacing-m;
+		}
 	}
 </style>

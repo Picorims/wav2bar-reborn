@@ -20,6 +20,17 @@
         "**"
       ]
     },
-    "os:default"
+    "os:default",
+    "shell:default",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "ffmpeg",
+          "cmd": "ffmpeg.exe",
+          "args": true
+        }
+      ]
+    }
   ]
 }

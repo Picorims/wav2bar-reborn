@@ -35,8 +35,24 @@
 		"show_logs_dir": "Show logs path",
 		"close": "OK"
 	},
+	"export_video": {
+		"title": "Export video",
+		"cancel": "Cancel",
+		"export": "Export",
+		"set_video_path": "Set video path",
+		"no_video_path_error": "Please specify a video path for the exported video.",
+		"ffmpeg_not_configured_error": "FFmpeg isn't in the PATH and is not configured in the settings! Please, either install FFmpeg on your os, or configure the binaries path within the app settings. This component is necessary for export!",
+		"missing_audio_error": "Please configure an audio file in project settings first. Currently unset!",
+		"video_picker": {
+			"filters": {
+				"all_supported_video_files": "All supported video formats",
+				"webm_video_file": "WEBM video format"
+			}
+		}
+	},
 	"object_pane": {
-		"title": "Objects"
+		"title": "Objects",
+		"add_object": "Add object"
 	},
 	"controls_pane": {
 		"zoom": {
@@ -45,6 +61,15 @@
 			"zoom_out": "Zoom Out",
 			"reset_zoom": "Reset Zoom"
 		}
+	},
+	"files_and_icons_pane": {
+		"project_settings": "Project Settings",
+		"new_project": "New project",
+		"open_project": "Open project",
+		"save_project": "Save project",
+		"export": "Export",
+		"settings": "Settings",
+		"help": "Help"
 	},
 	"modal": {
 		"add_object": {

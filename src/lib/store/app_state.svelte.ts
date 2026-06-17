@@ -11,6 +11,9 @@ interface AppState {
 	loading: boolean;
 	loadingInfo: string;
 	loadingInfoDetail: string;
+	/**
+	 * Between 0 and 100
+	 */
 	loadingProgress: number | null;
 	zoomLevelPercent: number;
 }
@@ -44,6 +47,10 @@ export function setLoadingInfo(info: string) {
 export function setLoadingInfoDetail(detail: string) {
 	appState.loadingInfoDetail = detail;
 }
+
+/**
+ * Between 0 and 100
+ */
 export function setLoadingProgress(progress: number | null) {
 	appState.loadingProgress = progress;
 }
