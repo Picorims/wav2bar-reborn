@@ -35,13 +35,13 @@
 		value={appState.zoomLevelPercent}
 		onChange={(value) => setZoomLevelPercent(value)}
 	/>
-	<IconButton onClick={zoomOut} alt={lang().controls_pane.zoom.zoom_out}>
+	<IconButton onClick={zoomOut} alt={lang().controls_pane.zoom.zoom_out} tooltipDir="top">
 		<ZoomOut />
 	</IconButton>
-	<IconButton onClick={zoomIn} alt={lang().controls_pane.zoom.zoom_in}>
+	<IconButton onClick={zoomIn} alt={lang().controls_pane.zoom.zoom_in} tooltipDir="top">
 		<ZoomIn />
 	</IconButton>
-	<IconButton onClick={resetZoom} alt={lang().controls_pane.zoom.reset_zoom}>
+	<IconButton onClick={resetZoom} alt={lang().controls_pane.zoom.reset_zoom} tooltipDir="top">
 		<ScanSearch />
 	</IconButton>
 </div>

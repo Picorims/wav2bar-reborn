@@ -19,6 +19,7 @@
 		onToggle?: (value: boolean) => void;
 		alt?: string;
 		disabled?: boolean;
+		tooltipDir?: 'top' | 'bottom';
 	}
 
 	let {
@@ -29,10 +30,14 @@
 		toggled = false,
 		onToggle = () => {},
 		alt = '',
-		disabled = false
+		disabled = false,
+		tooltipDir = 'bottom'
 	}: Props = $props();
 
+	let showTooltip = $state(false);
+
 	function handleClick() {
+		showTooltip = false;
 		onClick();
 		if (togglable) {
 			toggled = !toggled;
@@ -43,6 +48,10 @@
 
 <button
 	onclick={() => handleClick()}
+	onfocusin={() => (showTooltip = true)}
+	onfocusout={() => (showTooltip = false)}
+	onmouseenter={() => (showTooltip = true)}
+	onmouseleave={() => (showTooltip = false)}
 	type="button"
 	role={togglable ? 'switch' : 'button'}
 	aria-checked={togglable ? toggled : undefined}
@@ -53,11 +62,19 @@
 	{disabled}
 >
 	{@render children?.()}
+	{#if showTooltip && alt}
+		<div class="tooltip" class:bottom={tooltipDir === 'bottom'} class:top={tooltipDir === 'top'}>
+			<span>
+				{alt}
+			</span>
+		</div>
+	{/if}
 </button>
 
 <style lang="scss">
 	@use '../../../lib/css/globals_forward.scss' as g;
 	button.icon-button {
+		position: relative;
 		width: g.$size-m;
 		height: g.$size-m;
 		background: none;
@@ -112,7 +129,53 @@
 		height: 24px;
 		stroke: g.$color-background-950;
 	}
-	button.icon-button:disabled {
+	button.icon-button:disabled > :global(svg) {
 		opacity: 0.5;
+	}
+
+	div.tooltip {
+		position: absolute;
+		top: 125%;
+		left: 50%;
+		transform: translate(-50%);
+		padding: g.$spacing-s;
+		border-radius: g.$border-radius-s;
+		background-color: g.$color-background-200;
+		color: #eee;
+		z-index: 100000;
+		animation: 0.1s ease-in-out showAnim;
+	}
+	div.tooltip.top {
+		top: unset;
+		bottom: 125%;
+	}
+	div.tooltip > span {
+		position: relative;
+		z-index: 100001;
+	}
+	div.tooltip::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: rotate(45deg) translate(-50%);
+		width: g.$size-xs;
+		height: g.$size-xs;
+		background-color: g.$color-background-200;
+		z-index: 99999;
+	}
+	div.tooltip.top::before {
+		top: calc(100% - 2px);
+	}
+
+	@keyframes showAnim {
+		from {
+			transform: scale(0.9) translate(-50%);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1) translate(-50%);
+			opacity: 1;
+		}
 	}
 </style>

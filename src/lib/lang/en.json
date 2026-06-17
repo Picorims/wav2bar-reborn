@@ -60,6 +60,15 @@
 			"zoom_in": "Zoom In",
 			"zoom_out": "Zoom Out",
 			"reset_zoom": "Reset Zoom"
+		},
+		"playback": {
+			"seek_backwards": "Seek backwards",
+			"seek_forward": "Seek forward",
+			"loop": "Loop playback",
+			"play": "Play",
+			"pause": "Pause",
+			"seek_to_start": "Seek to start",
+			"seek_to_end": "Seek to end"
 		}
 	},
 	"files_and_icons_pane": {

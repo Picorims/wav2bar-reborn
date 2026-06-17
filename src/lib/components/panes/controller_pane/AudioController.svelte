@@ -11,6 +11,7 @@
 	import IconButton from '$lib/components/atoms/IconButton.svelte';
 	import SeparatorVertical from '$lib/components/atoms/SeparatorVertical.svelte';
 	import { renderer } from '$lib/engine/video/renderer';
+	import { lang } from '$lib/store/settings.svelte';
 	import { msToMMSS } from '$lib/string';
 	import {
 		SkipBack,
@@ -73,17 +74,17 @@
 
 <div class="container">
 	<div class="group">
-		<IconButton onClick={seekToStart}>
+		<IconButton onClick={seekToStart} alt={lang().controls_pane.playback.seek_to_start}>
 			<SkipBack />
 		</IconButton>
-		<IconButton onClick={togglePause}>
+		<IconButton onClick={togglePause} alt={paused ? lang().controls_pane.playback.play : lang().controls_pane.playback.pause}>
 			{#if paused}
 				<CirclePlay />
 			{:else}
 				<CirclePause />
 			{/if}
 		</IconButton>
-		<IconButton onClick={seekToEnd}>
+		<IconButton onClick={seekToEnd} alt={lang().controls_pane.playback.seek_to_end}>
 			<SkipForward />
 		</IconButton>
 	</div>
@@ -93,10 +94,10 @@
 	</div>
 	<div class="group">
 		<SeparatorVertical />
-		<IconButton onClick={() => renderer.seekToRelative(-5000)}>
+		<IconButton onClick={() => renderer.seekToRelative(-5000)} alt={lang().controls_pane.playback.seek_backwards}>
 			<IterationCw />
 		</IconButton>
-		<IconButton onClick={() => renderer.seekToRelative(5000)}>
+		<IconButton onClick={() => renderer.seekToRelative(5000)} alt={lang().controls_pane.playback.seek_forward}>
 			<IterationCcw />
 		</IconButton>
 		<IconButton
@@ -104,6 +105,7 @@
 			onToggle={(looped) => {
 				renderer.shallLoop(looped);
 			}}
+			alt={lang().controls_pane.playback.loop}
 		>
 			<Repeat />
 		</IconButton>
