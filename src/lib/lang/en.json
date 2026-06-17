@@ -266,7 +266,8 @@
 				"bold": "Bold",
 				"underline": "Underline",
 				"overline": "Overline",
-				"line_through": "Line Through"
+				"line_through": "Line Through",
+				"migration_warning": "Note: Underline, overline and line-through have NO EFFECT for now as they have not been migrated yet!"
 			},
 			"text_align": "Text Align",
 			"text_align_types": {
