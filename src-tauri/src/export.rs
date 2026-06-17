@@ -7,7 +7,7 @@
     file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use std::fs::{File, create_dir_all, exists};
+use std::fs::{self, File, create_dir_all, exists};
 use std::io::{Write};
 use std::net::{TcpListener, TcpStream};
 // use std::thread::{self};
@@ -66,6 +66,7 @@ pub fn setup_export(
                 let mut websocket = accept(stream.unwrap()).unwrap();
                 let mut frame_id: u64 = 0;
                 let mut slice_id: u64 = 0;
+                let mut video_slices_paths: Vec<String> = vec![];
                 send_next(& mut websocket);
                 // listen for messages
                 loop {
@@ -134,8 +135,8 @@ pub fn setup_export(
                         // }
                         frame_id += 1; // this being before the if size is intentional.
                         if frame_id >= SLICE_SIZE_FRAMES {
-                            commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
-                            // future.as_mut();
+                            let video_path = commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
+                            video_slices_paths.push(video_path);
                             frame_id = 0;
                             slice_id += 1;
                         }
@@ -160,7 +161,7 @@ pub fn setup_export(
                                 }
                             }
                             commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
-                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path).await;
+                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path, video_slices_paths).await;
                             break;
                         }
                     }
@@ -182,8 +183,9 @@ fn send_next(websocket: & mut WebSocket<TcpStream> ) {
 
 
 /// Commit current frames to video slice.
-/// Does NOT clear cache afterwards.
-async fn commit_frames_to_video_slice(app: &AppHandle, base_command: &String, screen_width: u16, screen_height: u16, fps: u16, total_frames: u64, video_name: String) {
+/// Clear frames afterwards.
+/// Returns the absolute path of the created video.
+async fn commit_frames_to_video_slice(app: &AppHandle, base_command: &String, screen_width: u16, screen_height: u16, fps: u16, total_frames: u64, video_name: String) -> String {
     log::info!("Committing frames to video slice.");
     let frames_path = get_temp_dir(&app).join("frames");
     let one_frame_path = frames_path.join("frame_%d.rgba");
@@ -237,31 +239,75 @@ async fn commit_frames_to_video_slice(app: &AppHandle, base_command: &String, sc
     ];
     // let args = vec!["-h"];
     spawn_ffmpeg(app, base_command, &args).await;
+    let entries = match fs::read_dir(frames_path) {
+        Ok(v) => v,
+        Err(why) => {
+            log::error!("Failed to read frames directory for frame pruning: {why}");
+            return video_path_display.to_string();
+        }
+    };
+    entries
+        .filter(|e| e.is_ok())
+        .map(|e| e.unwrap().path())
+        .filter(|e| e.is_file() && e.extension().is_some_and(|ext| ext == "rgba") && e.file_prefix().is_some_and(|p| p.display().to_string().starts_with("frame_")))
+        .for_each(|e| {
+            match fs::remove_file(e) {
+                Err(why) => {
+                    log::error!("Failed to delete frame: {why}");
+                },
+                _ => ()
+            }
+        });
+    return video_path_display.to_string();
 }
 
-async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, total_frames: u64, video_path: String) {
+async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, total_frames: u64, video_path: String, video_slices_path: Vec<String>) -> bool {
     log::info!("Committing frames to video slice.");
 
+    
     let frames_path = get_temp_dir(&app).join("frames");
-    let video_slice_path = frames_path.join("video_%d.webm");
-    let video_slice_path_display = video_slice_path.as_os_str().display();
 
+    log::info!("Preparing concat file.");
+    let concat_path = frames_path.join("concat.txt");
+    let content = video_slices_path.iter()
+        .map(|v| format!("file {v}").replace("\\", "\\\\"))
+        .reduce(|acc, s| format!("{acc}\n{s}"));
+    match content {
+        Some(c) => {
+            match fs::write(&concat_path, c) {
+                Err(why) => {
+                    log::error!("Cannot proceed with video concatenating: failed to write concat.txt file: {why}");
+                    return false;
+                },
+                _ => ()
+            };
+        },
+        None => {
+            log::error!("Cannot proceed with video concatenating: failed to prepare concat.txt file.");
+            return false;
+        }
+    }
+
+    log::info!("Concatenating video slices...");
     // let args = vec!["-v", "error", "-follow", "1", "-i", "pipe:0", &video_path_copy];
     // see: https://ffmpeg.org/ffmpeg-formats.html#rawvideo
     // see: ffmpeg -pix_fmts
     // see: https://trac.ffmpeg.org/wiki/Encode/AV1
     let frames_str = format!("{total_frames}");
-    let video_slice_path_arg = format!("{video_slice_path_display}");
+    let concat_path_display = concat_path.display();
+    let concat_path_arg = format!("{concat_path_display}");
     let args = vec![
         "-loglevel",
         "debug",
         "-progress",
         "pipe:1",
         "-y",
-        "-start_number",
+        "-f",
+        "concat",
+        "-safe",
         "0",
         "-i",
-        video_slice_path_arg.as_str(),
+        concat_path_arg.as_str(),
         "-frames:v",
         frames_str.as_str(),
         "-c:v",
@@ -270,6 +316,7 @@ async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, to
     ];
     // let args = vec!["-h"];
     spawn_ffmpeg(app, base_command, &args).await;
+    return true;
 }
 
 
