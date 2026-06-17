@@ -60,6 +60,15 @@
 			"zoom_in": "Zoom In",
 			"zoom_out": "Zoom Out",
 			"reset_zoom": "Reset Zoom"
+		},
+		"playback": {
+			"seek_backwards": "Seek backwards",
+			"seek_forward": "Seek forward",
+			"loop": "Loop playback",
+			"play": "Play",
+			"pause": "Pause",
+			"seek_to_start": "Seek to start",
+			"seek_to_end": "Seek to end"
 		}
 	},
 	"files_and_icons_pane": {
@@ -69,7 +78,7 @@
 		"save_project": "Save project",
 		"export": "Export",
 		"settings": "Settings",
-		"help": "Help"
+		"help": "Help (coming soon!)"
 	},
 	"modal": {
 		"add_object": {
@@ -257,7 +266,8 @@
 				"bold": "Bold",
 				"underline": "Underline",
 				"overline": "Overline",
-				"line_through": "Line Through"
+				"line_through": "Line Through",
+				"migration_warning": "Note: Underline, overline and line-through have NO EFFECT for now as they have not been migrated yet!"
 			},
 			"text_align": "Text Align",
 			"text_align_types": {

@@ -75,7 +75,7 @@
 		<Settings />
 	</IconButton>
 
-	<IconButton alt={lang().files_and_icons_pane.help} disabled>
+	<IconButton alt={lang().files_and_icons_pane.help} disabled tooltipDir="bottom-left">
 		<HelpCircle />
 	</IconButton>
 

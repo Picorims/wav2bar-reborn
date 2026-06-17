@@ -168,6 +168,7 @@
 		value={data?.font_size}
 		onChange={updateFontSize}
 	/>
+	<p>{lang().properties.text.text_decoration.migration_warning}</p>
 	<ButtonsGroup>
 		<ButtonsRow columns={5}>
 			<Button

@@ -69,7 +69,7 @@ $_splitter-half-size: calc(g.$spacing-l / 2);
 			opacity: 1;
 		}
 		&.splitpanes__splitter__active {
-			z-index: 2; /* Fix an issue of overlap fighting with a near hovered splitter */
+			z-index: 2; /* Fixes an issue of overlap fighting with a near hovered splitter */
 		}
 	}
 }
