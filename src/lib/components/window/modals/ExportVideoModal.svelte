@@ -84,6 +84,15 @@
 		const fps = saveManager.fps;
 		const durationSeconds = renderer.getDuration() / 1000;
 		const totalFrames = Math.ceil(fps * durationSeconds);
+		const dataDir = await invoke<string>('get_current_data_dir');
+		const audioPath = await join(
+			dataDir,
+			'temp',
+			'current_save',
+			'assets',
+			'audio',
+			saveManager.save.audio_filename
+		);
 		let frame = 0;
 		setLoadingInfoDetail(`${frame} / ${totalFrames}`);
 
@@ -115,7 +124,7 @@
 					// typed arrays are supported, in case it shows as an error:
 					// https://developer.mozilla.org/fr/docs/Web/API/WebSocket/send
 					socket.send(px);
-					if (performance.now() - lastLog > 300) {
+					if (performance.now() - lastLog > 2000) {
 						Log.export.info(`Export frames progress: ${frame}`);
 						lastLog = performance.now();
 					}
@@ -133,8 +142,10 @@
 				Log.export.info(`WebSocket connection closed: ${e.code} - ${e.reason}`);
 			});
 		};
+
 		invoke('setup_export', {
 			videoPath: exportPath,
+			audioPath,
 			ffmpegPath,
 			screenWidth: saveManager.save.screen.width,
 			screenHeight: saveManager.save.screen.height,

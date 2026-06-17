@@ -27,6 +27,7 @@ const SLICE_SIZE_FRAMES: u64 = 100;
 pub fn setup_export(
     app: AppHandle,
     video_path: String,
+    audio_path: String,
     ffmpeg_path: String,
     screen_width: u16,
     screen_height: u16,
@@ -161,7 +162,7 @@ pub fn setup_export(
                                 }
                             }
                             commit_frames_to_video_slice(&app, &base_command, screen_width, screen_height, fps, total_frames, format!("video_{slice_id}.webm")).await;
-                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path, video_slices_paths).await;
+                            commit_video_slices_to_video(&app, &base_command, total_frames, video_path, video_slices_paths, audio_path).await;
                             break;
                         }
                     }
@@ -261,7 +262,7 @@ async fn commit_frames_to_video_slice(app: &AppHandle, base_command: &String, sc
     return video_path_display.to_string();
 }
 
-async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, total_frames: u64, video_path: String, video_slices_path: Vec<String>) -> bool {
+async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, total_frames: u64, video_path: String, video_slices_path: Vec<String>, audio_path: String) -> bool {
     log::info!("Committing frames to video slice.");
 
     
@@ -308,6 +309,8 @@ async fn commit_video_slices_to_video(app: &AppHandle, base_command: &String, to
         "0",
         "-i",
         concat_path_arg.as_str(),
+        "-i",
+        audio_path.as_str(),
         "-frames:v",
         frames_str.as_str(),
         "-c:v",
