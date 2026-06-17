@@ -19,7 +19,7 @@
 		onToggle?: (value: boolean) => void;
 		alt?: string;
 		disabled?: boolean;
-		tooltipDir?: 'top' | 'bottom';
+		tooltipDir?: 'top' | 'bottom' | 'bottom-left';
 	}
 
 	let {
@@ -63,7 +63,7 @@
 >
 	{@render children?.()}
 	{#if showTooltip && alt}
-		<div class="tooltip" class:bottom={tooltipDir === 'bottom'} class:top={tooltipDir === 'top'}>
+		<div class="tooltip" class:bottom={tooltipDir.includes("bottom")} class:bottom-left={tooltipDir === "bottom-left"} class:top={tooltipDir === 'top'}>
 			<span>
 				{alt}
 			</span>
@@ -143,38 +143,49 @@
 		background-color: g.$color-background-200;
 		color: #eee;
 		z-index: 100000;
-		animation: 0.1s ease-in-out showAnim;
+		// animation: 0.1s ease-in-out showAnim;
+		box-shadow: 0 2px 4px #00000055;
 	}
 	div.tooltip.top {
 		top: unset;
 		bottom: 125%;
 	}
+	div.tooltip.bottom-left {
+		left: unset;
+		right: 0;
+		transform: translate(0);
+	}
 	div.tooltip > span {
 		position: relative;
 		z-index: 100001;
+		text-wrap-mode: nowrap;
 	}
 	div.tooltip::before {
 		content: '';
 		position: absolute;
 		top: 0;
 		left: 50%;
-		transform: rotate(45deg) translate(-50%);
+		transform: translate(-50%, -50%) rotate(45deg);
 		width: g.$size-xs;
 		height: g.$size-xs;
 		background-color: g.$color-background-200;
 		z-index: 99999;
 	}
 	div.tooltip.top::before {
-		top: calc(100% - 2px);
+		top: 100%;
+	}
+	div.tooltip.bottom-left::before {
+		left: unset;
+		right: g.$spacing-s;
 	}
 
 	@keyframes showAnim {
 		from {
-			transform: scale(0.9) translate(-50%);
+			transform: scale(0.9) translateX(-50%);
 			opacity: 0;
 		}
 		to {
-			transform: scale(1) translate(-50%);
+			transform: scale(1) translateX(-50%);
 			opacity: 1;
 		}
 	}

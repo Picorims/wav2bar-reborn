@@ -44,7 +44,7 @@
 			<IconButton onClick={() => alert('coming soon!')} disabled>
 				<Redo />
 			</IconButton> -->
-			<IconButton variant="accent" onClick={newObj} alt={lang().object_pane.add_object}>
+			<IconButton variant="accent" onClick={newObj} alt={lang().object_pane.add_object} tooltipDir="bottom-left">
 				<PlusCircle />
 			</IconButton>
 		</div>
