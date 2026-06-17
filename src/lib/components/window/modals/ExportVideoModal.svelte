@@ -65,7 +65,7 @@
 			alert(lang().export_video.ffmpeg_not_configured_error);
 			return;
 		}
-		if (saveManager.save.audio_filename === "") {
+		if (saveManager.save.audio_filename === '') {
 			alert(lang().export_video.missing_audio_error);
 			return;
 		}
@@ -101,10 +101,17 @@
 		let frame = 0;
 		let failedFrames = 0;
 
-		const setInfoDetail = (frame: number, totalFrames: number, failedFrames: number, suffix?: string) => {
-			setLoadingInfoDetail(`position: ${frame} / ${totalFrames}, failed frames: ${failedFrames}${suffix ? ` - ${suffix}` : ""}`);
-		}
-		setInfoDetail(frame, totalFrames, failedFrames)
+		const setInfoDetail = (
+			frame: number,
+			totalFrames: number,
+			failedFrames: number,
+			suffix?: string
+		) => {
+			setLoadingInfoDetail(
+				`position: ${frame} / ${totalFrames}, failed frames: ${failedFrames}${suffix ? ` - ${suffix}` : ''}`
+			);
+		};
+		setInfoDetail(frame, totalFrames, failedFrames);
 
 		const onWsReady = new Channel<number>();
 		onWsReady.onmessage = (port) => {
@@ -116,8 +123,8 @@
 			});
 
 			socket.addEventListener('message', async (msg) => {
-				if (msg.data === "next_from_success" || msg.data === "next_from_failures") {
-					if (msg.data === "next_from_failure") {
+				if (msg.data === 'next_from_success' || msg.data === 'next_from_failures') {
+					if (msg.data === 'next_from_failure') {
 						failedFrames += 1;
 					}
 					if (frame >= totalFrames) {
@@ -132,8 +139,12 @@
 						if (frame === 0) {
 							Log.export.debug(`frame size: ${px.BYTES_PER_ELEMENT * px.length}`);
 							Log.export.debug(`frame resolution: ${snapshot.width}x${snapshot.height}`);
-							Log.export.debug(`expected frame size: ${4 * saveManager.save.screen.width * saveManager.save.screen.height}`);
-							Log.export.debug(`expected frame resolution: ${saveManager.save.screen.width}x${saveManager.save.screen.height}`);
+							Log.export.debug(
+								`expected frame size: ${4 * saveManager.save.screen.width * saveManager.save.screen.height}`
+							);
+							Log.export.debug(
+								`expected frame resolution: ${saveManager.save.screen.width}x${saveManager.save.screen.height}`
+							);
 						}
 						// typed arrays are supported, in case it shows as an error:
 						// https://developer.mozilla.org/fr/docs/Web/API/WebSocket/send
@@ -142,22 +153,27 @@
 							Log.export.info(`Export frames progress: ${frame}`);
 							lastLog = performance.now();
 						}
-						
+
 						frame++;
 						setInfoDetail(frame, totalFrames, failedFrames);
 					}
-				} else if (msg.data === "creating_slice") {
-					setInfoDetail(frame, totalFrames, failedFrames, "Concatenating frames into slice...");
-				} else if (msg.data === "concatenating") {
-					setInfoDetail(frame, totalFrames, failedFrames, "Combining slices and audio into final video...");
-				} else if (msg.data === "done") {
+				} else if (msg.data === 'creating_slice') {
+					setInfoDetail(frame, totalFrames, failedFrames, 'Concatenating frames into slice...');
+				} else if (msg.data === 'concatenating') {
+					setInfoDetail(
+						frame,
+						totalFrames,
+						failedFrames,
+						'Combining slices and audio into final video...'
+					);
+				} else if (msg.data === 'done') {
 					socket.close();
 					setLoading(false);
-					alert("Video successfully exported!");
-				} else if (msg.data === "failed_concat") {
+					alert('Video successfully exported!');
+				} else if (msg.data === 'failed_concat') {
 					socket.close();
 					setLoading(false);
-					alert("Video export failure: failed at slices concatenation.");
+					alert('Video export failure: failed at slices concatenation.');
 				}
 			});
 

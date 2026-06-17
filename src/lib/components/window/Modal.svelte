@@ -18,7 +18,7 @@
 		 */
 		dialog: HTMLDialogElement;
 		onOpen?: () => void;
-		withButtonGap ?: boolean;
+		withButtonGap?: boolean;
 	}
 
 	let {
@@ -27,7 +27,7 @@
 		buttons,
 		dialog = $bindable(),
 		onOpen = () => {},
-		withButtonGap = false,
+		withButtonGap = false
 	}: Props = $props();
 
 	function onToggle() {

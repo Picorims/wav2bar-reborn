@@ -22,7 +22,7 @@
 		iconLeft?: Snippet;
 		iconRight?: Snippet;
 		margin?: boolean;
-		variant?: "primary" | "secondary" | "accent";
+		variant?: 'primary' | 'secondary' | 'accent';
 	}
 
 	let {
@@ -36,7 +36,7 @@
 		iconLeft,
 		iconRight,
 		margin = false,
-		variant = "secondary"
+		variant = 'secondary'
 	}: Props = $props();
 
 	let clientWidth = $state(0);
@@ -63,9 +63,9 @@
 	{title}
 	class:toggled
 	class:margin
-	class:secondary={variant === "secondary"}
-	class:primary={variant === "primary"}
-	class:accent={variant === "accent"}
+	class:secondary={variant === 'secondary'}
+	class:primary={variant === 'primary'}
+	class:accent={variant === 'accent'}
 >
 	{#if iconLeft}
 		{@render iconLeft()}

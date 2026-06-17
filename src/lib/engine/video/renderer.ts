@@ -287,7 +287,7 @@ export class Renderer {
 	}
 
 	reachedEnd() {
-		return this.getProgress()>= this.getDuration();
+		return this.getProgress() >= this.getDuration();
 	}
 
 	shallLoop(loop: boolean) {
@@ -391,7 +391,7 @@ export class Renderer {
 	async getSnapshot() {
 		return this.app.renderer.extract.pixels({
 			target: this.app.stage,
-			frame: this.app.screen,
+			frame: this.app.screen
 		});
 	}
 }

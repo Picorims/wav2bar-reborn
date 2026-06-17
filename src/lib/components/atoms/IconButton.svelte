@@ -18,7 +18,7 @@
 		toggled?: boolean;
 		onToggle?: (value: boolean) => void;
 		alt?: string;
-		disabled ?: boolean;
+		disabled?: boolean;
 	}
 
 	let {

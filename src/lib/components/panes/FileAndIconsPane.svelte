@@ -44,7 +44,7 @@
 	>
 		<FileCog />
 	</IconButton>
-	
+
 	<IconButton alt={lang().files_and_icons_pane.new_project}>
 		<FilePlus />
 	</IconButton>

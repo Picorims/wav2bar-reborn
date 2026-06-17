@@ -82,7 +82,7 @@ export const Log = {
 	video: new Logger('ticker'),
 	save: new Logger('save'),
 	ui: new Logger('ui'),
-	export: new Logger('export'),
+	export: new Logger('export')
 };
 
 if (typeof window !== 'undefined') {
