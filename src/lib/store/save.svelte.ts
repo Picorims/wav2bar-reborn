@@ -25,7 +25,7 @@ import { open, save } from '@tauri-apps/plugin-dialog';
 import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import { FileAudioCachedFFTProvider } from '$lib/engine/audio/file_audio_cached_fft_provider';
 import { join } from '@tauri-apps/api/path';
-import { setLoading, setLoadingInfo } from './app_state.svelte';
+import { setLoading, setLoadingInfo, setProjectName, setSaved } from './app_state.svelte';
 import { SaveConverter } from '$lib/save_converter';
 
 class SaveManager {
@@ -138,7 +138,9 @@ class SaveManager {
 		return typedObject;
 	}
 
-	public async openSave(renderer: Renderer) {
+	public async openSave(
+		renderer: Renderer
+	): Promise<{ success: boolean; message: string; warn: boolean }> {
 		Log.save.info('Asking for a file to open');
 		const path = await open({
 			title: 'Pick a save file',
@@ -150,7 +152,7 @@ class SaveManager {
 
 		if (path === null) {
 			Log.save.info('No file selected');
-			return;
+			return { success: true, message: 'No file selected.', warn: false };
 		} else {
 			setLoading(true);
 			try {
@@ -165,16 +167,19 @@ class SaveManager {
 				setLoadingInfo('Converting and validating save file...');
 				const result = SaveConverter.convert(saveJSON);
 				if (!result.success || result.convertedSave === null) {
-					throw new Error(
-						'Save file does not match the schema because:\nERRORS:\n' +
+					return {
+						success: false,
+						warn: false,
+						message:
+							'Save file does not match the schema because:\nERRORS:\n' +
 							result.errors.join('\n') +
 							'\nWARNINGS:\n' +
 							result.warnings.join('\n')
-					);
+					};
 				} else {
 					Log.save.info('Save file is valid, loading it');
 					setLoadingInfo('Loading save file...');
-					this.saveConfig = saveJSON as unknown as Save;
+					this.saveConfig = result.convertedSave as unknown as Save;
 
 					renderer.setFPS(this.saveConfig.fps);
 					renderer.setResolution(this.saveConfig.screen.width, this.saveConfig.screen.height);
@@ -182,17 +187,32 @@ class SaveManager {
 					await this.loadAudioFile();
 
 					this.reloadAllObjects();
+					setSaved(true);
+					setProjectName(path.replaceAll(/^.*[/\\]/g, ''));
 
 					Log.save.info('Save file loaded successfully');
+					const returnObj = {
+						success: true,
+						message: 'Save file loaded successfully.',
+						warn: false
+					};
+					if (result.warnings.length > 0) {
+						returnObj.warn = true;
+						returnObj.message += '\nWARNINGS:\n' + result.warnings.join('\n');
+					}
+					return returnObj;
 				}
 			} catch (e) {
 				// Tauri errors are strings
+				let error: string;
 				if (typeof e === 'string') {
-					Log.save.error('Failed to open save file: ' + e);
+					error = 'Failed to open save file: ' + e;
 				} else {
-					Log.save.error('Failed to open save file: ' + (e as Error).message);
+					error = 'Failed to open save file: ' + (e as Error).message;
 				}
-				return;
+				error += '\n\nIN MEMORY SAVE:\n\n' + JSON.stringify(this.saveConfig, undefined, 8);
+				Log.save.error(error);
+				return { success: false, message: error, warn: false };
 			} finally {
 				setLoading(false);
 			}
@@ -219,6 +239,8 @@ class SaveManager {
 				Log.save.info('Save JSON written to file, creating zip archive...');
 				await invoke('save_to_file', { pathStr: path });
 				Log.save.info('Save file saved successfully');
+				setSaved(true);
+				setProjectName(path.replaceAll(/^.*[/\\]/g, ''));
 			} catch (e) {
 				// Tauri errors are strings
 				Log.save.error('Failed to save file: ' + e);

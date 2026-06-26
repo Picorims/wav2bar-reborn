@@ -1,5 +1,6 @@
 {
 	"lang": "en",
+	"new_project_display_name": "[Never saved]",
 	"settings": {
 		"title": "Settings",
 		"subtitle_generic": "General",
@@ -73,7 +74,7 @@
 	},
 	"files_and_icons_pane": {
 		"project_settings": "Project Settings",
-		"new_project": "New project",
+		"new_project": "New project (coming soon!)",
 		"open_project": "Open project",
 		"save_project": "Save project",
 		"export": "Export",
@@ -122,6 +123,7 @@
 		},
 		"text_icon": {
 			"confirm": "Confirm",
+			"ok": "OK",
 			"cancel": "Cancel"
 		},
 		"confirm_remove_object": {
@@ -129,6 +131,10 @@
 			"description": "Are you sure you want to remove this object? This action cannot be undone.",
 			"confirm": "Remove",
 			"cancel": "Cancel"
+		},
+		"save_open_error": {
+			"error_title": "Failed to open save!",
+			"warning_title": "Save opened with warnings"
 		}
 	},
 	"properties": {

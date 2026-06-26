@@ -7,6 +7,8 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
+import { lang } from './settings.svelte';
+
 interface AppState {
 	loading: boolean;
 	loadingInfo: string;
@@ -16,6 +18,8 @@ interface AppState {
 	 */
 	loadingProgress: number | null;
 	zoomLevelPercent: number;
+	saved: boolean;
+	projectName: string;
 }
 
 export const appState = $state<AppState>({
@@ -23,7 +27,9 @@ export const appState = $state<AppState>({
 	loadingInfo: '',
 	loadingInfoDetail: '',
 	loadingProgress: null,
-	zoomLevelPercent: 100
+	zoomLevelPercent: 100,
+	saved: false,
+	projectName: lang().new_project_display_name
 });
 /**
  * Also resets loading info to empty string.
@@ -71,4 +77,18 @@ export function onZoomChanged(callback: (zoomLevelPercent: number) => void): () 
 			zoomCallbacks.splice(index, 1);
 		}
 	};
+}
+
+export function getSaved() {
+	return appState.saved;
+}
+export function setSaved(saved: boolean) {
+	appState.saved = saved;
+}
+
+export function getProjectName() {
+	return appState.projectName;
+}
+export function setProjectName(name: string) {
+	appState.projectName = name;
 }
