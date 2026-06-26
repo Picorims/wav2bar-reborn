@@ -8,6 +8,7 @@ file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
 import { version } from '$app/environment';
+import type { ErrorObject, ValidateFunction } from 'ajv';
 import { Log } from './log/logger';
 import {
 	CURRENT_SAVE_VERSION,
@@ -22,7 +23,8 @@ import type {
 	Shape as ShapeV5,
 	Text as TextV5,
 	VisualObject as VisualObjectV5,
-	Wav2BarSaveV5
+	Wav2BarSaveV5,
+	ParticleFlow as ParticleFlowV5
 } from './types/schemas/save_v5';
 
 interface ConversionResult<T extends Record<string, unknown> = Record<string, unknown>> {
@@ -139,6 +141,25 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 					delete newObj.box_shadow;
 
 					convertedSave.objects[objectId] = newObj as unknown as VisualObjectV5;
+				} else if (obj.visual_object_type === 'particle_flow') {
+					const newObj: ParticleFlowV5 = {
+						color: obj.color,
+						coordinates: obj.coordinates,
+						flow_center: [obj.flow_center.x, obj.flow_center.y],
+						flow_direction: obj.flow_direction,
+						flow_type: obj.flow_type,
+						layer: obj.layer,
+						name: obj.name,
+						particle_radius_range: obj.particle_radius_range,
+						particle_spawn_probability: obj.particle_spawn_probability,
+						particle_spawn_tests: obj.particle_spawn_tests,
+						rotation: obj.rotation,
+						size: obj.size,
+						svg_filter: obj.svg_filter,
+						visual_object_type: obj.visual_object_type,
+					}
+
+					convertedSave.objects[objectId] = newObj;
 				} else {
 					// no conversion needed.
 					convertedSave.objects[objectId] = obj as unknown as VisualObjectV5;
@@ -152,10 +173,14 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 	}
 };
 
-const validate: Record<number, (save: Record<string, unknown>) => boolean> = {
+const validate: Record<number, ValidateFunction<unknown>> = {
 	4: validateSaveV4,
 	5: validateSaveV5
 };
+
+function errorToString(e: ErrorObject) {
+	return `- ${e.keyword} - ${e.message ?? "no context"} - ${e.instancePath} - ${e.schemaPath}`;
+}
 
 export class SaveConverter {
 	public static convert(
@@ -169,7 +194,7 @@ export class SaveConverter {
 					success: false,
 					warnings: [],
 					errors: ['Save is not valid according to the latest schema.'].concat(
-						validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`) || []
+						validateSave.errors?.map((e) => errorToString(e)) || []
 					),
 					convertedSave: null
 				};
@@ -213,18 +238,19 @@ export class SaveConverter {
 
 			while (currentVersion < CURRENT_SAVE_VERSION) {
 				const targetVersion = currentVersion + 1;
+				Log.save.debug(`Converting from save v${currentVersion} to v${targetVersion}`);
 				const convertFunc = convertTo[targetVersion];
 				if (!convertFunc) {
 					conversionResult.errors.push(
 						`No conversion function available for version ${currentVersion} to ${targetVersion}.`
 					);
-					break;
+					return conversionResult;
 				}
 				const result = convertFunc(currentSave);
 				if (!result.success || result.convertedSave === null) {
 					conversionResult.errors.push(...result.errors);
 					conversionResult.warnings.push(...result.warnings);
-					break;
+					return conversionResult;
 				}
 
 				const validateFunc = validate[targetVersion];
@@ -232,12 +258,17 @@ export class SaveConverter {
 					conversionResult.errors.push(
 						`No validation function available for version ${targetVersion}.`
 					);
-					break;
+					return conversionResult;
 				}
 				const valid = validateFunc(result.convertedSave);
 				if (!valid) {
 					conversionResult.errors.push(`Converted save for version ${targetVersion} is not valid.`);
-					break;
+					if (validateFunc.errors) {
+						for (const e of validateFunc.errors) {
+							conversionResult.errors.push(errorToString(e));
+						}
+					}
+					return conversionResult;
 				}
 
 				conversionResult.warnings.push(...result.warnings);
@@ -246,6 +277,8 @@ export class SaveConverter {
 				currentVersion = targetVersion;
 			}
 
+			conversionResult.success = true;
+			conversionResult.convertedSave = currentSave;
 			return conversionResult;
 		}
 	}
@@ -626,7 +659,13 @@ export function parseCSSBorderRadiusV4(borderRadius: string): {
 		{ value: 0, unit: 'px' },
 		{ value: 0, unit: 'px' }
 	];
-	const warnings = [];
+	const warnings: string[] = [];
+	if (borderRadius === "") {
+		return {
+			border_radius: defaultBorderRadius,
+			warnings
+		};
+	}
 	const baseRegex =
 		/^(((\d+)(%|px)|0))( ((\d+)(%|px)|0)){0,3}( \/ (((\d+)(%|px)|0))( ((\d+)(%|px)|0)){0,3})?$/gm;
 	let string = borderRadius;

@@ -16,10 +16,10 @@
 	import Renderer from '$lib/components/atoms/Renderer.svelte';
 	import { minPercentFrom, maxPercentFrom, ratio, ratioToPercent } from '$lib/math';
 	import LoadingLockScreen from './LoadingLockScreen.svelte';
-	import { appState } from '$lib/store/app_state.svelte';
+	import { appState, getProjectName, getSaved } from '$lib/store/app_state.svelte';
 
-	let saved = false;
-	let projectTitle = 'New Project';
+	let projectName = $derived(getProjectName());
+	let saved = $derived(getSaved());
 	let windowWidth: number = $state(1);
 	let windowHeight: number = $state(1);
 </script>
@@ -39,7 +39,7 @@
 					<GripHorizontal class="grip-horizontal" />
 					<div class="flex-column">
 						<div class="file-and-icons-pane-container">
-							<FileAndIconsPane title={projectTitle} {saved} />
+							<FileAndIconsPane title={projectName} {saved} />
 						</div>
 						<div class="objects-pane-container">
 							<ObjectPane />

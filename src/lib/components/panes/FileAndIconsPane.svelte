@@ -15,6 +15,7 @@
 	import ProjectSettingsModal from '../window/modals/ProjectSettingsModal.svelte';
 	import { lang } from '$lib/store/settings.svelte';
 	import ExportVideoModal from '../window/modals/ExportVideoModal.svelte';
+	import TextIconModal from '../window/modals/TextIconModal.svelte';
 
 	interface Props {
 		title?: string;
@@ -25,14 +26,33 @@
 	let settingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 	let exportVideoModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
+	let saveOpenErrorDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
+	let saveErrorDescription = $state("");
+	let saveErrorMode = $state<"warning" | "error">("error");
 
-	function openAndLoadSave() {
-		saveManager.openSave(renderer);
+	async function openAndLoadSave() {
+		const result = await saveManager.openSave(renderer);
+		saveErrorDescription = result.message;
+		if (!result.success) {
+			saveErrorMode = "error";
+			saveOpenErrorDialog.showModal();
+		} else if (result.warn) {
+			saveErrorMode = "warning";
+			saveOpenErrorDialog.showModal();
+		}
 	}
 	function writeSave() {
 		saveManager.saveToFile();
 	}
 </script>
+
+<TextIconModal
+	bind:dialog={saveOpenErrorDialog}
+	mode="alert"
+	kind={saveErrorMode}
+	title={saveErrorMode === "error" ? lang().modal.save_open_error.error_title : lang().modal.save_open_error.warning_title}
+	description={saveErrorDescription.replaceAll("\n","\n\n")}
+/>
 
 <div class="card">
 	<span class="project-title">{title}{saved ? '' : '*'}</span>
@@ -45,7 +65,7 @@
 		<FileCog />
 	</IconButton>
 
-	<IconButton alt={lang().files_and_icons_pane.new_project}>
+	<IconButton alt={lang().files_and_icons_pane.new_project} disabled>
 		<FilePlus />
 	</IconButton>
 

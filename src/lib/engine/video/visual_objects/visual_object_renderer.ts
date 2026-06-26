@@ -206,7 +206,11 @@ export function borderRadiusRect(
 	radiuses: { unit: 'px' | 'percent'; value: number }[]
 ) {
 	if (radiuses.length !== 8) {
-		throw new Error('borderRadiusRect requires an array of 8 radius values');
+		let got = JSON.stringify(radiuses);
+		if (typeof radiuses === "undefined") {
+			got = "undefined";
+		}
+		throw new Error('borderRadiusRect requires an array of 8 radius values, but got: ' + got);
 	}
 	const factors = [h, w, w, h, h, w, w, h];
 	const d = ARC_APPROX_BEZIER_DIST;

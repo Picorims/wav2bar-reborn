@@ -14,7 +14,7 @@
 
 	interface Props {
 		dialog: HTMLDialogElement;
-		mode: 'confirm';
+		mode: 'confirm' | 'alert';
 		kind: 'danger' | 'warning' | 'info' | 'error';
 		onConfirm?: () => void;
 		onCancel?: () => void;
@@ -39,15 +39,17 @@
 
 <Modal bind:dialog {title}>
 	<div class="content {kind}">
-		{#if kind === 'danger'}
-			<MessageCircleWarning size={ICON_SIZE} />
-		{:else if kind === 'warning'}
-			<TriangleAlert size={ICON_SIZE} />
-		{:else if kind === 'info'}
-			<Info size={ICON_SIZE} />
-		{:else if kind === 'error'}
-			<OctagonX size={ICON_SIZE} />
-		{/if}
+		<div class="icon">
+			{#if kind === 'danger'}
+				<MessageCircleWarning size={ICON_SIZE} />
+			{:else if kind === 'warning'}
+				<TriangleAlert size={ICON_SIZE} />
+			{:else if kind === 'info'}
+				<Info size={ICON_SIZE} />
+			{:else if kind === 'error'}
+				<OctagonX size={ICON_SIZE} />
+			{/if}
+		</div>
 		<p>
 			{description}
 		</p>
@@ -68,6 +70,14 @@
 					onConfirm();
 					dialog?.close();
 				}}>{confirmText ?? lang().modal.text_icon.confirm}</button
+			>
+		{:else if mode === 'alert'}
+			<button
+				class="buttons confirm {kind}"
+				onclick={() => {
+					onConfirm();
+					dialog?.close();
+				}}>{confirmText ?? lang().modal.text_icon.ok}</button
 			>
 		{/if}
 	{/snippet}
@@ -91,20 +101,24 @@
 		justify-content: center;
 		gap: g.$spacing-m;
 	}
-	div.content.danger > :global(svg) {
+	div.icon {
+		min-width: g.$size-xl;
+	}
+	div.content.danger > .icon > :global(svg) {
 		stroke: g.$color-status-error;
 	}
-	div.content.error > :global(svg) {
+	div.content.error > .icon > :global(svg) {
 		stroke: g.$color-status-error;
 	}
-	div.content.warning > :global(svg) {
+	div.content.warning > .icon > :global(svg) {
 		stroke: g.$color-status-warning;
 	}
-	div.content.info > :global(svg) {
+	div.content.info > .icon > :global(svg) {
 		stroke: g.$color-status-info;
 	}
 	p {
 		@include g.text;
 		margin-top: g.$spacing-m;
+		white-space: pre-wrap;
 	}
 </style>
