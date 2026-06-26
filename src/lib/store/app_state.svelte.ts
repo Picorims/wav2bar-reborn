@@ -7,7 +7,7 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { lang } from "./settings.svelte";
+import { lang } from './settings.svelte';
 
 interface AppState {
 	loading: boolean;
@@ -29,7 +29,7 @@ export const appState = $state<AppState>({
 	loadingProgress: null,
 	zoomLevelPercent: 100,
 	saved: false,
-	projectName: lang().new_project_display_name,
+	projectName: lang().new_project_display_name
 });
 /**
  * Also resets loading info to empty string.

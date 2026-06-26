@@ -156,8 +156,8 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 						rotation: obj.rotation,
 						size: obj.size,
 						svg_filter: obj.svg_filter,
-						visual_object_type: obj.visual_object_type,
-					}
+						visual_object_type: obj.visual_object_type
+					};
 
 					convertedSave.objects[objectId] = newObj;
 				} else {
@@ -179,7 +179,7 @@ const validate: Record<number, ValidateFunction<unknown>> = {
 };
 
 function errorToString(e: ErrorObject) {
-	return `- ${e.keyword} - ${e.message ?? "no context"} - ${e.instancePath} - ${e.schemaPath}`;
+	return `- ${e.keyword} - ${e.message ?? 'no context'} - ${e.instancePath} - ${e.schemaPath}`;
 }
 
 export class SaveConverter {
@@ -660,7 +660,7 @@ export function parseCSSBorderRadiusV4(borderRadius: string): {
 		{ value: 0, unit: 'px' }
 	];
 	const warnings: string[] = [];
-	if (borderRadius === "") {
+	if (borderRadius === '') {
 		return {
 			border_radius: defaultBorderRadius,
 			warnings

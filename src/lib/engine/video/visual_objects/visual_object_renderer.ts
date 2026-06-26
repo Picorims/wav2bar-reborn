@@ -207,8 +207,8 @@ export function borderRadiusRect(
 ) {
 	if (radiuses.length !== 8) {
 		let got = JSON.stringify(radiuses);
-		if (typeof radiuses === "undefined") {
-			got = "undefined";
+		if (typeof radiuses === 'undefined') {
+			got = 'undefined';
 		}
 		throw new Error('borderRadiusRect requires an array of 8 radius values, but got: ' + got);
 	}

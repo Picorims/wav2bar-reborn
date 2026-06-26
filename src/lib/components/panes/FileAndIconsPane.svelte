@@ -27,17 +27,17 @@
 	let projectSettingsModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 	let exportVideoModalDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
 	let saveOpenErrorDialog = $state<HTMLDialogElement>(document.createElement('dialog'));
-	let saveErrorDescription = $state("");
-	let saveErrorMode = $state<"warning" | "error">("error");
+	let saveErrorDescription = $state('');
+	let saveErrorMode = $state<'warning' | 'error'>('error');
 
 	async function openAndLoadSave() {
 		const result = await saveManager.openSave(renderer);
 		saveErrorDescription = result.message;
 		if (!result.success) {
-			saveErrorMode = "error";
+			saveErrorMode = 'error';
 			saveOpenErrorDialog.showModal();
 		} else if (result.warn) {
-			saveErrorMode = "warning";
+			saveErrorMode = 'warning';
 			saveOpenErrorDialog.showModal();
 		}
 	}
@@ -50,8 +50,10 @@
 	bind:dialog={saveOpenErrorDialog}
 	mode="alert"
 	kind={saveErrorMode}
-	title={saveErrorMode === "error" ? lang().modal.save_open_error.error_title : lang().modal.save_open_error.warning_title}
-	description={saveErrorDescription.replaceAll("\n","\n\n")}
+	title={saveErrorMode === 'error'
+		? lang().modal.save_open_error.error_title
+		: lang().modal.save_open_error.warning_title}
+	description={saveErrorDescription.replaceAll('\n', '\n\n')}
 />
 
 <div class="card">

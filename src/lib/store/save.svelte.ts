@@ -138,7 +138,9 @@ class SaveManager {
 		return typedObject;
 	}
 
-	public async openSave(renderer: Renderer): Promise<{success: boolean; message: string, warn: boolean}> {
+	public async openSave(
+		renderer: Renderer
+	): Promise<{ success: boolean; message: string; warn: boolean }> {
 		Log.save.info('Asking for a file to open');
 		const path = await open({
 			title: 'Pick a save file',
@@ -150,7 +152,7 @@ class SaveManager {
 
 		if (path === null) {
 			Log.save.info('No file selected');
-			return {success: true, message: 'No file selected.', warn: false};
+			return { success: true, message: 'No file selected.', warn: false };
 		} else {
 			setLoading(true);
 			try {
@@ -168,10 +170,11 @@ class SaveManager {
 					return {
 						success: false,
 						warn: false,
-						message: 'Save file does not match the schema because:\nERRORS:\n' +
+						message:
+							'Save file does not match the schema because:\nERRORS:\n' +
 							result.errors.join('\n') +
 							'\nWARNINGS:\n' +
-							result.warnings.join('\n'),
+							result.warnings.join('\n')
 					};
 				} else {
 					Log.save.info('Save file is valid, loading it');
@@ -185,10 +188,14 @@ class SaveManager {
 
 					this.reloadAllObjects();
 					setSaved(true);
-					setProjectName(path.replaceAll(/^.*[/\\]/g, ""));
+					setProjectName(path.replaceAll(/^.*[/\\]/g, ''));
 
 					Log.save.info('Save file loaded successfully');
-					const returnObj = {success: true, message: "Save file loaded successfully.", warn: false};
+					const returnObj = {
+						success: true,
+						message: 'Save file loaded successfully.',
+						warn: false
+					};
 					if (result.warnings.length > 0) {
 						returnObj.warn = true;
 						returnObj.message += '\nWARNINGS:\n' + result.warnings.join('\n');
@@ -203,9 +210,9 @@ class SaveManager {
 				} else {
 					error = 'Failed to open save file: ' + (e as Error).message;
 				}
-				error += "\n\nIN MEMORY SAVE:\n\n" + JSON.stringify(this.saveConfig, undefined, 8);
+				error += '\n\nIN MEMORY SAVE:\n\n' + JSON.stringify(this.saveConfig, undefined, 8);
 				Log.save.error(error);
-				return {success: false, message: error, warn: false};
+				return { success: false, message: error, warn: false };
 			} finally {
 				setLoading(false);
 			}
@@ -233,7 +240,7 @@ class SaveManager {
 				await invoke('save_to_file', { pathStr: path });
 				Log.save.info('Save file saved successfully');
 				setSaved(true);
-				setProjectName(path.replaceAll(/^.*[/\\]/g, ""));
+				setProjectName(path.replaceAll(/^.*[/\\]/g, ''));
 			} catch (e) {
 				// Tauri errors are strings
 				Log.save.error('Failed to save file: ' + e);
