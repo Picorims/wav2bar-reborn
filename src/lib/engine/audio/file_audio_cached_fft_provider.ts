@@ -107,7 +107,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		}
 
 		const cacheEntry = this.cache.get(blockIndex);
-		// as per audio.rs command bake_fft, each block file contains SPECTRUM_SIZE_DEFAULT * FFT_BLOCK_SIZE_SECONDS * 1 byte
+		// as per audio.rs command bake_fft, each block file contains SPECTRUM_SIZE_DEFAULT * FFT_BLOCK_SIZE_SECONDS * 2 bytes
 		const expectedBlockFrame =
 			currentFrame % (FFT_BLOCK_SIZE_SECONDS * (this.renderer?.getFPS() ?? DEFAULT_FPS));
 		const offset = expectedBlockFrame * SPECTRUM_SIZE_DEFAULT;
@@ -134,6 +134,9 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		}
 		cacheEntry.reads += 1;
 		const dataArray = cacheEntry.data.slice(offset, offset + SPECTRUM_SIZE_DEFAULT);
+		if (currentFrame % 300 == 0) {
+			Log.audio.debug("for frame " + currentFrame + " we have " + dataArray.toString());
+		}
 
 		// if less than 2 seconds remain in this block, start caching the next one
 		// This must be done only if there is one more block
@@ -184,22 +187,27 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		this.cache.set(blockIndex, { data: new Uint16Array(), loading: true, reads: 0 });
 		const fftDir = await invoke<string>('get_fft_dir');
 		const fftFilePath = await join(fftDir, `fft_block_${blockIndex}.bin`);
-		try {
+		// try {
 			const content = await readFile(fftFilePath);
+			const view = new DataView(content.buffer);
+			const cacheBuffer = new ArrayBuffer(content.byteLength);
 			const uint16Array = new Uint16Array(
-				content.buffer,
-				content.byteOffset,
-				content.byteLength / Uint16Array.BYTES_PER_ELEMENT
+				cacheBuffer,
+				0,
+				content.byteLength / Uint16Array.BYTES_PER_ELEMENT,
 			);
+			for (let i = 0; i < uint16Array.length; i++) {
+				uint16Array[i] = view.getUint16(2 * i, false);
+			}
 			this.cache.set(blockIndex, { data: uint16Array, loading: false, reads: 0 });
 
 			this.pruneCacheIfNeeded();
-		} catch (e) {
-			Log.audio.error(
-				'Failed to read FFT block file: ' + fftFilePath + ' Error: ' + ((e as Error).message ?? e)
-			);
-			this.cache.delete(blockIndex);
-		}
+		// } catch (e) {
+		// 	Log.audio.error(
+		// 		'Failed to read FFT block file: ' + fftFilePath + ' Error: ' + ((e as Error).message ?? e)
+		// 	);
+		// 	this.cache.delete(blockIndex);
+		// }
 	}
 
 	private async cacheFrequenciesIfNeeded() {

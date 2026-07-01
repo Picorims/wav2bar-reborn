@@ -7,10 +7,10 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use log::{info, trace};
+use log::{debug, info, trace};
 use num::ToPrimitive;
 use spectrum_analyzer::scaling::divide_by_N;
-use spectrum_analyzer::windows::hann_window;
+use spectrum_analyzer::windows::{blackman_harris_4term, hann_window};
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
@@ -205,6 +205,10 @@ pub async fn bake_fft(
         // Create a sample buffer that matches the parameters of the decoded audio buffer.
         let mut sample_buf = SampleBuffer::<f32>::new(decoded.capacity() as u64, *decoded.spec());
 
+        if current_video_frame % 300 == 0 {
+            info!("decoded 'spec': {:?}", *decoded.spec());
+        }
+
         // Copy the contents of the decoded audio buffer into the sample buffer whilst performing
         // any required conversions.
         sample_buf.copy_interleaved_ref(decoded);
@@ -260,76 +264,107 @@ pub async fn bake_fft(
                     "Channel samples length does not match FFT size"
                 );
             }
-            // compute FFT for each channel and average the results
+
+            // https://webaudio.github.io/web-audio-api/#down-mix
+            let mut downmixed_mono: Vec<f32> = vec![0.0; fft_size as usize];
+            // ignoring special cases like 5.1.
+            assert!(track_channels_count > 0, "Cannot proceed with 0 channels, downmixing would break.");
+            for i in 0..fft_size as usize {
+                for c in 0..track_channels_count as usize {
+                    downmixed_mono[i] += channel_samples[c][i];
+                }
+                downmixed_mono[i] /= track_channels_count.to_f32().unwrap_or(1.0);
+            }
+
+            
+            // compute FFT for downmixed mono
             let mut out_fft: Vec<f32> = vec![0.0; (fft_size / 2) as usize];
-            for channel in 0..track_channels_count as usize {
-                let this_channel_samples = channel_samples[channel].as_slice();
-                // apply hann window for smoothing; length must be a power of 2 for the FFT
-                let hann_window = hann_window(this_channel_samples);
-                // calc spectrum
-                // Note: output is half the fft_size + 1 due to symmetry of FFT for real input.
-                // The +1 is for the Nyquist frequency.
-                let spectrum_hann_window = samples_fft_to_spectrum(
-                    // (windowed) samples
-                    &hann_window,
-                    // sampling rate
-                    sample_rate,
-                    // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
-                    // FrequencyLimit::Range(20.0, 20_000.0), // truncate the output, not the wanted behaviour
-                    FrequencyLimit::All,
-                    // optional scale
-                    Some(&divide_by_N),
-                )
-                .map_err(|e| format!("Failed to compute FFT: {}", e))?;
-
-                // for debugging, print some FFT data
-                if frames_in_current_block_file % 200 == 0 {
-                    trace!(
-                        "this channel samples length: {} ",
-                        this_channel_samples.len()
-                    );
-                    trace!("hann window length: {} ", hann_window.len());
-                    trace!(
-                        "spectrum hann window length: {} ",
-                        spectrum_hann_window.data().len()
-                    );
-                    trace!("out_fft length: {} ", out_fft.len());
-                    trace!("max: {}\n", spectrum_hann_window.max().1.val());
-                    // for (fr, fr_val) in spectrum_hann_window.data().iter() {
-                    //     print!("{}Hz => {} ;", fr, fr_val)
-                    // }
-                }
-
-                // accumulate results for averaging later
-                for (i, freq_pair) in spectrum_hann_window.data().iter().enumerate() {
-                    // ignore Nyquist frequency to have even number of bins
-                    if i >= out_fft.len() {
-                        break;
-                    }
-                    out_fft[i] += freq_pair.1.val();
-
-                    // cache frequencies only once
-                    if !cached_fft_frequencies && channel == 0 {
-                        fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
-                    }
-                }
-                cached_fft_frequencies = true;
+            let downmixed_samples_slice = downmixed_mono.as_slice();
+            // apply window for smoothing; length must be a power of 2 for the FFT
+            let windowed_samples = hann_window(downmixed_samples_slice);
+            if current_video_frame % 300 == 0 {
+                info!("downmixed: {:?}", downmixed_mono);
+                info!("channel samples: {:?}", channel_samples);
+                info!("slice: {:?}", downmixed_samples_slice);
+                info!("windowed samples: {:?}", windowed_samples);
             }
-            // average
-            for sample in out_fft.iter_mut() {
-                *sample /= track_channels_count.to_f32().unwrap_or(1.0);
+            // calc spectrum
+            // Note: output is half the fft_size + 1 due to symmetry of FFT for real input.
+            // The +1 is for the Nyquist frequency.
+            let spectrum = samples_fft_to_spectrum(
+                // (windowed) samples
+                &downmixed_samples_slice,
+                // sampling rate
+                sample_rate,
+                // optional frequency limit: e.g. only interested in frequencies 50 <= f <= 150?
+                // FrequencyLimit::Range(20.0, 20_000.0), // truncate the output, not the wanted behaviour
+                FrequencyLimit::All,
+                // optional scale
+                Some(&divide_by_N),
+                // None
+            )
+            .map_err(|e| format!("Failed to compute FFT: {}", e))?;
+
+            // for debugging, print some FFT data
+            if current_video_frame % 300 == 0 {
+                debug!(
+                    "this channel samples length: {} ",
+                    downmixed_samples_slice.len()
+                );
+                debug!("hann window length: {} ", windowed_samples.len());
+                debug!(
+                    "spectrum hann window length: {} ",
+                    spectrum.data().len()
+                );
+                debug!("out_fft length: {} ", out_fft.len());
+                debug!("max: {}\n", spectrum.max().1.val());
+                // for (fr, fr_val) in spectrum_hann_window.data().iter() {
+                //     print!("{}Hz => {} ;", fr, fr_val)
+                // }
             }
+
+            // accumulate results for averaging later
+            for (i, freq_pair) in spectrum.data().iter().enumerate() {
+                // ignore Nyquist frequency to have even number of bins
+                if i >= out_fft.len() {
+                    break;
+                }
+                out_fft[i] += freq_pair.1.val();
+
+                // cache frequencies only once
+                if !cached_fft_frequencies {//&& channel == 0 {
+                    fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
+                }
+            }
+            cached_fft_frequencies = true;
+
+            // // average
+            // for sample in out_fft.iter_mut() {
+            //     *sample /= track_channels_count.to_f32().unwrap_or(1.0);
+            // }
 
             // store FFT data in cache
             out_fft.iter().for_each(|val| {
-                // The factor within the exponential acts similarly to a compressor,
-                // amplifying lower values while capping higher ones.
-                // The more negative the factor (so the bigger the absolute value),
-                // the stronger the amplification of lower values.
-                // It can be helpful to print the max amplitude value
-                // and look at the function's curve to choose a good factor.
-                let processed_val = ((1.0 - (-64.0 * val).exp()) * 65535.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-65535)
-                fft_cache.push(processed_val.to_u16().unwrap_or(0));
+                // // The factor within the exponential acts similarly to a compressor,
+                // // amplifying lower values while capping higher ones.
+                // // The more negative the factor (so the bigger the absolute value),
+                // // the stronger the amplification of lower values.
+                // // It can be helpful to print the max amplitude value
+                // // and look at the function's curve to choose a good factor.
+                // let processed_val = ((1.0 - (-64.0 * val).exp()) * 65535.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-65535)
+
+                // https://webaudio.github.io/web-audio-api/#conversion-to-db
+                let min_db: f32 = -100.0;
+                let max_db: f32 = -30.0;
+                let db_val: f32 = 20.0 * f32::log10(*val);
+                // https://webaudio.github.io/web-audio-api/#AnalyserNode-methods
+                let mut framed_val = f32::floor((65535.0 / (max_db - min_db)) * (db_val - min_db));
+                framed_val = f32::max(0.0, f32::min(65535.0, framed_val));
+                let val_u16 = framed_val.to_u16().unwrap_or(0);
+                fft_cache.push(val_u16);
+                if current_video_frame % 300 == 0 {
+                    info!("{val} -> {db_val}dB -> {framed_val} on 2 bytes -> {val_u16} as u16");
+                }
             });
             frames_in_current_block_file += 1;
 
@@ -363,16 +398,17 @@ pub async fn bake_fft(
             current_video_frame += 1;
         }
 
-        if i % 100 == 0 {
+        if current_video_frame % 300 == 0 {
             let progress =
                 (current_read_samples as f64 / (frame_count * track_channels_count) as f64) * 100.0;
             info!(
-                "Read packet {}, current read samples: {}, progress: {:.2}%, time position: {:.0}:{:.0}",
+                "Read packet {}, current read samples: {}, progress: {:.2}%, time position: {:.0}:{:.0}, frame position: {}",
                 i,
                 current_read_samples,
                 progress,
                 (current_read_samples / track_channels_count / sample_rate as u64) / 60,
-                (current_read_samples / track_channels_count / sample_rate as u64) % 60
+                (current_read_samples / track_channels_count / sample_rate as u64) % 60,
+                current_video_frame
             );
             app.emit("audio_fft_progress", progress).unwrap_or(());
         }

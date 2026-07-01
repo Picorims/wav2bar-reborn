@@ -53,11 +53,12 @@ export class VO_VisualizerStraightBar
 		this.tickUnit.setMapping({
 			mappedLength: obj.visualizer_points_count,
 			minPercent: (obj.visualizer_analyzer_range[0] / 1024) * 100,
-			maxPercent: (obj.visualizer_analyzer_range[1] / 1024) * 100
+			maxPercent: (obj.visualizer_analyzer_range[1] / 1024) * 100,
+			toLog: false,
 		});
 		this.tickUnit.setSmoothingParams({
 			type: obj.visualization_smoothing_type,
-			factor: obj.visualization_smoothing_factor
+			factor: obj.visualization_smoothing_factor,
 		});
 
 		this.barsCount = obj.visualizer_points_count;
