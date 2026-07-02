@@ -279,7 +279,14 @@ pub async fn bake_fft(
             
             // compute FFT for downmixed mono
             let mut out_fft: Vec<f32> = vec![0.0; (fft_size / 2) as usize];
+            let mut dc_offset = 0.0;
+            for v in &downmixed_mono {
+                dc_offset += v;
+            }
+            dc_offset /= downmixed_mono.len().to_f32().unwrap_or(1.0);
+            downmixed_mono = downmixed_mono.iter().map(|v| v - dc_offset).collect();
             let downmixed_samples_slice = downmixed_mono.as_slice();
+            // Remove DC component
             // apply window for smoothing; length must be a power of 2 for the FFT
             let windowed_samples = hann_window(downmixed_samples_slice);
             if current_video_frame % 300 == 0 {
