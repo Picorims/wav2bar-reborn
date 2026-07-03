@@ -204,11 +204,11 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		const fillInterpolated = (fromIndexExcluded: number, toIndexExcluded: number) => {
 			const fromValue = logSpectrum[fromIndexExcluded];
 			const toValue = logSpectrum[toIndexExcluded];
-			const count = fromValue - toValue - 1; // from value and to value are already set.
-			for (let j = 1; j <= count; j++) {
-				// why +1: the step is the gap, there are count + 1 steps between from and to
-				const interpolated = this.smoothStep(fromValue, toValue, j / (count + 1));
-				// const interpolated = fromValue;
+			const countToFill = toIndexExcluded - fromIndexExcluded - 1; // from value and to value are already set.
+			const indexLength = toIndexExcluded - fromIndexExcluded;
+
+			for (let j = 1; j <= countToFill; j++) {
+				const interpolated = this.smoothStep(fromValue, toValue, j / indexLength);
 				logSpectrum[fromIndexExcluded + j] = Math.round(interpolated);
 			}
 		};
@@ -220,7 +220,6 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 				const values = outIndexValues[i];
 				const sum = values.reduce((a, b) => a + b, 0);
 				logSpectrum[i] = Math.round(sum / values.length);
-				// logSpectrum[i] = values.reduce((acc, v) => Math.max(acc, v));
 
 				// interpolate empty values in between
 				if (consecutiveEmptyCount > 0) {

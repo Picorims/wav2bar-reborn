@@ -135,9 +135,9 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		}
 		cacheEntry.reads += 1;
 		const dataArray = cacheEntry.data.slice(offset, offset + SPECTRUM_SIZE_DEFAULT);
-		if (currentFrame % 300 == 0) {
-			Log.audio.debug("for frame " + currentFrame + " we have " + dataArray.toString());
-		}
+		// if (currentFrame % 300 == 0) {
+		// 	Log.audio.debug("for frame " + currentFrame + " we have " + dataArray.toString());
+		// }
 
 		// if less than 2 seconds remain in this block, start caching the next one
 		// This must be done only if there is one more block

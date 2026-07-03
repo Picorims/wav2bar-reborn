@@ -361,7 +361,7 @@ pub async fn bake_fft(
                 // let processed_val = ((1.0 - (-64.0 * val).exp()) * 65535.0).floor(); //(amplification with ceiling at 1.0) * (scale to 0-65535)
 
                 // https://webaudio.github.io/web-audio-api/#conversion-to-db
-                let min_db: f32 = -100.0;
+                let min_db: f32 = -90.0;
                 let max_db: f32 = -20.0;
                 let db_val: f32 = 20.0 * f32::log10(*val);
                 // https://webaudio.github.io/web-audio-api/#AnalyserNode-methods
@@ -369,9 +369,9 @@ pub async fn bake_fft(
                 framed_val = f32::max(0.0, f32::min(65535.0, framed_val));
                 let val_u16 = framed_val.to_u16().unwrap_or(0);
                 fft_cache.push(val_u16);
-                if current_video_frame % 300 == 0 {
-                    info!("{val} -> {db_val}dB -> {framed_val} on 2 bytes -> {val_u16} as u16");
-                }
+                // if current_video_frame % 300 == 0 {
+                //     info!("{val} -> {db_val}dB -> {framed_val} on 2 bytes -> {val_u16} as u16");
+                // }
             });
             frames_in_current_block_file += 1;
 
