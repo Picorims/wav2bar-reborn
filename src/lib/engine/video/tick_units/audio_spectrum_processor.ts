@@ -139,8 +139,8 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 			spectrum = this.mappedArray(
 				spectrum,
 				this.mapping.mappedLength,
-				Math.floor(this.mapping.minPercent / 100 * spectrum.length),
-				Math.ceil(this.mapping.maxPercent / 100 * spectrum.length)
+				Math.floor((this.mapping.minPercent / 100) * spectrum.length),
+				Math.ceil((this.mapping.maxPercent / 100) * spectrum.length)
 			);
 		}
 
@@ -187,7 +187,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		const minPow10 = Math.log10(RANGE_HZ[0]);
 		const maxPow10 = Math.log10(RANGE_HZ[1]);
 		const pow10Range = maxPow10 - minPow10;
-		const mappingRatio = spectrum.length / pow10Range
+		const mappingRatio = spectrum.length / pow10Range;
 		for (let i = 0; i < spectrum.length; i++) {
 			const iFreq = frequencies[i];
 			if (iFreq < RANGE_HZ[0] || iFreq > RANGE_HZ[1]) {
@@ -223,7 +223,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
 				// interpolate empty values in between
 				if (consecutiveEmptyCount > 0) {
-					let fromIndex = (i - 1) - consecutiveEmptyCount;
+					let fromIndex = i - 1 - consecutiveEmptyCount;
 					if (fromIndex < 0) {
 						fromIndex = 0;
 					}
@@ -238,7 +238,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
 		if (consecutiveEmptyCount > 0) {
 			// fill the end with the last known value
-			let fromIndex = (logSpectrum.length - 2 /*-1 -1*/) - consecutiveEmptyCount;
+			let fromIndex = logSpectrum.length - 2 /*-1 -1*/ - consecutiveEmptyCount;
 			if (fromIndex < 0) {
 				fromIndex = 0;
 			}

@@ -189,20 +189,24 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		const fftDir = await invoke<string>('get_fft_dir');
 		const fftFilePath = await join(fftDir, `fft_block_${blockIndex}.bin`);
 		// try {
-			const content = await readFile(fftFilePath);
-			const view = new DataView(content.buffer);
-			const cacheBuffer = new ArrayBuffer(content.byteLength);
-			const uint16Array = new Uint16Array(
-				cacheBuffer,
-				0,
-				content.byteLength / Uint16Array.BYTES_PER_ELEMENT,
-			);
-			for (let i = 0; i < uint16Array.length; i++) {
-				uint16Array[i] = view.getUint16(2 * i, false);
-			}
-			this.cache.set(blockIndex, { data: toU16ArrayBigEndian(content.buffer), loading: false, reads: 0 });
+		const content = await readFile(fftFilePath);
+		const view = new DataView(content.buffer);
+		const cacheBuffer = new ArrayBuffer(content.byteLength);
+		const uint16Array = new Uint16Array(
+			cacheBuffer,
+			0,
+			content.byteLength / Uint16Array.BYTES_PER_ELEMENT
+		);
+		for (let i = 0; i < uint16Array.length; i++) {
+			uint16Array[i] = view.getUint16(2 * i, false);
+		}
+		this.cache.set(blockIndex, {
+			data: toU16ArrayBigEndian(content.buffer),
+			loading: false,
+			reads: 0
+		});
 
-			this.pruneCacheIfNeeded();
+		this.pruneCacheIfNeeded();
 		// } catch (e) {
 		// 	Log.audio.error(
 		// 		'Failed to read FFT block file: ' + fftFilePath + ' Error: ' + ((e as Error).message ?? e)

@@ -24,7 +24,7 @@ function forwardConsole(
 ) {
 	const original = console[fnName];
 	console[fnName] = (...args) => {
-		const message = args.map(args => args.toString()).join(" ");
+		const message = args.map((args) => args.toString()).join(' ');
 		original(message);
 		if (typeof message !== 'string') {
 			original('Logger: message is not a string, ignoring it.');

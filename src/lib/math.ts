@@ -97,9 +97,9 @@ export function toU16ArrayBigEndian(buffer: ArrayBuffer) {
 	const uint16Array = new Uint16Array(
 		cacheBuffer,
 		0,
-		buffer.byteLength / Uint16Array.BYTES_PER_ELEMENT,
+		buffer.byteLength / Uint16Array.BYTES_PER_ELEMENT
 	);
-	
+
 	for (let i = 0; i < uint16Array.length; i++) {
 		uint16Array[i] = view.getUint16(2 * i, false);
 	}
