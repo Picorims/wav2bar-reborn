@@ -52,13 +52,15 @@ export class TickEngine {
 		return this.lastTickDurationMS === 0 ? 0 : 1000 / this.lastTickDurationMS;
 	}
 
-	private reset() {
+	public reset() {
 		this.init = 0;
 		this.then = 0;
 		this.now = 0;
 		this.whenPaused = 0;
 		this.isPlaying = false;
-		this.tickUnits = [];
+		for (const unit of this.tickUnits) {
+			unit.reset();
+		}
 	}
 
 	public setAudioProvider(audioProvider: AudioProvider) {

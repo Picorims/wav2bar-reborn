@@ -123,6 +123,11 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		return AudioSpectrumProcessor.DEFAULT_VALUE;
 	}
 
+	reset() {
+		super.reset();
+		this.previousSpectrum = new Uint16Array();
+	}
+
 	protected computeNewState(
 		_basis: SpectrumData,
 		audioProvider: AudioProvider | null

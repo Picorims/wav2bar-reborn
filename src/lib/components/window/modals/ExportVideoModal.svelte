@@ -80,9 +80,10 @@
 			ffmpegPath += '.exe';
 		}
 
-		renderer.pauseTick();
-		renderer.seekToStart();
 		renderer.shallLoop(false);
+		renderer.stop();
+		renderer.resetTickEngine();
+		renderer.seekToStart();
 		setLoadingInfo('Exporting frames...');
 		setLoadingProgress(0);
 		let lastLog = 0;
