@@ -7,9 +7,11 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { floor } from '$lib/math';
+import { Log } from '$lib/log/logger';
 import type { AudioProvider } from '../audio/audio_provider';
 import type { TickUnit } from './tick_units/tick_unit';
+
+const MAX_TICKS_CATCHUP = 32;
 
 /**
  * manage the rendering state of the engine,
@@ -80,11 +82,15 @@ export class TickEngine {
 		this.isPlaying = true;
 		if (this.init === 0) {
 			this.init = this.getWindowNow();
+			this.then = this.now = this.init;
 		} else {
 			/** shift the timeline to the duration ellapsed
 			 * to make it as it never stopped
 			 */
-			this.init += this.getWindowNow() - this.whenPaused;
+			const pauseTime = this.getWindowNow() - this.whenPaused;
+			this.init += pauseTime;
+			this.then += pauseTime;
+			this.now += pauseTime;
 		}
 	}
 
@@ -105,17 +111,21 @@ export class TickEngine {
 	tick() {
 		if (!this.isPlaying) return;
 		this.now = this.getWindowNow();
-		const thenFrame = floor(this.then, 1000 / this.tps, this.init) / this.tps;
-		const nowFrame = floor(this.now, 1000 / this.tps, this.init) / this.tps;
+		const ellapsed = (this.now - this.init) - (this.then - this.init);
+		const ellapsedTps = Math.floor(ellapsed / this.tps);
 		/**
 		 * Number of ticks to perform
 		 */
-		const deltaFrame = nowFrame - thenFrame;
+		// const deltaFrame = nowFrame - thenFrame;
+		const deltaFrame = ellapsedTps;
 
 		if (deltaFrame < 1) return;
 
-		for (let i = 0; i < deltaFrame; i++) {
+		for (let i = 0; i < Math.min(deltaFrame, MAX_TICKS_CATCHUP); i++) {
 			this.tickOnce();
+		}
+		if (deltaFrame - MAX_TICKS_CATCHUP > 0) {
+			Log.renderer.warn(`Skipped ${deltaFrame - MAX_TICKS_CATCHUP} ticks to avoid freeze.`);
 		}
 		this.lastTickDurationMS = this.now - this.then;
 		this.then = this.now;
