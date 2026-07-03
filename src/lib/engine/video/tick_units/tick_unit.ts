@@ -38,4 +38,8 @@ export abstract class TickUnit<T> {
 		this.state = this.computeNewState(this.state, audioProvider);
 		this.dispatchTick();
 	}
+
+	public reset() {
+		this.state = this.getDefaultValue();
+	}
 }

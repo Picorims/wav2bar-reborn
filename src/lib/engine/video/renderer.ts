@@ -241,6 +241,10 @@ export class Renderer {
 		this.paused = true;
 	}
 
+	resetTickEngine() {
+		this.tickEngine.reset();
+	}
+
 	seekToStart() {
 		this.audioProvider?.seekTo(0);
 	}
