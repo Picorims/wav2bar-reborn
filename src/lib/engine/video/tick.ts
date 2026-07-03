@@ -111,12 +111,11 @@ export class TickEngine {
 	tick() {
 		if (!this.isPlaying) return;
 		this.now = this.getWindowNow();
-		const ellapsed = (this.now - this.init) - (this.then - this.init);
+		const ellapsed = this.now - this.init - (this.then - this.init);
 		const ellapsedTps = Math.floor(ellapsed / this.tps);
 		/**
 		 * Number of ticks to perform
 		 */
-		// const deltaFrame = nowFrame - thenFrame;
 		const deltaFrame = ellapsedTps;
 
 		if (deltaFrame < 1) return;
