@@ -1,0 +1,417 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="lin_log_sketch.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="true"
+     inkscape:zoom="1.0242632"
+     inkscape:cx="382.71412"
+     inkscape:cy="609.70656"
+     inkscape:window-width="1920"
+     inkscape:window-height="1009"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <inkscape:grid
+       id="grid1"
+       units="mm"
+       originx="0"
+       originy="0"
+       spacingx="0.99999998"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="5"
+       dotted="false"
+       gridanglex="30"
+       gridanglez="30"
+       visible="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs1">
+    <inkscape:path-effect
+       effect="ruler"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       unit="mm"
+       mark_distance="8"
+       mark_length="14"
+       minor_mark_length="7"
+       major_mark_steps="5"
+       shift="0"
+       offset="0"
+       mark_dir="left"
+       border_marks="both" />
+    <inkscape:path-effect
+       effect="ruler"
+       id="path-effect1-9"
+       is_visible="true"
+       lpeversion="1"
+       unit="mm"
+       mark_distance="40"
+       mark_length="14"
+       minor_mark_length="7"
+       major_mark_steps="1"
+       shift="0"
+       offset="0"
+       mark_dir="left"
+       border_marks="both" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="fill:#808080;stroke-width:2.11667;paint-order:stroke fill markers;stroke:#000000"
+       d="m 25,69.999997 h 160 m -160,0 v -14 m 8,14 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -14 m 8,14 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -14 m 8,14 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -14 m 8,14 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -7 m 8,7 v -14"
+       id="path1"
+       inkscape:path-effect="#path-effect1"
+       inkscape:original-d="M 25,69.999997 H 185" />
+    <path
+       style="fill:#808080;stroke:#000000;stroke-width:2.11667;paint-order:stroke fill markers"
+       d="m 25,69.999997 h 160 m -160,0 v -14 m 40,14 v -14 m 40,14 v -14 m 40,14 v -14 m 40,14 v -14"
+       id="path1-6"
+       inkscape:path-effect="#path-effect1-9"
+       inkscape:original-d="M 25,69.999997 H 185"
+       transform="translate(2.4159749e-6,125)" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-2.11667px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="22.036667"
+       y="100.98593"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="22.036667"
+         y="100.98593">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="174.75108"
+       y="102.9718"
+       id="text2"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="174.75108"
+         y="102.9718">2048</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="14.835752"
+       y="81.011337"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="14.835752"
+         y="81.011337">20Hz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="166.30133"
+       y="82.980263"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="166.30133"
+         y="82.980263">20   000Hz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833333px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="22.036667"
+       y="224.94919"
+       id="text1-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-9"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#000000;stroke:none;stroke-width:2.11667;letter-spacing:-1.05833333px"
+         x="22.036667"
+         y="224.94919">0</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="57.210659"
+       y="226.01132"
+       id="text1-7-7"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="57.210659"
+         y="226.01132">512</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="94.446289"
+       y="227.98026"
+       id="text1-7-1"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-7"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="94.446289"
+         y="227.98026">1024</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="134.51825"
+       y="227.96756"
+       id="text1-7-9"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="134.51825"
+         y="227.96756">1536</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="57.210655"
+       y="91.01133"
+       id="text1-7-7-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-3-9"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="57.210655"
+         y="91.01133">512</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="94.446281"
+       y="92.980263"
+       id="text1-7-1-9"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-7-6"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="94.446281"
+         y="92.980263">1024</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="134.51825"
+       y="92.967567"
+       id="text1-7-9-8"><tspan
+         sodipodi:role="line"
+         id="tspan1-9-4-2"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667"
+         x="134.51825"
+         y="92.967567">1536</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="169.75108"
+       y="222.97179"
+       id="text2-9"><tspan
+         sodipodi:role="line"
+         id="tspan2-4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="169.75108"
+         y="222.97179">2048</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="15.21338"
+       y="207.98026"
+       id="text3-4"><tspan
+         sodipodi:role="line"
+         id="tspan3-1"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="15.21338"
+         y="207.98026">20Hz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="166.30135"
+       y="207.98026"
+       id="text4-4"><tspan
+         sodipodi:role="line"
+         id="tspan4-8"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:-1.05833px;stroke-width:2.11667"
+         x="166.30135"
+         y="207.98026">20   000Hz</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="54.759556"
+       y="79.932266"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.11667"
+         x="54.759556"
+         y="79.932266">5000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="91.63958"
+       y="79.949196"
+       id="text6"><tspan
+         sodipodi:role="line"
+         id="tspan6"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.11667"
+         x="91.63958"
+         y="79.949196">10 000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="131.73711"
+       y="80.069267"
+       id="text6-4"><tspan
+         sodipodi:role="line"
+         id="tspan6-4"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.11667"
+         x="131.73711"
+         y="80.069267">15 000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="55"
+       y="204.99998"
+       id="text7"><tspan
+         sodipodi:role="line"
+         id="tspan7"
+         style="stroke-width:2.11667"
+         x="55"
+         y="204.99998">100</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="100"
+       y="204.99998"
+       id="text8"><tspan
+         sodipodi:role="line"
+         id="tspan8"
+         style="stroke-width:2.11667"
+         x="100"
+         y="204.99998">1000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="135"
+       y="204.99998"
+       id="text9"><tspan
+         sodipodi:role="line"
+         id="tspan9"
+         style="stroke-width:2.11667"
+         x="135"
+         y="204.99998">10 000</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="60.000004"
+       y="214.99998"
+       id="text10"><tspan
+         sodipodi:role="line"
+         id="tspan10"
+         style="stroke-width:2.11667"
+         x="60.000004"
+         y="214.99998">10²</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="100"
+       y="214.99998"
+       id="text11"><tspan
+         sodipodi:role="line"
+         id="tspan11"
+         style="stroke-width:2.11667"
+         x="100"
+         y="214.99998">10³</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:8.46667px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:-1.05833px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="140"
+       y="214.99998"
+       id="text12"><tspan
+         sodipodi:role="line"
+         id="tspan12"
+         style="stroke-width:2.11667"
+         x="140"
+         y="214.99998">10⁴</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:0px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="15.000001"
+       y="249.99998"
+       id="text13"><tspan
+         sodipodi:role="line"
+         id="tspan13"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;stroke-width:2.11667"
+         x="15.000001"
+         y="249.99998">log10(a.10^n) = log10(a)+n</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;stroke-width:2.11667"
+         x="15.000001"
+         y="257.05554"
+         id="tspan14">log(a) = x / d ; x = n to ? distance ; d = n to n+1 distance</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;stroke-width:2.11667"
+         x="15.000001"
+         y="264.11108"
+         id="tspan15">a = 10^(x/d)</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;stroke-width:2.11667"
+         x="15.000001"
+         y="271.16663"
+         id="tspan16">a*10^n = measure</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.64444px;line-height:normal;font-family:Gontserrat;-inkscape-font-specification:'Gontserrat, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-decoration-color:#000000;letter-spacing:0px;fill:#000000;stroke:none;stroke-width:2.11667;paint-order:stroke fill markers"
+       x="35"
+       y="115"
+       id="text17"><tspan
+         sodipodi:role="line"
+         id="tspan17"
+         style="stroke-width:2.11667"
+         x="35"
+         y="115">log10(5000) = 3.699</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:2.11667"
+         x="35"
+         y="122.05555"
+         id="tspan18">min = log10(20) = 1.301</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:2.11667"
+         x="35"
+         y="129.1111"
+         id="tspan19">max = log10(20 000) = 4.301</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:2.11667"
+         x="35"
+         y="136.16666"
+         id="tspan20">range = max - min = 3</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:2.11667"
+         x="35"
+         y="143.2222"
+         id="tspan21">index = (dest_range / src_range) * (x - min_src) + min_dest</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:2.11667"
+         x="35"
+         y="150.27776"
+         id="tspan22">index = 2048 / 3 * (3.699 - 1.301) = 1637.035 -&gt; 1637</tspan></text>
+  </g>
+</svg>

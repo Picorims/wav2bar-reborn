@@ -90,3 +90,19 @@ export class Vec2 {
 		return this.x * other.x + this.y * other.y;
 	}
 }
+
+export function toU16ArrayBigEndian(buffer: ArrayBuffer) {
+	const view = new DataView(buffer);
+	const cacheBuffer = new ArrayBuffer(buffer.byteLength);
+	const uint16Array = new Uint16Array(
+		cacheBuffer,
+		0,
+		buffer.byteLength / Uint16Array.BYTES_PER_ELEMENT
+	);
+
+	for (let i = 0; i < uint16Array.length; i++) {
+		uint16Array[i] = view.getUint16(2 * i, false);
+	}
+
+	return uint16Array;
+}
