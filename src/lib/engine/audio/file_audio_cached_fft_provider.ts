@@ -12,6 +12,7 @@ import { invoke } from '@tauri-apps/api/core';
 import { AudioProvider } from './audio_provider';
 import { join } from '@tauri-apps/api/path';
 import { readFile } from '@tauri-apps/plugin-fs';
+import { toU16ArrayBigEndian } from '$lib/math';
 
 export const SPECTRUM_SIZE_DEFAULT = 2048;
 const CACHE_CAPACITY = 25; // TODO possible bug if cache is full
@@ -199,7 +200,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 			for (let i = 0; i < uint16Array.length; i++) {
 				uint16Array[i] = view.getUint16(2 * i, false);
 			}
-			this.cache.set(blockIndex, { data: uint16Array, loading: false, reads: 0 });
+			this.cache.set(blockIndex, { data: toU16ArrayBigEndian(content.buffer), loading: false, reads: 0 });
 
 			this.pruneCacheIfNeeded();
 		// } catch (e) {
@@ -219,11 +220,7 @@ export class FileAudioCachedFFTProvider extends AudioProvider {
 		const frequenciesFilePath = await join(fftDir, `fft_frequencies.bin`);
 		try {
 			const content = await readFile(frequenciesFilePath);
-			this.frequenciesCache = new Uint16Array(
-				content.buffer,
-				content.byteOffset,
-				content.byteLength / Uint16Array.BYTES_PER_ELEMENT
-			);
+			this.frequenciesCache = toU16ArrayBigEndian(content.buffer);
 		} catch (e) {
 			Log.audio.error(
 				'Failed to read frequencies file: ' +

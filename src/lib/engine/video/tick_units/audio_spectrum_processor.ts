@@ -133,14 +133,14 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		let spectrum = audioProvider.getCurrentAudioSpectrum();
 		const frequencies = audioProvider.getFrequencies();
 		if (this.mapping.toLog) {
-			spectrum = this.toLogSpectrum(spectrum, frequencies);
+			spectrum = this.toLog10Spectrum(spectrum, frequencies);
 		}
 		if (this.mapping.mappedLength > 0) {
 			spectrum = this.mappedArray(
 				spectrum,
 				this.mapping.mappedLength,
-				Math.floor((this.mapping.minPercent * spectrum.length) / 100),
-				Math.ceil((this.mapping.maxPercent * spectrum.length) / 100)
+				Math.floor(this.mapping.minPercent / 100 * spectrum.length),
+				Math.ceil(this.mapping.maxPercent / 100 * spectrum.length)
 			);
 		}
 
@@ -169,7 +169,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 	 * Assuming it is sorted with the highest frequency at the end.
 	 * @returns the logarithmic scaled spectrum with smoothstep interpolation where needed
 	 */
-	toLogSpectrum(spectrum: Uint16Array, frequencies: Uint16Array): Uint16Array {
+	toLog10Spectrum(spectrum: Uint16Array, frequencies: Uint16Array): Uint16Array {
 		if (spectrum.length !== frequencies.length) {
 			throw new Error(
 				`Spectrum (${spectrum.length}) and frequencies (${frequencies.length}) length mismatch`
@@ -179,45 +179,52 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		/**
 		 * index -> list of values for this frequency index
 		 */
-		const dataMap: Map<number, number[]> = new Map();
-		//max index possible returned from the log should be closest to last index available.
-		// We search k where log2(max_frequency) * k = frequencies.length -1
-		const RANGE = [20, 20_000]; // Hz
-		const scaleFactor = frequencies.length / Math.log2(RANGE[1] - RANGE[0]);
+		const outIndexValues: Array<Array<number>> = [];
 		for (let i = 0; i < spectrum.length; i++) {
-			// log do the mapping, * scale factor increases the resolution.
-			// (log2 of 20_000 is index 14 approx, while we have
-			// hundreds or thousands of indexes available)
-			// we offset by RANGE[0] to avoid having very low frequencies taking a lot of space
-			const freq = Math.max(RANGE[0] + 1, frequencies[i]); // +1 to avoid log2(x < 1)
-			const logIndex = Math.floor(Math.log2(freq - RANGE[0]) * scaleFactor);
-			if (!dataMap.has(logIndex)) {
-				dataMap.set(logIndex, []);
+			outIndexValues.push([]);
+		}
+		const RANGE_HZ = [20, 20_000]; // Hz
+		const minPow10 = Math.log10(RANGE_HZ[0]);
+		const maxPow10 = Math.log10(RANGE_HZ[1]);
+		const pow10Range = maxPow10 - minPow10;
+		const mappingRatio = spectrum.length / pow10Range
+		for (let i = 0; i < spectrum.length; i++) {
+			const iFreq = frequencies[i];
+			if (iFreq < RANGE_HZ[0] || iFreq > RANGE_HZ[1]) {
+				continue;
 			}
-			dataMap.get(logIndex)?.push(spectrum[i]);
+
+			const pow10Curr = Math.log10(iFreq);
+			const outIndex = Math.floor(mappingRatio * (pow10Curr - minPow10));
+			outIndexValues[outIndex].push(spectrum[i]);
 		}
 
-		const fillInterpolated = (fromIndex: number, toIndex: number) => {
-			const fromValue = logSpectrum[fromIndex];
-			const toValue = logSpectrum[toIndex];
-			for (let j = 1; j <= consecutiveEmptyCount; j++) {
-				// why +1: the step is the gap, there are consecutiveEmptyCount + 1 steps between from and to
-				const interpolated = this.smoothStep(fromValue, toValue, j / (consecutiveEmptyCount + 1));
-				logSpectrum[fromIndex + j] = Math.round(interpolated);
+		// console.log(spectrum, frequencies, outIndexValues);
+
+		const fillInterpolated = (fromIndexExcluded: number, toIndexExcluded: number) => {
+			const fromValue = logSpectrum[fromIndexExcluded];
+			const toValue = logSpectrum[toIndexExcluded];
+			const count = fromValue - toValue - 1; // from value and to value are already set.
+			for (let j = 1; j <= count; j++) {
+				// why +1: the step is the gap, there are count + 1 steps between from and to
+				const interpolated = this.smoothStep(fromValue, toValue, j / (count + 1));
+				// const interpolated = fromValue;
+				logSpectrum[fromIndexExcluded + j] = Math.round(interpolated);
 			}
 		};
 
 		//compute the array
 		let consecutiveEmptyCount = 0;
 		for (let i = 0; i < logSpectrum.length; i++) {
-			if (dataMap.has(i)) {
-				const values = dataMap.get(i)!;
+			if (outIndexValues[i].length > 0) {
+				const values = outIndexValues[i];
 				const sum = values.reduce((a, b) => a + b, 0);
 				logSpectrum[i] = Math.round(sum / values.length);
+				// logSpectrum[i] = values.reduce((acc, v) => Math.max(acc, v));
 
 				// interpolate empty values in between
 				if (consecutiveEmptyCount > 0) {
-					let fromIndex = i - consecutiveEmptyCount - 1;
+					let fromIndex = (i - 1) - consecutiveEmptyCount;
 					if (fromIndex < 0) {
 						fromIndex = 0;
 					}
@@ -232,7 +239,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 
 		if (consecutiveEmptyCount > 0) {
 			// fill the end with the last known value
-			let fromIndex = logSpectrum.length - 1 - consecutiveEmptyCount - 1;
+			let fromIndex = (logSpectrum.length - 2 /*-1 -1*/) - consecutiveEmptyCount;
 			if (fromIndex < 0) {
 				fromIndex = 0;
 			}
@@ -243,46 +250,48 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 	}
 
 	/**
-	 * function that remaps an array, within the given min and max, to a new length.
+	 * function that remaps an array, within the given min and max, to a new length,
+	 * by picking `newLength` values in `array` at equal distances from provided min to max,
+	 * or the whole array otherwise.
 	 *
 	 * @export
 	 * @param array
-	 * @param new_length
-	 * @param min minimum index to consider for mapping.
-	 * @param max maximum index to consider for mapping.
+	 * @param newLength
+	 * @param minInOldArray minimum index to consider for mapping.
+	 * @param maxInOldArray maximum index to consider for mapping.
 	 * It is NOT guaranteed that the value at the maximum index
 	 * will be included in the output array.
 	 * @return The mapped array.
 	 */
 	mappedArray(
 		array: Uint16Array,
-		new_length: number,
-		min: number = 0,
-		max: number = array.length - 1
+		newLength: number,
+		minInOldArray: number = 0,
+		maxInOldArray: number = array.length - 1
 	): Uint16Array {
-		if (new_length < 0) {
+		if (newLength < 0) {
 			throw new Error('new_length must be non-negative.');
 		}
-		if (array.length === 0 && new_length === 0) {
+		if (array.length === 0 && newLength === 0) {
 			return new Uint16Array([]);
 		}
-		if (array.length === 0 && new_length > 0) {
+		if (array.length === 0 && newLength > 0) {
 			throw new Error('Cannot map from an empty array to a non-empty array.');
 		}
-		if (min < 0) {
+		if (minInOldArray < 0) {
 			throw new Error('min index cannot be negative.');
 		}
-		if (max >= array.length) {
+		if (maxInOldArray >= array.length) {
 			throw new Error('max index cannot be greater than or equal to array length.');
 		}
-		if (new_length === 0) {
+		if (newLength === 0) {
 			return new Uint16Array([]);
 		}
 
-		const newArray = new Uint16Array(new_length);
-		const step = (max - min + 1) / new_length; // (range length) / new length.
+		const newArray = new Uint16Array(newLength);
+		const step = (maxInOldArray - minInOldArray + 1) / newLength; // (range length) / new length.
 
-		let increment = min; //we start a the minimum of the range
+		let increment = minInOldArray; //we start a the minimum of the range
 
 		//We want to take at equal distance a "new_length" number of values in the old array, from min to max.
 		//In order to know how much we need to increment, we create a step.
@@ -291,7 +300,7 @@ export class AudioSpectrumProcessor extends TickUnit<SpectrumData> {
 		//If the range length is superior than the new length, step > 1 since we have to skip some values to match the new length.
 
 		//ARRAY CREATION
-		for (let i = 0; i < new_length; i++) {
+		for (let i = 0; i < newLength; i++) {
 			newArray[i] = array[Math.floor(increment)];
 			increment += step;
 		}

@@ -362,7 +362,7 @@ pub async fn bake_fft(
 
                 // https://webaudio.github.io/web-audio-api/#conversion-to-db
                 let min_db: f32 = -100.0;
-                let max_db: f32 = -30.0;
+                let max_db: f32 = -20.0;
                 let db_val: f32 = 20.0 * f32::log10(*val);
                 // https://webaudio.github.io/web-audio-api/#AnalyserNode-methods
                 let mut framed_val = f32::floor((65535.0 / (max_db - min_db)) * (db_val - min_db));
