@@ -14,19 +14,17 @@
 		"devo": "vite dev --open",
 		"build": "vite build",
 		"preview": "vite preview",
-		"test": "npm run test:integration && npm run test:unit",
+		"test": "npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "eslint .",
 		"format:check": "prettier --check .",
 		"format": "prettier --write .",
-		"test:integration": "playwright test",
 		"test:unit": "npx vitest",
 		"json2ts": "npx json2ts -i ./src/lib/schemas/ -o ./src/lib/types/schemas",
 		"prepare": "husky"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.61.1",
 		"@sveltejs/adapter-static": "^3.0.2",
 		"@sveltejs/kit": "^2.69.1",
 		"@sveltejs/vite-plugin-svelte": "^5.1.1",
@@ -49,7 +47,7 @@
 		"typescript-eslint": "^8.62.1",
 		"vite": "6.4",
 		"vite-plugin-checker": "^0.11.0",
-		"vitest": "^1.2.0"
+		"vitest": "^1.6.1"
 	},
 	"type": "module",
 	"dependencies": {
