@@ -33,7 +33,7 @@
 		"@tauri-apps/cli": "^2.4.0",
 		"@types/eslint": "^8.56.7",
 		"@types/node": "^24.10.1",
-		"eslint": "^9.0.0",
+		"eslint": "^9.39.4",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.45.1",
 		"globals": "^15.0.0",
