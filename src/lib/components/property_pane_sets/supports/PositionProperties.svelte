@@ -92,13 +92,13 @@
 <Accordion label={lang().properties.position.title} open>
 	<LabeledInputNumber
 		title={lang().properties.position.x}
-		unit={'px'}
+		unit="px"
 		value={saveManager.activeObjectData?.coordinates.x}
 		onChange={updateX}
 	/>
 	<LabeledInputNumber
 		title={lang().properties.position.y}
-		unit={'px'}
+		unit="px"
 		value={saveManager.activeObjectData?.coordinates.y}
 		onChange={updateY}
 	/>

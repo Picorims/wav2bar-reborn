@@ -81,7 +81,7 @@
 
 <Modal bind:dialog title={lang().modal.add_object.title}>
 	<div class="scrollable-picker">
-		{#each categories as category}
+		{#each categories as category (category)}
 			<h3>{lang().modal.add_object.categories[category]}</h3>
 			{@render typeButtons(category)}
 		{/each}
@@ -97,7 +97,7 @@
 </Modal>
 
 {#snippet typeButtons(category: Category)}
-	{#each Object.entries(entries).filter(([_, e]) => e.category === category) as [type, entry]}
+	{#each Object.entries(entries).filter(([_, e]) => e.category === category) as [type, entry] (type)}
 		<button
 			class="type-button"
 			aria-label={lang().modal.add_object.categories[category] + ': ' + entry.label}

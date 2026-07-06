@@ -61,14 +61,14 @@
 <Accordion label={lang().properties.size.title} open>
 	<LabeledInputNumber
 		title={lang().properties.size.width}
-		unit={'px'}
+		unit="px"
 		min={0}
 		value={saveManager.activeObjectData?.size.width}
 		onChange={updateWidth}
 	/>
 	<LabeledInputNumber
 		title={lang().properties.size.height}
-		unit={'px'}
+		unit="px"
 		min={0}
 		value={saveManager.activeObjectData?.size.height}
 		onChange={updateHeight}

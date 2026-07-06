@@ -163,7 +163,7 @@
 		}}
 		min={1}
 		step={1}
-		unit={'px'}
+		unit="px"
 	/>
 	<LabelInputNumber
 		defaultValue={saveManager.resolution.height}
@@ -175,7 +175,7 @@
 		}}
 		min={1}
 		step={1}
-		unit={'px'}
+		unit="px"
 	/>
 	<button class="audio-btn" onclick={pickAudio}>{lang().modal.project_settings.pick_audio}</button>
 	<p>{audioFile}</p>

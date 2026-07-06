@@ -163,7 +163,7 @@
 	/>
 	<LabeledInputNumber
 		title={lang().properties.text.font_size}
-		unit={'px'}
+		unit="px"
 		min={1}
 		value={data?.font_size}
 		onChange={updateFontSize}
@@ -217,19 +217,19 @@
 	<Accordion label={lang().properties.text.text_shadow.title} open={false}>
 		<LabeledInputNumber
 			title={lang().properties.text.text_shadow.offset_x}
-			unit={'px'}
+			unit="px"
 			value={data?.text_shadows[0]?.offset.x}
 			onChange={updateTextShadowOffsetX}
 		/>
 		<LabeledInputNumber
 			title={lang().properties.text.text_shadow.offset_y}
-			unit={'px'}
+			unit="px"
 			value={data?.text_shadows[0]?.offset.y}
 			onChange={updateTextShadowOffsetY}
 		/>
 		<LabeledInputNumber
 			title={lang().properties.text.text_shadow.blur_radius}
-			unit={'px'}
+			unit="px"
 			value={data?.text_shadows[0]?.blur_radius}
 			onChange={updateTextShadowBlurRadius}
 		/>

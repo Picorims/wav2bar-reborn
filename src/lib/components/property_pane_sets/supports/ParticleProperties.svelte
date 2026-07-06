@@ -80,14 +80,14 @@
 <Accordion label={lang().properties.particle_flow_props.title} open>
 	<LabeledInputNumber
 		title={lang().properties.particle_flow_props.radius_min}
-		unit={'px'}
+		unit="px"
 		min={1}
 		value={data?.particle_radius_range[0]}
 		onChange={updateRadiusMin}
 	/>
 	<LabeledInputNumber
 		title={lang().properties.particle_flow_props.radius_max}
-		unit={'px'}
+		unit="px"
 		min={1}
 		value={data?.particle_radius_range[1]}
 		onChange={updateRadiusMax}
@@ -101,13 +101,13 @@
 	{#if data?.flow_type === 'radial'}
 		<LabeledInputNumber
 			title={lang().properties.particle_flow_props.center_x}
-			unit={'px'}
+			unit="px"
 			value={data?.flow_center[0]}
 			onChange={updateFlowCenterX}
 		/>
 		<LabeledInputNumber
 			title={lang().properties.particle_flow_props.center_y}
-			unit={'px'}
+			unit="px"
 			value={data?.flow_center[1]}
 			onChange={updateFlowCenterY}
 		/>
@@ -115,7 +115,7 @@
 	{#if data?.flow_type === 'directional'}
 		<LabeledInputNumber
 			title={lang().properties.particle_flow_props.direction}
-			unit={'deg'}
+			unit="deg"
 			value={data?.flow_direction}
 			min={0}
 			max={360}
