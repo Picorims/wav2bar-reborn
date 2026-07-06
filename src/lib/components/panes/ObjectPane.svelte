@@ -57,7 +57,7 @@
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<div bind:this={listDiv} class="content" role="list" onkeyup={enterList} tabindex="-1">
 		<!-- Content -->
-		{#each Object.keys(saveManager.save.objects) as k}
+		{#each Object.keys(saveManager.save.objects) as k (k)}
 			<ObjectPaneItem uuid={k} />
 		{/each}
 	</div>

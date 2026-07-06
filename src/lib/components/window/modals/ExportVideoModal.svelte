@@ -223,7 +223,7 @@
 				dialog?.close();
 			}}
 		></Button>
-		<Button label={lang().export_video.export} onClick={exportVideo} variant={'accent'}></Button>
+		<Button label={lang().export_video.export} onClick={exportVideo} variant='accent'></Button>
 	{/snippet}
 </Modal>
 

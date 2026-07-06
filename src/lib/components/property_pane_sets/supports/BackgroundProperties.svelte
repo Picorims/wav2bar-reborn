@@ -236,7 +236,7 @@
 	/>
 	{#if data?.background.type === 'color'}
 		<LabeledInputColor
-			defaultValue={'#ffffff'}
+			defaultValue="#ffffff"
 			title={lang().properties.background.color}
 			value={data?.background.last_color}
 			onChange={updateColor}
@@ -343,7 +343,7 @@
 					defaultValue={DEFAULT_SIZE_X}
 					min={1}
 					step={1}
-					unit={'%'}
+					unit="%"
 					onChange={(v) => {
 						updateBackgroundSizePercentageX(v);
 					}}
@@ -353,7 +353,7 @@
 					defaultValue={DEFAULT_SIZE_Y}
 					min={1}
 					step={1}
-					unit={'%'}
+					unit="%"
 					onChange={(v) => {
 						updateBackgroundSizePercentageY(v);
 					}}

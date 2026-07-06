@@ -13,10 +13,8 @@
 	interface Props {
 		optionsArr?: string[] | null;
 		// optionsObj?: Record<string, string> | null;
-		// eslint-disable-next-line no-undef
 		optionsObj?: Options | null;
 		title?: string;
-		// eslint-disable-next-line no-undef
 		onChange?: (key: keyof Options) => void;
 		onFocusChange?: (focused: boolean) => void;
 		value?: string;
@@ -74,7 +72,7 @@
 		onfocusin={() => onFocusChange(true)}
 		onfocusout={() => onFocusChange(false)}
 	>
-		{#each options as option}
+		{#each options as option (option.key)}
 			<option value={option.key}>{option.value}</option>
 		{/each}
 	</select>
