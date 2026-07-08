@@ -7,10 +7,10 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use log::{debug, info, trace};
+use log::{debug, info};
 use num::ToPrimitive;
 use spectrum_analyzer::scaling::divide_by_N;
-use spectrum_analyzer::windows::{blackman_harris_4term, hann_window};
+use spectrum_analyzer::windows::{hann_window};
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
