@@ -34,6 +34,7 @@ const valid = validateSettingsV2(baseDefaultSettings);
 if (!valid) {
 	throw new Error(
 		'Failed to setup default settings. Some defaults might be missing in the schema\n' +
+			//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
 			valid.errors?.map((e) => errorToString(e))
 	);
 }
