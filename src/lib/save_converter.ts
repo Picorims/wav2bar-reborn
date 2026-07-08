@@ -178,7 +178,7 @@ const validate: Record<number, ValidateFunction<unknown>> = {
 	5: validateSaveV5
 };
 
-function errorToString(e: ErrorObject) {
+export function errorToString(e: ErrorObject) {
 	return `- ${e.keyword} - ${e.message ?? 'no context'} - ${e.instancePath} - ${e.schemaPath}`;
 }
 
