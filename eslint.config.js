@@ -45,6 +45,6 @@ export default [
 		}
 	},
 	{
-		ignores: ['build/**/*', '.svelte-kit/**/*', 'dist/**/*', 'target/**/*', 'src-tauri/**/*']
+		ignores: ['build/**/*', '.svelte-kit/**/*', 'dist/**/*', 'target/**/*', 'src-tauri/**/*', 'tests/**/*']
 	}
 ];
