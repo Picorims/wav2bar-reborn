@@ -18,14 +18,14 @@
 	// from the referenced tsconfig.json - TypeScript does not merge them in
 
 	"exclude": [
-		"../node_modules/**",
-		"../src/service-worker.js",
-		"../src/service-worker/**/*.js",
-		"../src/service-worker.ts",
-		"../src/service-worker/**/*.ts",
-		"../src/service-worker.d.ts",
-		"../src/service-worker/**/*.d.ts",
+		"node_modules/**",
+		"src/service-worker.js",
+		"src/service-worker/**/*.js",
+		"src/service-worker.ts",
+		"src/service-worker/**/*.ts",
+		"src/service-worker.d.ts",
+		"src/service-worker/**/*.d.ts",
 		"tests/**/*",
-		"src/lib/schemas/compiled/*"
+		"src/lib/schemas/compiled/*.js"
 	]
 }

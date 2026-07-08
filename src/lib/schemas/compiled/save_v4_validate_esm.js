@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use strict';
 export const validate = validate10;
 export default validate10;

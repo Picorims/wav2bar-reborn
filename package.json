@@ -24,7 +24,7 @@
 		"format": "prettier --write .",
 		"test:unit": "npx vitest",
 		"json2ts": "npx json2ts -i ./src/lib/schemas/ -o ./src/lib/types/schemas",
-		"ajv:build-schemas": "node scripts/build_schemas.js",
+		"ajv:build-schemas": "node scripts/build_schemas.js && echo 'Running Prettier on generated files...' && prettier --write src/lib/schemas/compiled/*",
 		"prepare": "husky"
 	},
 	"devDependencies": {

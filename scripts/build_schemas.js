@@ -46,7 +46,7 @@ for (const [name, schema] of Object.entries(schemas)) {
 	// `module.exports = <validateFunctionCode>;module.exports.default = <validateFunctionCode>;`
 	const ajv = new Ajv({ code: { source: true, esm: true }, useDefaults: true, allErrors: true });
 	const validate = ajv.compile(schema);
-	let moduleCode = standaloneCode(ajv, validate);
+	let moduleCode = '// @ts-nocheck\n' + standaloneCode(ajv, validate);
 
 	// Now you can write the module code to file
 	const filePath = path.join(dirName, `../src/lib/schemas/compiled/${name}_validate_esm.js`);
