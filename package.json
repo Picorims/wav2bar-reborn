@@ -13,6 +13,8 @@
 		"dev": "vite dev",
 		"devo": "vite dev --open",
 		"build": "vite build",
+		"tauri:build:r": "npx tauri build",
+		"tauri:build:d": "npx tauri build --debug",
 		"preview": "vite preview",
 		"test": "npm run test:unit",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
