@@ -17,8 +17,8 @@ export default defineConfig({
 		!process.env.VITEST
 			? checker({
 					typescript: {
-						root: "src",
-						tsconfigPath: "../tsconfig.json"
+						root: 'src',
+						tsconfigPath: '../tsconfig.json'
 					}
 				})
 			: undefined

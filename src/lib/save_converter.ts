@@ -175,7 +175,7 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 
 const validate: Record<number, ValidateFunction<unknown>> = {
 	4: validateSaveV4 as ValidateFunction<unknown>,
-	5: validateSaveV5 as ValidateFunction<unknown>,
+	5: validateSaveV5 as ValidateFunction<unknown>
 };
 
 export function errorToString(e: ErrorObject) {
