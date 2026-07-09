@@ -1,6 +1,6 @@
 [package]
 name = "wav2bar"
-version = "1.0.0-indev"
+version = "1.0.0-beta.1"
 description = "Free software for creating audio visualization (motion design) videos"
 authors = ["Charly Schmidt aka Picorims(picorims.contact@gmail.com)"]
 license = "MPL-2.0"

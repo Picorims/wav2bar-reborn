@@ -304,12 +304,13 @@ Based on [Semantic versioning](https://semver.org/)
    - `package-lock.json`
    - `tauri.conf.json`
    - `Cargo.toml`
+   - `Cargo.lock`
 2. update [CHANGELOG.md](../CHANGELOG.md)
 
 3. do necessary fixes
-4. push to master
+4. push
 
-5. build the app: TBD
+5. build the app: `npm run tauri:build:r`
 6. test the maked files (if not ok go back to step 3)
 
 7. merge the release from `develop` to `main`
@@ -323,11 +324,9 @@ Based on [Semantic versioning](https://semver.org/)
 10. setup the release:
     - **local build:**
       - Do the GitHub release with appropriate packages and the right tag (source code already managed BUT without node modules)
-    - **CI build:**
-      - Wait for the tag CI action to finish. It will produce a release draft for the tag, with built packages attached to it.
+    - **CI build:** (not available)
+      - ~~Wait for the tag CI action to finish. It will produce a release draft for the tag, with built packages attached to it.~~
 11. Fill the release information:
-
-TODO see if needs an update once builds are setup
 
 ```md
 [description]

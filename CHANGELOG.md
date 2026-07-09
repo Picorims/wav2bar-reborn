@@ -10,8 +10,10 @@ https://keepachangelog.com/en/1.0.0/
 - Box shadow may have rendering artifacts.
 - Shadow spread is ignored in text shadow.
 - Only one shadow is taken into account in text shadow.
+- Text shadow may be cropped.
 - The colour picker may be missing the alpha channel.
-- Frequency visualization is perfectible.
+- Frequency visualization might be missing within the first few seconds of export.
+- Last few seconds of the video may be cropped.
 
 ### Added
 
