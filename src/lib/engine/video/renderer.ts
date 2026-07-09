@@ -7,8 +7,8 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import { Application, Container, Rectangle, Texture } from "pixi.js";
-import "pixi.js/unsafe-eval";
+import { Application, Container, Rectangle, Texture } from 'pixi.js';
+import 'pixi.js/unsafe-eval';
 import { TickEngine } from './tick';
 import type { AudioProvider } from '../audio/audio_provider';
 import type { UUIDv4 } from '$lib/types/common_types';
