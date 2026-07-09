@@ -7,10 +7,10 @@ License, v. 2.0. If a copy of the MPL was not distributed with this
 file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-use log::{debug, info, trace};
+use log::{debug, info};
 use num::ToPrimitive;
 use spectrum_analyzer::scaling::divide_by_N;
-use spectrum_analyzer::windows::{blackman_harris_4term, hann_window};
+use spectrum_analyzer::windows::hann_window;
 use spectrum_analyzer::{samples_fft_to_spectrum, FrequencyLimit};
 use symphonia::core::audio::SampleBuffer;
 use symphonia::core::codecs::DecoderOptions;
@@ -268,7 +268,10 @@ pub async fn bake_fft(
             // https://webaudio.github.io/web-audio-api/#down-mix
             let mut downmixed_mono: Vec<f32> = vec![0.0; fft_size as usize];
             // ignoring special cases like 5.1.
-            assert!(track_channels_count > 0, "Cannot proceed with 0 channels, downmixing would break.");
+            assert!(
+                track_channels_count > 0,
+                "Cannot proceed with 0 channels, downmixing would break."
+            );
             for i in 0..fft_size as usize {
                 for c in 0..track_channels_count as usize {
                     downmixed_mono[i] += channel_samples[c][i];
@@ -276,7 +279,6 @@ pub async fn bake_fft(
                 downmixed_mono[i] /= track_channels_count.to_f32().unwrap_or(1.0);
             }
 
-            
             // compute FFT for downmixed mono
             let mut out_fft: Vec<f32> = vec![0.0; (fft_size / 2) as usize];
             let mut dc_offset = 0.0;
@@ -319,10 +321,7 @@ pub async fn bake_fft(
                     downmixed_samples_slice.len()
                 );
                 debug!("hann window length: {} ", windowed_samples.len());
-                debug!(
-                    "spectrum hann window length: {} ",
-                    spectrum.data().len()
-                );
+                debug!("spectrum hann window length: {} ", spectrum.data().len());
                 debug!("out_fft length: {} ", out_fft.len());
                 debug!("max: {}\n", spectrum.max().1.val());
                 // for (fr, fr_val) in spectrum_hann_window.data().iter() {
@@ -339,7 +338,8 @@ pub async fn bake_fft(
                 out_fft[i] += freq_pair.1.val();
 
                 // cache frequencies only once
-                if !cached_fft_frequencies {//&& channel == 0 {
+                if !cached_fft_frequencies {
+                    //&& channel == 0 {
                     fft_frequencies_cache.push(freq_pair.0.val().floor().to_u16().unwrap_or(0));
                 }
             }

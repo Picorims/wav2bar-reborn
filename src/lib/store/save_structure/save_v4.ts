@@ -7,9 +7,9 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import saveV4Schema from '$lib/schemas/save_v4.json';
 import type { Wav2BarSaveV4 } from '$lib/types/schemas/save_v4';
-import Ajv from 'ajv';
+import ajvSaveV4Validator from '$lib/schemas/compiled/save_v4_validate_esm';
+import ajvSaveV4VisualObjectValidator from '$lib/schemas/compiled/save_v4_visual_object_validate_esm';
 
 /**
  * - For versions beta 0.3.0 indev and above
@@ -36,13 +36,8 @@ export const ARCHIVE_STRUCTURE_V4 = {
 
 // Check package.json - "npm run json2ts" script to update the types associated to JSON schemas.
 
-const ajv = new Ajv({ useDefaults: true });
-export const validateSaveV4 = ajv.compile(saveV4Schema);
-export const validateSaveV4VisualObject = ajv.compile({
-	$schema: 'http://json-schema.org/draft-07/schema#',
-	definitions: saveV4Schema.definitions,
-	$ref: '#/definitions/visual_object'
-});
+export const validateSaveV4 = ajvSaveV4Validator;
+export const validateSaveV4VisualObject = ajvSaveV4VisualObjectValidator;
 
 // =========================================================
 // PROPERTIES ==============================================

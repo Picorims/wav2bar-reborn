@@ -5,9 +5,21 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
 	plugins: [
 		sveltekit(),
+		/**
+		 * Checker disabled: AJV schema compiler generates
+		 * JS files that flood errors due to
+		 * `vite-plugin-checker` not being able to exclude
+		 * files from typescript checking, so it has to be
+		 * disabled
+		 * (see https://github.com/fi3ework/vite-plugin-checker/issues/182
+		 * and https://github.com/fi3ework/vite-plugin-checker/issues/568).
+		 */
 		!process.env.VITEST
 			? checker({
-					typescript: true
+					typescript: {
+						root: 'src',
+						tsconfigPath: '../tsconfig.json'
+					}
 				})
 			: undefined
 	],

@@ -7,9 +7,9 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import saveV5Schema from '$lib/schemas/save_v5.json';
 import type { Wav2BarSaveV5 } from '$lib/types/schemas/save_v5';
-import Ajv from 'ajv';
+import ajvSaveV5Validator from '$lib/schemas/compiled/save_v5_validate_esm';
+import ajvSaveV5VisualObjectValidator from '$lib/schemas/compiled/save_v5_visual_object_validate_esm';
 
 /**
  * - For versions 1.0.0-beta.1 indev and above
@@ -36,13 +36,8 @@ export const ARCHIVE_STRUCTURE_V5 = {
 
 // Check package.json - "npm run json2ts" script to update the types associated to JSON schemas.
 
-const ajv = new Ajv({ useDefaults: true });
-export const validateSaveV5 = ajv.compile(saveV5Schema);
-export const validateSaveV5VisualObject = ajv.compile({
-	$schema: 'http://json-schema.org/draft-07/schema#',
-	definitions: saveV5Schema.definitions,
-	$ref: '#/definitions/visual_object'
-});
+export const validateSaveV5 = ajvSaveV5Validator;
+export const validateSaveV5VisualObject = ajvSaveV5VisualObjectValidator;
 
 type VisualObjectV5Type = Wav2BarSaveV5['objects'][string]['visual_object_type'];
 export const visualObject_V5_types: Readonly<VisualObjectV5Type[]> = [

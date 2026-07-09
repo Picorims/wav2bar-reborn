@@ -81,6 +81,7 @@ class SaveManager {
 		if (!validWithDefaults) {
 			throw new Error(
 				'Failed to create a default save because:\n\n' +
+					//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
 					validateSave.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join('\n')
 			);
 		}
@@ -98,6 +99,7 @@ class SaveManager {
 		if (!validWithDefaults) {
 			throw new Error(
 				`Failed to create a default visual object of type ${type} because:\n\n` +
+					//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
 					validateSaveVisualObject.errors?.map((e) => `- ${e.instancePath} ${e.message}`).join('\n')
 			);
 		}

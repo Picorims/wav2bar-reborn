@@ -53,6 +53,7 @@ export async function loadSettings() {
 			const valid = validateSettingsV2(parsedJson);
 			if (!valid) {
 				throw new Error(
+					//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
 					'Invalid settings JSON:\n' + validateSettingsV2.errors?.map((v) => `${v}\n`)
 				);
 			} else {

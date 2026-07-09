@@ -51,7 +51,8 @@ export default [
 			'dist/**/*',
 			'target/**/*',
 			'src-tauri/**/*',
-			'tests/**/*'
+			'tests/**/*',
+			'src/lib/schemas/compiled/*'
 		]
 	}
 ];

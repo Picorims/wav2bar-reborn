@@ -7,7 +7,8 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import * as PIXI from 'pixi.js';
+import { Application, Container, Rectangle, Texture } from 'pixi.js';
+import 'pixi.js/unsafe-eval';
 import { TickEngine } from './tick';
 import type { AudioProvider } from '../audio/audio_provider';
 import type { UUIDv4 } from '$lib/types/common_types';
@@ -59,7 +60,7 @@ const END_OF_TRACK_THRESHOLD_SECONDS = 0.001; // in seconds
  * Pixi.js renderer, drives the tick and audio engines.
  */
 export class Renderer {
-	private app: PIXI.Application;
+	private app: Application;
 	private hasInitBool = false;
 	private tickEngine: TickEngine;
 	private audioProvider: AudioProvider | null = null;
@@ -80,7 +81,7 @@ export class Renderer {
 			width: null,
 			height: null
 		};
-		this.app = new PIXI.Application();
+		this.app = new Application();
 		globalThis.__PIXI_APP__ = this.app;
 		this.tickEngine = new TickEngine();
 		this.atlas = new Atlas();
@@ -379,7 +380,7 @@ export class Renderer {
 		this.visualObjects.delete(id);
 	}
 
-	generateTexture(container: PIXI.Container, frame?: PIXI.Rectangle): PIXI.Texture {
+	generateTexture(container: Container, frame?: Rectangle): Texture {
 		if (!this.hasInit()) {
 			throw new Error('Cannot generate texture, renderer not initialized');
 		}

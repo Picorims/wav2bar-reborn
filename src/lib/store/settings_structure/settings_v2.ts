@@ -7,13 +7,12 @@
 	file, You can obtain one at https://mozilla.org/MPL/2.0/.
 */
 
-import settingsV2Schema from '$lib/schemas/settings_v2.json';
 import { version } from '$app/environment';
-import Ajv from 'ajv';
 import type { Wav2BarSettingsV2 } from '$lib/types/schemas/settings_v2';
+import ajvSettingsV2Validate from '$lib/schemas/compiled/settings_v2_validate_esm';
+import { errorToString } from '$lib/save_converter';
 
-const ajv = new Ajv({ useDefaults: true });
-export const validateSettingsV2 = ajv.compile(settingsV2Schema);
+export const validateSettingsV2 = ajvSettingsV2Validate;
 
 // export const defaultSettingsV2: Wav2BarSettingsV2 = {
 // 	save_version: 2,
@@ -29,10 +28,14 @@ const baseDefaultSettings = {
 	software_version_used: version,
 	software_version_first_created: version
 };
+console.log('alive');
+
 const valid = validateSettingsV2(baseDefaultSettings);
 if (!valid) {
 	throw new Error(
-		'Failed to setup default settings. Some defaults might be missing in the schema.'
+		'Failed to setup default settings. Some defaults might be missing in the schema\n' +
+			//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
+			valid.errors?.map((e) => errorToString(e))
 	);
 }
 

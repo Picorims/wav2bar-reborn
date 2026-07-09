@@ -174,11 +174,11 @@ const convertTo: Record<number, (save: Record<string, unknown>) => ConversionRes
 };
 
 const validate: Record<number, ValidateFunction<unknown>> = {
-	4: validateSaveV4,
-	5: validateSaveV5
+	4: validateSaveV4 as ValidateFunction<unknown>,
+	5: validateSaveV5 as ValidateFunction<unknown>
 };
 
-function errorToString(e: ErrorObject) {
+export function errorToString(e: ErrorObject) {
 	return `- ${e.keyword} - ${e.message ?? 'no context'} - ${e.instancePath} - ${e.schemaPath}`;
 }
 
@@ -194,6 +194,7 @@ export class SaveConverter {
 					success: false,
 					warnings: [],
 					errors: ['Save is not valid according to the latest schema.'].concat(
+						//@ts-expect-error incorrect typing from generated files, has the same API as the result of Ajv.compile().
 						validateSave.errors?.map((e) => errorToString(e)) || []
 					),
 					convertedSave: null
