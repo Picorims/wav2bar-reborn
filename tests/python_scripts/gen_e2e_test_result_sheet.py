@@ -247,7 +247,7 @@ def main():
         col_widths=(120, 20, 50),
         headings_style=headings_style,
         line_height=4,
-        text_align=("LEFT", "CENTER", "RIGHT"),
+        text_align=("LEFT", "CENTER", "LEFT"),
         width=table_w,
     ) as table:
         header = table.row()
