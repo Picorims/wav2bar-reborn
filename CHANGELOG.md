@@ -14,6 +14,15 @@ https://keepachangelog.com/en/1.0.0/
 - The colour picker may be missing the alpha channel.
 - Frequency visualization might be missing within the first few seconds of export.
 - Last few seconds of the video may be cropped.
+- Trying to bake FFT without any audio file present in the project show errors in the logs.
+- Layer related issues with transparent images (see issue #234: https://github.com/Picorims/wav2bar-reborn/issues/234)
+- Opening a project while another is open, then saving it can lead to unused audio file being saved with current project data (see issue #232: https://github.com/Picorims/wav2bar-reborn/issues/232).
+- Errors in log when playing while FFT data has not been baked.
+- Box shadows not working with shapes (see issue #235: https://github.com/Picorims/wav2bar-reborn/issues/235)
+- Shape background image is broken when behind a transparent image shape (see issue #237: https://github.com/Picorims/wav2bar-reborn/issues/237)
+- Initial newly created time text is not correctly initialized. (see #240: https://github.com/Picorims/wav2bar-reborn/issues/240)
+- The default spawn probability of zero for particles is confusing (looks like it doesn't work, the solution being setting it to a value above zero).
+- Inset box shadow can leak far away from the object (see #243: https://github.com/Picorims/wav2bar-reborn/issues/243)
 
 ### Added
 
